@@ -1,21 +1,23 @@
 import {Track} from "./Track";
+import {Page} from "../common/Types";
 
 export class TracksService {
-    baseUri = "localhost:8080/api/v1"
+    baseUri = "http://localhost:8080/api/v1"
 
-    async fetchTopTracks() : Promise<Array<Track>> {
-        const url = `https://localhost:8080/api/v1/demo/toptracks`
-        const rsp_body = await fetch(url);
+    async fetchTopTracks(page: Page) : Promise<Array<Track>> {
+        const url = `${this.baseUri}/demo/topTracks?limit=${page.elementsLimit}&page=${page.pageNum}&country=${page.searchQuery}`
+
+        const rsp_body = await fetch(url, {method: 'GET', headers: {'Access-Control-Allow-Origin': '*'}});
         const json_body = await rsp_body.json();
-        const tracks = json_body.tracks
-            .map((trackInfo: { name: string | undefined; listeners: number | undefined; }) => {
-                let track = new Track();
-                track.name = trackInfo.name;
-                track.listeners = trackInfo.listeners;
-                return track;
-            });
-        console.log(tracks);
+        const tracks = json_body.tracks.track.map(TracksService.jsonToTrack);
         return tracks;
+    }
+
+    private static jsonToTrack(trackInfo: { name: string | undefined; listeners: number | undefined; }) {
+        let track = new Track();
+        track.name = trackInfo.name;
+        track.listeners = trackInfo.listeners;
+        return track;
     }
 }
 

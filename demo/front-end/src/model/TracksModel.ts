@@ -4,9 +4,10 @@ import {Track} from "./Track";
 
 class TracksModel {
     service = new TracksService()
+    tracks : Array<Track> = []
 
-    async getTopTracks(page: Page): Promise<Array<Track>> {
-        return await this.service.fetchTopTracks()
+    getTopTracks(page: Page) : Promise<Array<Track>> {
+        return this.service.fetchTopTracks(page).then(value => this.tracks = value)
     }
 }
 

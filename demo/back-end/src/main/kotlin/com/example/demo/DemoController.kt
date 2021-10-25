@@ -2,6 +2,7 @@ package com.example.demo
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -17,11 +18,14 @@ class DemoController {
     @GetMapping(value = ["/helloWorld"])
     fun helloWorld() : String = "Hello World!"
 
-    @GetMapping(value = ["/toptracks"], produces = ["application/json"])
-    fun getTopTracks() : String {
+    @GetMapping(value = ["/topTracks"], produces = ["application/json"])
+    fun getTopTracks(@RequestParam(name = "limit", defaultValue = "50") limit: Int,
+                     @RequestParam(name = "page", defaultValue = "1") page: Int,
+                     @RequestParam(name = "country") country: String) : String {
+
         val result : CompletableFuture<String> = CompletableFuture()
         result.completeOnTimeout("No results were given sorry!", 5, TimeUnit.SECONDS)
-        lasfFmRepo.getTopTracks(2, 1, "Portugal") {
+        lasfFmRepo.getTopTracks(limit, page, country) {
             result.complete(it!!)
         }
         return result.get()

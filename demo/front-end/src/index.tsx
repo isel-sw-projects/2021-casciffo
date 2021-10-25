@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import '../index.css';
-import App from './App';
-import reportWebVitals from '../reportWebVitals';
+import './index.css';
+import App from './view/App';
+import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import SearchComponent from "./SearchComponent";
+import SearchComponent from "./view/SearchComponent";
+import TracksModel from "./model/TracksModel";
 
 ReactDOM.render(
   <React.StrictMode>
-      <SearchComponent/>
+      <SearchComponent model={new TracksModel()}/>
   </React.StrictMode>,
   document.getElementById('root')
 );
