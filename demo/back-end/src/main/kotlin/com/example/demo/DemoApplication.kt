@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse
 @EnableWebMvc
 class ApiConfig : WebMvcConfigurer {
 // future reference
-	override fun addInterceptors(registry: InterceptorRegistry) {
-		registry.addInterceptor(AuthorizationInterceptor())
-	}
+//	override fun addInterceptors(registry: InterceptorRegistry) {
+//		registry.addInterceptor(AuthorizationInterceptor())
+//	}
 
 	override fun addCorsMappings(registry: CorsRegistry) {
 		registry
