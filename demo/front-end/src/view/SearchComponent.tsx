@@ -54,63 +54,71 @@ function SearchComponent(props: SearchProps) {
         return items
     }
 
+    function showNavBar() {
+        return <Container>
+            <Navbar bg={'light'} expand={'lg'}>
+                <Container fluid>
+                    <Navbar.Brand>Demo React App</Navbar.Brand>
+                    <Navbar.Toggle aria-controls={'navbarScroll'}/>
+                    <Navbar.Collapse id={'navbarScroll'}>
+                        <Form className="d-flex">
+                            <FormControl
+                                type="search"
+                                placeholder="Portugal"
+                                className="me-2"
+                                aria-label="Search"
+                                value={searchQuery}
+                                onChange={e => setQuery(e.target.value)}
+                            />
+                            <Button variant="outline-success" onClick={() => fetchTopTracks()}>Search</Button>
+                        </Form>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+        </Container>;
+    }
+
+    function showResultTable() {
+        return <Table striped bordered hover size={"sm"}>
+            <thead>
+            <tr id={"headers"}>
+                <th>Track</th>
+                <th>Listeners</th>
+            </tr>
+            </thead>
+            <tbody>
+            {hasDataBeenFetched ?
+                <>
+                    {props.model.tracks.map(track => (
+                        <tr key={track.name}>
+                            <td>{track.name}</td>
+                            <td>{track.listeners}</td>
+                        </tr>
+                    ))}
+                </>
+                :
+                <>
+                    <tr key={"template"}>
+                        <td colSpan={2}>
+                            Search for a country name to show its top tracks and respective listener count!
+                        </td>
+                    </tr>
+                </>
+            }
+            </tbody>
+        </Table>;
+    }
+
     return (
         <>
+            {showNavBar()}
             <Container>
-                <Navbar bg={'light'} expand={'lg'}>
-                    <Container fluid>
-                        <Navbar.Brand>Demo React App</Navbar.Brand>
-                        <Navbar.Toggle aria-controls={'navbarScroll'}/>
-                        <Navbar.Collapse id={'navbarScroll'}>
-                            <Form className="d-flex">
-                                <FormControl
-                                    type="search"
-                                    placeholder="Portugal"
-                                    className="me-2"
-                                    aria-label="Search"
-                                    value={searchQuery}
-                                    onChange={e => setQuery( e.target.value )}
-                                />
-                                <Button variant="outline-success" onClick={() => fetchTopTracks()}>Search</Button>
-                            </Form>
-                        </Navbar.Collapse>
-                    </Container>
-                </Navbar>
-            </Container>
-            <Container>
-               <Table striped bordered hover size={"sm"}>
-                   <thead>
-                    <tr id={"headers"}>
-                        <th>Track</th>
-                        <th>Listeners</th>
-                    </tr>
-                   </thead>
-                   <tbody>
-                   {hasDataBeenFetched ?
-                       <>
-                           {props.model.tracks.map(track => (
-                               <tr key={track.name}>
-                                   <td>{track.name}</td>
-                                   <td>{track.listeners}</td>
-                               </tr>
-                           ))}
-                       </>
-                       :
-                       <>
-                           <tr key={"template"}>
-                               <td colSpan={2}>
-                                   Search for a country name to show its top tracks and respective listener count!
-                               </td>
-                           </tr>
-                       </>
-                   }
-                   </tbody>
-               </Table>
+                {showResultTable()}
                 {hasDataBeenFetched ?
                     <>
-                <Pagination key={"page_nums"}>
-                    {createPageIterations()}
-                </Pagination>
+                        <Pagination key={"page_nums"}>
+                            {createPageIterations()}
+                        </Pagination>
                     </> : <></>}
             </Container>
         </>
