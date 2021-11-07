@@ -13,6 +13,7 @@ import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
+import ReactDOM from "react-dom";
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -22,7 +23,8 @@ clientsClaim();
 // Their URLs are injected into the manifest variable below.
 // This variable must be present somewhere in your service worker file,
 // even if you decide not to use precaching. See https://cra.link/PWA
-precacheAndRoute(self.__WB_MANIFEST);
+const precache = self.__WB_MANIFEST
+precacheAndRoute(precache);
 
 // Set up App Shell-style routing, so that all navigation requests
 // are fulfilled with your index.html shell. Learn more at
@@ -78,3 +80,46 @@ self.addEventListener('message', (event) => {
 });
 
 // Any other custom service worker logic can go here.
+
+const CACHE_NAME = 'demo cache'
+
+// fetch runs on every request made from the browser
+// TODO: figure out a strategy to cache api requests and responses or change registerRoute function
+self.addEventListener('fetch', (event) => {
+    console.log("fetch request made to")
+    console.log(event.request.url)
+
+})
+
+//install
+//open our personal cache
+self.addEventListener('install', (event) => {
+    event.waitUntil(
+        caches.open(CACHE_NAME)
+            .then(() => console.log("cache opened ayy")
+        )
+    )
+});
+
+//offline
+// TODO: send a toast message to the user
+self.addEventListener('offline', (event) => {
+    console.log("offline, here we need to send a notification to the user about current status")
+});
+
+// //activate idk yet, runs when service worker is active
+// self.addEventListener('activate', (e) => {
+//     //delete old caches, keep only most recent
+//     const recentCache: string[] = []
+//     recentCache.push(CACHE_NAME)
+//
+//     e.waitUntil(
+//         caches.keys().then((cacheNames) => Promise.all(
+//             cacheNames.map(name => {
+//                 if(!recentCache.includes(name)) {
+//                     return caches.delete(name)
+//                 }
+//             })
+//         ))
+//     )
+// })
