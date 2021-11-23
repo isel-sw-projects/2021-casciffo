@@ -6,10 +6,11 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import SearchComponent from "./view/SearchComponent";
 import TracksModel from "./model/TracksModel";
+import App from "./App";
 
 ReactDOM.render(
     <React.StrictMode>
-        <SearchComponent model={new TracksModel()}/>
+        <App/>
     </React.StrictMode>,
     document.getElementById('root')
 );
