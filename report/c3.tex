@@ -1,0 +1,288 @@
+\chapter{}
+This chapter consists of a detailed view over the inner workings and functional requirements of the platform CASCIFFO.
+It is structured with the following sections:
+\begin{itemize}
+    \item Infrastruture: Description of technologies and frameworks used in the development of CASCIFFO. 
+    \item Access control: Identification and categorization of actors and their roles.
+    \item Processes: Identification and detailing of the flow of processes.
+    \item Functional Requirements: Description of functional requirements.
+\end{itemize}
+
+
+\section{Infrastructure} [to review and tie together neater when more is known; explore features of react, reason of choice]
+The infrastructure of CASCIFFO, has mentioned previously, consists of two core modules, the front-end and the back-end.  
+The front-end runs on a Node.js environment, using React with Typescript to build all front-end functionalities.  
+The back-end executes on a run-time Java environment, utilizing Spring-web as the server.
+
+
+falar de PWA, react, typescript, spring-web, cra (create-react-app), node, choice of npm over yarn, npx, bd postgresql  
+
+por decidir cloud vs on-premises hosting  
+
+algures nesta secção colocar  
+The patient and medical staff data will be imported from an internal database, "Admission", in the HFF/UIC. There are restrictions on querying the medical staff information, which limits this procedure to once a day.
+
+Por discutir  
+como realizar a integração sobre a BD admission
+
+\section{Access control}
+Within the app CASCIFFO, in order for the management of clinical investigations to adhere to its natural progress, it needs to be reviewed by many entities, such as the Administrative Council ("Concelho administrativo", CA), the Finance and Juridical department.
+Given this nature of CASCIFFO, there needs to be a well-defined structure of access control, so that each entity can contribute to the management of clinical investigations within the scope of their responsabilities. Each involved entity must have a role and a set of permissions.  
+The roles identified are as follows, the UIC role, given to the investigators who can create and edit clinical investigation proposals; the Team Member role, given to investigators belonging to the team conducting the clinical investigation; the Management role, able to approve and reject clinical investigation proposals; the Finance and Juridical roles, given to collaborators who's function belongs within the Finance and Juridical departments, respectfully; and finally the Superuser role, who has complete access to every feature CASCIFFO has to offer.
+
+\section{Processes} 
+This section details the types of processes occurring within the scope of the project.  
+There are three identified processes consisting of the life-cycle of a clinical investigation proposal, the Clinical Trials and the addenda to the contract. 
+
+
+
+\subsection{Clinical Investigation Proposals}
+From the moment a clinical investigation is proposed, it follows through a series of states and protocols that must be adhered to in order for it to be completely validated.
+There are two types of clinical investigations: Clinical Trials and Observational Trials.  
+Each state, except the terminal one, has an entity responsible, `owner`, for advancing the state. 
+The flow of states is as follows:  
+\begin{enumerate}
+    \item `Submetido`, `owner=UIC`
+    \item `Negociação de CF`, `owner=UIC`
+    \item `Validação interna`, `owner=Finance,Juridical`
+    \item `Validação externa`, `owner=UIC`
+    \item `Submissão ao CA`, `owner=UIC`
+    \item `Validação interna`, `owner=CA`
+    \item `Validado`
+\end{enumerate}
+
+The enumerated set of states corresponds to the life-cycle of a clinical trial Proposal. An Observational Trial Proposal consists of the enumerated states {1,4,5,6}; it lacks a financial component and a promoter.  
+
+Taking the example of the submission of a clinical trial Proposal, an investigator starts by creating and submitting a proposal. Once it's submitted, the CA will be notified, via app and email. This state is described as `Submetido`.  
+When the negotiation of the financial contract begins, the principal Investigator, who belongs to the UIC role, will advance the state to its next step in the proposal's evolution, `Negociação de CF`.  
+When the financial negotiation reaches an agreement of the UIC and external promoter, the investigator advances the state to its next stage, `Validação Interna`. Upon advancing, the users with the role of `Finance` and `Juridical`, which represents the Financial and Juridical internal departments, respectfully, will be notified that a proposal is ready to be evaluated. The evaluation will consist of a simple `Accept` or `Refuse` with added justification for the choice. In the case of either user with `Finance` or `Juridical` role reject the financial contract, the proposal's will backtrack to `Negociação de CF`, notifying the UIC of the occurrence.  
+Once it's accepted by both roles, the proposal will automatically advance into the next state, `Validação Externa`. In this state the UIC will be notified of the change and asked to verify all the documents, including the final version of the financial contract. The UIC to the external promoter, requesting their signatures. When the reply is received via email, the UIC adds the received signatures and possible additional documents to the proposal in the CASCIFFO platform, advancing it to the next stage `Submissão ao CA`.  
+In the state `Submissão ao CA`, the principal investigator will be notified both via the platform and email that a proposal requires their signature. Once the principal investigator submits their signature into the platform, he can advance the proposal's state into `Validação interna`. The progression to the mentioned state will notify users with the `CA` role stating that a proposal is ready for its final evaluation.  
+Once a user with the role of `CA` checks the proposal it can validate or invalidate the proposal. In case it's invalidated, the proposal will become `cancelled` with its life-cycle ending there, however, if it is validated, the proposal can become fully validated once the termination of another process is ends successfully.  
+This process, which can be considered a sub-process, is called the [validation] protocol. It starts in a parallel manner when the proposal is first submitted.  
+The purpose of this protocol is to validate the clinical investigation's ethical and safety values. It consists in the validation of the proposal by internal and external agencies, the \href{https://www.ceic.pt/}{clinical investigations Ethics Comity ("Comissão de Ética para Investigação Clínica", CEIC)} and \href{https://www.infarmed.pt/web/infarmed}{INFARMED, I.P} respectfully. The protocol ends when either of the mentioned agencies approves or rejects the proposal.  
+Once it has successfully passed through the described validation protocol, the proposal becomes `Validated` and a Clinical or Observational Trial is automatically created, importing the core information from the proposal.  
+If either process declares the proposal invalid, its state becomes `cancelled`, notifying the UIC and showing the root cause of cancelation.
+
+Each proposal is distinguished by six main properties, the principal investigator, the type of investigation, the type of therapeutic service it's integrated into (i.e Oncology), the `Sigla` which represents the name of the therapeutic or medicine, the partnerships involved in the investigation and the medical team participating in the investigation.  
+Proposals with a financial component must also include the promoter of the investigation, in addition to the properties listed.  
+
+\subsection{Clinical Trials} 
+The life-cycle of a clinical trial is divided into three states: active, completed, and canceled.  
+Starting with the active state, a clinical trial will become available for viewing and editing once its proposal has been accepted. 
+Clinical trials as a process consist on the experimentation of new medicine or treatment on a set of participants. These participants can be added to the clinical trial directly from the application. The experimentation requires constant monitoring, through visits, on each participant. These visits can be scheduled either when a participant is added or created afterwards.  
+In addition to monitoring participants, several studies can be made in the scope of the clinical trial, such as scientific articles, presentations, reports, etc. 
+REVIEW DOES NOT SEEM TO BE PROCESS ?
+
+\subsection{Addenda to the contract}
+Throughout the life of a clinical trial, there can be made changes to the study's contract, be it changing the investigator team or other factors that impact the standard run of the study. These changes pass through two entities before being applied; the UIC and the CA.  
+Addenda can only be made once a clinical trial is active, which means its proposal has already been approved.  
+The addenda have five different states: submitted `Submetido`, internal validation by UIC `Validação interna`, internal validation by CA `Validação interna`, the terminal state validated `Validado` and finally the terminal canceled state `Indeferido`.  
+The first four mentioned states are sequential, with the last one being an exception state. The sequential flow of states have an entity responsible for advancing their state, the `owner`. Listed below, in similar fashion to the states presented in the proposal process, is the aforementioned sequence:
+\begin{enumerate}
+    \item `Submitido`, `owner=UIC`
+    \item `Validação interna`, `owner=UIC` 
+    \item `Validação interna`, `owner=CA`
+    \item `Validado`
+\end{enumerate}
+
+
+\section{Functional Requirements}
+This section details the functional requirements and presents a mock user interface (UI) that will satisfy the requirement.
+The main features of CASCIFFO can be separated into three groups, which are: general functionalities, clinical component and financial component.  
+\begin{enumerate}
+    \item General features
+        \begin{itemize}
+            \item Visualization and management of Clinical Trials as a process; 
+            \item Ability to edit and validate data (edit checks);
+            \item Access control based on different user profiles; 
+            \item Access by computer, tablet or smartphone; 
+            \item Ability to export information in numerical or graphical mode; 
+            \item Ability to customize the form of visualization.
+        \end{itemize}
+    \item Clinical Component
+        \begin{itemize}
+           \item View detailed characteristics and evolution of clinical Trials including the tested medicine or technique in question;
+           \item Monitoring the set of patients included in clinical Trials and their characteristics;
+           \item Insertion of patient data in face-to-face or tele-consultation;
+           \item Characteristics of the treatment associated with the clinical trial and monitoring of the patient’s behavior under trial and its attendance;
+           \item Monitoring of physical and financial assets;
+           \item Monitoring of visits \& Recording of adverse events associated with patients due to the trial drug;
+        \end{itemize}
+\end{enumerate}
+
+\section{General Features}
+In this section, the general features mentioned in the document will be described and illustrated through mock-ups.
+
+\subsection{Visualization and management of Clinical Trials as a process}
+To view and manage a clinical trial as a process, a user needs only to view the general overview of Clinical Trials or clinical investigations Proposals.
+As shown in fig~\ref{fig:propostas} and fig~\ref{fig:ensaios}, the user has an overview of the all submitted proposals and clinical trials with their main characteristics, such as, the identification, current state, last alteration date, the principal investigator and whether it has partnerships or not.
+
+\begin{figure}
+    \centering
+    \includegraphics{images/proposals.png}
+    \caption{Mock overview of clinical investigations proposals}
+    \label{fig:propostas}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaios.png}
+    \caption{Mock overview of clinical trials}
+    \label{fig:ensaios}
+\end{figure}
+
+
+When a user clicks the link view details ("ver detalhe"), he will be redirected to a screen displaying the details of the target clinical investigation.
+
+\subsection{Ability to edit and validate data (edit checks)}
+Within the CASCIFFO platform, the UIC and internal departments can view the details of a certain clinical investigation proposal and edit or validate according to their roles.
+Users with `UIC` role will be able to create and edit their own Investigations, whereas the internal departments, with roles of `CA`, `Finance` and `Juridical` will only be able to validate the proposals.  
+The creation of a proposal starts in the overview of proposals screen, from there a user can click on "Criar proposta" and will be redirected to the screen illustrated in fig~\ref{fig:criar-proposta}. Here an investigator can choose what type of investigation this proposal corresponds to, either an observational or clinical trial. In the case a clinical trial is selected, more options will be shown since clinical trials have a corresponding financial component.
+The data fields corresponding to the therapeutic area, the service and the pathology of an investigation are restricted to a set of possible inputs. In addition, the members of a medical team also belong to an already defined database, being validated at the time of creation of the medical team for the investigation.  
+Certain fields cannot be altered once a proposal has been submitted, such as the promoter, the partnerships and the type of investigation can only be defined during the creation of a proposal.  
+
+
+\begin{figure}
+    \centering
+    \includegraphics{images/criar-proposta.png}
+    \caption{Mock creation of a clinical ivnestigation proposal}
+    \label{fig:criar-proposta}
+\end{figure}
+
+\subsection{Access control based on different user profiles}
+The access control within the CASCIFFO application is based on roles.
+As described in section 1, there are defined roles for each type of user.  
+A user with the role `UIC` can manage their own clinical investigation, being able to edit and have a hand in advancing the state. In addition, it also has an overview over all ongoing investigations, not being able to edit those that weren't created by said user. Once this user logs in, a dashboard showing overall statistics of the platform, i.e. number of active clinical trials, number of submitted proposals, etc.
+The role `Financial` is responsible for validating and updating the financial components of the investigations, thus when a user with this role logs in, an appropriate financial management screen will be displayed, whereas the `Juridical` component validates the juridical component.  
+The role `CA` is responsible for giving the final say in whether an investigation proposal can have the go-ahead to begin their clinical trials or observations.  
+A user of role `CA` once logged in, will be shown a primary screen displaying the overview of clinical investigation proposals awaiting validation.
+Finally, we have the `Superuser` role, which besides having the ability to execute every mentioned action, it can also create new types of services, therapeutic areas and pathologies.
+
+
+\subsection{Access by computer, tablet or smartphone}
+CASCIFFO is a web-application, however, by utilizing the Progressive Web Application (PWA) framework, it can be installed and used as an application, on any device with browsers that support service workers. This feature is supported by the latest version of any browser, barring Internet Explorer which does not have any support for service workers.  
+Among the features a PWA allows, the framework was chosen by its ability to let an application run in offline-mode and versatility in that it can be installed via the browser, as shown in fig.N, and used like a standalone app. 
+
+![FIGURE HERE TO ILLUSTRATE INSTALL APP FROM BROWSER](soon)
+
+\subsection{Ability to export information in numerical or graphical mode}
+CASCIFFO offers the ability to export information via excel, and visualize graphic data within the app.  
+There is a feature, shown in fig.N that allows a user to export data, e.g a selected number of clinical investigation proposals. This feature is present in the screens showing listed data, e.g list of clinical investigation proposals, and the details of each clinical investigation, proposal or trial.
+
+\begin{figure}
+    \centering
+    \includegraphics{images/propostas-exportar-para-excel.png}
+    \caption{Mock screen selecting clinical proposals to export into excel}
+    \label{fig:proposta-export-excel}
+\end{figure}
+
+\subsection{Ability to customize the form of visualization}
+The ability to customize the form of visualization will be available in the initial screen of the app, the Dashboard. Where the user will be able to view different types of graphs showing statistics based on the states of clinical investigations.
+
+\subsection{View detailed Characteristics and evolution of clinical Trials including the tested medicine or technique in question}
+
+To view detailed information about a clinical investigation, one needs to first overview the clinical investigations and then click on the details of a desired clinical investigation. Doing this, the user will be redirected to a screen detailing the study.  
+The evolution of any clinical investigation consists of its proposal followed the trial activity once the proposal has been fully validated.
+In fig.N, the details of a clinical trial proposal can be viewed. The flow of state of a proposal is shown in the form of a bar in a straight forward manner. Each state corresponds to a division, box, in the bar and has three properties: the name of the State, the date it was completed (if it hasn't been completed it will be shown as "------"), the deadline at which it should be completed and finally the entity responsible for advancing the state.  
+It is possible to click in the box of a state to display information about the events that occurred during the time the proposal was in that state. 
+
+\begin{figure}
+    \centering
+    \includegraphics{images/proposta-detalhe.png}
+    \caption{Mock overview of a clinical investigation proposal}
+    \label{fig:proposta-detalhe}
+\end{figure}
+
+A clinical trial proposal also another 5 components alongside its principal details displayed as tabs: the Contacts ("Contactos") which corresponds to comments related to external communications, viewed in fig.N; the Observations ("Observações") which contains comments made in regard to the proposal, viewed in fig.N; the Partnerships ("Parcerias"), where one can find the partnerships involved in the study proposal, viewed in fig.N; the validation Protocol ("Protocolo"), where it can be viewed the current state of affairs of the process described in section 3.1, viewed in fig.N; and finally the Chronology ("Cronologia") of events that also includes deadlines. In all tabs except the one pertaining to the Protocol validation, the state of the proposal will be shown.
+
+
+
+Once the proposal has reached its successful terminal state, as mentioned in section 3.1, a clinical trial will be created. To access the newly created trial, the user can either click the button "Ensaio Clínico" from the proposal details screen, as illustrated in fig~\ref{fig:proposta-detalhe}, or from the overview of clinical trials click on the details of one.  
+In the screen dedicated to the clinical trial, seen in fig~\ref{fig:enasio-detalhe}, there can be seen five different tabs, which are: the clinical trial tab ("Ensaio Clínico") that displays the characteristics of the study; the scientific activities tab ("Atividades científicas"), viewed in fig~\ref{fig:ensaio-atividades-cientificas}, which includes scientific work in the scope of the study, such as articles, thesis, reports, etc.; the visits tab where the investigator team can have an overview of the history and scheduled visits; the patients tab ("Pacientes") with the purpose of showing an overview of the participants included in the trial; the partnerships tab ("Parcerias"), similar to the proposal's version of partnerships tab, displays the partnerships involved in the study; and finally the financial management ("Financiamento"), where one can view the flow of monetary gain from visits and the partition between the investigator team.
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-detalhe.png}
+    \caption{Mock overview of the details of a clinical trial}
+    \label{fig:enasio-detalhe}
+\end{figure}
+
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-atividades-cientificas.png}
+    \caption{Mock overview of scientific activities made within the scope of the investigation}
+    \label{fig:ensaio-atividades-cientificas}
+\end{figure}
+
+
+\subsection{Monitoring the set of patients included in clinical Trials and their characteristics}
+
+The details of the set of patients involved in a clinical trial will be displayed when viewing the details of said clinical trial, under the tab "Pacientes", illustrated in fig~\ref{fig:ensaio-participantes}. This tab displays the set of current participants undergoing the clinical trial and information such as the participant number, used to identify the participant throughout the study, the name of the participant, their age, the treatment branch they were assigned to within the scope of the study, their last and the closest upcoming visit.  
+Included in this screen are the buttons Randomize ("Randomizar") and Add Participant ("Adicionar participante").
+The button randomize will randomly assign participants to treatment branches within the study, this one-time procedure is to be used once all the participants have been added to the clinical trial.  
+The button add participant, will begin the procedure to add a participant. Upon clicking this button, the user will be shown a small box, as illustrated in fig~\ref{fig:ensaio-adicionar-participante}, where he can input the name of the participant and then is also given the chance to immediately schedule several visits.
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-participantes.png}
+    \caption{Mock overview of all participants included in the study}
+    \label{fig:ensaio-participantes}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-adicionar-paciente.png}
+    \caption{Mock screen of adding a new patient as a participant in the study}
+    \label{fig:ensaio-adicionar-participante}
+\end{figure}
+
+\subsection{Insertion of patient data in face-to-face or tele-consultation}
+The insertion of patient data in the context of a visit is made by the investigator associated to said visit. In order to do this, the investigator has to navigate to the details of the visit, from the overview of clinical trials, to the details of the trial followed by the overview of visits and finally the details of the visit in question. Here the investigator can input observational data into the field "Observações" which will represent the observations made throughout the visit or tele-consultation. He is also asked to mark the attendance of the participant by clicking on a simple button "Marcar presença", as illustrated in fig.N.
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-visita-detalhes.png}
+    \caption{Mock overview of a visit's details}
+    \label{fig:ensaio-visita-detalhes}
+\end{figure}
+%TODO [ideia-colocar-eventos-mais-proximos-na-dashboard]
+
+
+\subsection{Characteristics of the treatment associated with the clinical trial and monitoring of the patient’s behavior under trial and its attendance}
+The characteristics of the treatment associated with clinical trials consists of three main factors, the service area it's under, the therapeutic field and the pathology the clinical trial aims to investigate/treat. These details can all be found in the detailed view of a clinical trial under the tab "Ensaio Clínico".  
+The monitoring of the patient's behavior and its attendance, can be tracked via the visits and viewed in two different ways. The first is to filter the visits, under the visits tab, to show only the visits related to the participant in question, as illustrated in fig.N. The second is to view the details of this participant in particular, from the overview of total participants in the study, clicking on the details of the participant and then checking the tab "Attendance", as illustrated in fig.N. 
+
+
+\subsection{Monitoring of physical and financial assets} 
+In regard to the monitoring of physical assets, these can be viewed under the tab "Ensaio Clínico" while in the detail page of the clinical trial in question. The assets to be monitored are documentation archives, consisting of three fields, the Volume, a Label and the total Number.
+CASCIFFO also offers another type of monitoring, the monetary flow. As described in section 4.2.1, each clinical trial has a financial management section that discriminates the earnings made by visit and the partitions of each team member involved in the study.  
+Under the tab "Financiamento", the general monetary information, such as, total balance ("saldo"), amount per participant, etc., is displayed on a top section of the page. Below this section there can be observed another two tabs, differentiating the income made from the investigation team and the clinical trial itself. The first tab "EC", shown in fig.N, shows the income made according to the visits done, whereas the second tab "Equipa", illustrated in fig.N, shows the income by team member.
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-finance-ec.png}
+    \caption{Mock detailed view of the income flow made in the investigation}
+    \label{fig:ensaio-finance-ec}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-finance-team.png}
+    \caption{Mock detailed view of income flow divided by the investigator team}
+    \label{fig:ensaio-finance-team}
+\end{figure}
+
+\subsection{Monitoring of visits \& Recording of adverse events associated with patients due to the trial drug.} 
+The monitoring of visits during a clinical trial can be tracked and viewed under the tab "Visitas" existing in the detailed screen of a clinical trial.
+In this setting, any investigator associated to the clinical trial is able to view and track the past and scheduled visits made by the team. However, only the investigators associated to a visit are able to manipulate them. When creating a visit, that visit will automatically be associated to its creator, giving also the option to associate other investigators to the same visit, allowing them to freely edit the visit details. Along with this option, the investigator is required to fill in the fields depicted in fig~\ref{fig:ensaio-visitas}. These fields are as follows: the periodicity ("Períodicidade") that can be turned ON in case the visit is a reoccurring one with the ability to schedule at a custom interval in days; the type of visit ("Tipo de visita"), that has three possible inputs, Screening, indicating the first visit, Monitoring ("Monitorização") indicating a motoring visit and finally a Closeout visit, which indicates the final visit done to a participant. In case the visit is periodic the field of end date ("Data fim") becomes mandatory to fill.  
+
+\begin{figure}
+    \centering
+    \includegraphics{images/ensaio-visitas.png}
+    \caption{Mock overview of visits scheduled in the clinical trial}
+    \label{fig:ensaio-visitas}
+\end{figure}
+
+When a visit occurs, the associated investigators are given access to the observations ("Observações") field and adverse event ("Evento adverso") warning. In addition to this, the field "Marcar presença" is now available to mark attendance.
