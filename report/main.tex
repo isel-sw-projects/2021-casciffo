@@ -5,8 +5,17 @@
 \usepackage[utf8]{inputenc} % no Unix (com codificação UTF-8)
 %\usepackage[latin1]{inputenc} % no Windows (com codificação ISO-8859-1, ou ISO-8859-15)
 
-% para aspectos de hifenização
+% lingua
 \usepackage[english]{babel}
+
+% definir margins
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={150mm,257mm},
+ left=20mm,
+ top=30mm,
+ }
 
 %% para incluir imagens e tratar de modo adequado endereços url
 \usepackage{graphicx,url}
@@ -30,7 +39,7 @@
 \usepackage{dsfont}
 
 %% para formatação (e.g. espaçamento) de Tabelas
-\usepackage{tabls}
+\usepackage{booktabs}
 
 %% Para usar listagens de código
 \usepackage{listings}
@@ -83,11 +92,12 @@
 %comentar se quiser alterar o espaçamento entre linhas
 \setlinespacing{1.15} 
 \myTableOfContents
+
 %%________________________________________________________________________
 %% comentar o que não interessar
 \myListOfTables
 \myListOfFigures
-%%________________________________________________________________________
+%________________________________________________________________________
 
 
 
@@ -109,7 +119,7 @@
 
 
 
-\appendix
+% \appendix
 %%________________________________________________________________________
 %% comentar o que não interessar (ou incluir outros ficheiros)
 %\input{./02_PRJ_cap_apendice.tex}
