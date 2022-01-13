@@ -105,9 +105,10 @@ The main features of CASCIFFO can be separated into three groups, which are: gen
            \item View detailed characteristics and evolution of clinical trials including the tested medicine or technique in question;
            \item Monitoring the set of patients included in clinical trials and their characteristics;
            \item Insertion of patient data in face-to-face or tele-consultation;
-           \item Characteristics of the treatment associated with the clinical trial and monitoring of the patient’s behavior under trial and its attendance;
+           \item Characteristics of the treatment associated with the clinical trial;
+           \item Monitoring of the patient’s behavior under trial and its attendance;
            \item Monitoring of physical and financial assets;
-           \item Monitoring of visits \& Recording of adverse events associated with patients due to the trial drug;
+           \item Monitoring of visits \& recording of adverse events.
         \end{itemize}
 \end{enumerate}
 
@@ -123,15 +124,14 @@ As in figure~\ref{fig:propostas} and figure~\ref{fig:ensaios}, the user has an o
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/proposals.png}
-    \caption{Mock overview of clinical investigations proposals}
+    \caption{Mock overview of clinical investigations proposals.}
     \label{fig:propostas}
 \end{figure}
-\todo{pontos finais nas captions das figuras}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaios.png}
-    \caption{Mock overview of clinical trials}
+    \caption{Mock overview of clinical trials.}
     \label{fig:ensaios}
 \end{figure}
 
@@ -150,7 +150,7 @@ Certain fields cannot be changed once a proposal has been submitted, such as the
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/criar-proposta.png}
-    \caption{Mock creation of a clinical investigation proposal}
+    \caption{Mock creation of a clinical investigation proposal.}
     \label{fig:criar-proposta}
 \end{figure}
 
@@ -178,7 +178,7 @@ There is a feature, shown in figure~\ref{fig:proposta-export-excel} that allows 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/propostas-exportar-para-excel.png}
-    \caption{Mock screen selecting clinical proposals to export into excel}
+    \caption{Mock screen selecting clinical proposals to export into excel.}
     \label{fig:proposta-export-excel}
 \end{figure}
 
@@ -196,57 +196,73 @@ It is possible to click in the box of a state to display information about the e
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/proposta-detalhe.png}
-    \caption{Mock overview of a clinical investigation proposal}
+    \caption{Mock overview of a clinical investigation proposal.}
     \label{fig:proposta-detalhe}
 \end{figure}
 
-A clinical trial proposal considers five components alongside its principal details displayed as tabs: the Contacts ("Contactos") which corresponds to comments related to external communications, viewed in figure~\ref{fig:proposta-contactos}; the Observations ("Observações") which contains comments made in regard to the proposal, viewed in figure~\ref{fig:proposta-observações}; the Partnerships ("Parcerias"), where one can find the partnerships involved in the study proposal, viewed in figure~\ref{fig:proposta-parcerias}; the validation Protocol ("Protocolo"), where it can be viewed the current state of affairs of the process described in section~\ref{subsec:visualization-clinical-trials-as-process}, and in figure~\ref{fig:proposta-protocolo}; and finally the Chronology ("Cronologia") of events that also includes deadlines. \todo{rephrase this sentence} This tab shows the timeline of events that have occurred, events can be considered changes of state as well as deadlines, the ability to view both deadlines and state transitions is given to the user as shown in figure~\ref{fig:proposta-cronologia}. In all tabs, except the one pertaining to the Protocol validation, the state of the proposal will be presented.
+A clinical trial proposal considers five components alongside its principal details displayed as tabs and listed below: 
+\begin{itemize}
+    \item the Contacts ("Contactos") tab which corresponds to comments related to external communications, viewed in figure~\ref{fig:proposta-contactos};
+    \item the Observations ("Observações") tab which contains comments made in regard to the proposal, viewed in figure~\ref{fig:proposta-observações};
+    \item the Partnerships ("Parcerias") tab, where one can find the partnerships involved in the study proposal, viewed in figure~\ref{fig:proposta-parcerias};
+    \item the validation Protocol ("Protocolo") tab, where it can be viewed the current state of affairs of the process described in section~\ref{subsec:visualization-clinical-trials-as-process}, and in figure~\ref{fig:proposta-protocolo};
+    \item the Chronology ("Cronologia") tab that displays the timeline of events, as in figure~\ref{fig:proposta-cronologia}. Events include deadlines introduced by the user and the transition of states. The user will have the ability to specify the scope of the timeline, selecting the time range and type of events to view. 
+\end{itemize}
+
+All tabs, except the one pertaining to the Protocol validation, will have present the current state of the proposal.
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/proposta-contactos.png}
-    \caption{Mock overview of the contacts tab}
+    \caption{Mock overview of the contacts tab.}
     \label{fig:proposta-contactos}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/proposta-observações.png}
-    \caption{Mock overview of the observations tab}
+    \caption{Mock overview of the observations tab.}
     \label{fig:proposta-observações}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/proposta-parcerias.png}
-    \caption{Mock overview of the partnerships tab}
+    \caption{Mock overview of the partnerships tab.}
     \label{fig:proposta-parcerias}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/proposta-protocolo.png}
-    \caption{Mock overview of the protocol tab}
+    \caption{Mock overview of the protocol tab.}
     \label{fig:proposta-protocolo}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/proposta-cronologia.png}
-    \caption{Mock overview of the chronology tab}
+    \caption{Mock overview of the chronology tab.}
     \label{fig:proposta-cronologia}
 \end{figure}
 
 
 
 Once the proposal has reached its successful terminal state, as in section~\ref{subsec:clinical-investigation-proposals} a clinical trial will be created. To access the newly created trial, the user can either click the button "Ensaio Clínico" from the proposal details screen, as in figure~\ref{fig:proposta-detalhe}, or from the overview of clinical trials click on the details of one.  
-\todo{re-do with bullet list}
-In the screen dedicated to the clinical trial and presented in figure~\ref{fig:enasio-detalhe}, there are five different tabs: the clinical trial tab ("Ensaio Clínico") that displays the characteristics of the study; the scientific activities tab ("Atividades científicas"), viewed in figure~\ref{fig:ensaio-atividades-cientificas}, which includes scientific work in the scope of the study, such as articles, thesis, reports, etc.; the visits tab where the investigator team can have an overview of the history and scheduled visits; the patients tab ("Pacientes") with the purpose of showing an overview of the participants included in the trial; the partnerships tab ("Parcerias"), similar to the proposal's version of partnerships tab, displays the partnerships involved in the study; and finally the financial management ("Financiamento"), where one can view the flow of monetary gain from visits and the partition between the investigator team.
+In the screen dedicated to the clinical trial and presented in figure~\ref{fig:enasio-detalhe}, there are five different tabs: 
+\begin{itemize}
+    \item the clinical trial tab ("Ensaio Clínico") that displays the characteristics of the study;
+    \item the scientific activities tab ("Atividades científicas"), viewed in figure~\ref{fig:ensaio-atividades-cientificas}, which includes scientific work in the scope of the study, such as articles, thesis, reports, etc.;
+    \item  the visits tab ("Visitas") where the investigator team can have an overview of the history and scheduled visits;
+    \item the patients tab ("Pacientes") with the purpose of showing an overview of the participants included in the trial;
+    \item the partnerships tab ("Parcerias"), similar to the proposal's version of partnerships tab, displays the partnerships involved in the study;
+    \item the financial management ("Financiamento"), where one can view the flow of monetary gain from visits and the partition between the investigator team.
+\end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-detalhe.png}
-    \caption{Mock overview of the details of a clinical trial}
+    \caption{Mock overview of the details of a clinical trial.}
     \label{fig:enasio-detalhe}
 \end{figure}
 
@@ -254,7 +270,7 @@ In the screen dedicated to the clinical trial and presented in figure~\ref{fig:e
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-atividades-cientificas.png}
-    \caption{Mock overview of scientific activities made within the scope of the investigation}
+    \caption{Mock overview of scientific activities made within the scope of the investigation.}
     \label{fig:ensaio-atividades-cientificas}
 \end{figure}
 
@@ -269,14 +285,14 @@ The button add, will begin the procedure to add a patient. Upon clicking this bu
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-participantes.png}
-    \caption{Mock overview of all participants included in the study}
+    \caption{Mock overview of all participants included in the study.}
     \label{fig:ensaio-participantes}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-adicionar-paciente.png}
-    \caption{Mock screen of adding a new patient as a participant in the study}
+    \caption{Mock screen of adding a new patient as a participant in the study.}
     \label{fig:ensaio-adicionar-paciente}
 \end{figure}
 
@@ -287,7 +303,7 @@ The insertion of patient data in the context of a visit is made by the investiga
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-visita-detalhes.png}
-    \caption{Mock overview of a visit's details}
+    \caption{Mock overview of a visit's details.}
     \label{fig:ensaio-visita-detalhes}
 \end{figure}
 %TODO [ideia-colocar-eventos-mais-proximos-na-dashboard]
@@ -297,12 +313,12 @@ The insertion of patient data in the context of a visit is made by the investiga
 The characteristics of the treatment associated with clinical trials consists of three main factors, the service area it is within, the therapeutic field and the pathology the clinical trial aims to investigate/treat. These details can all be found in the detailed view of a clinical trial under the tab "Ensaio Clínico".  
 
 \subsection{Monitoring of the patient’s behavior under trial and its attendance}
-The monitoring of the patient's behavior and its attendance, can be tracked via the visits and in \todo{review correct wording} two tabs. The first is to filter the visits, under the visits tab, to show only the visits related to the participant in question. The second is to view the details of this participant in particular, from the overview of total participants in the study, clicking on the details of the participant and then checking the tab "Attendance", as in figure~\ref{fig:ensaio-paciente-detalhes}. 
+The monitoring of the patient's behavior and its attendance, can be tracked via the visits and in twofold. The first is to filter the visits, under the visits tab, to show only the visits related to the participant in question. The second is to view the details of this participant in particular, from the overview of total participants in the study, clicking on the details of the participant and then checking the tab "Attendance", as in figure~\ref{fig:ensaio-paciente-detalhes}. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-paciente-detalhes.png}
-    \caption{Mock overview of patient details}
+    \caption{Mock overview of patient details.}
     \label{fig:ensaio-paciente-detalhes}
 \end{figure}
 
@@ -314,25 +330,25 @@ Under the tab "Financiamento", the general monetary information, such as, total 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-finance-ec.png}
-    \caption{Mock detailed view of the income flow made in the investigation}
+    \caption{Mock detailed view of the income flow made in the investigation.}
     \label{fig:ensaio-finance-ec}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-finance-team.png}
-    \caption{Mock detailed view of income flow divided by the investigator team}
+    \caption{Mock detailed view of income flow divided by the investigator team.}
     \label{fig:ensaio-finance-team}
 \end{figure}
 
-\subsection{Monitoring of visits \& Recording of adverse events associated with patients due to the trial drug.} 
+\subsection{Monitoring of visits \& recording of adverse events} 
 The monitoring of visits during a clinical trial can be tracked and viewed under the tab "Visitas", in the detailed screen of a clinical trial.
 In this setting, any investigator (associated to the clinical trial) is able to view and track the past and scheduled visits made by the team. However, only the investigators associated to a visit are able to manipulate them. When creating a visit, that visit will automatically be associated to its creator, giving also the option to associate other investigators to the same visit, allowing them to freely edit the visit details. Along with this option, the investigator is required to fill in the fields depicted in figure~\ref{fig:ensaio-visitas}. These fields are as follows: the periodicity ("Períodicidade") that can be turned ON in case the visit is a reoccurring one with the ability to schedule at a custom interval in days; the type of visit ("Tipo de visita"), that has three possible inputs, Screening, indicating the first visit, Monitoring ("Monitorização") indicating a motoring visit and finally a Closeout visit, which indicates the final visit done to a participant. In case the visit is periodic, the field of `end date` ("Data fim") becomes mandatory to fill.  
 
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/ensaio-visitas.png}
-    \caption{Mock overview of visits scheduled in the clinical trial}
+    \caption{Mock overview of visits scheduled in the clinical trial.}
     \label{fig:ensaio-visitas}
 \end{figure}
 
