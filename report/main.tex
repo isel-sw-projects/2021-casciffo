@@ -57,6 +57,14 @@
 % Para ter no "heading" o nome do capítulo e da secção
 \usepackage{fancyhdr}
 
+% para bibliografia
+\usepackage{biblatex}
+\addbibresource{refs.bib}
+\usepackage{csquotes}
+
+% todo notes
+\usepackage{todonotes}
+
 %%________________________________________________________________________
 %% para incluir o estilo proposto
 \usepackage{./00_PRJ_padrao}
@@ -80,8 +88,8 @@
 \frontmatter
 %%________________________________________________________________________
 %% comentar o que não interessar
-\include{./00a_PRJ_resumo_abstract}
-\include{./00b_PRJ_agradecimentos}
+\include{c0_abstract}
+% \include{./00b_PRJ_agradecimentos}
 %%________________________________________________________________________
 
 
@@ -91,12 +99,12 @@
 %% incluir a lista de conteúdos (índice, tabelas e figuras)
 %comentar se quiser alterar o espaçamento entre linhas
 \setlinespacing{1.15} 
-\myTableOfContents
+% \myTableOfContents
 
-%%________________________________________________________________________
-%% comentar o que não interessar
-\myListOfTables
-\myListOfFigures
+% %%________________________________________________________________________
+% %% comentar o que não interessar
+% \myListOfTables
+% \myListOfFigures
 %________________________________________________________________________
 
 
@@ -107,13 +115,12 @@
 \mainmatter
 \myPageStyle
 %% cada um dos Capítulos
-%% (aqui separados em dois ficheiros)
 %%________________________________________________________________________
-%% comentar o que não interessar (ou incluir outros ficheiros)
-% \input{./01_PRJ_intro.tex}
+\listoftodos
+\todo{glossario}
 \input{c1}
 \input{c2}
-\input{c3}
+\input{c3_conclusao}
 %%________________________________________________________________________
 
 
@@ -121,7 +128,7 @@
 
 % \appendix
 %%________________________________________________________________________
-%% comentar o que não interessar (ou incluir outros ficheiros)
+%% 
 %\input{./02_PRJ_cap_apendice.tex}
 %%________________________________________________________________________
 
@@ -130,31 +137,7 @@
 
 
 %% bibliografia
-\begin{thebibliography}{1}
-\bibitem{a} 
-
-\bibitem{b} 
-
-\bibitem{c} 
-
-\end{thebibliography}
-
-\chapter*{Webografia}
-\begin{itemize}
-	\item[1]  
-
-	\item[2] 
-    
-	\item[3] 
-
-	\item[4] 
-
-	\item[5] 
-
-	\item[6] 
-
-	\item[7] 
-\end{itemize}
+\printbibliography
 
 %%________________________________________________________________________
 \end{document}
