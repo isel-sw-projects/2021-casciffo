@@ -1,0 +1,142 @@
+%% o documento é definido do tipo "book" em a4, font 12pt
+\documentclass[a4paper,12pt]{book}
+
+%% para usar caracteres acentuados
+\usepackage[utf8]{inputenc} % no Unix (com codificação UTF-8)
+%\usepackage[latin1]{inputenc} % no Windows (com codificação ISO-8859-1, ou ISO-8859-15)
+
+% lingua
+\usepackage[english]{babel}
+
+% definir margins
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={150mm,257mm},
+ left=20mm,
+ top=30mm,
+ }
+
+%% para incluir imagens e tratar de modo adequado endereços url
+\usepackage{graphicx,url}
+\graphicspath{{./images/}}
+
+\usepackage{hyperref}
+
+%% para usar \begin{comment} ... \end{comment}
+\usepackage{verbatim}
+
+%% para usar o símbolo do euro
+%usepackage{eurosym}
+
+%% para juntar multiplas linhas em tabelas
+\usepackage{multirow}
+
+%% Para usar símbolos matemáticos
+\usepackage[centertags]{amsmath}
+
+%% Para usar \mathds{...}
+\usepackage{dsfont}
+
+%% para formatação (e.g. espaçamento) de Tabelas
+\usepackage{booktabs}
+
+%% Para usar listagens de código
+\usepackage{listings}
+
+%% para escrita "formal" de algoritmos
+\usepackage{algorithm}
+
+%% Para que a numeracao de listings seja global
+%% (e nao no contexto de cada capitulo!)
+\usepackage{chngcntr}
+
+% Para usar um estilo diferente na identificação de "Capítulo"
+%Sonny, Lenny(x), Glenn, Conny, Rejne, Bjarne
+%\usepackage[Lenny]{fncychap}
+% Para ter no "heading" o nome do capítulo e da secção
+\usepackage{fancyhdr}
+
+% para bibliografia
+\usepackage{biblatex}
+\addbibresource{refs.bib}
+\usepackage{csquotes}
+
+% todo notes
+\usepackage{todonotes}
+
+%%________________________________________________________________________
+%% para incluir o estilo proposto
+\usepackage{./00_PRJ_padrao}
+
+
+
+
+%%________________________________________________________________________
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Begin Document
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+% para que a numeracao de listings seja global
+% (e nao no contexto de cada capitulo!)
+\counterwithout{lstlisting}{chapter}
+%% incluir a capa
+\frontmatter
+\fazerCapa
+%% incluir o resumo e abstract
+%% caso pretenda, incluir os agradecimentos e a dedicatória
+\frontmatter
+%%________________________________________________________________________
+%% comentar o que não interessar
+\include{c0_abstract}
+% \include{./00b_PRJ_agradecimentos}
+%%________________________________________________________________________
+
+
+
+
+
+%% incluir a lista de conteúdos (índice, tabelas e figuras)
+%comentar se quiser alterar o espaçamento entre linhas
+\setlinespacing{1.15} 
+% \myTableOfContents
+
+% %%________________________________________________________________________
+% %% comentar o que não interessar
+% \myListOfTables
+% \myListOfFigures
+%________________________________________________________________________
+
+
+
+
+
+%% "Corpo Principal" do texto
+\mainmatter
+\myPageStyle
+%% cada um dos Capítulos
+%%________________________________________________________________________
+% \listoftodos
+\input{c1}
+\input{c2}
+\input{c3_conclusao}
+%%________________________________________________________________________
+
+
+
+
+% \appendix
+%%________________________________________________________________________
+%% 
+%\input{./02_PRJ_cap_apendice.tex}
+%%________________________________________________________________________
+
+
+
+
+
+%% bibliografia
+\printbibliography
+
+%%________________________________________________________________________
+\end{document}
