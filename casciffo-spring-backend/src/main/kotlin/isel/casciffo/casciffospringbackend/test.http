@@ -1,0 +1,12 @@
+POST http://localhost:8080/api/casciffo/roles
+Content-Type: application/json
+
+{
+  "userName": "test",
+  "userEmail": "test@test.pt",
+  "password":"123",
+  "role": "superuser"
+}
+
+###
+GET http://localhost:8080/api/casciffo/roles
