@@ -18,4 +18,4 @@ INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, '
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'MEMBER', 2);
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'MEMBER', 3);
 INSERT INTO proposal_comments(proposal_id, author_id, content, comment_type) VALUES (1, 2, 'Early bird gets the worm', 'CONTACTS');
-DELETE FROM proposal where proposal_id = 1
+--DELETE FROM proposal where proposal_id = 1

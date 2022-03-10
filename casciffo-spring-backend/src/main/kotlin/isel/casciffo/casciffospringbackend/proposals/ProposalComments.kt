@@ -21,7 +21,7 @@ class ProposalComments (
     val dateCreated: LocalDateTime,
 
     @LastModifiedDate
-    val dateModified: LocalDateTime,
+    val dateModified: LocalDateTime?,
 
     val content: String,
 

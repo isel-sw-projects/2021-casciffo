@@ -69,10 +69,11 @@ class Proposal(
     var financialComponent: ProposalFinancialComponent?
 ) {
     override fun toString(): String {
-        return "Proposal:{\nid:${id},\nsigla:${sigla},\ntype:${type},\ndateCreated:${dateCreated}," +
-                "\nlastModified:${lastUpdated},\nstateId:${stateId}\nserviceTypeId:${serviceTypeId}," +
-                "\ntherapeuticAreaId:${therapeuticAreaId},\npathologyId:${pathologyId},\nstate:${state}," +
-                "\nserviceType:${serviceType},\ntherapeuticArea:${therapeuticArea},\npathology:${pathology}" +
+        return "Proposal:{\nid:${id},\nsigla:${sigla},\ntype:${type},\nprincipalInvestigator:${principalInvestigator}," +
+                "\ndateCreated:${dateCreated},\nlastModified:${lastUpdated},\nstateId:${stateId}," +
+                "\nserviceTypeId:${serviceTypeId},\ntherapeuticAreaId:${therapeuticAreaId}," +
+                "\npathologyId:${pathologyId},\nstate:${state},\nserviceType:${serviceType}," +
+                "\ntherapeuticArea:${therapeuticArea},\npathology:${pathology}" +
                 ",\nteam:${investigationTeam?.toString()},\ncomments:${comments?.toString()}," +
                 "\nfinancialComponent:${financialComponent}}"
     }

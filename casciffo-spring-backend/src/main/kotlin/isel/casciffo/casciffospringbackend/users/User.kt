@@ -30,6 +30,6 @@ class User(
 
 ) {
     override fun toString(): String {
-        return "User:{userId=${userId},\nname=${name},\nemail=${email},\npassword=${password},\nroleId=${roleId},\nrole=${role}}"
+        return "{userId=${userId},\tname=${name},\temail=${email},\tpassword=${password},\troleId=${roleId},\trole=${role}}"
     }
 }

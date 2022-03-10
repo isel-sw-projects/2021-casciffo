@@ -15,6 +15,6 @@ class UserRole (
     val roleName: String
 ) {
     override fun toString(): String {
-        return "Role:{roleId=${roleId},\nroleName=${roleName}}"
+        return "{roleId=${roleId},\troleName=${roleName}}"
     }
 }

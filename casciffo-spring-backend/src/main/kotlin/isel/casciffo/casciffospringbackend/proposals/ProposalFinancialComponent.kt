@@ -15,5 +15,10 @@ class ProposalFinancialComponent (
     val financialContractId: Int?,
 
     @Transient
-    var promoter: Promoter
-)
+    var promoter: Promoter?
+) {
+    override fun toString(): String {
+        return "{id:${id},\tproposalId:${proposalId},\tpromoterId:${promoterId}," +
+                "\tcontractId:${financialContractId},\tpromoter:${promoter}}"
+    }
+}
