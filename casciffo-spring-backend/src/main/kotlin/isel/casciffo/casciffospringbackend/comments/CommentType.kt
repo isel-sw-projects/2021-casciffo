@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals
+package isel.casciffo.casciffospringbackend.comments
 
 enum class CommentType {
     OBSERVATIONS, CONTACTS

@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals
+package isel.casciffo.casciffospringbackend.investigation_team
 
 import reactor.core.publisher.Mono
 

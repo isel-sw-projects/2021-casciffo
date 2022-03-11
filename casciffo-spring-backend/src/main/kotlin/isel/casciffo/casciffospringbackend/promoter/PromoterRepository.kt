@@ -1,8 +1,7 @@
-package isel.casciffo.casciffospringbackend.states
+package isel.casciffo.casciffospringbackend.promoter
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface StatesRepository : ReactiveCrudRepository<States, Int> {
-}
+interface PromoterRepository : ReactiveCrudRepository<Promoter, Int>

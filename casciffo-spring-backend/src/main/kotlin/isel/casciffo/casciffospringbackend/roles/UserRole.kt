@@ -7,14 +7,10 @@ import org.springframework.data.relational.core.mapping.Table
 
 @Table(value = "user_role")
 @ToString
-class UserRole (
+data class UserRole (
     @Id
     var roleId : Int?,
 
 
     val roleName: String
-) {
-    override fun toString(): String {
-        return "{roleId=${roleId},\troleName=${roleName}}"
-    }
-}
+)

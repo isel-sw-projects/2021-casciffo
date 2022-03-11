@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals
+package isel.casciffo.casciffospringbackend.promoter
 
 enum class PromoterType {
     COMERCIAL, NAO_COMERCIAL

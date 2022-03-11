@@ -1,8 +1,8 @@
-package isel.casciffo.casciffospringbackend.proposals
+package isel.casciffo.casciffospringbackend.states
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface TherapeuticAreaRepository : ReactiveCrudRepository<TherapeuticArea, Int> {
+interface StateRepository : ReactiveCrudRepository<State, Int> {
 }

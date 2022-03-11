@@ -8,7 +8,7 @@ import org.springframework.data.relational.core.mapping.Table
 
 @Table(value = "user_account")
 @ToString
-class User(
+data class User(
     @Id
     var userId : Int?,
 
@@ -20,16 +20,10 @@ class User(
 
     val password: String,
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_role")
     @Column(value = "user_role_id")
     var roleId: Int?,
 
     @Transient
     var role: UserRole?
 
-) {
-    override fun toString(): String {
-        return "{userId=${userId},\tname=${name},\temail=${email},\tpassword=${password},\troleId=${roleId},\trole=${role}}"
-    }
-}
+)

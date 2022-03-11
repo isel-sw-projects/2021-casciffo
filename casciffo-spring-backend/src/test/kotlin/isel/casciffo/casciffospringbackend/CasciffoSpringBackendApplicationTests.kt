@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend
 
-import isel.casciffo.casciffospringbackend.proposals.InvestigationTeamRepository
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.proposals.ProposalRepository
 import isel.casciffo.casciffospringbackend.proposals.ProposalService
 import isel.casciffo.casciffospringbackend.roles.UserRole
@@ -8,14 +8,10 @@ import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
 import isel.casciffo.casciffospringbackend.users.User
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import isel.casciffo.casciffospringbackend.users.UserService
-import kotlinx.coroutines.reactor.awaitSingle
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
 
 @SpringBootTest
 class CasciffoSpringBackendApplicationTests(

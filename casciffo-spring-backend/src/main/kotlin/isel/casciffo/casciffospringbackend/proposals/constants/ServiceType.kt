@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals
+package isel.casciffo.casciffospringbackend.proposals.constants
 
 
 import org.springframework.data.annotation.Id
@@ -7,15 +7,11 @@ import org.springframework.data.relational.core.mapping.Table
 
 
 @Table(value = "service")
-class ServiceType (
+data class ServiceType (
     @Id
     @Column(value = "service_id")
     var id: Int?,
 
     @Column(value = "service_name")
     val name: String
-) {
-    override fun toString(): String {
-        return "{id:${id},\tname:${name}}"
-    }
-}
+)

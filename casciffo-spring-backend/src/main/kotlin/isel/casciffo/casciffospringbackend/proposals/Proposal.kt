@@ -1,6 +1,13 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.states.States
+import isel.casciffo.casciffospringbackend.comments.ProposalComments
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
+import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
+import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
+import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
+import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
+import isel.casciffo.casciffospringbackend.states.State
+import isel.casciffo.casciffospringbackend.states.StateTransitions
 import isel.casciffo.casciffospringbackend.users.User
 import lombok.AllArgsConstructor
 import lombok.ToString
@@ -14,7 +21,7 @@ import java.time.LocalDateTime
 @ToString
 @AllArgsConstructor
 @Table(value = "proposal")
-class Proposal(
+data class Proposal(
     @Id
     @Column(value = "proposal_id")
     var id: Int?,
@@ -45,7 +52,7 @@ class Proposal(
     var principalInvestigatorId: Int,
 
     @Transient
-    var state : States?,
+    var state : State?,
 
     @Transient
     var serviceType: ServiceType?,
@@ -66,15 +73,8 @@ class Proposal(
     var comments: List<ProposalComments>?,
 
     @Transient
-    var financialComponent: ProposalFinancialComponent?
-) {
-    override fun toString(): String {
-        return "Proposal:{\nid:${id},\nsigla:${sigla},\ntype:${type},\nprincipalInvestigator:${principalInvestigator}," +
-                "\ndateCreated:${dateCreated},\nlastModified:${lastUpdated},\nstateId:${stateId}," +
-                "\nserviceTypeId:${serviceTypeId},\ntherapeuticAreaId:${therapeuticAreaId}," +
-                "\npathologyId:${pathologyId},\nstate:${state},\nserviceType:${serviceType}," +
-                "\ntherapeuticArea:${therapeuticArea},\npathology:${pathology}" +
-                ",\nteam:${investigationTeam?.toString()},\ncomments:${comments?.toString()}," +
-                "\nfinancialComponent:${financialComponent}}"
-    }
-}
+    var financialComponent: ProposalFinancialComponent?,
+
+    @Transient
+    var stateTransitions: List<StateTransitions>?
+)

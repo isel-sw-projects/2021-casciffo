@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Table
 
 
 @Table(value = "states")
-class States(
+data class State(
     @Id
     @Column(value = "state_id")
     var stateId: Int?,
@@ -20,8 +20,4 @@ class States(
 
     @Transient
     val owner: UserRole?
-) {
-    override fun toString(): String {
-        return "{id:${stateId},state:${stateName},owner:${ownerId}}"
-    }
-}
+)

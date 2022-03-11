@@ -35,6 +35,8 @@ CREATE TABLE IF NOT EXISTS states (
 
 CREATE TABLE IF NOT EXISTS state_transition (
     id SERIAL PRIMARY KEY,
+    transition_type VARCHAR NOT NULL,
+    reference_id INT NOT NULL, --id referencing to the type addenda/proposal/research
     state_id_before INT NOT NULL,
     state_id_after INT NOT NULL,
     transition_date TIMESTAMP DEFAULT NOW(),
@@ -95,14 +97,14 @@ CREATE TABLE IF NOT EXISTS proposal (
 );
 
 
-CREATE TABLE IF NOT EXISTS proposal_state_transitions (
-    id SERIAL PRIMARY KEY,
-    proposal_id INT,
-    state_transition_id INT,
-    CONSTRAINT fk_proposal_id FOREIGN KEY (proposal_id)
-        REFERENCES proposal(proposal_id) ON DELETE CASCADE,
-    CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
-);
+-- CREATE TABLE IF NOT EXISTS proposal_state_transitions (
+--     id SERIAL PRIMARY KEY,
+--     proposal_id INT,
+--     state_transition_id INT,
+--     CONSTRAINT fk_proposal_id FOREIGN KEY (proposal_id)
+--         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
+--     CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
+-- );
 
 
 CREATE TABLE IF NOT EXISTS proposal_files (
@@ -212,16 +214,16 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     CONSTRAINT fk_state_id FOREIGN KEY(research_state) REFERENCES states(state_name)
 );
 
-CREATE TABLE IF NOT EXISTS research_state_transitions (
-    id SERIAL PRIMARY KEY,
-    research_id INT NOT NULL,
-    state_transition_id INT NOT NULL,
-    motive text NOT NULL, -- reason for canceling / reason for starting such as SIV completed
-    --PRIMARY KEY (research_id, state_transition_id),
-    CONSTRAINT fk_research_id FOREIGN KEY (research_id)
-        REFERENCES clinical_research(research_id) ON DELETE CASCADE,
-    CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
-);
+-- CREATE TABLE IF NOT EXISTS research_state_transitions (
+--     id SERIAL PRIMARY KEY,
+--     research_id INT NOT NULL,
+--     state_transition_id INT NOT NULL,
+--     motive text NOT NULL, -- reason for canceling / reason for starting such as SIV completed
+--     --PRIMARY KEY (research_id, state_transition_id),
+--     CONSTRAINT fk_research_id FOREIGN KEY (research_id)
+--         REFERENCES clinical_research(research_id) ON DELETE CASCADE,
+--     CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
+-- );
 
 
 CREATE TABLE IF NOT EXISTS dossier (
@@ -369,12 +371,12 @@ CREATE TABLE IF NOT EXISTS addenda (
     CONSTRAINT fk_file_id FOREIGN KEY(addenda_file_id) REFERENCES files(file_id)
 );
 
-CREATE TABLE IF NOT EXISTS addenda_state_transitions (
-    id SERIAL PRIMARY KEY,
-    addenda_id INT NOT NULL,
-    state_transition_id INT NOT NULL,
-    observations TEXT,
-    --PRIMARY KEY (addenda_id, state_transition_id),
-    CONSTRAINT fk_addenda_id FOREIGN KEY (addenda_id) REFERENCES addenda(addenda_id) ON DELETE CASCADE,
-    CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
-);
+-- CREATE TABLE IF NOT EXISTS addenda_state_transitions (
+--     id SERIAL PRIMARY KEY,
+--     addenda_id INT NOT NULL,
+--     state_transition_id INT NOT NULL,
+--     observations TEXT,
+--     --PRIMARY KEY (addenda_id, state_transition_id),
+--     CONSTRAINT fk_addenda_id FOREIGN KEY (addenda_id) REFERENCES addenda(addenda_id) ON DELETE CASCADE,
+--     CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
+-- );

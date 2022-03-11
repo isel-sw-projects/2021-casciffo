@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals
+package isel.casciffo.casciffospringbackend.comments
 
 import isel.casciffo.casciffospringbackend.users.User
 import org.springframework.data.annotation.CreatedDate
@@ -9,7 +9,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 
 @Table(value = "proposal_comments")
-class ProposalComments (
+data class ProposalComments (
     @Id
     @Column(value = "comment_id")
     var id: Int?,
@@ -29,8 +29,4 @@ class ProposalComments (
 
     @Transient
     var author: User?
-) {
-    override fun toString(): String {
-        return "{id:${id},proposalId:${proposalId},authorId:${authorId},dateCreated:${dateCreated},author:${author}}"
-    }
-}
+)
