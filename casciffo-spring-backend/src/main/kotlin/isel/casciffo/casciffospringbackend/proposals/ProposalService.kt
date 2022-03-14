@@ -6,4 +6,5 @@ import reactor.core.publisher.Mono
 interface ProposalService {
     fun getAllProposals(): Flux<Proposal>
     fun getProposalById(id: Int): Mono<Proposal>
+    fun create(proposal: Proposal) : Mono<Proposal>
 }

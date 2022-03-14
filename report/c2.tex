@@ -4,18 +4,22 @@
 This chapter consists of a detailed view over the concept and functional requirements of the CASCIFFO platform.
 It is structured with the following sections:
 \begin{itemize}
-    \item Infrastructure: Description of technologies and framework used in the development of CASCIFFO. 
+    \item State of the Art: The state of the art of CASCIFFO.
+    \item Infrastructure: Description of technologies and framework used for the development of CASCIFFO. 
     \item Access control: Identification and categorization of actors and their roles.
     \item Processes: Identification and detailing of the process flow.
     \item Functional Requirements: Description of functional requirements.
 \end{itemize}
 
+\section{State of the Art}
+CASCIFFO is a platform being developed with a purpose in mind: the software capacitation of the Hospital Professor Doutor Fernando Fonseca, bringing innovation and a way of managing clinical trials. In this aspect CASCIFFO is unique in its field, sharing general functional similarities to management type of applications, such as: task management; progress tracking and time management. Web based platforms such as AssetPanda~\cite{asset-panda} who's main goal is managing and tracking any type of assets or ProofHub~\cite{proofhub} for task management and timeline management, both share general functional similarities to CASCIFFO.
+CASCIFFO includes these features customized to its purpose of clinical trial management.
 
 \section{Infrastructure}
 \label{sec:infrastructure}
 The infrastructure of CASCIFFO, has mentioned previously, consists of two core modules, the front-end and the back-end.  
 The front-end runs on a Node.js environment, using \href{https://reactjs.org/}{React}, a Javascript library for building user interfaces~\cite{reactjs},  with Typescript to build all front-end functionalities. The dependencies are managed and installed using \href{https://docs.npmjs.com/about-npm}{npm}, a software package manager, installer and the worlds largest software library~\cite{npm}. npm was chosen over \href{https://yarnpkg.com/}{yarn}~\cite{yarn} due to its larger community and support.
-The back-end executes on a run-time Java environment, utilizing Spring-web as the basis for building the server. Spring-web facilitates the building and deployment of web applications by removing much of the boilerplate code and configuration associated with web development~\cite{spring-web}.
+The back-end executes on a run-time Java environment, utilizing Spring-boot and Spring-webflux as the basis for building the server. Spring-boot facilitates the building and deployment of web applications by removing much of the boilerplate code and configuration associated with web development~\cite{spring-boot}. Spring-webflux, despite being a new technology, was chosen for its non-blocking webstack framework~\cite{spring-webflux}. This technology allows for the use of Spring Data R2DBC~\cite{r2dbc}, a driver that overcomes the inherent blocking limitation of drivers such as JDBC when accessing data in a database. The database connections via R2DBC are non-blocking, returning streams of data in the form of Flux and Mono upon access.
 CASCIFFO has its own database, utilizing the framework \href{https://www.postgresql.org/about/}{PostgreSQL}, a powerful open-source object-relation database system. Postgres was chosen for its earned reputation in its proven architecture, reliability, data integrity and community support~\cite{postgresql}. While CASCIFFO has its own databse, the patient and medical staff data will be imported from an internal database, "Admission", within the HFF/UIC. There are restrictions on the amount of queries made on the medical staff information, limiting this procedure to once per day.
 
 \section{Access control}

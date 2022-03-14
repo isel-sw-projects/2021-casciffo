@@ -11,7 +11,7 @@ data class InvestigationTeam(
     @Column(value = "team_id")
     var id: Int?,
 
-    val proposalId: Int,
+    var proposalId: Int,
     val memberRole: InvestigatorRole,
     val memberId: Int,
 

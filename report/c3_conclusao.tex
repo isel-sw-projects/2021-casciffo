@@ -2,3 +2,10 @@
 The management and monitoring of clinical trial data is a arduous task for the researchers within the UIC, who have to contribute a considerable amount of effort and time into organizing the overview of clinical trials. To decrease this burden and optimize the management of clinical trials, the platform CASCIFFO has been proposed.
 
 In this report, the functional requirements of the platform CASCIFFO are presented, accompanied by visual user interfaces depicting how these objectives will be achieved as a result of their analysis and specification.
+
+\section{Current status}
+The development of CASCIFFO started with the specification of the functional requirements and mock screens to be used. Following the completion of the functional specification and mock screens, the data model was developed in the PostgreSQL language. In sequence to the development of the data model, the back-end module started to be developed.
+The current state of development of CASCIFFO consists of the implementation of the back-end module introduced in \ref{sec:infrastructure}. The back-end module is being implemented with the usage of Spring-webflux written in Kotlin. The database being used is currently a PostgreSQL based database set up in the cloud service, Heroku. This module is currently under testing, benefiting of Spring's Unit~\cite{spring-testing-unit} testing capabilities, to guarantee the quality of the developed module.
+
+\section{Timeline}
+The current development status of CASCIFFO is within the expected time for of development. The back-end module is due for completion within the third week of March, followed by the start of implementation of the front-end module to be developed in a Node.js environment using Typescript as it programming language.

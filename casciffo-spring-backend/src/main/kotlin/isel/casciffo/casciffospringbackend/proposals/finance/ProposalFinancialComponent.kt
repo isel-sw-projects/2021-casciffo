@@ -5,15 +5,15 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
-@Table(value = "proposal_financial_id")
+@Table(value = "proposal_financial_component")
 data class ProposalFinancialComponent (
     @Id
     @Column(value = "proposal_financial_id")
     var id : Int?,
 
-    val proposalId: Int,
-    val promoterId: Int,
-    val financialContractId: Int?,
+    var proposalId: Int?,
+    var promoterId: Int?,
+    var financialContractId: Int?,
 
     @Transient
     var promoter: Promoter?,
