@@ -69,7 +69,33 @@
 %% para incluir o estilo proposto
 \usepackage{./00_PRJ_padrao}
 
+%% Gantt diagram
+%% ------------------------------------------------------------
+% Comment if not needed
+\usepackage{pdflscape}
+\usepackage{pgfgantt,pgfcalendar}
+\definecolor{bargray}{RGB}{224,224,224}
+\definecolor{barblue}{RGB}{153,204,254}
+\definecolor{groupblue}{RGB}{51,102,254}
+\definecolor{linkred}{RGB}{165,0,33}
+\definecolor{orange}{RGB}{239,80,23}
+\definecolor{royalblue}{rgb}{0.25, 0.41, 0.88}
+%%\renewcommand\sfdefault{phv}
+%%\renewcommand\mddefault{mc}
+%%\renewcommand\bfdefault{bc}
 
+% Define link types
+\newganttlinktypealias{sta-to-sta}{s-s}
+\newganttlinktypealias{fin-to-fin}{f-f}
+\newganttlinktypealias{sta-to-fin}{s-f}
+\newganttlinktypealias{fin-to-sta}{f-s}
+
+% Contains the label that you may assign to each link: \ganttlinklabel
+
+\setganttlinklabel{sta-to-sta}{s2s}
+\setganttlinklabel{fin-to-fin}{f2f}
+\setganttlinklabel{sta-to-fin}{s2f}
+\setganttlinklabel{fin-to-sta}{f2s}
 
 
 %%________________________________________________________________________

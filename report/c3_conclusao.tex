@@ -5,7 +5,23 @@ In this report, the functional requirements of the platform CASCIFFO are present
 
 \section{Current status}
 The development of CASCIFFO started with the specification of the functional requirements and mock screens to be used. Following the completion of the functional specification and mock screens, the data model was developed in the PostgreSQL language. In sequence to the development of the data model, the back-end module started to be developed.
-The current state of development of CASCIFFO consists of the implementation of the back-end module introduced in \ref{sec:infrastructure}. The back-end module is being implemented with the usage of Spring-webflux written in Kotlin. The database being used is currently a PostgreSQL based database set up in the cloud service, Heroku. This module is currently under testing, benefiting of Spring's Unit~\cite{spring-testing-unit} testing capabilities, to guarantee the quality of the developed module.
+The current state of development of CASCIFFO consists of the implementation of the back-end module introduced in \ref{sec:infrastructure}. The back-end module is being implemented with the usage of Spring-webflux written in Kotlin. The database currently being used is a PostgreSQL database set up in the cloud service, Heroku. This module is currently under testing, benefiting of Spring's Unit~\cite{spring-testing-unit} testing capabilities, to guarantee the quality of the developed module.
 
 \section{Timeline}
-The current development status of CASCIFFO is within the expected time for of development. The back-end module is due for completion within the third week of March, followed by the start of implementation of the front-end module to be developed in a Node.js environment using Typescript as it programming language.
+The current development status of CASCIFFO is within the expected time for of development. The back-end module is soon due for completion, followed by the implementation of the front-end module to be developed in a Node.js environment using Typescript as its programming language. The timeline can be viewed in the diagram below~\ref{timeline-diagram}.
+
+\pagebreak
+\begin{landscape}~\label{timeline-diagram}
+\centering
+\vspace*{\fill}
+\resizebox{1.5\textwidth}{!}{
+%\printganttdiagram
+\InputIfFileExists{ganttdiagram}{%
+% File ganttdiagram.tex exists and is read
+}{%
+% File ganttdiagram.tex is not found, ignore
+}
+}
+\vfill
+\end{landscape}
+%%
