@@ -16,6 +16,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import reactor.core.publisher.Flux
 import java.time.LocalDateTime
 
 @ToString
@@ -67,14 +68,17 @@ data class Proposal(
     var principalInvestigator: User?,
 
     @Transient
-    var investigationTeam: List<InvestigationTeam>?,
+    var investigationTeam: Flux<InvestigationTeam>?,
 
     @Transient
-    var comments: List<ProposalComments>?,
+    var comments: Flux<ProposalComments>?,
 
     @Transient
     var financialComponent: ProposalFinancialComponent?,
 
     @Transient
-    var stateTransitions: List<StateTransitions>?
+    var stateTransitions: Flux<StateTransitions>?,
+
+    @Transient
+    var timelineEvents: Flux<TimelineEvent>?
 )

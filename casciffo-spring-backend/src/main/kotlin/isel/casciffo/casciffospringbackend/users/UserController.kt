@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.users
 
+import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -12,17 +13,17 @@ class UserController(@Autowired val service : UserService) {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    fun createUser(@RequestBody(required = true) user: User): Mono<User?> {
+    suspend fun createUser(@RequestBody(required = true) user: User): User? {
         return service.createUser(user)
     }
 
     @GetMapping("/{userId}")
-    fun getUser(@PathVariable userId : Int): Mono<User?> {
+    suspend fun getUser(@PathVariable userId : Int): User? {
         return service.getUser(userId)
     }
 
     @GetMapping()
-    fun getAllUsers(): Flux<User?> {
+    suspend fun getAllUsers(): Flow<User?> {
         return service.getAllUsers()
     }
 }

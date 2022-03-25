@@ -4,6 +4,6 @@ import isel.casciffo.casciffospringbackend.proposals.Proposal
 import reactor.core.publisher.Mono
 
 interface ProposalFinancialService {
-    fun createProposalFinanceComponent(pfc: ProposalFinancialComponent) : Mono<ProposalFinancialComponent>
-    fun findComponentByProposalId(pid: Int) : Mono<ProposalFinancialComponent>
+    suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent) : ProposalFinancialComponent
+    suspend fun findComponentByProposalId(pid: Int) : ProposalFinancialComponent
 }

@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.roles
 
+import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
@@ -12,12 +13,12 @@ class UserRoleController(@Autowired val service: UserRoleService) {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun createUserRole(@RequestBody(required = true) role: String) : Mono<UserRole?> {
+    suspend fun createUserRole(@RequestBody(required = true) role: String) : UserRole? {
         return service.createRole(role)
     }
 
     @GetMapping
-    fun getUserRoles() : Flux<UserRole> {
+    suspend fun getUserRoles() : Flow<UserRole> {
         return service.getRoles()
     }
 }

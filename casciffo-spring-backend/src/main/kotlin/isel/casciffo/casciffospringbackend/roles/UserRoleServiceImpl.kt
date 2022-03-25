@@ -1,5 +1,7 @@
 package isel.casciffo.casciffospringbackend.roles
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -14,7 +16,7 @@ class UserRoleServiceImpl(@Autowired private val repository: UserRoleRepository)
         return repository.save(userRole).awaitFirstOrNull()
     }
 
-    override suspend fun getRoles(): Flux<UserRole> {
-        return repository.findAll()
+    override suspend fun getRoles(): Flow<UserRole> {
+        return repository.findAll().asFlow()
     }
 }

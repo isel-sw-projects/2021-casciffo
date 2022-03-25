@@ -32,7 +32,8 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql:42.3.3")
 	annotationProcessor("org.projectlombok:lombok:1.18.22")
 	testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.4")
-	testImplementation("io.projectreactor:reactor-test:3.4.14")
+	testImplementation("io.projectreactor:reactor-test:3.4.15")
+	testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
 }
 
 tasks.withType<KotlinCompile> {

@@ -18,4 +18,7 @@ INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, '
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'MEMBER', 2);
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'MEMBER', 3);
 INSERT INTO proposal_comments(proposal_id, author_id, content, comment_type) VALUES (1, 2, 'Early bird gets the worm', 'CONTACTS');
+INSERT INTO partnerships(proposal_financial_id, icon_url, spokesman_name, email, phone_contact, site_url)
+VALUES (1, 'a cool icon url', 'ze manel', 'ze.manel@home.pt','923722883', 'the best site url ever')
+
 --DELETE FROM proposal where proposal_id = 1

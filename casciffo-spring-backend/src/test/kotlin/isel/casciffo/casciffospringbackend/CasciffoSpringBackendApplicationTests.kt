@@ -17,10 +17,13 @@ import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.users.User
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import isel.casciffo.casciffospringbackend.users.UserService
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
 import java.time.LocalDateTime
 
 @SpringBootTest
@@ -64,20 +67,20 @@ class CasciffoSpringBackendApplicationTests(
 		val users = userRepo.findAll().collectList().block()
 		println(users)
 	}
-
-	@Test
-	fun testUserServiceFindAll() {
-		val users = userService.getAllUsers()
-
-		println(users.collectList().block())
-	}
-
-	@Test
-	fun testUserServiceFindById() {
-		val user = userService.getUser(1)
-
-		println(user.block())
-	}
+//
+//	@Test
+//	fun testUserServiceFindAll() {
+//		val users = userService.getAllUsers()
+//
+//		println(users.collectList().block())
+//	}
+//
+//	@Test
+//	fun testUserServiceFindById() {
+//		val user = userService.getUser(1)
+//
+//		println(user.block())
+//	}
 
 	@Test
 	fun testInvestigationTeamRepositoryFindAll() {
@@ -105,21 +108,27 @@ class CasciffoSpringBackendApplicationTests(
 			investigationTeam = listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null)),
 			financialComponent = ProposalFinancialComponent(null, 0, 1, 1, null,null),
 			state = null, stateTransitions = null, serviceType = null, therapeuticArea = null, pathology = null, principalInvestigator = null,
-			comments = null
+			comments = null, timelineEvents = null
 			)
-		proposalService.create(proposal)
+		runBlocking {
+			proposalService.create(proposal)
+		}
 	}
 
 	@Test
 	fun testProposalServiceFindAll() {
-		val res = proposalService.getAllProposals().collectList().block()
-		println(res)
+		runBlocking {
+			val res = proposalService.getAllProposals(ProposalType.CLINICAL_TRIAL).toList()
+			println(res)
+		}
 	}
 
 	@Test
 	fun testFinancialComponentFindAll() {
-		val res = proposalFinancialService.findComponentByProposalId(1).block()
-		println(res)
+		runBlocking {
+			val res = proposalFinancialService.findComponentByProposalId(1)
+			res.partnerships!!.doOnEach { println(it.get()?.email) }.blockLast()
+		}
 	}
 
 	@Test

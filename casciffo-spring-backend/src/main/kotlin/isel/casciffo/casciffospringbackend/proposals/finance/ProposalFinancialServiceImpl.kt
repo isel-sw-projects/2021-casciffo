@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.proposals.finance
 
 import isel.casciffo.casciffospringbackend.promoter.PromoterRepository
 import isel.casciffo.casciffospringbackend.proposals.Proposal
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -10,54 +11,68 @@ import reactor.core.publisher.Mono
 class ProposalFinancialServiceImpl(
     @Autowired val proposalFinancialRepository: ProposalFinancialRepository,
     @Autowired val promoterRepository: PromoterRepository,
-    @Autowired val partnershipRepository: PartnershipRepository
+    @Autowired val partnershipRepository: PartnershipRepository,
 ) : ProposalFinancialService {
-    //possibly unnecessary
-    override fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): Mono<ProposalFinancialComponent> {
-        //FIXME NEED TO CHAIN TO PROPERLY INSERT VALUES, NEEDS A WAY TO CHAIN OR BLOCK
+    override suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): ProposalFinancialComponent {
         if(pfc.proposalId == null) throw IllegalArgumentException("Proposal Id must not be null here!!!")
-
-        var mono = Mono.just(pfc)
-        if(pfc.financialContractId != null) {
-            //create financial contract here
-            //mono = mono.zipWith()
-        }
-
-        return promoterRepository
-            .save(pfc.promoter!!)
-            .map {
-                pfc.promoterId = it.id
-                proposalFinancialRepository.save(pfc)
-            }
-            .flatMap { partnershipRepository
-                    .saveAll(pfc.partnerships!!)
-                    .collectList()
-            }
-            .map {
-                pfc.partnerships = it
-                pfc
-            }
-
-
-//        return proposalFinancialRepository.save(pfc)
-//            .map { it.t2 }
-//            .zipWith(partnershipRepository.saveAll(pfc.partnerships!!).collectList())
-//            .map { it.t1 }
-//        val pfcMono = proposalFinancialRepository.save(pfc)
-//        val partnershipFlux = partnershipRepository.saveAll(pfc.partnerships!!)
-//        return pfcMono
+        pfc.promoter = promoterRepository.save(pfc.promoter!!).awaitFirstOrNull()
+        pfc.partnerships = partnershipRepository.findByFinanceComponentId(pfc.id!!)
+        return pfc
     }
 
-    override fun findComponentByProposalId(pid: Int): Mono<ProposalFinancialComponent> {
-        return proposalFinancialRepository.findByProposalId(pid).flatMap(this::loadRelations)
+    override suspend fun findComponentByProposalId(pid: Int): ProposalFinancialComponent {
+        val component = proposalFinancialRepository.findByProposalId(pid).awaitFirstOrNull()
+            ?: throw IllegalArgumentException("No financial component for provided proposal Id!!!")
+        return loadRelations(component)
     }
 
-
-    private fun loadRelations(component: ProposalFinancialComponent): Mono<ProposalFinancialComponent> {
-        return Mono.just(component)
-            .zipWith(promoterRepository.findById(component.promoterId!!))
-            .flatMap { it.t1.promoter = it.t2; return@flatMap Mono.just(it.t1) }
-            .zipWith(partnershipRepository.findByFinanceComponentId(component.id!!).collectList())
-            .flatMap { it.t1.partnerships = it.t2; return@flatMap Mono.just(it.t1) }
+    private suspend fun loadRelations(component: ProposalFinancialComponent): ProposalFinancialComponent {
+        component.promoter = promoterRepository.findById(component.promoterId!!).awaitFirstOrNull()
+        component.partnerships = partnershipRepository.findByFinanceComponentId(component.id!!)
+        return component
     }
+
 }
+
+//    FLUX MONO SYNTAX
+//    override fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): Mono<ProposalFinancialComponent> {
+//        if(pfc.proposalId == null) throw IllegalArgumentException("Proposal Id must not be null here!!!")
+//
+//        var mono = Mono.just(pfc)
+//        if(pfc.financialContractId != null) {
+//            //create financial contract here
+//            //mono = mono.zipWith()
+//        }
+//
+//        return promoterRepository
+//            .save(pfc.promoter!!)
+//            .map {
+//                pfc.promoterId = it.id
+//                proposalFinancialRepository.save(pfc)
+//            }
+//            .flatMap { partnershipRepository
+//                    .saveAll(pfc.partnerships!!)
+//                    .collectList()
+//            }
+//            .map {
+//                pfc.partnerships = it
+//                pfc
+//            }
+//    }
+//
+//    override fun findComponentByProposalId(pid: Int): Mono<ProposalFinancialComponent> {
+//        return proposalFinancialRepository.findByProposalId(pid).flatMap(this::loadRelations)
+//    }
+//
+//
+//    private fun loadRelations(component: ProposalFinancialComponent): Mono<ProposalFinancialComponent> {
+//        return promoterRepository.findById(component.promoterId!!)
+//            .flatMap {
+//                component.promoter = it
+//                partnershipRepository.findByFinanceComponentId(component.id!!).collectList()
+//            }
+//            .map {
+//                component.partnerships = it
+//                component
+//            }
+//    }

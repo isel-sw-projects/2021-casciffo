@@ -14,8 +14,8 @@ data class ProposalComments (
     @Column(value = "comment_id")
     var id: Int?,
 
-    val proposalId: Int,
-    val authorId: Int,
+    var proposalId: Int?,
+    var authorId: Int?,
 
     @CreatedDate
     val dateCreated: LocalDateTime,

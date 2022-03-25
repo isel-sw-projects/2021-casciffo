@@ -1,18 +1,16 @@
-package isel.casciffo.casciffospringbackend.patients
+package isel.casciffo.casciffospringbackend.files
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
-@Table("participant")
-data class Participant (
+@Table("proposal_files")
+data class ProposalFiles (
     @Id
-    @Column("process_id")
+    @Column("id")
     var id: Int?,
 
-    val fullName: String,
+    var proposalId: Int?,
 
-    val gender: String,
-
-    val age: Int
+    var fileId: Int?
 )

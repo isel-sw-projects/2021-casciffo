@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS partnerships (
 CREATE TABLE IF NOT EXISTS clinical_research (
     research_id SERIAL PRIMARY KEY,
     proposal_id INT NOT NULL,
-    research_state VARCHAR,
+    research_state_id INT NOT NULL,
     eudra_ct VARCHAR,
     sample_size INT,
     duration INT,
@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     phase VARCHAR, -- phase 1 | 2 | 3 | 4 
     CONSTRAINT fk_proposal_id FOREIGN KEY(proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
-    CONSTRAINT fk_state_id FOREIGN KEY(research_state) REFERENCES states(state_name)
+    CONSTRAINT fk_state_id FOREIGN KEY(research_state_id) REFERENCES states(state_id)
 );
 
 -- CREATE TABLE IF NOT EXISTS research_state_transitions (
@@ -292,9 +292,9 @@ CREATE TABLE IF NOT EXISTS clinical_visit (
     scheduled_date TIMESTAMP NOT NULL,
     start_date TIMESTAMP,
     end_date TIMESTAMP,
-    periodicy VARCHAR,
+    periodicity VARCHAR,
     observations TEXT,
-    hasAdverseEventAlert BOOLEAN,
+    has_adverse_event_alert BOOLEAN,
     has_marked_attendance BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id) ON DELETE CASCADE,
@@ -363,11 +363,11 @@ CREATE TABLE IF NOT EXISTS research_finance (
 
 CREATE TABLE IF NOT EXISTS addenda (
     addenda_id SERIAL PRIMARY KEY,
-    research_id INT,
-    addenda_state VARCHAR,
-    addenda_file_id INT,
+    research_id INT NOT NULL,
+    addenda_state_id INT NOT NULL,
+    addenda_file_id INT NOT NULL,
     CONSTRAINT fk_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
-    CONSTRAINT fk_addenda_state FOREIGN KEY(addenda_state) REFERENCES states(state_name),
+    CONSTRAINT fk_addenda_state FOREIGN KEY(addenda_state_id) REFERENCES states(state_id),
     CONSTRAINT fk_file_id FOREIGN KEY(addenda_file_id) REFERENCES files(file_id)
 );
 
