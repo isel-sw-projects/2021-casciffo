@@ -1,8 +1,7 @@
-package isel.casciffo.casciffospringbackend.comments
+package isel.casciffo.casciffospringbackend.proposals.comments
 
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.domain.PageRequest
-import reactor.core.publisher.Flux
 
 interface ProposalCommentsService {
     suspend fun createComment(comment: ProposalComments): ProposalComments?

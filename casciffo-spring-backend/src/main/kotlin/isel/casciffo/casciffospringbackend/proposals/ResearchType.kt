@@ -1,5 +1,5 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-enum class ProposalType {
+enum class ResearchType {
 CLINICAL_TRIAL, OBSERVATIONAL_STUDY
 }

@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
 
 @Table("trial_financial_component")
-data class ResearchFinancialComponent(
+data class ResearchFinance(
     @Id
     @Column("financial_id")
     var id: Int?,

@@ -1,6 +1,5 @@
-package isel.casciffo.casciffospringbackend.comments
+package isel.casciffo.casciffospringbackend.proposals.comments
 
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 

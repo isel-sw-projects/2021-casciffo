@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
-import isel.casciffo.casciffospringbackend.states.TransitionType
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column

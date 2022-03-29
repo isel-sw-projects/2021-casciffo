@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.visits.investigators
+package isel.casciffo.casciffospringbackend.research.visits.investigators
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository

@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.comments
+package isel.casciffo.casciffospringbackend.proposals.comments
 
 import isel.casciffo.casciffospringbackend.users.UserService
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +26,7 @@ class ProposalCommentsServiceImpl(@Autowired val repository: ProposalCommentsRep
     }
 
     override suspend fun getComments(proposalId: Int, page: PageRequest): Flow<ProposalComments>{
-        return repository.findByProposalId(proposalId, page).asFlow().map(this::loadAuthor)
+        return repository.findByProposalId(proposalId).asFlow().map(this::loadAuthor)
     }
 
     suspend fun loadAuthor(comment: ProposalComments): ProposalComments {

@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.comments
+package isel.casciffo.casciffospringbackend.proposals.comments
 
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.r2dbc.repository.Query
@@ -11,5 +11,8 @@ interface ProposalCommentsRepository: ReactiveSortingRepository<ProposalComments
     @Query("select pc.* from proposal_comments pc " +
             "join proposal p on pc.proposal_id = p.proposal_id " +
             "where p.proposal_id = :id")
-    fun findByProposalId(id: Int, pageRequest: PageRequest) : Flux<ProposalComments>
+    fun findByProposalId(id: Int) : Flux<ProposalComments>
+
+
+    fun findByProposalIdAndCommentType(id: Int, commentType: CommentType, pageRequest: PageRequest) : Flux<ProposalComments>
 }

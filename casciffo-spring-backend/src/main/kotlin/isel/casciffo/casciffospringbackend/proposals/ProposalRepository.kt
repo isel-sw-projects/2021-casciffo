@@ -9,5 +9,5 @@ import reactor.core.publisher.Flux
 interface ProposalRepository : ReactiveSortingRepository<Proposal, Int> {
 
     @Query("SELECT p.* from proposal p where p.proposal_type=:type")
-    fun findAllByType(type: ProposalType) : Flux<Proposal>
+    fun findAllByType(type: ResearchType) : Flux<Proposal>
 }

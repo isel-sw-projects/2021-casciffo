@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.comments
+package isel.casciffo.casciffospringbackend.proposals.comments
 
 import isel.casciffo.casciffospringbackend.users.User
 import org.springframework.data.annotation.CreatedDate

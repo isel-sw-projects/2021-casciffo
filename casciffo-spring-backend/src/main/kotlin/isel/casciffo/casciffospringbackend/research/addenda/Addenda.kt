@@ -1,10 +1,12 @@
 package isel.casciffo.casciffospringbackend.research.addenda
 
 import isel.casciffo.casciffospringbackend.files.FileInfo
-import isel.casciffo.casciffospringbackend.states.StateTransitions
+import isel.casciffo.casciffospringbackend.states.State
+import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import reactor.core.publisher.Flux
 
 @Table("addenda")
 data class Addenda (
@@ -21,7 +23,10 @@ data class Addenda (
     var fileId: Int?,
 
     @Transient
-    var stateTransitions: List<StateTransitions>?,
+    var state: State?,
+
+    @Transient
+    var stateTransitions: Flux<StateTransition>?,
 
     @Transient
     var fileInfo: FileInfo?

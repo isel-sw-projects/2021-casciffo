@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.patients
+package isel.casciffo.casciffospringbackend.research.patients
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column

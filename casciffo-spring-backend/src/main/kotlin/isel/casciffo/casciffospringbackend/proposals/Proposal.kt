@@ -1,13 +1,13 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.comments.ProposalComments
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.states.State
-import isel.casciffo.casciffospringbackend.states.StateTransitions
+import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.User
 import lombok.AllArgsConstructor
 import lombok.ToString
@@ -31,7 +31,7 @@ data class Proposal(
     var sigla: String,
 
     @Column(value = "proposal_type")
-    var type: ProposalType,
+    var type: ResearchType,
 
     @Column(value = "date_created")//, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @CreatedDate
@@ -77,7 +77,7 @@ data class Proposal(
     var financialComponent: ProposalFinancialComponent?,
 
     @Transient
-    var stateTransitions: Flux<StateTransitions>?,
+    var stateTransitions: Flux<StateTransition>?,
 
     @Transient
     var timelineEvents: Flux<TimelineEvent>?

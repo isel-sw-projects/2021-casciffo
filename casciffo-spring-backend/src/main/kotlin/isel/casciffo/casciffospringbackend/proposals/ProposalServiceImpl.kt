@@ -1,38 +1,42 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.comments.ProposalCommentsRepository
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
+import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
+import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
+import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @Service
-class ProposalServiceImpl(@Autowired val proposalRepository: ProposalRepository,
-                          @Autowired val serviceTypeRepository: ServiceTypeRepository,
-                          @Autowired val therapeuticAreaRepository: TherapeuticAreaRepository,
-                          @Autowired val pathologyRepository: PathologyRepository,
-                          @Autowired val investigationTeamRepository: InvestigationTeamRepository,
-                          @Autowired val userRepository: UserRepository,
-                          @Autowired val stateRepository: StateRepository,
-                          @Autowired val commentsRepository: ProposalCommentsRepository,
-                          @Autowired val proposalFinancialRepository: ProposalFinancialRepository,
-                          @Autowired val proposalFinancialService: ProposalFinancialService,
-                          @Autowired val timelineEventRepository: TimelineEventRepository
+class ProposalServiceImpl(
+    @Autowired val proposalRepository: ProposalRepository,
+    @Autowired val serviceTypeRepository: ServiceTypeRepository,
+    @Autowired val therapeuticAreaRepository: TherapeuticAreaRepository,
+    @Autowired val pathologyRepository: PathologyRepository,
+    @Autowired val investigationTeamRepository: InvestigationTeamRepository,
+    @Autowired val userRepository: UserRepository,
+    @Autowired val stateRepository: StateRepository,
+    @Autowired val stateTransitionService: StateTransitionService,
+    @Autowired val commentsRepository: ProposalCommentsRepository,
+    @Autowired val proposalFinancialService: ProposalFinancialService,
+    @Autowired val timelineEventRepository: TimelineEventRepository
 )
     : ProposalService {
 
-    override suspend fun getAllProposals(type: ProposalType): Flow<Proposal> =
+    override suspend fun getAllProposals(type: ResearchType): Flow<Proposal> =
         proposalRepository.findAllByType(type).asFlow().map(this::loadRelations)
 
     override suspend fun getProposalById(id: Int): Proposal {
@@ -41,17 +45,22 @@ class ProposalServiceImpl(@Autowired val proposalRepository: ProposalRepository,
         return loadRelations(proposal, true)
     }
 
-
+    @Transactional
     override suspend fun create(proposal: Proposal): Proposal {
         val createdProposal = proposalRepository.save(proposal).awaitFirstOrNull()
             ?: throw InternalError("Something went wrong creating the proposal")
-        val investigationTeamFlux = createdProposal.investigationTeam!!.doOnEach{it.get()?.proposalId = createdProposal.id!!}
+        val investigationTeamFlux =
+            createdProposal
+                .investigationTeam!!
+                .doOnEach {
+                    it.get()?.proposalId = createdProposal.id!!
+                }
 
         createdProposal.investigationTeam =
             investigationTeamRepository
                 .saveAll(investigationTeamFlux)
 
-        val hasFinancialComponent = proposal.type == ProposalType.CLINICAL_TRIAL
+        val hasFinancialComponent = proposal.type == ResearchType.CLINICAL_TRIAL
         if(hasFinancialComponent) {
             createdProposal.financialComponent =
                 proposalFinancialService
@@ -60,27 +69,38 @@ class ProposalServiceImpl(@Autowired val proposalRepository: ProposalRepository,
         return createdProposal
     }
 
+    override suspend fun updateProposal(proposal: Proposal): Proposal {
+        val existingProposal = proposalRepository.findById(proposal.id!!).awaitFirstOrNull()
+            ?: throw IllegalArgumentException("Proposal doesnt exist!!!")
+        val hasStateTransitioned = proposal.stateId == existingProposal.stateId
+
+        if(hasStateTransitioned) {
+            stateTransitionService
+                .newTransition(existingProposal.stateId, proposal.stateId, TransitionType.PROPOSAL, proposal.id!!)
+        }
+        return proposalRepository.save(proposal).awaitFirstOrNull() ?: throw Exception("Idk what happened bro ngl")
+    }
+
 
     private suspend fun loadRelations(proposal: Proposal, isDetailedView: Boolean = false): Proposal {
         var prop = loadConstantRelations(proposal)
 
-        if(prop.type == ProposalType.CLINICAL_TRIAL) {
+        if(prop.type == ResearchType.CLINICAL_TRIAL) {
             prop = loadFinancialComponent(prop)
         }
 
-//        if(isDetailedView) {
-//            prop.investigationTeam =
-//                investigationTeamRepository
-//                    .findInvestigationTeamByProposalId(prop.id!!)
-//
-//            prop.comments =
-//                commentsRepository
-//                    .findByProposalId(prop.id!!)
-//
-//            prop.timelineEvents =
-//                timelineEventRepository
-//                    .findTimelineEventsByProposalId(prop.id!!)
-//        }
+        if(isDetailedView) {
+            prop.investigationTeam =
+                investigationTeamRepository
+                    .findInvestigationTeamByProposalId(prop.id!!)
+
+            prop.comments = commentsRepository
+                .findByProposalId(prop.id!!)
+
+            prop.timelineEvents =
+                timelineEventRepository
+                    .findTimelineEventsByProposalId(prop.id!!)
+        }
 
         return prop
     }

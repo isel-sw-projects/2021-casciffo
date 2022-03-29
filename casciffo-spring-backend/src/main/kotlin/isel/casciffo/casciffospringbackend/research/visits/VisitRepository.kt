@@ -1,9 +1,9 @@
-package isel.casciffo.casciffospringbackend.patients
+package isel.casciffo.casciffospringbackend.research.visits
 
 import org.springframework.data.repository.reactive.ReactiveSortingRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ParticipantRepository: ReactiveSortingRepository<Participant, Int> {
+interface VisitRepository: ReactiveSortingRepository<Visit, Int> {
 
 }

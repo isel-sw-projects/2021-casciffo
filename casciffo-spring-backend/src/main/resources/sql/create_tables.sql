@@ -208,7 +208,8 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     industry VARCHAR,
     protocol VARCHAR,
     initiative_by VARCHAR,
-    phase VARCHAR, -- phase 1 | 2 | 3 | 4 
+    phase VARCHAR, -- phase 1 | 2 | 3 | 4,
+    type VARCHAR NOT NULL,
     CONSTRAINT fk_proposal_id FOREIGN KEY(proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
     CONSTRAINT fk_state_id FOREIGN KEY(research_state_id) REFERENCES states(state_id)

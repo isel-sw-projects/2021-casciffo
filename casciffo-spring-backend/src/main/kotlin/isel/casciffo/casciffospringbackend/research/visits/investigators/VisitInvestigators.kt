@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.visits.investigators
+package isel.casciffo.casciffospringbackend.research.visits.investigators
 
 import isel.casciffo.casciffospringbackend.users.User
 import org.springframework.data.annotation.Id

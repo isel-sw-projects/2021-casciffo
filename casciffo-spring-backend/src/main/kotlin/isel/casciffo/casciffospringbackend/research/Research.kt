@@ -1,10 +1,15 @@
 package isel.casciffo.casciffospringbackend.research
 
+import isel.casciffo.casciffospringbackend.proposals.Proposal
+import isel.casciffo.casciffospringbackend.proposals.ResearchType
+import isel.casciffo.casciffospringbackend.research.patients.Participant
+import isel.casciffo.casciffospringbackend.research.patients.ResearchParticipants
 import isel.casciffo.casciffospringbackend.states.State
-import isel.casciffo.casciffospringbackend.states.StateTransitions
+import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import reactor.core.publisher.Flux
 import java.time.LocalDate
 
 @Table("clinical_research")
@@ -40,9 +45,17 @@ data class Research (
 
     var phase: String,
 
+    var type: ResearchType,
+
     @Transient
     var state: State?,
 
     @Transient
-    var stateTransitions: List<StateTransitions>?
+    var proposal: Proposal?,
+
+    @Transient
+    var participants: Flux<Participant>?,
+
+    @Transient
+    var stateTransitions: Flux<StateTransition>?
 )

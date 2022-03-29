@@ -6,13 +6,12 @@ import isel.casciffo.casciffospringbackend.investigation_team.InvestigatorRole
 import isel.casciffo.casciffospringbackend.proposals.Proposal
 import isel.casciffo.casciffospringbackend.proposals.ProposalRepository
 import isel.casciffo.casciffospringbackend.proposals.ProposalService
-import isel.casciffo.casciffospringbackend.proposals.ProposalType
+import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialRepository
 import isel.casciffo.casciffospringbackend.roles.UserRole
 import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
-import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.users.User
 import isel.casciffo.casciffospringbackend.users.UserRepository
@@ -22,8 +21,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.test.StepVerifier
 import java.time.LocalDateTime
 
 @SpringBootTest
@@ -103,9 +102,9 @@ class CasciffoSpringBackendApplicationTests(
 	@Test
 	fun testProposalServiceCreate() {
 
-		val proposal = Proposal(null, "sigla2", ProposalType.CLINICAL_TRIAL,
+		val proposal = Proposal(null, "sigla2", ResearchType.CLINICAL_TRIAL,
 			LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,1,
-			investigationTeam = listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null)),
+			investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null))),
 			financialComponent = ProposalFinancialComponent(null, 0, 1, 1, null,null),
 			state = null, stateTransitions = null, serviceType = null, therapeuticArea = null, pathology = null, principalInvestigator = null,
 			comments = null, timelineEvents = null
@@ -118,7 +117,7 @@ class CasciffoSpringBackendApplicationTests(
 	@Test
 	fun testProposalServiceFindAll() {
 		runBlocking {
-			val res = proposalService.getAllProposals(ProposalType.CLINICAL_TRIAL).toList()
+			val res = proposalService.getAllProposals(ResearchType.CLINICAL_TRIAL).toList()
 			println(res)
 		}
 	}

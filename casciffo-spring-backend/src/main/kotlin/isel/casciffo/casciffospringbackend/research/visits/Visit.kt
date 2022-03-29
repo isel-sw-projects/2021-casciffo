@@ -1,8 +1,7 @@
-package isel.casciffo.casciffospringbackend.visits
+package isel.casciffo.casciffospringbackend.research.visits
 
-import isel.casciffo.casciffospringbackend.patients.Participant
-import isel.casciffo.casciffospringbackend.users.User
-import isel.casciffo.casciffospringbackend.visits.investigators.VisitInvestigators
+import isel.casciffo.casciffospringbackend.research.patients.Participant
+import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
