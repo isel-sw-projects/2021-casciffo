@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.finance
 
 import isel.casciffo.casciffospringbackend.users.User
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
@@ -33,5 +34,6 @@ data class ResearchTeamMonetaryFlow(
     val roleAmount: Float,
 
     @Transient
+    @Value("null")
     var investigator: User?
 )

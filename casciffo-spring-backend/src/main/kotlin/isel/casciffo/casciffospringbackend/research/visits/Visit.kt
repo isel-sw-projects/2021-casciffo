@@ -5,6 +5,7 @@ import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitIn
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import org.springframework.data.annotation.Transient
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
 

@@ -7,5 +7,6 @@ import reactor.core.publisher.Flux
 
 @Repository
 interface ResearchParticipantsRepository: ReactiveSortingRepository<ResearchParticipants, Int> {
+
     fun findAllByResearchId(researchId: Int) : Flux<ResearchParticipants>
 }

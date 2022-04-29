@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.util.*
 
 
 @Service
@@ -30,21 +31,18 @@ class UserServiceImpl(@Autowired val userRepository: UserRepository,
 
     @Transactional
     override suspend fun createUser(user: User): User? {
+        user.password = Base64.getEncoder().encodeToString("CASCIFFO//".plus(user.password).toByteArray())
         return userRepository.save(user).awaitFirstOrNull()
+    }
+
+    override suspend fun verifyCredentials(userId: Int, password: String): Boolean {
+        val user = userRepository.findById(userId).awaitFirstOrNull() ?: return false
+        //compares encryption........ maybe should decrypt?
+        return user.password == password
     }
 
     private suspend fun loadRelations(user: User): User {
         user.role = roleRepository.findById(user.roleId!!).awaitFirstOrNull()
         return user
     }
-
-//    private fun loadRelations(user: User): Mono<User?> {
-//        // Load the role
-//        return Mono.just(user)
-//            .zipWith(roleRepository.findById(user.roleId!!))
-//            .map {
-//                it.t1.role = it.t2
-//                return@map it.t1
-//            }
-//    }
 }

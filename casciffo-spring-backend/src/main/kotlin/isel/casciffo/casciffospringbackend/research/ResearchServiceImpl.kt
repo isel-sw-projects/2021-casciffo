@@ -2,9 +2,11 @@ package isel.casciffo.casciffospringbackend.research
 
 import isel.casciffo.casciffospringbackend.proposals.ProposalService
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
+import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaService
 import isel.casciffo.casciffospringbackend.research.finance.ResearchFinanceService
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
+import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
@@ -29,7 +31,7 @@ class ResearchServiceImpl(
     @Autowired val stateRepository: StateRepository,
     @Autowired val stateTransitionService: StateTransitionService,
     @Autowired val researchRepository: ResearchRepository,
-    @Autowired val proposalService: ProposalService,
+//    @Autowired val proposalService: ProposalService,
     @Autowired val participantService: ParticipantService
 ): ResearchService {
 
@@ -49,6 +51,22 @@ class ResearchServiceImpl(
     }
 
     @Transactional
+    override suspend fun createStudy(study: ScientificActivities) : ScientificActivities {
+        return scientificActivitiesRepository.save(study).awaitFirst()
+    }
+
+    override suspend fun getResearchStudies(researchId: Int): Flow<ScientificActivities> {
+        return scientificActivitiesRepository.findAllByResearchId(researchId).asFlow()
+    }
+
+    override suspend fun addParticipant(researchId: Int, participantId: Int) {
+        participantService.addParticipantToResearch(researchId = researchId, participantId =  participantId)
+    }
+
+    @Transactional
+    override suspend fun createAddenda(addenda: Addenda) : Addenda = addendaService.createAddenda(addenda)
+
+    @Transactional
     override suspend fun updateResearch(research: Research): Research {
         val existingResearch = researchRepository.findById(research.id!!).awaitFirstOrNull()
             ?: throw IllegalArgumentException("Research doesnt exist!!!")
@@ -62,7 +80,7 @@ class ResearchServiceImpl(
     }
 
     suspend fun loadRelations(research: Research, isDetailedView: Boolean = false) : Research {
-        research.proposal = proposalService.getProposalById(research.proposalId!!)
+        //research.proposal = proposalService.getProposalById(research.proposalId!!)
 
         if(isDetailedView) {
             research.stateTransitions = stateTransitionService.findAllByReferenceId(research.id!!)

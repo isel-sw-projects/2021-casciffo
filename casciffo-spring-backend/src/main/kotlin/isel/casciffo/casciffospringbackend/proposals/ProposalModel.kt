@@ -6,11 +6,13 @@ import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
+import isel.casciffo.casciffospringbackend.research.Research
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.User
 import lombok.AllArgsConstructor
 import lombok.ToString
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
@@ -18,67 +20,78 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
+import org.springframework.data.annotation.Transient
 
 @ToString
 @AllArgsConstructor
 @Table(value = "proposal")
-data class Proposal(
+data class ProposalModel(
     @Id
     @Column(value = "proposal_id")
-    var id: Int?,
+    var id: Int? = null,
 
     @Column(value = "sigla")
-    var sigla: String,
+    var sigla: String? = null,
 
     @Column(value = "proposal_type")
-    var type: ResearchType,
+    var type: ResearchType? = null,
 
     @Column(value = "date_created")//, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @CreatedDate
-    var dateCreated: LocalDateTime,
+    var dateCreated: LocalDateTime? = null,
 
     @Column(value = "last_update")//, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     @LastModifiedDate
-    var lastUpdated: LocalDateTime,
+    var lastUpdated: LocalDateTime? = null,
 
     @Column(value = "state_id")
-    var stateId: Int,
+    var stateId: Int? = null,
     @Column(value = "service_id")
-    var serviceTypeId: Int,
+    var serviceTypeId: Int? = null,
     @Column(value = "therapeutic_area_id")
-    var therapeuticAreaId: Int,
+    var therapeuticAreaId: Int? = null,
     @Column(value = "pathology_id")
-    var pathologyId: Int,
+    var pathologyId: Int? = null,
     @Column(value = "principal_investigator_id")
-    var principalInvestigatorId: Int,
+    var principalInvestigatorId: Int? = null,
 
     @Transient
-    var state : State?,
+    @Value("null")
+    var state : State? = null,
 
     @Transient
-    var serviceType: ServiceType?,
+    @Value("null")
+    var serviceType: ServiceType? = null,
 
     @Transient
-    var therapeuticArea: TherapeuticArea?,
+    @Value("null")
+    var therapeuticArea: TherapeuticArea? = null,
 
     @Transient
-    var pathology: Pathology?,
+    @Value("null")
+    var pathology: Pathology? = null,
 
     @Transient
-    var principalInvestigator: User?,
+    @Value("null")
+    var principalInvestigator: User? = null,
 
     @Transient
-    var investigationTeam: Flux<InvestigationTeam>?,
+    @Value("null")
+    var comments: Flux<ProposalComments>? = null,
 
     @Transient
-    var comments: Flux<ProposalComments>?,
+    @Value("null")
+    var financialComponent: ProposalFinancialComponent? = null,
 
     @Transient
-    var financialComponent: ProposalFinancialComponent?,
+    @Value("null")
+    var stateTransitions: Flux<StateTransition>? = null,
 
     @Transient
-    var stateTransitions: Flux<StateTransition>?,
+    @Value("null")
+    var timelineEvents: Flux<TimelineEvent>? = null,
 
     @Transient
-    var timelineEvents: Flux<TimelineEvent>?
+    @Value("null")
+    var investigationTeam: Flux<InvestigationTeam>? = null
 )

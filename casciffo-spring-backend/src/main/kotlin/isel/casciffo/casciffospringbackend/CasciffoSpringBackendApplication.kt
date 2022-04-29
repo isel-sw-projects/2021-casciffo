@@ -2,8 +2,11 @@ package isel.casciffo.casciffospringbackend
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
+import org.springframework.web.reactive.config.EnableWebFlux
 
-
+//@EnableWebFlux
+@EnableR2dbcRepositories
 @SpringBootApplication
 class CasciffoSpringBackendApplication
 
@@ -11,7 +14,7 @@ class CasciffoSpringBackendApplication
 fun main(args: Array<String>) {
 	runApplication<CasciffoSpringBackendApplication>(*args)
 }
-//TODO ADD SECURITY MIDDLEWARE TO VERIFY WHO'S MAKING THE CALL
+
 
 
 //@Bean

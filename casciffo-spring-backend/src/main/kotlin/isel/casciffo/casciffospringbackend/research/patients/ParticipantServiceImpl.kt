@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.research.patients
 import isel.casciffo.casciffospringbackend.research.visits.Visit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -17,12 +18,12 @@ class ParticipantServiceImpl(
 ): ParticipantService {
     @Transactional
     override suspend fun addParticipantToResearch(participantId: Int, researchId: Int): Participant {
-        //consider if in case the Id doesnt exist in casciffo db, check in admission db
+        //todo consider if in case the Id doesnt exist in casciffo db, check in admission db
         val participant = participantRepository.findById(participantId).awaitSingleOrNull()
             ?: throw IllegalArgumentException("The patient Id doesnt exist in the db!!!")
 
         val researchParticipant = ResearchParticipants(null, participantId, researchId, LocalDateTime.now())
-        researchParticipantsRepository.save(researchParticipant)
+        researchParticipantsRepository.save(researchParticipant).awaitSingle()
         return participant
     }
 

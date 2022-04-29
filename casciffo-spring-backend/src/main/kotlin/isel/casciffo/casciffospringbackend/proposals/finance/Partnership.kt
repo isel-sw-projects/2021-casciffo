@@ -15,5 +15,6 @@ data class Partnership (
      val siteUrl: String,
      val spokesmanName: String,
      val email: String,
-     val phoneContact: String
+     val phoneContact: String,
+     val description: String
 )

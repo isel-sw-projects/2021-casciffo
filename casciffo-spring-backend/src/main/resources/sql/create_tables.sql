@@ -186,7 +186,8 @@ CREATE TABLE IF NOT EXISTS partnerships (
     spokesman_name VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
     phone_contact VARCHAR,
-    site_url TEXT
+    site_url TEXT,
+    description TEXT
 );
 
 
@@ -261,7 +262,8 @@ CREATE TABLE IF NOT EXISTS scientific_activities (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS participant (
-    process_id BIGINT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
+    process_id BIGINT UNIQUE,
     full_name VARCHAR NOT NULL,
     gender VARCHAR NOT NULL,
     age INT NOT NULL
@@ -277,7 +279,7 @@ CREATE TABLE IF NOT EXISTS research_participants (
     CONSTRAINT fk_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id)
         ON DELETE CASCADE,
-    CONSTRAINT fk_participant_id FOREIGN KEY(participant_id) REFERENCES participant(process_id)
+    CONSTRAINT fk_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
 );
 
 
@@ -299,7 +301,7 @@ CREATE TABLE IF NOT EXISTS clinical_visit (
     has_marked_attendance BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id) ON DELETE CASCADE,
-    CONSTRAINT fk_participant_id FOREIGN KEY(participant_id) REFERENCES participant(process_id)
+    CONSTRAINT fk_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
 );
 
 

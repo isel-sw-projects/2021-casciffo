@@ -11,9 +11,8 @@ import reactor.core.publisher.Mono
 
 @Service
 class UserRoleServiceImpl(@Autowired private val repository: UserRoleRepository) : UserRoleService {
-    override suspend fun createRole(role: String): UserRole? {
-        val userRole = UserRole(null, roleName = role)
-        return repository.save(userRole).awaitFirstOrNull()
+    override suspend fun createRole(role: UserRole): UserRole? {
+        return repository.save(role).awaitFirstOrNull()
     }
 
     override suspend fun getRoles(): Flow<UserRole> {

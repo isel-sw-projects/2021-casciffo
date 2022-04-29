@@ -10,4 +10,5 @@ interface UserService {
     suspend fun getAllUsers() : Flow<User?>
     suspend fun getUser(id: Int) : User?
     suspend fun createUser(user: User) : User?
+    suspend fun verifyCredentials(userId: Int, password: String): Boolean
 }

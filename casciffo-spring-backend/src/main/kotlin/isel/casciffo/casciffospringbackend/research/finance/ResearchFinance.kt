@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.finance
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -20,8 +21,10 @@ data class ResearchFinance(
     var balance: Float,
 
     @Transient
+    @Value("null")
     var monetaryFlow: Flux<ResearchMonetaryFlow>?,
 
     @Transient
+    @Value("null")
     var teamFinanceFlow: Flux<ResearchTeamMonetaryFlow>?
 )

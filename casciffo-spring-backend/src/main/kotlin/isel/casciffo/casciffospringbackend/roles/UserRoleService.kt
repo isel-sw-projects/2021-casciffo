@@ -5,6 +5,6 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface UserRoleService {
-    suspend fun createRole(role: String): UserRole?
+    suspend fun createRole(role: UserRole): UserRole?
     suspend fun getRoles() : Flow<UserRole>
 }

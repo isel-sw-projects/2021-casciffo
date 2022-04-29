@@ -1,10 +1,12 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
 import isel.casciffo.casciffospringbackend.users.User
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 
@@ -28,5 +30,6 @@ data class ProposalComments (
     val commentType: CommentType,
 
     @Transient
+    @Value("null")
     var author: User?
 )

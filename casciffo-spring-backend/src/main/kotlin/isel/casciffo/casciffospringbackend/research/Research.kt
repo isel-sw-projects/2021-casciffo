@@ -1,12 +1,13 @@
 package isel.casciffo.casciffospringbackend.research
 
-import isel.casciffo.casciffospringbackend.proposals.Proposal
+import isel.casciffo.casciffospringbackend.proposals.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.research.patients.Participant
-import isel.casciffo.casciffospringbackend.research.patients.ResearchParticipants
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
@@ -21,41 +22,45 @@ data class Research (
     var proposalId: Int?,
 
     @Column("research_state_id")
-    var stateId: Int?,
+    var stateId: Int? = null,
 
-    var eudra_ct: String,
+    var eudra_ct: String? = null,
 
-    var sampleSize: Int,
+    var sampleSize: Int? = null,
 
-    var duration: Int,
+    var duration: Int? = null,
 
-    var cro: String,
+    var cro: String? = null,
 
-    var startDate: LocalDate,
+    var startDate: LocalDate? = null,
 
-    var endState: LocalDate,
+    var endDate: LocalDate? = null,
 
-    var estimatedEndDate: LocalDate,
+    var estimatedEndDate: LocalDate? = null,
 
-    var industry: String,
+    var industry: String? = null,
 
-    var protocol: String,
+    var protocol: String? = null,
 
-    var initiativeBy: String,
+    var initiativeBy: String? = null,
 
-    var phase: String,
+    var phase: String? = null,
 
-    var type: ResearchType,
-
-    @Transient
-    var state: State?,
+    var type: ResearchType? = null,
 
     @Transient
-    var proposal: Proposal?,
+    @Value("null")
+    var state: State? = null,
 
     @Transient
-    var participants: Flux<Participant>?,
+    @Value("null")
+    var proposal: ProposalModel? = null,
 
     @Transient
-    var stateTransitions: Flux<StateTransition>?
+    @Value("null")
+    var participants: Flux<Participant>? = null,
+
+    @Transient
+    @Value("null")
+    var stateTransitions: Flux<StateTransition>? = null
 )

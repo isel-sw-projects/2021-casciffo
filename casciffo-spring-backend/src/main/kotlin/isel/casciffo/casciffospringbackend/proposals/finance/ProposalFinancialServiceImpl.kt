@@ -1,11 +1,10 @@
 package isel.casciffo.casciffospringbackend.proposals.finance
 
 import isel.casciffo.casciffospringbackend.promoter.PromoterRepository
-import isel.casciffo.casciffospringbackend.proposals.Proposal
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
 
 @Service
 class ProposalFinancialServiceImpl(
@@ -15,8 +14,16 @@ class ProposalFinancialServiceImpl(
 ) : ProposalFinancialService {
     override suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): ProposalFinancialComponent {
         if(pfc.proposalId == null) throw IllegalArgumentException("Proposal Id must not be null here!!!")
-        pfc.promoter = promoterRepository.save(pfc.promoter!!).awaitFirstOrNull()
-        pfc.partnerships = partnershipRepository.findByFinanceComponentId(pfc.id!!)
+        if(pfc.promoter == null && pfc.promoterId == null) throw IllegalArgumentException("Promoter must not be null here!!!")
+        if(pfc.promoterId != null) {
+            pfc.promoter = promoterRepository.findById(pfc.promoterId!!).awaitSingle()
+        } else {
+            pfc.promoter =  promoterRepository.save(pfc.promoter!!).awaitFirstOrNull()
+        }
+        if(pfc.partnerships != null)
+            pfc.partnerships = partnershipRepository.findByFinanceComponentId(pfc.id!!).collectList().awaitSingle()
+        val createdPfc = proposalFinancialRepository.save(pfc).awaitSingle()
+        pfc.id = createdPfc.id
         return pfc
     }
 
@@ -28,7 +35,7 @@ class ProposalFinancialServiceImpl(
 
     private suspend fun loadRelations(component: ProposalFinancialComponent): ProposalFinancialComponent {
         component.promoter = promoterRepository.findById(component.promoterId!!).awaitFirstOrNull()
-        component.partnerships = partnershipRepository.findByFinanceComponentId(component.id!!)
+        component.partnerships = partnershipRepository.findByFinanceComponentId(component.id!!).collectList().awaitSingle()
         return component
     }
 

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface ProposalRepository : ReactiveSortingRepository<Proposal, Int> {
+interface ProposalRepository : ReactiveSortingRepository<ProposalModel, Int> {
 
     @Query("SELECT p.* from proposal p where p.proposal_type=:type")
-    fun findAllByType(type: ResearchType) : Flux<Proposal>
+    fun findAllByType(type: ResearchType) : Flux<ProposalModel>
 }

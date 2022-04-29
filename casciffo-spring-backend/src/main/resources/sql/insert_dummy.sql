@@ -7,7 +7,7 @@ INSERT INTO user_account(user_name, user_email, password, user_role_id) VALUES (
 INSERT INTO service(service_name) VALUES ('Cardiologia');
 INSERT INTO pathology(pathology_name) VALUES ('Pneumonia');
 INSERT INTO therapeutic_area(therapeutic_area_name) VALUES ('Terapia Cardio');
-INSERT INTO states(state_name, role_responsible_for_advancing_id) VALUES ('Submetido', 2);
+INSERT INTO states(state_name, role_responsible_for_advancing_id) VALUES ('SUBMETIDO', 2);
 INSERT INTO
     proposal(state_id, pathology_id, service_id, therapeutic_area_id, protocol_state_id, sigla, principal_investigator_id, proposal_type)
         VALUES (1,1,1,1,NULL,'APOLLO',1,'CLINICAL_TRIAL');

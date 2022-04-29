@@ -4,7 +4,7 @@ import isel.casciffo.casciffospringbackend.promoter.Promoter
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import reactor.core.publisher.Flux
+import org.springframework.data.annotation.Transient
 
 @Table(value = "proposal_financial_component")
 data class ProposalFinancialComponent (
@@ -20,5 +20,5 @@ data class ProposalFinancialComponent (
     var promoter: Promoter?,
 
     @Transient
-    var partnerships: Flux<Partnership>?
+    var partnerships: List<Partnership>?
 )
