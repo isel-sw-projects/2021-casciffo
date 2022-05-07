@@ -1,4 +1,4 @@
 export const ResearchTypes = {
-    CLINICAL_TRIAL: {name:"Ensaio Clínico", id:"CLINICAL_TRIAL"},
-    OBSVERTIONAL_STUDY: {name:"Estudo Observacional", id:"OBSERVATIONAL_STUDY"}
+    CLINICAL_TRIAL: {name:"Ensaios Clínicos", id:"CLINICAL_TRIAL"},
+    OBSVERTIONAL_STUDY: {name:"Estudos Observacionais", id:"OBSERVATIONAL_STUDY"}
 }

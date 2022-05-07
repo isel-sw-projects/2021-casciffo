@@ -4,7 +4,7 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import SearchComponent from "./view/util-components/SearchComponent";
+import TableComponent from "./view/util-components/TableComponent";
 import TracksModel from "./model/TracksModel";
 import App from "./view/app/App";
 

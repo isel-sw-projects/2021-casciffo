@@ -1,9 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import org.mapstruct.Mapper
 import reactor.kotlin.core.publisher.toFlux
 
-@Mapper(componentModel = "spring")
 class ProposalMapper {
 
     fun proposalDTOtoProposalModel(proposalDTO: ProposalDTO): ProposalModel {

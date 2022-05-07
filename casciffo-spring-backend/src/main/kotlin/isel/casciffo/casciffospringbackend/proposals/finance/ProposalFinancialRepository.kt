@@ -7,8 +7,8 @@ import reactor.core.publisher.Mono
 
 @Repository
 interface ProposalFinancialRepository : ReactiveCrudRepository<ProposalFinancialComponent, Int> {
-    @Query("select pfc.* from proposal_financial_component pfc " +
-            "join proposal p on p.proposal_id = pfc.proposal_id " +
-            "where p.proposal_id = :id")
+//    @Query("select pfc.* from proposal_financial_component pfc " +
+//            "join proposal p on p.proposal_id = pfc.proposal_id " +
+//            "where p.proposal_id = :id")
     fun findByProposalId(id: Int): Mono<ProposalFinancialComponent>
 }

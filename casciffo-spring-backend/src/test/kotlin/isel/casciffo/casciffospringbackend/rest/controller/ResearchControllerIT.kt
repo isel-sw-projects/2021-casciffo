@@ -21,6 +21,6 @@ class ResearchControllerIT {
 
     @BeforeEach
     fun setup() {
-        webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:$randomServerPort").build()
+//        webTestClient = WebTestClient.bindToServer().baseUrl("http://localhost:$randomServerPort").build()
     }
 }

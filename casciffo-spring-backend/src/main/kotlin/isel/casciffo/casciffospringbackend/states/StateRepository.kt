@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface StateRepository : ReactiveCrudRepository<State, Int> {
-    fun findByStateName(stateName: String) : State
+    fun findByName(name: String) : State
 }

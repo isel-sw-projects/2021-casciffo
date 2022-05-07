@@ -1,4 +1,4 @@
 package isel.casciffo.casciffospringbackend.service
 
-class ResearchServiceT {
+class ResearchServiceIT {
 }

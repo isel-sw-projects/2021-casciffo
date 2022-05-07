@@ -16,11 +16,15 @@ export default class ProposalAggregateService {
     fetchConstants(): Promise<Constants> {
         return fetch(ApiUrls.constantsUrl).then(rsp => rsp.json())
     }
+
     fetchConstantsMock(): Promise<Constants> {
-        return new Promise<Constants>(resolve => resolve({
-            serviceTypes: [{id: 1, name: "service1"}],
-            pathologies: [{id: 1, name: "service1"}],
-            therapeuticAreas: [{id: 1, name: "Terapia Cardio"}]
-        }))
+        return new Promise<Constants>(resolve => {
+            setTimeout(() =>
+                resolve({
+                    serviceTypes: [{id: 1, name: "service1"}],
+                    pathologies: [{id: 1, name: "service1"}],
+                    therapeuticAreas: [{id: 1, name: "Terapia Cardio"}]
+                }), 1)
+        })
     }
 }

@@ -125,8 +125,7 @@ CREATE TABLE IF NOT EXISTS proposal_comments (
     date_modified TIMESTAMP,
     content TEXT NOT NULL,
     comment_type VARCHAR NOT NULL,
-    CONSTRAINT fk_proposal_id FOREIGN KEY(proposal_id)
-        REFERENCES proposal(proposal_id) ON DELETE CASCADE,
+    CONSTRAINT fk_pc_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
     CONSTRAINT fk_author_id FOREIGN KEY(author_id) REFERENCES user_account(user_id)
 );
 
@@ -139,7 +138,7 @@ CREATE TABLE IF NOT EXISTS timeline_event (
     completed_date DATE,
     is_over_due BOOLEAN DEFAULT FALSE,
     days_over_due INT DEFAULT 0,
-    CONSTRAINT  fk_proposal_id FOREIGN KEY(proposal_id)
+    CONSTRAINT  fk_te_proposal_id FOREIGN KEY(proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE
 );
 
@@ -152,8 +151,8 @@ CREATE TABLE IF NOT EXISTS investigation_team (
     proposal_id INT NOT NULL,
     member_role VARCHAR(50) NOT NULL,
     member_id INT NOT NULL,
-    CONSTRAINT fk_member FOREIGN KEY (member_id) REFERENCES user_account(user_id),
-    CONSTRAINT fk_proposal FOREIGN KEY (proposal_id)
+    CONSTRAINT fk_it_member FOREIGN KEY (member_id) REFERENCES user_account(user_id),
+    CONSTRAINT fk_it_proposal FOREIGN KEY (proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE
 );
 
@@ -174,9 +173,9 @@ CREATE TABLE IF NOT EXISTS proposal_financial_component (
     proposal_id INT,
     financial_contract_id INT,
     promoter_id INT,
-    CONSTRAINT fk_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
-    CONSTRAINT fk_financial_contract_id FOREIGN KEY (financial_contract_id) REFERENCES files(file_id),
-    CONSTRAINT fk_promoter_id FOREIGN KEY(promoter_id) REFERENCES promoter(promoter_id)
+    CONSTRAINT fk_pfc_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
+    CONSTRAINT fk_pfc_financial_contract_id FOREIGN KEY (financial_contract_id) REFERENCES files(file_id),
+    CONSTRAINT fk_pfc_promoter_id FOREIGN KEY(promoter_id) REFERENCES promoter(promoter_id)
 );
 
 CREATE TABLE IF NOT EXISTS partnerships (
@@ -211,9 +210,9 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     initiative_by VARCHAR,
     phase VARCHAR, -- phase 1 | 2 | 3 | 4,
     type VARCHAR NOT NULL,
-    CONSTRAINT fk_proposal_id FOREIGN KEY(proposal_id)
+    CONSTRAINT fk_cr_proposal_id FOREIGN KEY(proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
-    CONSTRAINT fk_state_id FOREIGN KEY(research_state_id) REFERENCES states(state_id)
+    CONSTRAINT fk_cr_state_id FOREIGN KEY(research_state_id) REFERENCES states(state_id)
 );
 
 -- CREATE TABLE IF NOT EXISTS research_state_transitions (
@@ -234,7 +233,7 @@ CREATE TABLE IF NOT EXISTS dossier (
     volume VARCHAR NOT NULL,
     label VARCHAR NOT NULL,
     amount INT NOT NULL,
-    CONSTRAINT fk_clinical_research FOREIGN KEY(clinical_research_id)
+    CONSTRAINT fk_d_clinical_research FOREIGN KEY(clinical_research_id)
         REFERENCES clinical_research(research_id)
         ON DELETE CASCADE
 );
@@ -252,7 +251,7 @@ CREATE TABLE IF NOT EXISTS scientific_activities (
     country_published VARCHAR,
     has_been_indexed BOOLEAN,
     published_url TEXT,
-    CONSTRAINT fk_research_id FOREIGN KEY(research_id)
+    CONSTRAINT fk_sa_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id)
         ON DELETE CASCADE
 );
@@ -276,10 +275,10 @@ CREATE TABLE IF NOT EXISTS research_participants (
     research_id INT,
     join_date TIMESTAMP DEFAULT NOW(),
     --PRIMARY KEY (participant_id, research_id),
-    CONSTRAINT fk_research_id FOREIGN KEY(research_id)
+    CONSTRAINT fk_rp_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id)
         ON DELETE CASCADE,
-    CONSTRAINT fk_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
+    CONSTRAINT fk_rp_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
 );
 
 
@@ -299,9 +298,9 @@ CREATE TABLE IF NOT EXISTS clinical_visit (
     observations TEXT,
     has_adverse_event_alert BOOLEAN,
     has_marked_attendance BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_research_id FOREIGN KEY(research_id)
+    CONSTRAINT fk_cv_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id) ON DELETE CASCADE,
-    CONSTRAINT fk_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
+    CONSTRAINT fk_cv_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
 );
 
 
@@ -310,9 +309,9 @@ CREATE TABLE IF NOT EXISTS visit_assigned_investigators (
     visit_id INT NOT NULL,
     investigator_id INT NOT NULL,
     --PRIMARY KEY (visit_id, investigator_id),
-    CONSTRAINT fk_visit_id FOREIGN KEY(visit_id)
+    CONSTRAINT fk_vai_visit_id FOREIGN KEY(visit_id)
         REFERENCES clinical_visit(visit_id) ON DELETE CASCADE,
-    CONSTRAINT fk_investigator_id FOREIGN KEY(investigator_id) REFERENCES user_account(user_id)
+    CONSTRAINT fk_vai_investigator_id FOREIGN KEY(investigator_id) REFERENCES user_account(user_id)
 );
 
 ---------------------------------------------------------------------------------------
@@ -325,7 +324,7 @@ CREATE TABLE IF NOT EXISTS trial_financial_component (
     value_per_participant INT,
     role_value_per_participant INT,
     balance FLOAT,
-    CONSTRAINT fk_research_id FOREIGN KEY(research_id)
+    CONSTRAINT fk_tfc_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id)
         ON DELETE CASCADE
 );
@@ -340,11 +339,11 @@ CREATE TABLE IF NOT EXISTS research_team_financial_scope (
     amount FLOAT NOT NULL,
     partition_percentage NUMERIC(5,2) NOT NULL,
     role_amount FLOAT NOT NULL,
-    CONSTRAINT fk_trial_financial_component
+    CONSTRAINT fk_rtfc_trial_financial_component
         FOREIGN KEY (trial_financial_component_id)
             REFERENCES trial_financial_component(financial_id)
             ON DELETE CASCADE,
-    CONSTRAINT fk_investigator_id FOREIGN KEY (investigator_id) REFERENCES user_account(user_id)
+    CONSTRAINT fk_rtfc_investigator_id FOREIGN KEY (investigator_id) REFERENCES user_account(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS research_finance (
@@ -354,7 +353,7 @@ CREATE TABLE IF NOT EXISTS research_finance (
     type_of_flow VARCHAR NOT NULL,
     motive VARCHAR NOT NULL,
     amount FLOAT NOT NULL,
-    CONSTRAINT fk_trial_financial_component FOREIGN KEY(trial_financial_component_id)
+    CONSTRAINT fk_rf_trial_financial_component FOREIGN KEY(trial_financial_component_id)
         REFERENCES trial_financial_component(financial_id)
         ON DELETE CASCADE
 );
@@ -369,9 +368,9 @@ CREATE TABLE IF NOT EXISTS addenda (
     research_id INT NOT NULL,
     addenda_state_id INT NOT NULL,
     addenda_file_id INT NOT NULL,
-    CONSTRAINT fk_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
+    CONSTRAINT fk_a_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
     CONSTRAINT fk_addenda_state FOREIGN KEY(addenda_state_id) REFERENCES states(state_id),
-    CONSTRAINT fk_file_id FOREIGN KEY(addenda_file_id) REFERENCES files(file_id)
+    CONSTRAINT fk_a_file_id FOREIGN KEY(addenda_file_id) REFERENCES files(file_id)
 );
 
 -- CREATE TABLE IF NOT EXISTS addenda_state_transitions (

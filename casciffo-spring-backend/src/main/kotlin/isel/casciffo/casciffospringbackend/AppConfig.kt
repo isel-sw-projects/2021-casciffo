@@ -13,19 +13,31 @@ import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 
-//@Configuration
-//@EnableWebFlux
-//class ApiConfig : WebFluxConfigurer {
-//
-//    override fun addCorsMappings(registry: CorsRegistry) {
-//        // TODO: Revisit this to elaborate on the CORS protocol TO ALLOW ONLY VALID ACCESS FROM FRONT-END
-//        registry
-//            .addMapping("/**")
-//            .allowedHeaders("*")
-//            .allowedMethods("*")
-//            .allowedOrigins("*")
+@Configuration
+class AppConfig : WebFluxConfigurer {
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        // TODO: Revisit this to elaborate on the CORS protocol TO ALLOW ONLY VALID ACCESS FROM FRONT-END
+        registry
+            .addMapping("/**")
+            .allowedHeaders("*")
+            .allowedMethods("*")
+            .allowedOrigins("*")
+    }
+}
+
+//@Bean
+//class
+//fun initializer(connectionFactory: ConnectionFactory?): ConnectionFactoryInitializer? {
+//    val initializer = ConnectionFactoryInitializer()
+//    if (connectionFactory != null) {
+//        initializer.setConnectionFactory(connectionFactory)
 //    }
+//    val populator = ResourceDatabasePopulator(ClassPathResource("sql/create.sql"))
+//    initializer.setDatabasePopulator(populator)
+//    return initializer
 //}
+
 //
 ////TODO MAYBE ADD MORE FILTERS TO MANAGE THE PERMISSIONS DEPENDING ON PATH AND USER ROLE
 //@Component

@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.finance
 
 import isel.casciffo.casciffospringbackend.promoter.Promoter
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -17,8 +18,10 @@ data class ProposalFinancialComponent (
     var financialContractId: Int?,
 
     @Transient
-    var promoter: Promoter?,
+    @Value("null")
+    var promoter: Promoter? = null,
 
     @Transient
+    @Value("null")
     var partnerships: List<Partnership>?
 )

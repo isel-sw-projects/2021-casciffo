@@ -25,7 +25,6 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import reactor.core.publisher.Mono
 import kotlin.math.abs
 
 @Service
@@ -104,16 +103,16 @@ class ProposalServiceImpl(
         val nextState  = stateRepository.findById(proposal.stateId!!).awaitSingle()
         val currState = stateRepository.findById(existingProposal.stateId!!).awaitSingle()
 
-        if (currState.stateName == States.CANCELADO.name) throw CannotUpdateCancelledProposalException()
+        if (currState.name == States.CANCELADO.name) throw CannotUpdateCancelledProposalException()
         val isValidStateTransition =
-            abs(States.valueOf(nextState.stateName).code - States.valueOf(currState.stateName).code) == 1
+            abs(States.valueOf(nextState.name).code - States.valueOf(currState.name).code) == 1
 
         if (!isValidStateTransition)
             throw InvalidStateTransitionException()
 
-        if (nextState.stateName == States.VALIDADO.name) {
-            val stateAtivo = stateRepository.findByStateName(States.ATIVO.name)
-            val research = Research(null, proposal.id, stateAtivo.stateId)
+        if (nextState.name == States.VALIDADO.name) {
+            val stateAtivo = stateRepository.findByName(States.ATIVO.name)
+            val research = Research(null, proposal.id, stateAtivo.id)
             researchService.createResearch(research)
         }
 

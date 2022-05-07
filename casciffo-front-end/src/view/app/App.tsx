@@ -1,11 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import logo from '../../logo.svg';
 import './App.css';
 import {Container, Nav, Navbar, Stack} from 'react-bootstrap';
-import {BrowserRouter as Router, Link, Route, Routes, useNavigate} from "react-router-dom";
+import {BrowserRouter as Router, Link, Route, Routes, useLocation} from "react-router-dom";
 import {CreateProposal} from '../proposal-form/CreateProposal'
 import { Proposals } from '../proposals/Proposals';
 import ProposalAggregateService from "../../services/ProposalAggregateService";
+import ProposalService from "../../services/ProposalService";
 
 
 function NavigationBar() {
@@ -13,7 +14,7 @@ function NavigationBar() {
         <Navbar bg="primary" variant="dark">
             <Container>
                 <Navbar.Collapse>
-                    <Navbar.Brand href="#home">Navbar</Navbar.Brand>
+                    <Navbar.Brand href="#home">Casciffo</Navbar.Brand>
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to={"/propostas"}>Propostas</Nav.Link>
                         <Nav.Link as={Link} to={"/"}>Inicio</Nav.Link>
@@ -28,7 +29,7 @@ function NavigationBar() {
 function CreateRoutes() {
     return <Routes>
         <Route path={"/"} element={<>Home</>}/>
-        <Route path={"/propostas"} element={<Proposals/>}/>
+        <Route path={"/propostas"} element={<Proposals service={new ProposalService()}/>}/>
         <Route
             path={"/propostas/criar"}
             element={<CreateProposal
@@ -38,21 +39,24 @@ function CreateRoutes() {
     </Routes>;
 }
 
-function buildCurrentPathAsLinks() {
-    let pathVariables = window.location.pathname.split("/").slice(3) //ignores {first /, api, casciffo}
-    let path : Array<string> = []
+
+function DisplayPath() {
+    const path = useLocation()
+    let pathVariables = path.pathname.split("/").filter(s => s.length !== 0)
+    let displayPath : Array<string> = []
     pathVariables = ["/", ...pathVariables]
-    path.push("Início")
+    displayPath.push("Início")
     for (let i = 1; i < pathVariables.length; i++) {
-        path.push(pathVariables[i])
-        console.log(path)
+        let currPathVariable = pathVariables[i]
+        currPathVariable = currPathVariable.charAt(0).toUpperCase().concat(currPathVariable.substring(1))
+        displayPath.push(currPathVariable)
         pathVariables[i] = pathVariables[i - 1].concat("/",pathVariables[i])
     }
     return (
         <Container key={"curret-path"} className={"mb-1 mt-2"}>
             <Stack direction={"horizontal"} gap={2}>
-                {path.map((path, idx) =>
-                    <p key={path+idx}>{`\u27A4 `}<Link to={pathVariables[idx]} >{path}</Link></p>)}
+                {displayPath.map((p, i) =>
+                    <p key={p+i}>{`\u27A4 `}<Link to={pathVariables[i]}>{p}</Link></p>)}
             </Stack>
         </Container>
     )
@@ -64,7 +68,7 @@ function App() {
         <>
             <Router basename={"/api/casciffo"} key={"router"}>
                 <NavigationBar/>
-                {buildCurrentPathAsLinks()}
+                <DisplayPath/>
                 <CreateRoutes/>
             </Router>
 

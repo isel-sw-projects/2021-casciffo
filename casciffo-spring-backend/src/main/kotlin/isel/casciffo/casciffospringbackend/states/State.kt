@@ -12,10 +12,10 @@ import org.springframework.data.relational.core.mapping.Table
 data class State(
     @Id
     @Column(value = "state_id")
-    var stateId: Int?,
+    var id: Int?,
 
     @Column(value = "state_name")
-    val stateName: String,
+    val name: String,
 
     @Column(value = "role_responsible_for_advancing_id")
     val ownerId: Int,

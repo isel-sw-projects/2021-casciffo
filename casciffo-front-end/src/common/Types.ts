@@ -25,7 +25,27 @@ type Investigator = {
     teamRole: string
 }
 
-type Partnership = {
+type Promoter = {
+    promoterName: string,
+    promoterEmail: string,
+    promoterType: string
+}
+
+type ProposalForm = {
+    sigla: string,
+    serviceId: number,
+    therapeuticAreaId: number,
+    pathologyId: number,
+    pInvestigator: Investigator,
+    researchType: string,
+    promoter: Promoter,
+    team: Array<Investigator>,
+    partnerships: Array<Partnership>,
+    file?: File
+}
+
+interface Partnership {
+    id?: number,
     partnershipName: string,
     partnershipWebsite: string,
     partnershipRepresentative: string,
@@ -40,4 +60,9 @@ type Constants = {
     therapeuticAreas: Array<TherapeuticAreaModel>
 }
 
-export type {Page, APIResponse, ResearchType, Investigator, Partnership, Constants}
+type Filter = {
+    value: string,
+    id: string
+}
+
+export type {Page, APIResponse, ResearchType, Investigator, Partnership, Constants, Filter, ProposalForm, Promoter}

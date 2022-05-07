@@ -25,17 +25,24 @@ import isel.casciffo.casciffospringbackend.users.UserService
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.runBlocking
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Profile
+import org.springframework.core.io.ClassPathResource
+import org.springframework.data.util.StreamUtils
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.util.FileCopyUtils.copyToString
+import org.springframework.util.StreamUtils.copyToString
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.nio.charset.Charset
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Profile("test")
+@ActiveProfiles(value = ["test"])
 @SpringBootTest
 class CasciffoSpringBackendApplicationTests(
 	@Autowired val userRepo: UserRepository,
@@ -55,17 +62,18 @@ class CasciffoSpringBackendApplicationTests(
 
 	@Test
 	fun contextLoads() {
-		val dataBase = PGSimpleDataSource()
-		dataBase.databaseName = ""
-		dataBase.user = ""
-		dataBase.password = ""
-		dataBase.portNumbers = intArrayOf(1234)
+//		val dataBase = PGSimpleDataSource()
+//		dataBase.databaseName = ""
+//		dataBase.user = ""
+//		dataBase.password = ""
+//		dataBase.portNumbers = intArrayOf(1234)
 	}
+
 
 	@Test
 	fun cleanup() {
-		userRepo.deleteAll().block()
-		userRoleRepository.deleteAll().block()
+//		userRepo.deleteAll().block()
+//		userRoleRepository.deleteAll().block()
 	}
 
 	@Test
@@ -86,20 +94,6 @@ class CasciffoSpringBackendApplicationTests(
 		val users = userRepo.findAll().collectList().block()
 		println(users)
 	}
-//
-//	@Test
-//	fun testUserServiceFindAll() {
-//		val users = userService.getAllUsers()
-//
-//		println(users.collectList().block())
-//	}
-//
-//	@Test
-//	fun testUserServiceFindById() {
-//		val user = userService.getUser(1)
-//
-//		println(user.block())
-//	}
 
 	@Test
 	fun testInvestigationTeamRepositoryFindAll() {
@@ -123,7 +117,7 @@ class CasciffoSpringBackendApplicationTests(
 	fun testResearchRepositoryCreate() {
 		val research = Research(null, 1, 1, "eudra_ct", 10, 20, "cro",
 			LocalDate.now(), null, null, "industry", "protocol",
-			"promotor", "1 | 4", ResearchType.OBSERVATIONAL_STUDY)
+			"promotor", "1 | 4", ResearchType.CLINICAL_TRIAL)
 		runBlocking{
 			val res = researchRepository.save(research).block()
 			println(res)
@@ -148,7 +142,7 @@ class CasciffoSpringBackendApplicationTests(
 
 	@Test
 	fun testProposalRepositoryCreate() {
-		val proposal = ProposalModel(null, "sigla2", ResearchType.CLINICAL_TRIAL,
+		val proposal = ProposalModel(null, "sigla2", ResearchType.OBSERVATIONAL_STUDY,
 			LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,
 			1,
 			investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null))),
@@ -165,7 +159,7 @@ class CasciffoSpringBackendApplicationTests(
 	@Test
 	fun testProposalServiceCreate() {
 
-		val proposal = ProposalModel(null, "sigla2", ResearchType.CLINICAL_TRIAL,
+		val proposal = ProposalModel(null, "sigla2", ResearchType.OBSERVATIONAL_STUDY,
 			LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,1,
 			investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null))),
 			financialComponent = ProposalFinancialComponent(null, null, 1, 1, null,null),
@@ -186,7 +180,6 @@ class CasciffoSpringBackendApplicationTests(
 
 	@Test
 	fun testProposalServiceUpdate() {
-
 		runBlocking {
 			val proposalToBeSaved = ProposalModel(null, "antes de update", ResearchType.CLINICAL_TRIAL, stateId = 1,
 			pathologyId = 1, serviceTypeId = 1, principalInvestigatorId = 1, therapeuticAreaId = 1)
@@ -207,7 +200,18 @@ class CasciffoSpringBackendApplicationTests(
 	}
 
 	@Test
-	fun testFinancialComponentFindAll() {
+	fun testFinancialComponentRepositoryFindAll() {
+		runBlocking {
+			val res = proposalFinancialRepository.findByProposalId(1).awaitSingle()
+			assert(res.id != null)
+			assert(res.promoterId != null)
+			assert(res.partnerships == null)
+			assert(res.promoter == null)
+		}
+	}
+
+	@Test
+	fun testFinancialComponentServiceFindAll() {
 		runBlocking {
 			val res = proposalFinancialService.findComponentByProposalId(1)
 			assert(res.id != null)

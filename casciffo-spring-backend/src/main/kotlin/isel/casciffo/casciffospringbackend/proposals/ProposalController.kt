@@ -1,4 +1,5 @@
 package isel.casciffo.casciffospringbackend.proposals
+
 import isel.casciffo.casciffospringbackend.util.PROPOSAL_URI
 import isel.casciffo.casciffospringbackend.util.PROPOSAL_BASE_URL
 import kotlinx.coroutines.flow.Flow
@@ -6,14 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping(PROPOSAL_BASE_URL, headers = ["Accept=application/json"])
+@RequestMapping(headers = ["Accept=application/json"])
 class ProposalController(
     @Autowired val service: ProposalService
     ) {
 
     val mapper: ProposalMapper = ProposalMapper()
 
-    @GetMapping
+    @GetMapping(PROPOSAL_BASE_URL)
     suspend fun getAllProposals(@RequestParam(required = true) type: ResearchType): Flow<ProposalModel> {
         return service.getAllProposals(type)
     }
@@ -23,7 +24,7 @@ class ProposalController(
         return service.getProposalById(proposalId)
     }
 
-    @PostMapping
+    @PostMapping(PROPOSAL_BASE_URL)
     suspend fun createProposal(@RequestBody(required = true) proposal: ProposalDTO): ProposalModel {
         return service.create(mapper.proposalDTOtoProposalModel(proposal))
     }

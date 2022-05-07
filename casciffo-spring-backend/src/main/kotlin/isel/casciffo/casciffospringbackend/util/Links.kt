@@ -1,8 +1,5 @@
 package isel.casciffo.casciffospringbackend.util
 
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-
-val baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
 
 /************************************** ROLES ******************************************/
 /***************************************************************************************/
@@ -26,7 +23,7 @@ const val PROPOSAL_BASE_URL = "/proposals"
 
 const val PROPOSAL_URI = "${PROPOSAL_BASE_URL}/{proposalId}"
 
-val buildGetProposalUrl = { id: Int -> "${baseUrl}/${PROPOSAL_BASE_URL}/${id}"}
+val buildGetProposalUrl = { id: Int -> "/${PROPOSAL_BASE_URL}/${id}"}
 
 const val PROPOSAL_COMMENTS = "${PROPOSAL_URI}/comments"
 
@@ -40,7 +37,7 @@ const val RESEARCH_BASE_URL = "/research"
 
 const val RESEARCH_URI = "${RESEARCH_BASE_URL}/{researchId}"
 
-val buildGetResearchUrl = { id: Int -> "${baseUrl}/${RESEARCH_BASE_URL}/${id}"}
+val buildGetResearchUrl = { id: Int -> "/${RESEARCH_BASE_URL}/${id}"}
 
 const val POST_ADDENDA_URI = "${RESEARCH_URI}/addenda"
 const val GET_ADDENDA_URI = "${POST_ADDENDA_URI}/{addendaId}"

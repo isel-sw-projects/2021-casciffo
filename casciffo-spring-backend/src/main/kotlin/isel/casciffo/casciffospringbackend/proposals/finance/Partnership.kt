@@ -10,11 +10,11 @@ data class Partnership (
      @Column("partnership_id")
      var id: Int?,
      @Column("proposal_financial_id")
-     val financeComponentId: Int,
-     val iconUrl: String,
-     val siteUrl: String,
-     val spokesmanName: String,
-     val email: String,
-     val phoneContact: String,
-     val description: String
+     var financeComponentId: Int,
+     var iconUrl: String?,
+     var siteUrl: String?,
+     var spokesmanName: String?,
+     var email: String,
+     var phoneContact: String,
+     var description: String?
 )
