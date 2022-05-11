@@ -182,7 +182,7 @@ CREATE TABLE IF NOT EXISTS partnerships (
     partnership_id SERIAL PRIMARY KEY,
     proposal_financial_id INT,
     icon_url TEXT,
-    spokesman_name VARCHAR NOT NULL,
+    representative VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
     phone_contact VARCHAR,
     site_url TEXT,

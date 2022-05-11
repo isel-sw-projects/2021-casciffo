@@ -2,6 +2,8 @@ import {Badge, Button, Card, CloseButton, Col, Container, Form, InputGroup, List
 import React, {useState} from "react";
 import {Investigator} from "../../common/Types";
 import {TeamRoleTypes} from "../../model/TeamRoleTypes";
+import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
+import UserModel from "../../model/user/UserModel";
 
 type InvestigatorTeamState = {
     investigator: Investigator,
@@ -9,7 +11,8 @@ type InvestigatorTeamState = {
 }
 
 type ITC_Props = {
-    setTeam: (team: Array<Investigator>) => void
+    setTeam: (team: Array<Investigator>) => void,
+    searchInvestigators: (q: string) => Promise<UserModel[]>
 }
 
 export function InvestigatorTeamColumn(props: ITC_Props) {
@@ -46,16 +49,11 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
         })
     }
 
-    function handleInvestigatorInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const key = e.target.name as keyof Investigator
-        const value = e.target.value
+    function handleInvestigatorInputChange(investigator: Investigator) {
         setState(prevState => {
             return ({
                 ...prevState,
-                investigator: {
-                    ...prevState.investigator,
-                    [key]: value
-                }
+                investigator: investigator
             })
         })
     }
@@ -67,6 +65,18 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
         <br/>
         <Form.Group>
             <InputGroup>
+                <AsyncAutoCompleteSearch
+                    requestUsers={(q: string) => {
+                        return props.searchInvestigators(q)
+                    }}
+                    setInvestigator={i =>
+                        handleInvestigatorInputChange(
+                            {
+                                name: i.name,
+                                pid: i.id,
+                                teamRole: TeamRoleTypes.MEMBER
+                            })}
+                />
                 <Form.Control
                     aria-required
                     aria-describedby={"basic-addon2"}
@@ -80,7 +90,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                 <Button
                     variant="outline-secondary"
                     id="button-addon2"
-                    onClick={(() => addInvestigatorToTeam())} //FIXME LATER ON ADD PID
+                    onClick={(() => addInvestigatorToTeam())}
                 >
                     🕀
                 </Button>

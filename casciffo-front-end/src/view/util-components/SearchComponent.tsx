@@ -1,6 +1,7 @@
-import {Button, Container, Form, FormControl, Stack} from "react-bootstrap";
+import {Button, Container, Form, FormControl, InputGroup, Stack} from "react-bootstrap";
 import React, {useState} from "react";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
+import {FaSearch} from "react-icons/fa";
 
 type SearchProps = {
     handleSubmit: (query: string) => void
@@ -10,17 +11,26 @@ export function SearchComponent(props: SearchProps) {
 
     const [query, setQuery] = useState<string>("")
 
+    function handleSearch() {
+        props.handleSubmit(query)
+    }
+
+    function handlePressEnter(e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        (e.key === 'Enter' || e.key === 'NumpadEnter') && handleSearch()
+    }
 
     return (
-            <Form className="d-flex" onSubmit={() => props.handleSubmit(query)}>
+            <InputGroup>
                 <FormControl
                     type="search"
                     placeholder="Pesquisar"
-                    className="me-2"
                     value={query}
                     onChange={e => setQuery(e.target.value)}
+                    onKeyUp={handlePressEnter}
                 />
-                <Button variant="outline-success">Procurar</Button>
-            </Form>
+                <Button variant="outline-success" type={"button"} onClick={handleSearch}>
+                    <FaSearch className={"mb-1"}/>
+                </Button>
+            </InputGroup>
     )
 }

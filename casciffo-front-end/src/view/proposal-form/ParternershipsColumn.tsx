@@ -1,32 +1,33 @@
 import React, {useState} from "react";
 import {Badge, Button, Card, CloseButton, Col, Container, Form} from "react-bootstrap";
-import {Partnership} from "../../common/Types";
+import {PartnershipModel} from "../../model/PartnershipModel";
+
 
 type PsC_Props = {
-    partnerships: Array<Partnership>,
-    setPartnerships: (arr: Array<Partnership>) => void
+    partnerships: Array<PartnershipModel>,
+    setPartnerships: (arr: Array<PartnershipModel>) => void
 }
 
 type PartnershipsState = {
     isNewPartnership: boolean,
-    partnershipToAdd: Partnership
+    partnershipToAdd: PartnershipModel
 }
 
 export function PartnershipsColumn(props: PsC_Props) {
     const [state, setState] = useState<PartnershipsState>({
         isNewPartnership: false,
         partnershipToAdd: {
-            partnershipDescription: "",
-            partnershipContact: "",
-            partnershipEmail: "",
-            partnershipName: "",
-            partnershipRepresentative: "",
-            partnershipWebsite: ""
+            description: "",
+            phoneContact: "",
+            email: "",
+            name: "",
+            representative: "",
+            siteUrl: ""
         }
     })
 
     function handlePartnershipChange(event: React.ChangeEvent<HTMLInputElement>) {
-        let key = event.target.name as keyof Partnership
+        let key = event.target.name as keyof PartnershipModel
         let value = event.target.value
         console.log(state.partnershipToAdd)
         setState(prevState => {
@@ -46,18 +47,18 @@ export function PartnershipsColumn(props: PsC_Props) {
             return ({
                 isNewPartnership: !prevState.isNewPartnership,
                 partnershipToAdd: {
-                    partnershipDescription: "",
-                    partnershipContact: "",
-                    partnershipEmail: "",
-                    partnershipName: "",
-                    partnershipRepresentative: "",
-                    partnershipWebsite: ""
+                    description: "",
+                    phoneContact: "",
+                    email: "",
+                    name: "",
+                    representative: "",
+                    siteUrl: ""
                 }
             })
         })
     }
 
-    function removePartnership(partnership: Partnership) {
+    function removePartnership(partnership: PartnershipModel) {
         props.setPartnerships(props.partnerships.filter(p => p !== partnership))
     }
 
@@ -83,7 +84,7 @@ export function PartnershipsColumn(props: PsC_Props) {
                             <br/>
                             <Card className={"small"}>
                                 <Card.Header className="d-flex justify-content-between align-items-start">
-                                    <h6>{partnership.partnershipName}</h6>
+                                    <h6>{partnership.name}</h6>
                                     <Badge bg={"outline-danger"} pill>
                                         <CloseButton
                                             style={{fontSize: 9}}
@@ -97,8 +98,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                         <Form.Control
                                             readOnly
                                             type={"input"}
-                                            name={"partnershipRepresentative"}
-                                            value={partnership.partnershipRepresentative}
+                                            name={"representative"}
+                                            value={partnership.representative}
                                             onChange={handlePartnershipChange}
                                         />
                                     </Form.Group>
@@ -107,8 +108,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                         <Form.Control
                                             readOnly
                                             type={"email"}
-                                            name={"partnershipEmail"}
-                                            value={partnership.partnershipEmail}
+                                            name={"email"}
+                                            value={partnership.email}
                                             onChange={handlePartnershipChange}
                                         />
                                     </Form.Group>
@@ -117,22 +118,22 @@ export function PartnershipsColumn(props: PsC_Props) {
                                         <Form.Control
                                             readOnly
                                             type={"tel"}
-                                            name={"partnershipContact"}
-                                            value={partnership.partnershipContact}
+                                            name={"phoneContact"}
+                                            value={partnership.phoneContact}
                                             onChange={handlePartnershipChange}
                                         />
                                     </Form.Group>
                                     <Form.Group
                                         className={"mb-3"}
                                         controlId={"formBasicInput"}
-                                        hidden={partnership.partnershipWebsite.length === 0}
+                                        hidden={partnership.siteUrl?.length === 0}
                                     >
                                         <Form.Label>Website</Form.Label>
                                         <Form.Control
                                             readOnly
                                             type={"text"}
-                                            name={"partnershipWebsite"}
-                                            value={partnership.partnershipWebsite}
+                                            name={"siteUrl"}
+                                            value={partnership.siteUrl}
                                             onChange={handlePartnershipChange}
                                         />
                                     </Form.Group>
@@ -140,15 +141,15 @@ export function PartnershipsColumn(props: PsC_Props) {
                                     <Form.Group
                                         className={"mb-3"}
                                         controlId={"formBasicInput"}
-                                        hidden={partnership.partnershipDescription.length === 0}
+                                        hidden={partnership.description?.length === 0}
                                     >
                                         <Form.Label>Descrição</Form.Label>
                                         <Form.Control
                                             readOnly
                                             as={"textarea"}
                                             rows={2}
-                                            name={"partnershipDescription"}
-                                            value={partnership.partnershipDescription}
+                                            name={"description"}
+                                            value={partnership.description}
                                             onChange={handlePartnershipChange}
                                         />
                                     </Form.Group>
@@ -168,8 +169,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                     <Form.Control
                                         required
                                         type={"input"}
-                                        name={"partnershipName"}
-                                        value={state.partnershipToAdd.partnershipName}
+                                        name={"name"}
+                                        value={state.partnershipToAdd.name}
                                         onChange={handlePartnershipChange}
                                     />
                                 </Form.Group>
@@ -178,8 +179,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                     <Form.Control
                                         required
                                         type={"input"}
-                                        name={"partnershipRepresentative"}
-                                        value={state.partnershipToAdd.partnershipRepresentative}
+                                        name={"representative"}
+                                        value={state.partnershipToAdd.representative}
                                         onChange={handlePartnershipChange}
                                     />
                                 </Form.Group>
@@ -188,8 +189,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                     <Form.Control
                                         required
                                         type={"email"}
-                                        name={"partnershipEmail"}
-                                        value={state.partnershipToAdd.partnershipEmail}
+                                        name={"email"}
+                                        value={state.partnershipToAdd.email}
                                         onChange={handlePartnershipChange}
                                     />
                                 </Form.Group>
@@ -198,8 +199,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                     <Form.Control
                                         required
                                         type={"tel"}
-                                        name={"partnershipContact"}
-                                        value={state.partnershipToAdd.partnershipContact}
+                                        name={"phoneContact"}
+                                        value={state.partnershipToAdd.phoneContact}
                                         onChange={handlePartnershipChange}
                                     />
                                 </Form.Group>
@@ -207,8 +208,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                     <Form.Label>Website</Form.Label>
                                     <Form.Control
                                         type={"text"}
-                                        name={"partnershipWebsite"}
-                                        value={state.partnershipToAdd.partnershipWebsite}
+                                        name={"siteUrl"}
+                                        value={state.partnershipToAdd.siteUrl}
                                         onChange={handlePartnershipChange}
                                     />
                                 </Form.Group>
@@ -218,8 +219,8 @@ export function PartnershipsColumn(props: PsC_Props) {
                                     <Form.Control
                                         as={"textarea"}
                                         rows={2}
-                                        name={"partnershipDescription"}
-                                        value={state.partnershipToAdd.partnershipDescription}
+                                        name={"description"}
+                                        value={state.partnershipToAdd.description}
                                         onChange={handlePartnershipChange}
                                     />
                                 </Form.Group>

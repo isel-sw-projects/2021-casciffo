@@ -2,6 +2,8 @@ import {Track} from "../model/Track";
 import {PathologyModel} from "../model/constants/PathologyModel";
 import {ServiceTypeModel} from "../model/constants/ServiceTypeModel";
 import {TherapeuticAreaModel} from "../model/constants/TherapeuticAreaModel";
+import {PromoterModel} from "../model/proposal/finance/PromoterModel";
+import {PartnershipModel} from "../model/PartnershipModel";
 
 type Page = {
     pageNum: number,
@@ -33,25 +35,15 @@ type Promoter = {
 
 type ProposalForm = {
     sigla: string,
-    serviceId: number,
+    serviceTypeId: number,
     therapeuticAreaId: number,
     pathologyId: number,
     pInvestigator: Investigator,
     researchType: string,
-    promoter: Promoter,
+    promoter: PromoterModel,
     team: Array<Investigator>,
-    partnerships: Array<Partnership>,
+    partnerships: Array<PartnershipModel>,
     file?: File
-}
-
-interface Partnership {
-    id?: number,
-    partnershipName: string,
-    partnershipWebsite: string,
-    partnershipRepresentative: string,
-    partnershipContact: string,
-    partnershipEmail: string,
-    partnershipDescription: string
 }
 
 type Constants = {
@@ -65,4 +57,4 @@ type Filter = {
     id: string
 }
 
-export type {Page, APIResponse, ResearchType, Investigator, Partnership, Constants, Filter, ProposalForm, Promoter}
+export type {Page, APIResponse, ResearchType, Investigator, Constants, Filter, ProposalForm, Promoter}

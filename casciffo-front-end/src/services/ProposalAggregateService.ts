@@ -4,17 +4,24 @@ import {TherapeuticAreaService} from "./TherapeuticAreaService";
 import ProposalService from "./ProposalService";
 import {Constants} from "../common/Types";
 import ApiUrls from "../common/Links";
+import {ProposalModel} from "../model/proposal/ProposalModel";
+import {UserService} from "./UserService";
+import UserModel from "../model/user/UserModel";
 
 export default class ProposalAggregateService {
-    constructor() {
-        const pathologiesService = new PathologyService()
-        const serviceTypesService = new ServiceTypeService()
-        const therapeuticAreaService = new TherapeuticAreaService()
-        const proposalService = new ProposalService()
+    proposalService = new ProposalService()
+    userService = new UserService()
+
+    fetchInvestigators(name: string) : Promise<UserModel[]> {
+        return fetch(ApiUrls.usersByRoleAndNameUrl(name,["UIC", "SUPERUSER"])).then(rsp => rsp.json())
     }
 
     fetchConstants(): Promise<Constants> {
         return fetch(ApiUrls.constantsUrl).then(rsp => rsp.json())
+    }
+
+    saveProposal(proposal: ProposalModel) {
+        return this.proposalService.save(proposal).then(rsp => rsp.json())
     }
 
     fetchConstantsMock(): Promise<Constants> {

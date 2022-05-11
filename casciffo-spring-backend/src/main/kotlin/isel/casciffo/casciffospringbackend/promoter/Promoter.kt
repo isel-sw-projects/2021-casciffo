@@ -12,5 +12,6 @@ data class Promoter (
 
     val name: String,
     val email: String,
+    @Column(value = "promoter_type")
     val promoterType: PromoterType
 )

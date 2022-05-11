@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import reactor.kotlin.core.publisher.toFlux
 
 class ProposalMapper {
 
@@ -13,11 +12,13 @@ class ProposalMapper {
         proposalModel.serviceTypeId = proposalDTO.serviceTypeId
         proposalModel.therapeuticAreaId = proposalDTO.therapeuticAreaId
         proposalModel.stateId = proposalDTO.stateId
+        proposalModel.principalInvestigatorId = proposalDTO.principalInvestigatorId
         proposalModel.state = proposalDTO.state
         proposalModel.pathology = proposalDTO.pathology
         proposalModel.serviceType = proposalDTO.serviceType
         proposalModel.therapeuticArea = proposalDTO.therapeuticArea
-        proposalModel.investigationTeam = proposalDTO.investigationTeam!!.toFlux()
+        proposalModel.investigationTeam = proposalDTO.investigationTeam
+        proposalModel.financialComponent = proposalDTO.financialComponent
         return proposalModel
     }
 

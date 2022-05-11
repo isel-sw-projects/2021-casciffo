@@ -5,6 +5,7 @@ import {ResearchTypes} from "../model/ResearchTypes";
 import {PromoterTypes} from "../model/PromoterTypes";
 
 class ProposalService {
+
     fetchByType(type: string, sort: string): Promise<Array<ProposalModel>> {
         return fetch(`${ApiUrls.proposalsUrl}/?type=${type}&sort=${sort}`).then(rsp => rsp.json())
     }
@@ -17,7 +18,7 @@ class ProposalService {
             stateId: 0,
             pathologyId: 0,
             principalInvestigatorId: 0,
-            principalInvestigator: {name:"Dr. Nuno"},
+            principalInvestigator: {name:"Dr. Nuno", email:"outro email bue fixe"},
             serviceTypeId: 0,
             therapeuticAreaId: 0,
             type: ResearchTypes.CLINICAL_TRIAL.id,
@@ -28,7 +29,7 @@ class ProposalService {
             dateCreated: [],
             financialComponent: {
                 promoter: {id: "1", name:"Merck KGaA", email:"abc@promotor1.com", promoterType: PromoterTypes.COMMERCIAL.id},
-                partnerships: [{partnershipName:"abc", partnershipDescription: "abc", partnershipContact: "abc", partnershipWebsite: "abc", partnershipRepresentative: "abc", partnershipEmail: "abc"}]
+                partnerships: [{name:"abc", description: "abc", phoneContact: "abc", siteUrl: "abc", representative: "abc", email: "abc"}]
             }
         }
         const proposal2: ProposalModel = {
@@ -36,7 +37,7 @@ class ProposalService {
             stateId: 0,
             pathologyId: 0,
             principalInvestigatorId: 0,
-            principalInvestigator: {name:"Dr. Hermilindo"},
+            principalInvestigator: {name:"Dr. Hermilindo", email:"1email bue fixe"},
             serviceTypeId: 0,
             sigla: "Firefly",
             therapeuticAreaId: 0,
@@ -56,6 +57,18 @@ class ProposalService {
 
     fetchById(id: string | undefined) : Promise<ProposalModel> {
         return fetch(ApiUrls.buildDetailProposalUrl(`${id}`)).then(rsp => rsp.json())
+    }
+
+    save(proposal: ProposalModel) {
+        const opt : RequestInit = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(proposal)
+        }
+        return fetch(ApiUrls.proposalsUrl, opt)
     }
 }
 

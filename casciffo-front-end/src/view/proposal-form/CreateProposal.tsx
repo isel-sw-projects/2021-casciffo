@@ -1,44 +1,46 @@
 import React, {useCallback, useEffect, useState} from "react";
 import './ProposalForm.css'
 import {
-    Button,
-    Col,
-    Container,
-    Form,
-    Row, Stack
+    Row
 } from "react-bootstrap";
 import {ResearchTypes} from "../../model/ResearchTypes";
-import {PromoterTypes} from "../../model/PromoterTypes";
 import {InvestigatorTeamColumn} from "./InvestigationTeamColumn";
-import {Constants, Investigator, Partnership, Promoter, ProposalForm} from "../../common/Types";
+import {Constants, Investigator, Promoter, ProposalForm} from "../../common/Types";
 import {PartnershipsColumn} from "./ParternershipsColumn";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import {TeamRoleTypes} from "../../model/TeamRoleTypes";
 import {ProposalFormColumn} from "./ProposalFormColumn";
+import {ProposalModel} from "../../model/proposal/ProposalModel";
+import {PartnershipModel} from "../../model/PartnershipModel";
+import UserModel from "../../model/user/UserModel";
+import {TeamInvestigatorModel} from "../../model/TeamInvestigatorModel";
 
 type CP_Props = {
     service: ProposalAggregateService
 }
 
-type EventValue = string | Promoter | Array<Investigator | Partnership> | File | Investigator
+type EventValue = string | Promoter | Array<Investigator | PartnershipModel> | File | Investigator
 type ProposalFormKey = keyof ProposalForm
+
+
 
 export function CreateProposal(props : CP_Props) {
 
     const [hasPartnerships, setHasPartnerships] = useState(false)
+    const [listOfInvestigators, setListOfInvestigators] = useState<Array<UserModel>>([])
 
     const [proposalForm, setProposalForm] = useState<ProposalForm>({
         pInvestigator: {pid: "", name: "", teamRole: TeamRoleTypes.PRINCIPAL},
         partnerships: [],
         pathologyId: -1,
         researchType: "",
-        serviceId: -1,
+        serviceTypeId: -1,
         sigla: "",
         team: [],
         therapeuticAreaId: -1,
         promoter: {
-            promoterEmail: "",
-            promoterName: "",
+            email: "",
+            name: "",
             promoterType: ""
         },
         file: undefined
@@ -55,13 +57,39 @@ export function CreateProposal(props : CP_Props) {
         })
     }
 
-    function handleFormSubmit(formData: ProposalForm) {
-            //add the principal investigator to the team
-            proposalForm.team.push(proposalForm.pInvestigator)
+    function proposalFormToModel(proposalForm: ProposalForm) {
+        //proposalForm.team.push(proposalForm.pInvestigator)
+        const model : ProposalModel = {
+            pathologyId: proposalForm.pathologyId,
+            principalInvestigatorId: parseInt(proposalForm.pInvestigator.pid),
+            serviceTypeId: proposalForm.serviceTypeId,
+            sigla: proposalForm.sigla,
+            therapeuticAreaId: proposalForm.therapeuticAreaId,
+            type: proposalForm.researchType,
+            investigationTeam: proposalForm.team.map(i => ({
+                memberRole: i.teamRole,
+                memberId: parseInt(i.pid),
+            }))
+        }
+        console.log(proposalForm.team)
+        console.log(model.investigationTeam)
+        if(proposalForm.researchType === ResearchTypes.CLINICAL_TRIAL.id) {
+            model.financialComponent = {
+                file: undefined,
+                id: 0,
+                partnerships: proposalForm.partnerships,
+                promoter: proposalForm.promoter,
+            }
+        }
+
+        return model;
+    }
+
+    function handleFormSubmit() {
             console.log(proposalForm);
             console.log("data should have printed");
-            alert("Proposta criada")
-            //call props.service.saveProposal(proposalForm)
+            props.service.saveProposal(proposalFormToModel(proposalForm))
+                .then(r => alert(r))
     }
 
     return (
@@ -75,7 +103,10 @@ export function CreateProposal(props : CP_Props) {
                     setHasPartnerships={setHasPartnerships}
                     setFormData={setProposalForm}
                 />
-                <InvestigatorTeamColumn setTeam={(team => setProposalForm(updateState("team", team)))}/>
+                <InvestigatorTeamColumn
+                    setTeam={(team => setProposalForm(updateState("team", team)))}
+                    searchInvestigators={props.service.fetchInvestigators}
+                />
                 {hasPartnerships ?
                     <PartnershipsColumn
                         setPartnerships={(partnerships =>

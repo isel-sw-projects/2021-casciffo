@@ -25,8 +25,8 @@ class ProposalController(
     }
 
     @PostMapping(PROPOSAL_BASE_URL)
-    suspend fun createProposal(@RequestBody(required = true) proposal: ProposalDTO): ProposalModel {
-        return service.create(mapper.proposalDTOtoProposalModel(proposal))
+    suspend fun createProposal(@RequestBody(required = true) proposal: ProposalModel): ProposalModel {
+        return service.create(proposal)
     }
 
     @PatchMapping(PROPOSAL_URI)

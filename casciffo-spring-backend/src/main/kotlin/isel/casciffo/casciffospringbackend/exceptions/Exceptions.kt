@@ -24,6 +24,8 @@ class CannotUpdateCancelledProposalException : Exception()
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Proposal Id requested doesn't exist.")
 class ProposalNotFoundException: Exception()
 
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "State id doesn't exist.")
+class InvalidStateException: Exception()
 
 @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR, reason = "There was an error in Database.")
-class DataBaseException() : Exception()
+class DataBaseException: Exception()

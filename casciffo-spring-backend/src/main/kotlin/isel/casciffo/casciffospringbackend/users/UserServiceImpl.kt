@@ -2,7 +2,10 @@ package isel.casciffo.casciffospringbackend.users
 
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
 import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
+import isel.casciffo.casciffospringbackend.roles.UserRoleService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -16,7 +19,7 @@ import java.util.*
 
 @Service
 class UserServiceImpl(@Autowired val userRepository: UserRepository,
-                      @Autowired val roleRepository: UserRoleRepository) : UserService {
+                      @Autowired val roleService: UserRoleService) : UserService {
 
     override suspend fun getAllUsers(): Flow<User?> {
         return userRepository.findAll().asFlow().onEach(this::loadRelations)
@@ -41,8 +44,18 @@ class UserServiceImpl(@Autowired val userRepository: UserRepository,
         return user.password == password
     }
 
+    override suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<User?> {
+        return userRepository.findAllByRoleNameIsIn(roles).asFlow()
+    }
+
+    override suspend fun searchUsers(name: String, roles: List<String>): Flow<User?> {
+        //% is added to make query (SELECT ... WHERE name LIKE abc% AND ...)
+        //adding % to the query itself will break the statement and throw runtime db exception
+        return userRepository.findAllByRoleNameIsInAndNameLike(name.plus('%'), roles).asFlow()
+    }
+
     private suspend fun loadRelations(user: User): User {
-        user.role = roleRepository.findById(user.roleId!!).awaitFirstOrNull()
+        user.role = roleService.findById(user.roleId!!)
         return user
     }
 }

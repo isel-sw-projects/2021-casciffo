@@ -2,7 +2,10 @@ const BASE_URL = `http://localhost:8080/api/casciffo`
 
 /************************** USER **************************/
 const USERS_URL = `${BASE_URL}/users`
-
+const USERS_BY_ROLE = (roles: string[]) => `${USERS_URL}/search?roles=${roles}`
+const USERS_BY_ROLE_AND_NAME =
+    (name: string, roles: string[]) =>
+        `${USERS_BY_ROLE(roles)}&name=${name}`
 
 /************************** ROLE **************************/
 const ROLES_URL = `${BASE_URL}/roles`
@@ -37,12 +40,14 @@ const ApiUrls = {
     researchUrl: RESEARCH_URL,
     buildDetailResearchUrl: DETAIL_RESEARCH_URL,
     usersUrl: USERS_URL,
+    usersByRoleUrl: USERS_BY_ROLE,
     rolesUrl: ROLES_URL,
     statesUrl: STATES_URL,
     constantsUrl: CONSTANTS_URL,
     serviceTypesUrl: SERVICE_TYPES_URL,
     pathologiesUrl: PATHOLOGIES_URL,
-    therapeuticAreasUrl: THERAPEUTIC_AREAS_URL
+    therapeuticAreasUrl: THERAPEUTIC_AREAS_URL,
+    usersByRoleAndNameUrl: USERS_BY_ROLE_AND_NAME
 }
 
 export default ApiUrls

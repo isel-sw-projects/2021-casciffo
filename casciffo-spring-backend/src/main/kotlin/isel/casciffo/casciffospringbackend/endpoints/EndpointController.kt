@@ -14,6 +14,6 @@ class EndpointController(
 
     @GetMapping
     suspend fun getEndpoints(): Any? {
-        return handlerMapping.handlerMethods.keys.stream().map { it.patternsCondition }
+        return handlerMapping.handlerMethods.keys.stream().map { it.patternsCondition.patterns }
     }
 }

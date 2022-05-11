@@ -39,7 +39,7 @@ class ResearchRepositoryIT(
         val proposal = ProposalModel(null, "sigla2", ResearchType.CLINICAL_TRIAL,
             LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,
             1,
-            investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(null,0, InvestigatorRole.PRINCIPAL,1,null))),
+            investigationTeam = listOf(InvestigationTeam(null,0, InvestigatorRole.PRINCIPAL,1,null)),
             financialComponent = ProposalFinancialComponent(null, null, 1, 1, null, null)
         )
         val res = proposalRepository.save(proposal).block()

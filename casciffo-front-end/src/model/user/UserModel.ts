@@ -1,6 +1,7 @@
 interface UserModel {
-    id?: string
+    userId?: string
     name: string,
+    email: string,
     roleId?: number,
     role?: UserModel
 }

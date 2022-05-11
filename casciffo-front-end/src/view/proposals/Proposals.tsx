@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
+import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import ProposalService from "../../services/ProposalService";
 import {SearchComponent} from "../util-components/SearchComponent";
 import {PaginationComponent} from "../util-components/PaginationComponent";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {ResearchTypes} from "../../model/ResearchTypes";
 import {Util} from "../../common/Util";
+import {Link} from "react-router-dom";
+import {CreateProposal} from "../proposal-form/CreateProposal";
 
 type Proposals_Props = {
     service: ProposalService
@@ -199,7 +201,10 @@ export function Proposals(props: Proposals_Props) {
                 </Col>
                 <Col/>
                 <Col/>
-                <Col/>
+                <Col>
+                    <br/>
+                    <Link to={`criar`} className={"btn btn-primary float-end"}>Criar Proposta</Link>
+                </Col>
             </Row>
             </Container>
 

@@ -5,6 +5,7 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ProposalFinancialServiceImpl(
@@ -12,17 +13,21 @@ class ProposalFinancialServiceImpl(
     @Autowired val promoterRepository: PromoterRepository,
     @Autowired val partnershipRepository: PartnershipRepository,
 ) : ProposalFinancialService {
+
+    @Transactional
     override suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): ProposalFinancialComponent {
+        pfc.id = null
         if(pfc.proposalId == null) throw IllegalArgumentException("Proposal Id must not be null here!!!")
         if(pfc.promoter == null && pfc.promoterId == null) throw IllegalArgumentException("Promoter must not be null here!!!")
-        if(pfc.promoterId != null) {
-            pfc.promoter = promoterRepository.findById(pfc.promoterId!!).awaitSingle()
-        } else {
-            pfc.promoter =  promoterRepository.save(pfc.promoter!!).awaitFirstOrNull()
+        if(pfc.promoterId == null) {
+            pfc.promoter =  promoterRepository.save(pfc.promoter!!).awaitSingle()
+            pfc.promoterId = pfc.promoter!!.id!!
         }
-        if(pfc.partnerships != null)
-            pfc.partnerships = partnershipRepository.findByFinanceComponentId(pfc.id!!).collectList().awaitSingle()
         val createdPfc = proposalFinancialRepository.save(pfc).awaitSingle()
+        if(pfc.partnerships != null) {
+            pfc.partnerships!!.forEach { it.financeComponentId = createdPfc.id!! }
+            pfc.partnerships = partnershipRepository.saveAll(pfc.partnerships!!).collectList().awaitSingle()
+        }
         pfc.id = createdPfc.id
         return pfc
     }

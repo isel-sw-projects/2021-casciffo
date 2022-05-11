@@ -2,11 +2,14 @@ import {Button, Col, Container, Form, Stack} from "react-bootstrap";
 import {ResearchTypes} from "../../model/ResearchTypes";
 import {PromoterTypes} from "../../model/PromoterTypes";
 import React, {useEffect, useState} from "react";
-import {Constants, Investigator, Partnership, Promoter, ProposalForm} from "../../common/Types";
+import {Constants, Investigator, ProposalForm} from "../../common/Types";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
+import {PromoterModel} from "../../model/proposal/finance/PromoterModel";
+import {PartnershipModel} from "../../model/PartnershipModel";
+import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
 
 type PFC_Props = {
-    onSubmit: (formData: ProposalForm) => void,
+    onSubmit: () => void,
     service: ProposalAggregateService,
     setHasPartnerships: (state: boolean) => void,
     hasPartnerships: boolean,
@@ -14,7 +17,7 @@ type PFC_Props = {
     formData: ProposalForm
 }
 
-type EventValue = string | Promoter | Array<Investigator | Partnership> | File | Investigator
+type EventValue = string | PromoterModel | Array<Investigator | PartnershipModel> | File | Investigator
 type ReactGeneralInputValue = React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
 type ProposalFormKey = keyof ProposalForm
 
@@ -51,20 +54,20 @@ export function ProposalFormColumn(props: PFC_Props) {
     }
 
     function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault(); //stop redirect
         const form = event.currentTarget;
         //if a proposal is marked with having partnerships, it must have a least 1 partnership
         const isPartnershipsValid = props.formData.partnerships.length !== 0 || !props.hasPartnerships
         if (!form.checkValidity() && isPartnershipsValid) {
-            event.preventDefault();
             event.stopPropagation();
             return
         }
-        props.onSubmit(props.formData)
+        props.onSubmit()
     }
 
     function handlePromoterChange(event: React.ChangeEvent<HTMLInputElement>) {
         const value = event.target.value
-        const key = event.target.name as keyof Promoter
+        const key = event.target.name as keyof PromoterModel
         const p = {
             ...props.formData.promoter,
             [key]: value
@@ -113,18 +116,27 @@ export function ProposalFormColumn(props: PFC_Props) {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicInput">
                         <Form.Label>Identificador do Investigador</Form.Label>
-                        <Form.Control
-                            key={"investigator-name-id"}
-                            required
-                            type={"text"}
-                            // todo add validation with regular expression
-                            name={"pInvestigator.name"}
-                            value={props.formData.pInvestigator.name}
-                            onChange={(event =>
-                                props.setFormData(
-                                    updateState("pInvestigator",
-                                        {...props.formData.pInvestigator, name: event.target.value}
-                                    )))}
+                        {/*<Form.Control*/}
+                        {/*    key={"investigator-name-id"}*/}
+                        {/*    required*/}
+                        {/*    type={"text"}*/}
+                        {/*    // todo add validation with regular expression*/}
+                        {/*    name={"pInvestigator.name"}*/}
+                        {/*    value={props.formData.pInvestigator.name}*/}
+                        {/*    onChange={(event =>*/}
+                        {/*        props.setFormData(*/}
+                        {/*            updateState("pInvestigator",*/}
+                        {/*                {...props.formData.pInvestigator, name: event.target.value}*/}
+                        {/*            )))}*/}
+                        {/*/>*/}
+                        <AsyncAutoCompleteSearch
+                            requestUsers={(q: string) => {
+                                return props.service.fetchInvestigators(q)
+                            }}
+                            setInvestigator={i => props.setFormData(
+                                updateState("pInvestigator",
+                                    {...props.formData.pInvestigator, name: i.name, pid: i.id}
+                                ))}
                         />
                     </Form.Group>
                     <Form.Group key={"patologia-bit"}>
@@ -203,8 +215,8 @@ export function ProposalFormColumn(props: PFC_Props) {
                                     key={"promoter-name"}
                                     required={props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id}
                                     type={"text"}
-                                    name={"promoterName"}
-                                    value={props.formData.promoter.promoterName}
+                                    name={"name"}
+                                    value={props.formData.promoter.name}
                                     onChange={handlePromoterChange}
                                 />
                             </Form.Group>
@@ -215,8 +227,8 @@ export function ProposalFormColumn(props: PFC_Props) {
                                     key={"promoter-email"}
                                     required={props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id}
                                     type={"email"}
-                                    name={"promoterEmail"}
-                                    value={props.formData.promoter.promoterEmail}
+                                    name={"email"}
+                                    value={props.formData.promoter.email}
                                     onChange={handlePromoterChange}
                                 />
                             </Form.Group>
@@ -245,7 +257,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                                     required={props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id}
                                     type={"file"}
                                     name={"file"}
-                                    // TODO file save in POSTGRES
+                                    // TODO file save
                                     onInput={handleFileInput}
                                 />
                             </Form.Group>

@@ -77,7 +77,7 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var comments: Flux<ProposalComments>? = null,
+    var comments: List<ProposalComments>? = null,
 
     @Transient
     @Value("null")
@@ -85,13 +85,13 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var stateTransitions: Flux<StateTransition>? = null,
+    var stateTransitions: List<StateTransition>? = null,
 
     @Transient
     @Value("null")
-    var timelineEvents: Flux<TimelineEvent>? = null,
+    var timelineEvents: List<TimelineEvent>? = null,
 
     @Transient
     @Value("null")
-    var investigationTeam: Flux<InvestigationTeam>? = null
+    var investigationTeam: List<InvestigationTeam>? = null
 )

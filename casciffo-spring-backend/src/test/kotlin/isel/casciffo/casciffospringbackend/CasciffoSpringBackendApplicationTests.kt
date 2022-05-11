@@ -23,22 +23,16 @@ import isel.casciffo.casciffospringbackend.users.User
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import isel.casciffo.casciffospringbackend.users.UserService
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.core.io.ClassPathResource
-import org.springframework.data.util.StreamUtils
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.util.FileCopyUtils.copyToString
-import org.springframework.util.StreamUtils.copyToString
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.nio.charset.Charset
+import reactor.test.StepVerifier
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -61,19 +55,47 @@ class CasciffoSpringBackendApplicationTests(
 ) {
 
 	@Test
-	fun contextLoads() {
-//		val dataBase = PGSimpleDataSource()
-//		dataBase.databaseName = ""
-//		dataBase.user = ""
-//		dataBase.password = ""
-//		dataBase.portNumbers = intArrayOf(1234)
-	}
-
-
-	@Test
 	fun cleanup() {
 //		userRepo.deleteAll().block()
 //		userRoleRepository.deleteAll().block()
+	}
+
+	@Test
+	fun whenRolesAndUsersCreated_thenSearchUsersByRoleNames() {
+		val userRole = UserRole(null, roleName = "finance")
+		val userRole2 = UserRole(null, roleName = "management")
+		val resRole: Flux<UserRole> = userRoleRepository.saveAll(listOf(userRole, userRole2))
+
+		StepVerifier
+			.create(resRole)
+			.expectSubscription()
+			.thenAwait()
+			.expectNextCount(2)
+			.expectComplete()
+			.verifyThenAssertThat()
+
+		val roles = resRole.collectList().block()
+		assert(roles != null)
+		val user = User(null, "hermelindo", "hermelindo2@gmail.com", "123",
+			roleId = roles!![0].roleId, role = null)
+		val user2 = User(null, "eric brown", "eric.brown@gmail.com", "password",
+			roleId = roles[1].roleId, role = null)
+		val usersFlux: Flux<User> = userRepo.saveAll(listOf(user, user2))
+
+		StepVerifier
+			.create(usersFlux)
+			.expectSubscription()
+			.thenAwait()
+			.expectNextCount(2)
+			.expectComplete()
+			.verifyThenAssertThat()
+		runBlocking {
+			val test = userService.getAllUsersByRoleNames(roles.map { it.roleName }).toList()
+			assert(test.isNotEmpty())
+			assert(test.count() == 2)
+			userRepo.deleteAllById(test.map { it!!.roleId })
+			userRoleRepository.deleteAllById(roles.map { it.roleId })
+		}
 	}
 
 	@Test
@@ -83,7 +105,8 @@ class CasciffoSpringBackendApplicationTests(
 		val resUserRole = resRole.block()
 		println(resUserRole)
 
-		val user = User(null, "hermelindo", "hermelindo@gmail.com", "123", roleId = resUserRole!!.roleId, role = null)
+		val user = User(null, "hermelindo", "hermelindo@gmail.com", "123",
+			roleId = resUserRole!!.roleId, role = null)
 		val res: Mono<User> = userRepo.save(user)
 		val resUser = res.block()
 		println(resUser)
@@ -143,10 +166,8 @@ class CasciffoSpringBackendApplicationTests(
 	@Test
 	fun testProposalRepositoryCreate() {
 		val proposal = ProposalModel(null, "sigla2", ResearchType.OBSERVATIONAL_STUDY,
-			LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,
-			1,
-			investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null))),
-			financialComponent = ProposalFinancialComponent(null, null, 1, 1, null, null)
+			LocalDateTime.now(), LocalDateTime.now(),
+			1, 1,1,1, 1
 		)
 		runBlocking {
 			val res = proposalRepository.save(proposal).block()
@@ -161,16 +182,16 @@ class CasciffoSpringBackendApplicationTests(
 
 		val proposal = ProposalModel(null, "sigla2", ResearchType.OBSERVATIONAL_STUDY,
 			LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,1,
-			investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null))),
+			investigationTeam = listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null)),
 			financialComponent = ProposalFinancialComponent(null, null, 1, 1, null,null),
 			state = null, stateTransitions = null, serviceType = null, therapeuticArea = null, pathology = null, principalInvestigator = null,
 			comments = null, timelineEvents = null)
 		runBlocking {
 			val res = proposalService.create(proposal)
 			assert(res.investigationTeam != null)
-			val investigationTeam = res.investigationTeam!!.collectList().awaitSingle()
+			val investigationTeam = res.investigationTeam!!
 
-			assert(!investigationTeam.isNullOrEmpty())
+			assert(investigationTeam.isNotEmpty())
 			investigationTeam.forEach {
 				assert(it.id != null)
 			}

@@ -11,4 +11,6 @@ interface UserService {
     suspend fun getUser(id: Int) : User?
     suspend fun createUser(user: User) : User?
     suspend fun verifyCredentials(userId: Int, password: String): Boolean
+    suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<User?>
+    suspend fun searchUsers(name: String, roles: List<String>): Flow<User?>
 }

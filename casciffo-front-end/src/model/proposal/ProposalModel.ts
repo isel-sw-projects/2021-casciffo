@@ -3,7 +3,9 @@ import {ServiceTypeModel} from "../constants/ServiceTypeModel";
 import {TherapeuticAreaModel} from "../constants/TherapeuticAreaModel";
 import {PathologyModel} from "../constants/PathologyModel";
 import UserModel from "../user/UserModel";
-import {ProposalFinance} from "./finance/ProposalFinance";
+import {ProposalFinanceModel} from "./finance/ProposalFinanceModel";
+import {Investigator} from "../../common/Types";
+import {TeamInvestigatorModel} from "../TeamInvestigatorModel";
 
 export interface ProposalModel {
     id?: number,
@@ -22,5 +24,6 @@ export interface ProposalModel {
     //date comes formatted as [year, month, day, hour, min, sec, milis]
     dateCreated?: Array<number>,
     dateModified?: Array<number>,
-    financialComponent?: ProposalFinance
+    financialComponent?: ProposalFinanceModel,
+    investigationTeam?: Array<TeamInvestigatorModel>
 }

@@ -13,6 +13,7 @@ import isel.casciffo.casciffospringbackend.research.Research
 import isel.casciffo.casciffospringbackend.research.ResearchService
 import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
+import isel.casciffo.casciffospringbackend.states.StateService
 import isel.casciffo.casciffospringbackend.states.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
@@ -36,7 +37,7 @@ class ProposalServiceImpl(
     @Autowired val investigationTeamRepository: InvestigationTeamRepository,
     @Autowired val userRepository: UserRepository,
     @Autowired val roleRepository: UserRoleRepository,
-    @Autowired val stateRepository: StateRepository,
+    @Autowired val stateService: StateService,
     @Autowired val stateTransitionService: StateTransitionService,
     @Autowired val commentsRepository: ProposalCommentsRepository,
     @Autowired val proposalFinancialService: ProposalFinancialService,
@@ -57,26 +58,47 @@ class ProposalServiceImpl(
 
     @Transactional
     override suspend fun create(proposal: ProposalModel): ProposalModel {
+        setProposalStateToDefault(proposal)
+
         val createdProposal = proposalRepository.save(proposal).awaitSingle()
 
-        val investigationTeamFlux =
-            proposal.investigationTeam!!
-                .doOnEach {
-                    it.get()?.proposalId = createdProposal.id!!
-                }
-
-        createdProposal.investigationTeam =
-            investigationTeamRepository
-                .saveAll(investigationTeamFlux)
+        createInvestigationTeam(proposal, createdProposal)
 
         val hasFinancialComponent = proposal.type == ResearchType.CLINICAL_TRIAL
         if(hasFinancialComponent) {
-            proposal.financialComponent!!.proposalId = createdProposal.id
-            createdProposal.financialComponent =
-                proposalFinancialService
-                    .createProposalFinanceComponent(proposal.financialComponent!!)
+            createFinancialComponent(proposal, createdProposal)
         }
         return createdProposal
+    }
+
+    private suspend fun setProposalStateToDefault(proposal: ProposalModel) {
+        proposal.stateId = stateService.findByName(States.SUBMETIDO.name).id
+    }
+
+    private suspend fun createFinancialComponent(
+        proposal: ProposalModel,
+        createdProposal: ProposalModel
+    ) {
+        proposal.financialComponent!!.proposalId = createdProposal.id
+        createdProposal.financialComponent =
+            proposalFinancialService
+                .createProposalFinanceComponent(proposal.financialComponent!!)
+    }
+
+    private suspend fun createInvestigationTeam(
+        proposal: ProposalModel,
+        createdProposal: ProposalModel
+    ) {
+        proposal.investigationTeam!!
+            .forEach {
+                it.proposalId = createdProposal.id!!
+            }
+
+        createdProposal.investigationTeam =
+            investigationTeamRepository
+                .saveAll(proposal.investigationTeam!!)
+                .collectList()
+                .awaitSingle()
     }
 
     @Transactional
@@ -95,23 +117,21 @@ class ProposalServiceImpl(
         return proposal
     }
 
-    //todo REPLACE STATE REPOSITORY WITH STATE SERVICE
     private suspend fun handleStateTransition(
         proposal: ProposalModel,
         existingProposal: ProposalModel
     ) {
-        val nextState  = stateRepository.findById(proposal.stateId!!).awaitSingle()
-        val currState = stateRepository.findById(existingProposal.stateId!!).awaitSingle()
+        val nextState  = States.valueOf(stateService.findById(proposal.stateId!!).name)
+        val currState = States.valueOf(stateService.findById(existingProposal.stateId!!).name)
 
-        if (currState.name == States.CANCELADO.name) throw CannotUpdateCancelledProposalException()
-        val isValidStateTransition =
-            abs(States.valueOf(nextState.name).code - States.valueOf(currState.name).code) == 1
+        //TODO when superuser is available
+        // currState.isCancelled to not cancelled should be possible
 
-        if (!isValidStateTransition)
+        if (currState.isNextStateValid(nextState))
             throw InvalidStateTransitionException()
 
-        if (nextState.name == States.VALIDADO.name) {
-            val stateAtivo = stateRepository.findByName(States.ATIVO.name)
+        if (nextState.isCompleted()) {
+            val stateAtivo = stateService.findByName(States.ATIVO.name)
             val research = Research(null, proposal.id, stateAtivo.id)
             researchService.createResearch(research)
         }
@@ -136,19 +156,29 @@ class ProposalServiceImpl(
         }
 
         if(isDetailedView) {
-            prop.investigationTeam =
-                investigationTeamRepository
-                    .findInvestigationTeamByProposalId(prop.id!!)
-
-            prop.comments = commentsRepository
-                .findByProposalId(prop.id!!)
-
-            prop.timelineEvents =
-                timelineEventRepository
-                    .findTimelineEventsByProposalId(prop.id!!)
+            loadDetails(prop)
         }
 
         return prop
+    }
+
+    private suspend fun loadDetails(prop: ProposalModel) {
+        prop.investigationTeam =
+            investigationTeamRepository
+                .findInvestigationTeamByProposalId(prop.id!!)
+                .collectList()
+                .awaitSingle()
+
+        prop.comments = commentsRepository
+            .findByProposalId(prop.id!!)
+            .collectList()
+            .awaitSingle()
+
+        prop.timelineEvents =
+            timelineEventRepository
+                .findTimelineEventsByProposalId(prop.id!!)
+                .collectList()
+                .awaitSingle()
     }
 
     private suspend fun loadFinancialComponent(proposal: ProposalModel): ProposalModel {
@@ -163,7 +193,7 @@ class ProposalServiceImpl(
 
         proposal.therapeuticArea = therapeuticAreaRepository.findById(proposal.therapeuticAreaId!!).awaitSingle()
 
-        proposal.state = stateRepository.findById(proposal.stateId!!).awaitSingle()
+        proposal.state = stateService.findById(proposal.stateId!!)
 
         proposal.principalInvestigator = userRepository.findById(proposal.principalInvestigatorId!!).awaitSingle()
 

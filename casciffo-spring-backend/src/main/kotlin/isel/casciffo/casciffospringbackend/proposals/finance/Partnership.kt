@@ -13,7 +13,7 @@ data class Partnership (
      var financeComponentId: Int,
      var iconUrl: String?,
      var siteUrl: String?,
-     var spokesmanName: String?,
+     var representative: String?,
      var email: String,
      var phoneContact: String,
      var description: String?

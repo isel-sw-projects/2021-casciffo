@@ -1,5 +1,5 @@
 INSERT INTO files(file_name, file_path, file_size) VALUES ('contrato-apollo-trial-pfizer', 'some Url Or System Path', 51235);
-INSERT INTO promoter(name, promoter_type, email) VALUES ('PFIZER', 'COMERCIAL', 'pfizer.no.more.@covid.com');
+INSERT INTO promoter(name, promoter_type, email) VALUES ('PFIZER', 'COMMERCIAL', 'pfizer.no.more.@covid.com');
 INSERT INTO user_role(role_name) VALUES ('SUPERUSER'), ('UIC');
 INSERT INTO user_account(user_name, user_email, password, user_role_id) VALUES ('admin', 'admin@admin.pt', 'YWRtaW4=', 1);
 INSERT INTO user_account(user_name, user_email, password, user_role_id) VALUES ('Fernando', 'Fernando@casciffo.pt', 'YWRtaW4=', 2);
@@ -18,7 +18,7 @@ INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, '
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'MEMBER', 2);
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'MEMBER', 3);
 INSERT INTO proposal_comments(proposal_id, author_id, content, comment_type) VALUES (1, 2, 'Early bird gets the worm', 'CONTACTS');
-INSERT INTO partnerships(proposal_financial_id, icon_url, spokesman_name, email, phone_contact, site_url)
+INSERT INTO partnerships(proposal_financial_id, icon_url, representative, email, phone_contact, site_url)
 VALUES (1, 'a cool icon url', 'ze manel', 'ze.manel@home.pt','923722883', 'the best site url ever')
 
 --DELETE FROM proposal where proposal_id = 1
