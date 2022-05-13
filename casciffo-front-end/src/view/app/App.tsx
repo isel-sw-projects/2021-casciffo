@@ -29,28 +29,33 @@ function NavigationBar() {
 }
 
 function CreateRoutes() {
-    return <Routes>
-        <Route path={"/"} element={<>Home</>}/>
-        <Route path={"/propostas"} element={<Proposals service={new ProposalService()}/>}/>
-        <Route
-            path={"/propostas/criar"}
-            element={<CreateProposal
-                service={new ProposalAggregateService()}
-            />}
-        />
-        <Route
-            path={"/propostas/:proposalId"}
-            element={<ProposalDetails
-                proposalService={new ProposalService()}
-                stateService={new StateService()}
-            />}
-        />
-    </Routes>;
+    return (
+        <Routes>
+            <Route path={"/"} element={<>Home</>}/>
+            <Route path={"/propostas"} element={<Proposals service={new ProposalService()}/>}/>
+            <Route
+                path={"/propostas/criar"}
+                element={<CreateProposal
+                    service={new ProposalAggregateService()}
+                />}
+            />
+            <Route
+                path={"/propostas/:proposalId"}
+                element={<ProposalDetails
+                    proposalService={new ProposalService()}
+                    stateService={new StateService()}
+                />}
+            />
+        </Routes>
+    );
 }
 
 function DisplayPath() {
     const path = useLocation()
-    let pathVariables = path.pathname.split("/")
+
+    let pathVariables = [path.pathname]
+    if(path.pathname.length > 1) pathVariables = path.pathname.split("/")
+
     let displayPath : Array<string> = []
     displayPath.push("Início")
     for (let i = 1; i < pathVariables.length; i++) {

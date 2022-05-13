@@ -6,7 +6,7 @@ import {PaginationComponent} from "../util-components/PaginationComponent";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {ResearchTypes} from "../../model/ResearchTypes";
 import {Util} from "../../common/Util";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {CSVLink} from "react-csv";
 
 type Proposals_Props = {
@@ -15,16 +15,16 @@ type Proposals_Props = {
 
 type ProposalRowInfo = {
     id: number,
-    dataSubmetido: string,
+    dateCreated: string,
     sigla: string,
-    estado: string,
-    patologia: string,
-    servico: string,
-    areaTerapeutica: string,
-    investigadorPrincipal: string,
-    tipo: string,
-    promotor?: string,
-    parcerias?: string
+    state: string,
+    pathology: string,
+    serviceType: string,
+    therapeuticArea: string,
+    principalInvestigator: string,
+    type: string,
+    promoter?: string,
+    partnerships?: string
 }
 
 type ProposalRow = {
@@ -32,14 +32,21 @@ type ProposalRow = {
     proposal: ProposalRowInfo
 }
 
+type CSVHeader = {
+    label: string,
+    key: keyof ProposalRowInfo
+}
+
 export function Proposals(props: Proposals_Props) {
     const service = props.service
 
-    const tableHeadersClinicalTrials = ["Id", "Data criada", "Sigla", "Estado",
-        "Patologia", "Serviço", "Área terapeutica", "Investigador Principal",
-        "Promotor", "Parcerias"]
-    const tableHeadersClinicalStudies = ["Id", "Data criada", "Sigla", "Estado",
-        "Patologia", "Serviço", "Área terapeutica", "Investigador Principal"]
+    const tableHeadersClinicalTrials: CSVHeader[] = [
+        {label:"Id", key:"id"}, {label:"Data criada", key: "dateCreated"}, {label:"Sigla", key:"sigla"},
+        {label:"Estado", key:"state"}, {label:"Patologia", key:"pathology"}, {label:"Serviço", key: "serviceType"},
+        {label:"Área terapeutica", key:"therapeuticArea"}, {label: "Investigador Principal", key:"principalInvestigator"},
+        {label:"Promotor", key:"promoter"}, {label:"Parcerias", key:"partnerships"}
+    ]
+    const tableHeadersClinicalStudies: CSVHeader[] = tableHeadersClinicalTrials.slice(0, -2)
 
     const [proposals, setProposals] = useState<ProposalRow[]>([])
     const [isDataReady, setIsDataReady] = useState(false)
@@ -58,16 +65,16 @@ export function Proposals(props: Proposals_Props) {
             selected: false,
             proposal: {
                 id: p.id!,
-                dataSubmetido: Util.formatDate(p.dateCreated!),
+                dateCreated: Util.formatDate(p.dateCreated!),
                 sigla: p.sigla,
-                estado: p.state!.name,
-                patologia: p.pathology!.name,
-                servico: p.serviceType!.name,
-                areaTerapeutica: p.therapeuticArea!.name,
-                investigadorPrincipal: p.principalInvestigator!.name,
-                tipo: p.type,
-                promotor: hasFinancialComponent ? p.financialComponent!.promoter.name : undefined,
-                parcerias: hasFinancialComponent && p.financialComponent!.partnerships !== null ? "Sim" : "Não"
+                state: p.state!.name,
+                pathology: p.pathology!.name,
+                serviceType: p.serviceType!.name,
+                therapeuticArea: p.therapeuticArea!.name,
+                principalInvestigator: p.principalInvestigator!.name,
+                type: p.type,
+                promoter: hasFinancialComponent ? p.financialComponent!.promoter.name : undefined,
+                partnerships: hasFinancialComponent && p.financialComponent!.partnerships !== null ? "Sim" : "Não"
             }
         }))
         setProposals(rows)
@@ -144,35 +151,20 @@ export function Proposals(props: Proposals_Props) {
                     <br/>
                     <span><Link to={`${row.proposal.id}`}>Ver detalhes</Link></span>
                 </td>
-                <td>{row.proposal.dataSubmetido}</td>
+                <td>{row.proposal.dateCreated}</td>
                 <td>{row.proposal.sigla}</td>
-                <td>{row.proposal.estado}</td>
-                <td>{row.proposal.patologia}</td>
-                <td>{row.proposal.servico}</td>
-                <td>{row.proposal.areaTerapeutica}</td>
-                <td>{row.proposal.investigadorPrincipal}</td>
-                {row.proposal.tipo === ResearchTypes.CLINICAL_TRIAL.id ?
+                <td>{row.proposal.state}</td>
+                <td>{row.proposal.pathology}</td>
+                <td>{row.proposal.serviceType}</td>
+                <td>{row.proposal.therapeuticArea}</td>
+                <td>{row.proposal.principalInvestigator}</td>
+                {row.proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
                     <>
-                        <td>{row.proposal.promotor}</td>
-                        <td>{row.proposal.parcerias}</td>
+                        <td>{row.proposal.promoter}</td>
+                        <td>{row.proposal.partnerships}</td>
                     </>
                     : <></>
                 }
-                {/*<td>{row.proposal.id}</td>*/}
-                {/*<td>{Util.formatDate(row.proposal.dateCreated!)}</td>*/}
-                {/*<td>{row.proposal.sigla}</td>*/}
-                {/*<td>{row.proposal.state!.name}</td>*/}
-                {/*<td>{row.proposal.pathology!.name}</td>*/}
-                {/*<td>{row.proposal.serviceType!.name}</td>*/}
-                {/*<td>{row.proposal.therapeuticArea!.name}</td>*/}
-                {/*<td>{row.proposal.principalInvestigator!.name}</td>*/}
-                {/*{row.proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?*/}
-                {/*    <>*/}
-                {/*        <td>{row.proposal.financialComponent!.promoter.name}</td>*/}
-                {/*        <td>{row.proposal.financialComponent!.partnerships !== null ? "Sim" : "Não"}</td>*/}
-                {/*    </>*/}
-                {/*    : <></>*/}
-                {/*}*/}
             </tr>
         )
     }
@@ -182,13 +174,10 @@ export function Proposals(props: Proposals_Props) {
     }
 
 
-    function getHeaders() : string[] {
+    function getHeaders() : CSVHeader[] {
         return researchType === ResearchTypes.CLINICAL_TRIAL.id? tableHeadersClinicalTrials : tableHeadersClinicalStudies
     }
 
-    function handleExportToExcel() {
-
-    }
 
     return (
         <React.Fragment>
@@ -264,12 +253,9 @@ export function Proposals(props: Proposals_Props) {
             <br/>
             <br/>
             <Container>
-                {/*<Button className={"float-end"}>*/}
-                {/*    {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel `}*/}
-                {/*</Button>*/}
-                {/*headers={getHeaders().slice(1)}*/}
                 <CSVLink
                     className={"float-end mb-2"}
+                    headers={getHeaders()}
                     data={proposals.map(p => p.proposal)}
                     filename={`Propostas-${(new Date()).toLocaleDateString()}`}
                 >
@@ -289,7 +275,7 @@ export function Proposals(props: Proposals_Props) {
                                 onChange={onMasterCheck}
                             />
                         </th>
-                        {getHeaders().map((header, i) => <th key={`${header}-${i}`}>{header}</th>)}
+                        {getHeaders().map((h, i) => <th key={`${h.key}-${i}`}>{h.label}</th>)}
                     </tr>
                     </thead>
                     <tbody>

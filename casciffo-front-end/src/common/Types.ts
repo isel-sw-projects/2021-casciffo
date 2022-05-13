@@ -23,7 +23,8 @@ type ResearchType = {
 
 type Investigator = {
     name: string,
-    pid: string,
+    id: string,
+    email: string,
     teamRole: string
 }
 

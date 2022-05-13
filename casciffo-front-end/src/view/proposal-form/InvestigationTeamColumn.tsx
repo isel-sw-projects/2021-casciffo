@@ -1,9 +1,11 @@
-import {Badge, Button, Card, CloseButton, Col, Container, Form, InputGroup, ListGroup} from "react-bootstrap";
+import {Alert, Badge, Button, Card, CloseButton, Col, Container, Form, InputGroup, ListGroup} from "react-bootstrap";
 import React, {useState} from "react";
 import {Investigator} from "../../common/Types";
 import {TeamRoleTypes} from "../../model/TeamRoleTypes";
 import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
 import UserModel from "../../model/user/UserModel";
+import {BsPlusSquare} from "react-icons/bs";
+
 
 type InvestigatorTeamState = {
     investigator: Investigator,
@@ -16,23 +18,31 @@ type ITC_Props = {
 }
 
 export function InvestigatorTeamColumn(props: ITC_Props) {
+    const [errorState, setErrorState] = useState({show: false, message: ""})
     const [state, setState] = useState<InvestigatorTeamState>(
         {
             investigator: {
                 name: "",
-                pid: "",
+                id: "",
+                email: "",
                 teamRole: TeamRoleTypes.MEMBER
             },
             team: []
         })
 
-    function addInvestigatorToTeam() {
+    function addInvestigatorToTeam(event: React.MouseEvent<HTMLButtonElement>) {
+        if (state.investigator.id.length === 0) {
+            showErrorMessage("Por favor escolha um investigador da lista de resultados.")
+            event.stopPropagation()
+            event.preventDefault()
+            return
+        }
         let newTeam = [...state.team, state.investigator]
         props.setTeam(newTeam)
         setState(() => {
             return ({
                 team: newTeam,
-                investigator: {name: "", pid: "", teamRole: TeamRoleTypes.MEMBER}
+                investigator: {name: "", id: "", email: "", teamRole: TeamRoleTypes.MEMBER}
             })
         })
     }
@@ -58,68 +68,85 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
         })
     }
 
+    function showErrorMessage(msg: string) {
+        setErrorState({show: true, message: msg})
+        setTimeout(() => {
+            setErrorState({show: false, message: ""})
+        }, 8000)
+    }
+
     return (
         <Col className="block-example border border-dark">
-        Equipa de investigação
-        <br/>
-        <br/>
-        <Form.Group>
-            <InputGroup>
-                <AsyncAutoCompleteSearch
-                    requestUsers={(q: string) => {
-                        return props.searchInvestigators(q)
-                    }}
-                    setInvestigator={i =>
-                        handleInvestigatorInputChange(
-                            {
-                                name: i.name,
-                                pid: i.id,
-                                teamRole: TeamRoleTypes.MEMBER
-                            })}
-                />
-                {/*<Form.Control*/}
-                {/*    aria-required*/}
-                {/*    aria-describedby={"basic-addon2"}*/}
-                {/*    placeholder={"Identificador do Investigador i.e 1235"}*/}
-                {/*    type={"text"}*/}
-                {/*    name={"name"}*/}
-                {/*    value={state.investigator.name}*/}
-                {/*    onChange={(e: any) => handleInvestigatorInputChange(e)}*/}
-                {/*/>*/}
-                <Button
-                    variant="outline-secondary"
-                    id="button-addon2"
-                    onClick={(() => addInvestigatorToTeam())}
-                >
-                    🕀
-                </Button>
-            </InputGroup>
-        </Form.Group>
-        <br/>
-        <Container>
-            <Card>
-                <Card.Header style={{backgroundColor: 'lightgray'}}>Equipa</Card.Header>
-                <Card.Body>
-                    <ListGroup variant="flush">
-                        {state.team.map((currInvestigator, idx) =>
-                            <ListGroup.Item
-                                as="li"
-                                className="d-flex justify-content-between align-items-start"
-                                style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
-                                key={`${currInvestigator}-${idx}`}
-                            >
-                                {currInvestigator.name}
-                                <Badge bg={"outline-danger"} pill>
-                                    <CloseButton
-                                        style={{fontSize: 9}}
-                                        onClick={() => removeInvestigatorFromTeam(currInvestigator)}
-                                    />
-                                </Badge>
-                            </ListGroup.Item>
-                        )}
-                    </ListGroup>
-                </Card.Body>
-            </Card>
-        </Container>
-    </Col>);
+            <Alert
+                variant={"danger"}
+                show={errorState.show}
+                onClose={() => setErrorState({show: false, message: ""})}
+                dismissible
+            >
+                {errorState.message}
+            </Alert>
+            Equipa de investigação
+            <br/>
+            <br/>
+            <Form.Group>
+                <InputGroup>
+                    <AsyncAutoCompleteSearch
+                        requestUsers={(q: string) => {
+                            return props.searchInvestigators(q)
+                        }}
+                        // selectedUser={state.investigator}
+                        setInvestigator={(user =>
+                            handleInvestigatorInputChange(
+                                {
+                                    ...user,
+                                    teamRole: TeamRoleTypes.MEMBER
+                                }))}
+                    />
+                    {/*<Form.Control*/}
+                    {/*    aria-required*/}
+                    {/*    aria-describedby={"basic-addon2"}*/}
+                    {/*    placeholder={"Identificador do Investigador i.e 1235"}*/}
+                    {/*    type={"text"}*/}
+                    {/*    name={"name"}*/}
+                    {/*    value={state.investigator.name}*/}
+                    {/*    onChange={(e: any) => handleInvestigatorInputChange(e)}*/}
+                    {/*/>*/}
+                    <Button
+                        className={"btn-plus"}
+                        variant="outline-secondary"
+                        id="button-addon2"
+                        onClick={addInvestigatorToTeam}
+                    >
+                        <BsPlusSquare className={"mb-1"}/>
+                    </Button>
+                </InputGroup>
+            </Form.Group>
+            <br/>
+            <Container>
+                <Card>
+                    <Card.Header style={{backgroundColor: 'lightgray'}}>Equipa</Card.Header>
+                    <Card.Body>
+                        <ListGroup variant="flush">
+                            {state.team.map((currInvestigator, idx) =>
+                                <ListGroup.Item
+                                    as="li"
+                                    className="d-flex justify-content-between align-items-start"
+                                    style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
+                                    key={`${currInvestigator}-${idx}`}
+                                >
+                                    {currInvestigator.name}
+                                    <Badge bg={"outline-danger"} pill>
+                                        <CloseButton
+                                            style={{fontSize: 9}}
+                                            onClick={() => removeInvestigatorFromTeam(currInvestigator)}
+                                        />
+                                    </Badge>
+                                </ListGroup.Item>
+                            )}
+                        </ListGroup>
+                    </Card.Body>
+                </Card>
+            </Container>
+        </Col>
+    );
 }

@@ -9,3 +9,8 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
+.btn-plus:hover {
+    background-color:green; /*will change background-color of element on hover */
+    color: white; /*will change color of text within the element on hover */
+}

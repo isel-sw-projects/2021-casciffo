@@ -1,4 +1,4 @@
-import {Button, Col, Container, Form, Stack} from "react-bootstrap";
+import {Alert, Button, Col, Container, Form, Stack} from "react-bootstrap";
 import {ResearchTypes} from "../../model/ResearchTypes";
 import {PromoterTypes} from "../../model/PromoterTypes";
 import React, {useEffect, useState} from "react";
@@ -23,16 +23,18 @@ type ProposalFormKey = keyof ProposalForm
 
 export function ProposalFormColumn(props: PFC_Props) {
 
+    const [errorState, setErrorState] = useState({show: false, message: ""})
+
     const [constants, setConstants] = useState<Constants>({
         serviceTypes: [],
         pathologies: [],
         therapeuticAreas: []
     })
 
+
     useEffect(() => {
         props.service.fetchConstants().then(setConstants)
     }, [props.service])
-    
 
     const updateState = (key: ProposalFormKey, value: EventValue ) =>
         (
@@ -44,28 +46,29 @@ export function ProposalFormColumn(props: PFC_Props) {
                 [key]: value
             })
         }
-
     function handleInputChange(event: ReactGeneralInputValue) {
         event.persist()
         console.log(`Input Change!!!!\nProp name: ${event.target.name} \t value:${event.target.value}`)
         let propKey = event.target.name as keyof ProposalForm
         let value = event.target.value
         props.setFormData(updateState(propKey, value))
-    }
 
+    }
     function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault(); //stop redirect
         const form = event.currentTarget;
         //if a proposal is marked with having partnerships, it must have a least 1 partnership
         const isPartnershipsValid = props.formData.partnerships.length !== 0 || !props.hasPartnerships
-        const isInvestigatorValid = props.formData.pInvestigator.pid.length !== 0
-        if (!form.checkValidity() && !isPartnershipsValid && !isInvestigatorValid) {
+
+        const isInvestigatorValid = props.formData.pInvestigator.id.length !== 0
+        if (!form.checkValidity() || !isPartnershipsValid || !isInvestigatorValid) {
+            if(!isPartnershipsValid) showErrorMessage("Ao indicar que existem parcerias, a proposta tem de ter pelo menos uma parceria válida.")
+            if(!isInvestigatorValid) showErrorMessage("Por favor escolha um investigador da lista de resultados.")
             event.stopPropagation();
             return
         }
         props.onSubmit()
     }
-
     function handlePromoterChange(event: React.ChangeEvent<HTMLInputElement>) {
         const value = event.target.value
         const key = event.target.name as keyof PromoterModel
@@ -74,6 +77,14 @@ export function ProposalFormColumn(props: PFC_Props) {
             [key]: value
         }
         props.setFormData(updateState("promoter", p))
+
+    }
+
+    function showErrorMessage(msg: string) {
+        setErrorState({show: true, message: msg})
+        setTimeout(() => {
+            setErrorState({show: false, message: ""})
+        }, 8000)
     }
 
     function handleFileInput(event: React.ChangeEvent<HTMLInputElement>) {
@@ -83,12 +94,23 @@ export function ProposalFormColumn(props: PFC_Props) {
             return
         }
         let file = event.target.files!.item(0)
-        if(file === null) return;
+        if(file === null) {
+            showErrorMessage("Falha ao carregar ficheiro, por favor tente de novo.");
+            return;
+        }
         props.setFormData(updateState("file", file))
     }
 
     return (
         <Col key={"proposal-form-col"} className="block-example border border-dark">
+            <Alert
+                variant={"danger"}
+                show={errorState.show}
+                onClose={() => setErrorState({show: false, message: ""})}
+                dismissible
+            >
+                {errorState.message}
+            </Alert>
             <Form onSubmit={handleFormSubmit}>
                 <Container>
                     <h5>Proposta</h5>
@@ -133,12 +155,13 @@ export function ProposalFormColumn(props: PFC_Props) {
                             requestUsers={(q: string) => {
                                 return props.service.fetchInvestigators(q)
                             }}
-                            setInvestigator={i => props.setFormData(
+                            // selectedUser={props.formData.pInvestigator}
+                            setInvestigator={(i => props.setFormData(
                                 updateState("pInvestigator",
-                                    {...props.formData.pInvestigator, name: i.name, pid: i.id}
-                                ))}
+                                    {...props.formData.pInvestigator, ...i}
+                                )))}
+                            // useValidation
                         />
-                        <Form.Control.Feedback type="invalid">Escolha ao clicar na lista de resultados!</Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group key={"patologia-bit"}>
                         <Form.Label>Patologia</Form.Label>

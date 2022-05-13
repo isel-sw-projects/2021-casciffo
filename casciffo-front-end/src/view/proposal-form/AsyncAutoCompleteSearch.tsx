@@ -77,7 +77,7 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
 
                 setOptions(usersInfo);
                 setIsLoading(false);
-        });
+            });
     }, [props]);
 
     // Bypass client-side filtering by returning `true`. Results are already
@@ -91,8 +91,8 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
 
     return (
         <AsyncTypeahead
-            isInvalid={(selectedUser.id.length === 0 && selectedUser.id !== "default")}
-            isValid={(selectedUser.id.length !== 0 && selectedUser.id !== "default")}
+            isInvalid={(selectedUser.id === "" && query !== "")}
+            isValid={(selectedUser.id !== "" && query === selectedUser.name && query !== "")}
             inputProps={{required: true}}
             id="async-autocomplete"
             delay={200}

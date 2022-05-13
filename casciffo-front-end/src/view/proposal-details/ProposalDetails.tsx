@@ -19,6 +19,7 @@ import {ProposalDetailsTab} from "./ProposalDetailsTab";
 import {StateService} from "../../services/StateService";
 import {STATES} from "../../model/state/STATES";
 import {Util} from "../../common/Util";
+import {ResearchTypes} from "../../model/ResearchTypes";
 
 export function ProposalDetails(props: ProposalDetailsProps) {
     const {proposalId} = useParams()
@@ -156,11 +157,11 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                                 </Col>
                                                 <Col>
                                                     <Form.Group>
-                                                        <Form.Label>Promotor</Form.Label>
+                                                        <Form.Label>Investigator</Form.Label>
                                                         <Form.Control
                                                             type={"text"}
-                                                            name={"promoterName"}
-                                                            value={proposal.financialComponent?.promoter.name}
+                                                            name={"investigator"}
+                                                            value={proposal.principalInvestigator?.name}
                                                             disabled
                                                         />
                                                     </Form.Group>
@@ -190,15 +191,18 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                                     </Form.Group>
                                                 </Col>
                                                 <Col>
-                                                    <Form.Group>
-                                                        <Form.Label>Investigator</Form.Label>
-                                                        <Form.Control
-                                                            type={"text"}
-                                                            name={"investigator"}
-                                                            value={proposal.principalInvestigator?.name}
-                                                            disabled
-                                                        />
-                                                    </Form.Group>
+                                                    {proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
+                                                        <Form.Group>
+                                                            <Form.Label>Promotor</Form.Label>
+                                                            <Form.Control
+                                                                type={"text"}
+                                                                name={"promoterName"}
+                                                                value={proposal.financialComponent?.promoter.name}
+                                                                disabled
+                                                            />
+                                                        </Form.Group>
+                                                        : <></>
+                                                    }
                                                 </Col>
                                             </Row>
 

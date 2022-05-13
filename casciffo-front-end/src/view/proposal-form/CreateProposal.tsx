@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import './ProposalForm.css'
 import {
+    Button,
     Row
 } from "react-bootstrap";
 import {ResearchTypes} from "../../model/ResearchTypes";
@@ -12,10 +13,8 @@ import {TeamRoleTypes} from "../../model/TeamRoleTypes";
 import {ProposalFormColumn} from "./ProposalFormColumn";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {PartnershipModel} from "../../model/PartnershipModel";
-import UserModel from "../../model/user/UserModel";
-import {TeamInvestigatorModel} from "../../model/TeamInvestigatorModel";
-import {useLocation, useNavigate} from "react-router-dom";
-import ApiUrls from "../../common/Links";
+import {useNavigate} from "react-router-dom";
+
 
 type CP_Props = {
     service: ProposalAggregateService
@@ -29,10 +28,9 @@ type ProposalFormKey = keyof ProposalForm
 export function CreateProposal(props : CP_Props) {
 
     const [hasPartnerships, setHasPartnerships] = useState(false)
-    const [listOfInvestigators, setListOfInvestigators] = useState<Array<UserModel>>([])
 
     const [proposalForm, setProposalForm] = useState<ProposalForm>({
-        pInvestigator: {pid: "", name: "", teamRole: TeamRoleTypes.PRINCIPAL},
+        pInvestigator: {id: "", name: "", email: "", teamRole: TeamRoleTypes.PRINCIPAL},
         partnerships: [],
         pathologyId: -1,
         researchType: "",
@@ -47,7 +45,7 @@ export function CreateProposal(props : CP_Props) {
         },
         file: undefined
     })
-    const nagivate = useNavigate()
+
 
     const updateState = (key: ProposalFormKey, value: EventValue ) =>
         (
@@ -64,14 +62,14 @@ export function CreateProposal(props : CP_Props) {
         proposalForm.team.push(proposalForm.pInvestigator)
         const model : ProposalModel = {
             pathologyId: proposalForm.pathologyId,
-            principalInvestigatorId: parseInt(proposalForm.pInvestigator.pid),
+            principalInvestigatorId: parseInt(proposalForm.pInvestigator.id),
             serviceTypeId: proposalForm.serviceTypeId,
             sigla: proposalForm.sigla,
             therapeuticAreaId: proposalForm.therapeuticAreaId,
             type: proposalForm.researchType,
             investigationTeam: proposalForm.team.map(i => ({
                 memberRole: i.teamRole,
-                memberId: parseInt(i.pid),
+                memberId: parseInt(i.id),
             }))
         }
         console.log(proposalForm.team)
@@ -87,13 +85,14 @@ export function CreateProposal(props : CP_Props) {
 
         return model;
     }
+    const navigate = useNavigate()
 
     function handleFormSubmit() {
         console.log(proposalForm);
         console.log("data should have printed");
         props.service.saveProposal(proposalFormToModel(proposalForm))
             .then((p) => {
-                nagivate(`${p.id}`)
+                navigate(`/propostas/${p.id}`)
             })
     }
 
