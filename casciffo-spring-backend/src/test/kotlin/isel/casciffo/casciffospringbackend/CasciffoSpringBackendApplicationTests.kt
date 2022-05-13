@@ -22,8 +22,11 @@ import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.users.User
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import isel.casciffo.casciffospringbackend.users.UserService
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
@@ -89,6 +92,7 @@ class CasciffoSpringBackendApplicationTests(
 			.expectNextCount(2)
 			.expectComplete()
 			.verifyThenAssertThat()
+
 		runBlocking {
 			val test = userService.getAllUsersByRoleNames(roles.map { it.roleName }).toList()
 			assert(test.isNotEmpty())
@@ -153,11 +157,10 @@ class CasciffoSpringBackendApplicationTests(
 	fun testServiceAddParticipantToResearch() {
 		var participant = Participant(null, 102, "manel dos testes", "m", 50)
 		runBlocking {
-//			participantRepository.deleteAll().awaitSingle()
-			participant = participantRepository.findByProcessId(102).awaitSingle()
+			participant = participantService.findByProcessId(102) ?: participantService.save(participant)
 			val addedParticipant = participantService.addParticipantToResearch(participant.id!!, 1)
-			val participants = participantService.getParticipantsByResearchId(1).collectList().awaitSingle()
-			assert(participants.contains(addedParticipant))
+			val participants = participantService.getParticipantsByResearchId(1)
+			assert(participants.first().id === addedParticipant.id)
 		}
 	}
 
@@ -182,19 +185,22 @@ class CasciffoSpringBackendApplicationTests(
 
 		val proposal = ProposalModel(null, "sigla2", ResearchType.OBSERVATIONAL_STUDY,
 			LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,1,
-			investigationTeam = listOf(InvestigationTeam(null,0,InvestigatorRole.PRINCIPAL,1,null)),
-			financialComponent = ProposalFinancialComponent(null, null, 1, 1, null,null),
-			state = null, stateTransitions = null, serviceType = null, therapeuticArea = null, pathology = null, principalInvestigator = null,
-			comments = null, timelineEvents = null)
+			investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(proposalId = 0,memberRole = InvestigatorRole.PRINCIPAL, memberId = 1))),
+			financialComponent = ProposalFinancialComponent(promoterId = 1, financialContractId = 1))
 		runBlocking {
 			val res = proposalService.create(proposal)
 			assert(res.investigationTeam != null)
 			val investigationTeam = res.investigationTeam!!
 
-			assert(investigationTeam.isNotEmpty())
-			investigationTeam.forEach {
-				assert(it.id != null)
-			}
+			StepVerifier
+				.create(investigationTeam)
+				.expectSubscription()
+				.thenAwait()
+				.expectNextCount(1)
+				.expectNextMatches{it.id != null}
+				.expectComplete()
+				.verifyThenAssertThat()
+
 			assert(res.financialComponent!!.id != null)
 		}
 	}
@@ -215,8 +221,18 @@ class CasciffoSpringBackendApplicationTests(
 	@Test
 	fun testProposalServiceFindAll() {
 		runBlocking {
-			val res = proposalService.getAllProposals(ResearchType.CLINICAL_TRIAL).toList()
-			assert(res.isNotEmpty())
+			val res = proposalService.getAllProposals(ResearchType.CLINICAL_TRIAL).asFlux()
+			StepVerifier
+				.create(res)
+				.expectSubscription()
+				.expectNextCount(1)
+				.expectNextMatches{
+					it.id != null
+					it.financialComponent!!.id != null
+					it.financialComponent!!.promoter!!.id != null
+				}
+				.expectComplete()
+				.verifyThenAssertThat()
 		}
 	}
 

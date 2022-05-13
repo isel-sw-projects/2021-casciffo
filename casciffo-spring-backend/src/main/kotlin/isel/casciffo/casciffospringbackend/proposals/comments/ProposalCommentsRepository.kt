@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
-import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveSortingRepository
 import org.springframework.stereotype.Repository
@@ -8,11 +8,9 @@ import reactor.core.publisher.Flux
 
 @Repository
 interface ProposalCommentsRepository: ReactiveSortingRepository<ProposalComments, Int> {
-    @Query("select pc.* from proposal_comments pc " +
-            "join proposal p on pc.proposal_id = p.proposal_id " +
-            "where p.proposal_id = :id")
-    fun findByProposalId(id: Int) : Flux<ProposalComments>
+
+    fun findByProposalId(id: Int, pageable: Pageable) : Flux<ProposalComments>
 
 
-    fun findByProposalIdAndCommentType(id: Int, commentType: CommentType, pageRequest: PageRequest) : Flux<ProposalComments>
+    fun findByProposalIdAndCommentType(id: Int, commentType: CommentType, pageable: Pageable) : Flux<ProposalComments>
 }

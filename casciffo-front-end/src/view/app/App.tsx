@@ -48,12 +48,10 @@ function CreateRoutes() {
     </Routes>;
 }
 
-
 function DisplayPath() {
     const path = useLocation()
-    let pathVariables = path.pathname.split("/").filter(s => s.length !== 0)
+    let pathVariables = path.pathname.split("/")
     let displayPath : Array<string> = []
-    pathVariables = ["/", ...pathVariables]
     displayPath.push("Início")
     for (let i = 1; i < pathVariables.length; i++) {
         let currPathVariable = pathVariables[i]
@@ -61,6 +59,7 @@ function DisplayPath() {
         displayPath.push(currPathVariable)
         pathVariables[i] = pathVariables[i - 1].concat("/",pathVariables[i])
     }
+    pathVariables[0] = "/"
     return (
         <Container key={"curret-path"} className={"mb-1 mt-2"}>
             <Stack direction={"horizontal"} gap={2}>
@@ -75,7 +74,7 @@ function App() {
 
     return (
         <>
-            <Router key={"router"}>
+            <Router basename={"/"} key={"router"}>
                 <NavigationBar/>
                 <DisplayPath/>
                 <CreateRoutes/>

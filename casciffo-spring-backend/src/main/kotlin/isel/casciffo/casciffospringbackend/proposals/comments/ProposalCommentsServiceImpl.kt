@@ -7,6 +7,7 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -27,8 +28,8 @@ class ProposalCommentsServiceImpl(
         return repository.save(comment).awaitSingleOrNull()
     }
 
-    override suspend fun getComments(proposalId: Int, page: PageRequest): Flow<ProposalComments>{
-        return repository.findByProposalId(proposalId).asFlow().map(this::loadAuthor)
+    override suspend fun getComments(proposalId: Int, page: Pageable): Flow<ProposalComments>{
+        return repository.findByProposalId(proposalId, page).asFlow().map(this::loadAuthor)
     }
 
     suspend fun loadAuthor(comment: ProposalComments): ProposalComments {

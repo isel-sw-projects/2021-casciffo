@@ -141,6 +141,7 @@ export function Proposals(props: Proposals_Props) {
                 /></td>
                 <td>
                     <span>{row.proposal.id}</span>
+                    <br/>
                     <span><Link to={`${row.proposal.id}`}>Ver detalhes</Link></span>
                 </td>
                 <td>{row.proposal.dataSubmetido}</td>

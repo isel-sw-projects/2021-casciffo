@@ -11,11 +11,11 @@ import org.springframework.data.annotation.Transient
 data class ProposalFinancialComponent (
     @Id
     @Column(value = "proposal_financial_id")
-    var id : Int?,
+    var id : Int? = null,
 
-    var proposalId: Int?,
-    var promoterId: Int?,
-    var financialContractId: Int?,
+    var proposalId: Int? = null,
+    var promoterId: Int? = null,
+    var financialContractId: Int? = null,
 
     @Transient
     @Value("null")
@@ -23,5 +23,5 @@ data class ProposalFinancialComponent (
 
     @Transient
     @Value("null")
-    var partnerships: List<Partnership>?
+    var partnerships: List<Partnership>? = null
 )

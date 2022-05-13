@@ -22,12 +22,12 @@ class InvestigationTeamServiceImpl(
             .map(this::loadMember)
     }
 
-    override suspend fun saveTeam(team: List<InvestigationTeam>): Flow<InvestigationTeam> {
+    override suspend fun saveTeam(team: Flux<InvestigationTeam>): Flow<InvestigationTeam> {
         return investigationTeamRepository.saveAll(team).asFlow()
     }
 
     private suspend fun loadMember(member: InvestigationTeam): InvestigationTeam {
-        member.member = userService.getUser(member.memberId)
+        member.member = userService.getUser(member.memberId!!)
         return member
     }
 

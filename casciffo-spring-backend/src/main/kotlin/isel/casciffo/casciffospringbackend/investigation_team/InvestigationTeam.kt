@@ -11,13 +11,13 @@ import org.springframework.data.relational.core.mapping.Table
 data class InvestigationTeam(
     @Id
     @Column(value = "team_id")
-    var id: Int?,
+    var id: Int? = null,
 
-    var proposalId: Int,
-    val memberRole: InvestigatorRole,
-    val memberId: Int,
+    var proposalId: Int? = null,
+    val memberRole: InvestigatorRole? = null,
+    val memberId: Int? = null,
 
     @Transient
     @Value("null")
-    var member: User?
+    var member: User? = null
 )

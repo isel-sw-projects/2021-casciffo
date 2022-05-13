@@ -5,6 +5,7 @@ import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
 import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
@@ -21,9 +22,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.math.abs
@@ -40,7 +45,7 @@ class ProposalServiceImpl(
     @Autowired val roleRepository: UserRoleRepository,
     @Autowired val stateService: StateService,
     @Autowired val stateTransitionService: StateTransitionService,
-    @Autowired val commentsRepository: ProposalCommentsRepository,
+    @Autowired val commentsService: ProposalCommentsService,
     @Autowired val proposalFinancialService: ProposalFinancialService,
     @Autowired val timelineEventRepository: TimelineEventRepository,
     @Autowired val researchService: ResearchService
@@ -90,12 +95,14 @@ class ProposalServiceImpl(
         proposal: ProposalModel,
         createdProposal: ProposalModel
     ) {
-        proposal.investigationTeam!!
-            .forEach {
-                it.proposalId = createdProposal.id!!
-            }
+        val investigators =
+            proposal.investigationTeam!!
+                .map {
+                    it.proposalId = createdProposal.id!!
+                    it
+                }
 
-        createdProposal.investigationTeam = investigationTeamService.saveTeam(proposal.investigationTeam!!).toList()
+        createdProposal.investigationTeam = investigationTeamService.saveTeam(investigators).asFlux()
     }
 
     @Transactional
@@ -157,20 +164,14 @@ class ProposalServiceImpl(
     }
 
     private suspend fun loadDetails(prop: ProposalModel) {
-        prop.investigationTeam = investigationTeamService.findTeamByProposalId(prop.id!!).toList()
+        prop.investigationTeam = investigationTeamService.findTeamByProposalId(prop.id!!).asFlux()
 
-        prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!).toList()
+        prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!).asFlux()
 
-        prop.comments = commentsRepository
-            .findByProposalId(prop.id!!)
-            .collectList()
-            .awaitSingle()
+        val page = PageRequest.of(0, 20, Sort.by("dateCreated"))
+        prop.comments = commentsService.getComments(prop.id!!, page).asFlux()
 
-        prop.timelineEvents =
-            timelineEventRepository
-                .findTimelineEventsByProposalId(prop.id!!)
-                .collectList()
-                .awaitSingle()
+        prop.timelineEvents = timelineEventRepository.findTimelineEventsByProposalId(prop.id!!)
     }
 
     private suspend fun loadFinancialComponent(proposal: ProposalModel): ProposalModel {

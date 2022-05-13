@@ -1,11 +1,13 @@
 package isel.casciffo.casciffospringbackend.proposals
 
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.states.State
+import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.User
 import lombok.Data
 
@@ -28,5 +30,9 @@ data class ProposalDTO (
     var pathology: Pathology? = null,
     var principalInvestigator: User? = null,
     var financialComponent: ProposalFinancialComponent? = null,
-    var investigationTeam: List<InvestigationTeam>? = listOf()
-)
+    var investigationTeam: List<InvestigationTeam>? = listOf(),
+    var stateTransitions: List<StateTransition>? = null,
+    var timelineEvents: List<TimelineEvent>? = null,
+    var comments: List<ProposalComments>? = null,
+
+    )
