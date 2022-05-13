@@ -10,10 +10,14 @@ import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.User
 import lombok.Data
+import java.time.LocalDateTime
 
 @Data
 data class ProposalDTO (
     var id: Int? = null,
+
+    var dateCreated: LocalDateTime?=null,
+    var lastUpdated: LocalDateTime? = null,
 
     var sigla: String? = null,
 

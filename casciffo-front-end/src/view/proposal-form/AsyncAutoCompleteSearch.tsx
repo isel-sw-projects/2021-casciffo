@@ -25,10 +25,11 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<UserInfo[]>([]);
     const [query, setQuery] = useState("");
-    const [selectedUser, setSelectedUser] = useState<UserInfo>({email: "", id: "", name: ""})
+    const [selectedUser, setSelectedUser] = useState<UserInfo>({email: "", id: "default", name: ""})
 
     const handleInputChange = (q: string) => {
         setQuery(q);
+        setSelectedUser({email: "", id: "", name: ""})
     };
 
     const handlePagination = (e: unknown, shownResults: unknown) => {
@@ -90,8 +91,8 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
 
     return (
         <AsyncTypeahead
-            isInvalid={selectedUser.id.length === 0}
-            isValid={selectedUser.id.length !== 0}
+            isInvalid={(selectedUser.id.length === 0 && selectedUser.id !== "default")}
+            isValid={(selectedUser.id.length !== 0 && selectedUser.id !== "default")}
             inputProps={{required: true}}
             id="async-autocomplete"
             delay={200}

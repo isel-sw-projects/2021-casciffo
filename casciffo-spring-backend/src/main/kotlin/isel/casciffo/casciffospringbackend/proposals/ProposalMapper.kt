@@ -10,17 +10,20 @@ class ProposalMapper {
 
     private fun mapDTONonListPropertiesToModel(proposalDTO: ProposalDTO, proposalModel: ProposalModel) {
         proposalModel.id = proposalDTO.id
+        proposalModel.dateCreated = proposalDTO.dateCreated
+        proposalModel.lastUpdated = proposalDTO.lastUpdated
         proposalModel.sigla = proposalDTO.sigla
         proposalModel.type = proposalDTO.type
         proposalModel.pathologyId = proposalDTO.pathologyId
-        proposalModel.serviceTypeId = proposalDTO.serviceTypeId
-        proposalModel.therapeuticAreaId = proposalDTO.therapeuticAreaId
-        proposalModel.stateId = proposalDTO.stateId
-        proposalModel.principalInvestigatorId = proposalDTO.principalInvestigatorId
-        proposalModel.state = proposalDTO.state
         proposalModel.pathology = proposalDTO.pathology
+        proposalModel.serviceTypeId = proposalDTO.serviceTypeId
         proposalModel.serviceType = proposalDTO.serviceType
+        proposalModel.therapeuticAreaId = proposalDTO.therapeuticAreaId
         proposalModel.therapeuticArea = proposalDTO.therapeuticArea
+        proposalModel.stateId = proposalDTO.stateId
+        proposalModel.state = proposalDTO.state
+        proposalModel.principalInvestigatorId = proposalDTO.principalInvestigatorId
+        proposalModel.principalInvestigator = proposalDTO.principalInvestigator
         proposalModel.financialComponent = proposalDTO.financialComponent
     }
     private fun mapDTOListPropertiesToModel(proposalDTO: ProposalDTO, proposalModel: ProposalModel)  {
@@ -34,17 +37,20 @@ class ProposalMapper {
     }
     private fun mapModelNonListPropertiesToDTO(proposalModel: ProposalModel, proposalDTO: ProposalDTO) {
         proposalDTO.id = proposalModel.id
+        proposalDTO.dateCreated = proposalModel.dateCreated
+        proposalDTO.lastUpdated = proposalModel.lastUpdated
         proposalDTO.sigla = proposalModel.sigla
         proposalDTO.type = proposalModel.type
         proposalDTO.pathologyId = proposalModel.pathologyId
-        proposalDTO.serviceTypeId = proposalModel.serviceTypeId
-        proposalDTO.therapeuticAreaId = proposalModel.therapeuticAreaId
-        proposalDTO.stateId = proposalModel.stateId
-        proposalDTO.principalInvestigatorId = proposalModel.principalInvestigatorId
-        proposalDTO.state = proposalModel.state
         proposalDTO.pathology = proposalModel.pathology
+        proposalDTO.serviceTypeId = proposalModel.serviceTypeId
         proposalDTO.serviceType = proposalModel.serviceType
+        proposalDTO.therapeuticAreaId = proposalModel.therapeuticAreaId
         proposalDTO.therapeuticArea = proposalModel.therapeuticArea
+        proposalDTO.stateId = proposalModel.stateId
+        proposalDTO.state = proposalModel.state
+        proposalDTO.principalInvestigatorId = proposalModel.principalInvestigatorId
+        proposalDTO.principalInvestigator = proposalModel.principalInvestigator
         proposalDTO.financialComponent = proposalModel.financialComponent
     }
     private suspend fun mapModelListPropertiesToDTO(proposalModel: ProposalModel, proposalDTO: ProposalDTO) {

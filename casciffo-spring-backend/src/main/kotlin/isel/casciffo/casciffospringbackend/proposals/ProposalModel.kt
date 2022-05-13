@@ -36,11 +36,11 @@ data class ProposalModel(
     @Column(value = "proposal_type")
     var type: ResearchType? = null,
 
-    @Column(value = "date_created")//, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(value = "date_created")
     @CreatedDate
     var dateCreated: LocalDateTime? = null,
 
-    @Column(value = "last_update")//, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(value = "last_update")
     @LastModifiedDate
     var lastUpdated: LocalDateTime? = null,
 
