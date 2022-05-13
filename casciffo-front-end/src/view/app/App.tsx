@@ -7,6 +7,8 @@ import {CreateProposal} from '../proposal-form/CreateProposal'
 import { Proposals } from '../proposals/Proposals';
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import ProposalService from "../../services/ProposalService";
+import {ProposalDetails} from "../proposal-details/ProposalDetails";
+import {StateService} from "../../services/StateService";
 
 
 function NavigationBar() {
@@ -34,6 +36,13 @@ function CreateRoutes() {
             path={"/propostas/criar"}
             element={<CreateProposal
                 service={new ProposalAggregateService()}
+            />}
+        />
+        <Route
+            path={"/propostas/:proposalId"}
+            element={<ProposalDetails
+                proposalService={new ProposalService()}
+                stateService={new StateService()}
             />}
         />
     </Routes>;
@@ -66,7 +75,7 @@ function App() {
 
     return (
         <>
-            <Router basename={"/api/casciffo"} key={"router"}>
+            <Router key={"router"}>
                 <NavigationBar/>
                 <DisplayPath/>
                 <CreateRoutes/>

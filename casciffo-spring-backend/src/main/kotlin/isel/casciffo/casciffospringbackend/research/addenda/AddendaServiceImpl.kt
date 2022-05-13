@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.research.addenda
 import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
@@ -39,7 +40,7 @@ class AddendaServiceImpl(
 
     suspend fun loadRelations(addenda: Addenda) : Addenda {
         addenda.state = stateRepository.findById(addenda.stateId!!).awaitFirstOrNull()
-        addenda.stateTransitions = stateTransitionService.findAllByReferenceId(addenda.id!!)
+        addenda.stateTransitions = stateTransitionService.findAllByReferenceId(addenda.id!!).toList()
         return addenda
     }
 }

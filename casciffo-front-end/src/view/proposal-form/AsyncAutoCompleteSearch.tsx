@@ -24,7 +24,8 @@ const PER_PAGE = 50;
 export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [options, setOptions] = useState<UserInfo[]>([]);
-    const [query, setQuery] = useState('');
+    const [query, setQuery] = useState("");
+    const [selectedUser, setSelectedUser] = useState<UserInfo>({email: "", id: "", name: ""})
 
     const handleInputChange = (q: string) => {
         setQuery(q);
@@ -54,7 +55,6 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
         //     setIsLoading(false);
         //     setOptions(options);
         // });
-        console.log("onPaginate called")
     };
 
     // `handleInputChange` updates state and triggers a re-render, so
@@ -67,23 +67,40 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
         }
 
         setIsLoading(true);
+        //on each search reset selected user
+        setSelectedUser({email: "", id: "", name: ""})
         props.requestUsers(query)
             .then((users) => {
                 const usersInfo = users.map(user => ({name: user.name, id: user.userId!, email: user.email}))
                 requestCache.set(query, usersInfo);
 
-                setIsLoading(false);
                 setOptions(usersInfo);
+                setIsLoading(false);
         });
     }, [props]);
 
+    // Bypass client-side filtering by returning `true`. Results are already
+    // filtered by the search endpoint, so no need to do it again.
+    const filterBy = () => true;
+
+    function onSelectedUser(user: UserInfo) {
+        props.setInvestigator(user)
+        setSelectedUser(user)
+    }
+
     return (
         <AsyncTypeahead
+            isInvalid={selectedUser.id.length === 0}
+            isValid={selectedUser.id.length !== 0}
+            inputProps={{required: true}}
             id="async-autocomplete"
+            delay={200}
+            filterBy={filterBy}
             isLoading={isLoading}
             labelKey="name"
             maxResults={PER_PAGE - 1}
             minLength={3}
+            ignoreDiacritics={true}
             onInputChange={handleInputChange}
             onPaginate={handlePagination}
             onSearch={handleSearch}
@@ -93,7 +110,7 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
             searchText="A carregar..."
             renderMenuItemChildren={(option: any) => {
                 return (
-                    <div key={option.id} className={"border-bottom"} onClick={() => props.setInvestigator(option)}>
+                    <div key={option.id} className={"border-bottom"} onClick={() => onSelectedUser(option)}>
                         <Highlighter search={query}>
                             {option.name}
                         </Highlighter>

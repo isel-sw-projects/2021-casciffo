@@ -1,8 +1,9 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
-import reactor.core.publisher.Flux
+import kotlinx.coroutines.flow.Flow
+
 
 interface StateTransitionService {
     suspend fun newTransition(oldStateId: Int, newStateId: Int, transitionType: TransitionType, referenceId: Int): Boolean
-    fun findAllByReferenceId(id: Int): Flux<StateTransition>
+    suspend fun findAllByReferenceId(id: Int): Flow<StateTransition>
 }

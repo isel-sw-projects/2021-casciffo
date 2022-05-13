@@ -1,4 +1,5 @@
 const BASE_URL = `http://localhost:8080/api/casciffo`
+//const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo`
 
 /************************** USER **************************/
 const USERS_URL = `${BASE_URL}/users`
@@ -16,7 +17,8 @@ const STATES_URL = `${BASE_URL}/states`
 
 
 /************************** PROPOSAL **************************/
-const PROPOSALS_URL = `${BASE_URL}/proposals`
+const PROPOSALS_URL =  `${BASE_URL}/proposals`
+const PROPOSALS_URL_BY_TYPE = (type: string) => `${PROPOSALS_URL}?type=${type}`
 const DETAIL_PROPOSAL_URL = (id: string) => `${PROPOSALS_URL}/${id}`
 
 
@@ -36,6 +38,7 @@ const DETAIL_RESEARCH_URL = (id: string) => `${RESEARCH_URL}/${id}`
 const ApiUrls = {
     baseUrl: BASE_URL,
     proposalsUrl: PROPOSALS_URL,
+    proposalsByTypeUrl: PROPOSALS_URL_BY_TYPE,
     buildDetailProposalUrl: DETAIL_PROPOSAL_URL,
     researchUrl: RESEARCH_URL,
     buildDetailResearchUrl: DETAIL_RESEARCH_URL,

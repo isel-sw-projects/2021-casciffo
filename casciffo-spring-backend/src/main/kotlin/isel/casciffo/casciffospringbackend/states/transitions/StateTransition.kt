@@ -1,5 +1,7 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
+import isel.casciffo.casciffospringbackend.states.State
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
@@ -18,9 +20,17 @@ data class StateTransition(
     var newStateId: Int?,
 
     @CreatedDate
-    val transitionDate: LocalDateTime,
+    var transitionDate: LocalDateTime,
 
-    val transitionType: TransitionType,
+    var transitionType: TransitionType,
 
-    val referenceId: Int
+    var referenceId: Int,
+
+    @Transient
+    @Value("null")
+    var stateBefore: State? = null,
+
+    @Transient
+    @Value("null")
+    var stateAfter: State? = null
 )

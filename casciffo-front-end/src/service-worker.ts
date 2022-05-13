@@ -84,7 +84,6 @@ self.addEventListener('message', (event) => {
 const CACHE_NAME = 'demo cache'
 
 // fetch runs on every request made from the browser
-// TODO: figure out a strategy to cache api requests and responses or change registerRoute function
 self.addEventListener('fetch', (event) => {
     console.log("fetch request made to")
     console.log(event.request.url)

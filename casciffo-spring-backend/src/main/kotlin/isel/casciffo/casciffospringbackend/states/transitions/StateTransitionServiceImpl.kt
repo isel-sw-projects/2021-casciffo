@@ -1,5 +1,7 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -29,7 +31,7 @@ class StateTransitionServiceImpl(
         return true
     }
 
-    override fun findAllByReferenceId(id: Int): Flux<StateTransition> {
-        return stateTransitionRepository.findAllByReferenceId(id)
+    override suspend fun findAllByReferenceId(id: Int): Flow<StateTransition> {
+        return stateTransitionRepository.findAllByReferenceId(id).asFlow()
     }
 }

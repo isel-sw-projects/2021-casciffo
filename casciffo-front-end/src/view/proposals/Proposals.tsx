@@ -7,15 +7,29 @@ import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {ResearchTypes} from "../../model/ResearchTypes";
 import {Util} from "../../common/Util";
 import {Link} from "react-router-dom";
-import {CreateProposal} from "../proposal-form/CreateProposal";
+import {CSVLink} from "react-csv";
 
 type Proposals_Props = {
     service: ProposalService
 }
 
+type ProposalRowInfo = {
+    id: number,
+    dataSubmetido: string,
+    sigla: string,
+    estado: string,
+    patologia: string,
+    servico: string,
+    areaTerapeutica: string,
+    investigadorPrincipal: string,
+    tipo: string,
+    promotor?: string,
+    parcerias?: string
+}
+
 type ProposalRow = {
     selected: boolean,
-    proposal: ProposalModel
+    proposal: ProposalRowInfo
 }
 
 export function Proposals(props: Proposals_Props) {
@@ -39,7 +53,23 @@ export function Proposals(props: Proposals_Props) {
     })
 
     function mapToProposalRow(value: ProposalModel[]) {
-        let rows = value.map(p => ({proposal: p, selected: false}))
+        const hasFinancialComponent= researchType === ResearchTypes.CLINICAL_TRIAL.id
+        let rows = value.map(p => ({
+            selected: false,
+            proposal: {
+                id: p.id!,
+                dataSubmetido: Util.formatDate(p.dateCreated!),
+                sigla: p.sigla,
+                estado: p.state!.name,
+                patologia: p.pathology!.name,
+                servico: p.serviceType!.name,
+                areaTerapeutica: p.therapeuticArea!.name,
+                investigadorPrincipal: p.principalInvestigator!.name,
+                tipo: p.type,
+                promotor: hasFinancialComponent ? p.financialComponent!.promoter.name : undefined,
+                parcerias: hasFinancialComponent && p.financialComponent!.partnerships !== null ? "Sim" : "Não"
+            }
+        }))
         setProposals(rows)
     }
 
@@ -74,7 +104,7 @@ export function Proposals(props: Proposals_Props) {
 
         setCheckBoxGroupState({
             masterChecked: event.target.checked,
-            totalCheckedItems: checkedProposals.length
+            totalCheckedItems: event.target.checked ? checkedProposals.length : 0
         })
         setProposals(checkedProposals)
     }
@@ -82,7 +112,6 @@ export function Proposals(props: Proposals_Props) {
     function selectProposalRow(row: ProposalRow) {
         return (event: React.ChangeEvent<HTMLInputElement>) => {
             let _totalCheckedItems = checkBoxGroupState.totalCheckedItems + (event.target.checked ? 1 : -1)
-            console.log(`CheckedItems: ${_totalCheckedItems}\nTotalItems: ${proposals.length}`)
             row.selected = event.target.checked
             setCheckBoxGroupState(prevState => ({
                 ...prevState,
@@ -110,21 +139,39 @@ export function Proposals(props: Proposals_Props) {
                     id={`row-check-${row.proposal.id}`}
                     onChange={selectProposalRow(row)}
                 /></td>
-                <td>{row.proposal.id}</td>
-                <td>{Util.formatDate(row.proposal.dateCreated!)}</td>
+                <td>
+                    <span>{row.proposal.id}</span>
+                    <span><Link to={`${row.proposal.id}`}>Ver detalhes</Link></span>
+                </td>
+                <td>{row.proposal.dataSubmetido}</td>
                 <td>{row.proposal.sigla}</td>
-                <td>{row.proposal.state!.name}</td>
-                <td>{row.proposal.pathology!.name}</td>
-                <td>{row.proposal.serviceType!.name}</td>
-                <td>{row.proposal.therapeuticArea!.name}</td>
-                <td>{row.proposal.principalInvestigator!.name}</td>
-                {row.proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
+                <td>{row.proposal.estado}</td>
+                <td>{row.proposal.patologia}</td>
+                <td>{row.proposal.servico}</td>
+                <td>{row.proposal.areaTerapeutica}</td>
+                <td>{row.proposal.investigadorPrincipal}</td>
+                {row.proposal.tipo === ResearchTypes.CLINICAL_TRIAL.id ?
                     <>
-                        <td>{row.proposal.financialComponent!.promoter.name}</td>
-                        <td>{row.proposal.financialComponent!.partnerships !== null ? "Sim" : "Não"}</td>
+                        <td>{row.proposal.promotor}</td>
+                        <td>{row.proposal.parcerias}</td>
                     </>
                     : <></>
                 }
+                {/*<td>{row.proposal.id}</td>*/}
+                {/*<td>{Util.formatDate(row.proposal.dateCreated!)}</td>*/}
+                {/*<td>{row.proposal.sigla}</td>*/}
+                {/*<td>{row.proposal.state!.name}</td>*/}
+                {/*<td>{row.proposal.pathology!.name}</td>*/}
+                {/*<td>{row.proposal.serviceType!.name}</td>*/}
+                {/*<td>{row.proposal.therapeuticArea!.name}</td>*/}
+                {/*<td>{row.proposal.principalInvestigator!.name}</td>*/}
+                {/*{row.proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?*/}
+                {/*    <>*/}
+                {/*        <td>{row.proposal.financialComponent!.promoter.name}</td>*/}
+                {/*        <td>{row.proposal.financialComponent!.partnerships !== null ? "Sim" : "Não"}</td>*/}
+                {/*    </>*/}
+                {/*    : <></>*/}
+                {/*}*/}
             </tr>
         )
     }
@@ -136,6 +183,10 @@ export function Proposals(props: Proposals_Props) {
 
     function getHeaders() : string[] {
         return researchType === ResearchTypes.CLINICAL_TRIAL.id? tableHeadersClinicalTrials : tableHeadersClinicalStudies
+    }
+
+    function handleExportToExcel() {
+
     }
 
     return (
@@ -212,7 +263,19 @@ export function Proposals(props: Proposals_Props) {
             <br/>
             <br/>
             <Container>
-
+                {/*<Button className={"float-end"}>*/}
+                {/*    {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel `}*/}
+                {/*</Button>*/}
+                {/*headers={getHeaders().slice(1)}*/}
+                <CSVLink
+                    className={"float-end mb-2"}
+                    data={proposals.map(p => p.proposal)}
+                    filename={`Propostas-${(new Date()).toLocaleDateString()}`}
+                >
+                    {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel`}
+                </CSVLink>
+            </Container>
+            <Container>
                 <Table striped bordered hover size={"sm"}>
                     <thead>
                     <tr key={"headers"}>

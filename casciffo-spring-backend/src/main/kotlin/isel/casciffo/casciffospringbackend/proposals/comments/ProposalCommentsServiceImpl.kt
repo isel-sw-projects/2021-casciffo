@@ -10,8 +10,10 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
-class ProposalCommentsServiceImpl(@Autowired val repository: ProposalCommentsRepository,
-                                  @Autowired val userService: UserService)
+class ProposalCommentsServiceImpl(
+    @Autowired val repository: ProposalCommentsRepository,
+    @Autowired val userService: UserService
+    )
     : ProposalCommentsService {
     override suspend fun createComment(comment: ProposalComments): ProposalComments? {
         if(comment.proposalId == null) {

@@ -7,7 +7,7 @@ import {PromoterTypes} from "../model/PromoterTypes";
 class ProposalService {
 
     fetchByType(type: string, sort: string): Promise<Array<ProposalModel>> {
-        return fetch(`${ApiUrls.proposalsUrl}/?type=${type}&sort=${sort}`).then(rsp => rsp.json())
+        return fetch(ApiUrls.proposalsByTypeUrl(type)).then(rsp => rsp.json())
     }
 
     fetchByTypeMock(type: string): Promise<Array<ProposalModel>> {

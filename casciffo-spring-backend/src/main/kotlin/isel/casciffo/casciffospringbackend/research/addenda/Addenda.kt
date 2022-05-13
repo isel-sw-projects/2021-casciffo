@@ -30,7 +30,7 @@ data class Addenda (
 
     @Transient
     @Value("null")
-    var stateTransitions: Flux<StateTransition>?,
+    var stateTransitions: List<StateTransition>?,
 
     @Transient
     @Value("null")

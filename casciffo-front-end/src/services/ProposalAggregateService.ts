@@ -20,7 +20,7 @@ export default class ProposalAggregateService {
         return fetch(ApiUrls.constantsUrl).then(rsp => rsp.json())
     }
 
-    saveProposal(proposal: ProposalModel) {
+    saveProposal(proposal: ProposalModel): Promise<ProposalModel> {
         return this.proposalService.save(proposal).then(rsp => rsp.json())
     }
 

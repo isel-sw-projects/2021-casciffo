@@ -15,6 +15,7 @@ import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionRep
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -83,8 +84,8 @@ class ResearchServiceImpl(
         //research.proposal = proposalService.getProposalById(research.proposalId!!)
 
         if(isDetailedView) {
-            research.stateTransitions = stateTransitionService.findAllByReferenceId(research.id!!)
-            research.participants = participantService.getParticipantsByResearchId(research.id!!)
+            research.stateTransitions = stateTransitionService.findAllByReferenceId(research.id!!).toList()
+            research.participants = participantService.getParticipantsByResearchId(research.id!!).toList()
         }
 
         return research

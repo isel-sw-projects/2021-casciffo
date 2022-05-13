@@ -43,7 +43,6 @@ class ProposalFinancialServiceImpl(
         component.partnerships = partnershipRepository.findByFinanceComponentId(component.id!!).collectList().awaitSingle()
         return component
     }
-
 }
 
 //    FLUX MONO SYNTAX

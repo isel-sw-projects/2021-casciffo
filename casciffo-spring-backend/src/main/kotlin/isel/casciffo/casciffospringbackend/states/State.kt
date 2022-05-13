@@ -15,12 +15,12 @@ data class State(
     var id: Int?,
 
     @Column(value = "state_name")
-    val name: String,
+    var name: String,
 
     @Column(value = "role_responsible_for_advancing_id")
-    val ownerId: Int,
+    var ownerId: Int,
 
     @Transient
     @Value("null")
-    val owner: UserRole?
+    var owner: UserRole?
 )

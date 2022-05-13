@@ -137,7 +137,6 @@ export function PartnershipsColumn(props: PsC_Props) {
                                             onChange={handlePartnershipChange}
                                         />
                                     </Form.Group>
-                                    {/*TODO HIDE IN BUTTON THAT ONCE CLICKED OPENS DESC FIELD?*/}
                                     <Form.Group
                                         className={"mb-3"}
                                         controlId={"formBasicInput"}
@@ -213,7 +212,6 @@ export function PartnershipsColumn(props: PsC_Props) {
                                         onChange={handlePartnershipChange}
                                     />
                                 </Form.Group>
-                                {/*TODO HIDE IN BUTTON THAT ONCE CLICKED OPENS DESC FIELD?*/}
                                 <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
                                     <Form.Label>Descrição</Form.Label>
                                     <Form.Control

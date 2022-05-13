@@ -58,9 +58,9 @@ data class Research (
 
     @Transient
     @Value("null")
-    var participants: Flux<Participant>? = null,
+    var participants: List<Participant>? = null,
 
     @Transient
     @Value("null")
-    var stateTransitions: Flux<StateTransition>? = null
+    var stateTransitions: List<StateTransition>? = null
 )

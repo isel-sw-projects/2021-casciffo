@@ -27,13 +27,14 @@ class ParticipantServiceImpl(
         return participant
     }
 
-    override suspend fun getParticipantsByResearchId(researchId: Int): Flux<Participant> {
+    override suspend fun getParticipantsByResearchId(researchId: Int): Flow<Participant> {
         return researchParticipantsRepository
             .findAllByResearchId(researchId)
             .flatMap { participantRepository.findById(it.participantId!!) }
+            .asFlow()
     }
 
     override suspend fun getParticipantScheduledVisits(participantId: Int, researchId: Int): Flow<Visit> {
-        TODO("Not yet implemented")
+        TODO("Implemented on visit service")
     }
 }

@@ -6,6 +6,7 @@ import UserModel from "../user/UserModel";
 import {ProposalFinanceModel} from "./finance/ProposalFinanceModel";
 import {Investigator} from "../../common/Types";
 import {TeamInvestigatorModel} from "../TeamInvestigatorModel";
+import {StateTransitionModel} from "../state/StateTransitionModel";
 
 export interface ProposalModel {
     id?: number,
@@ -25,5 +26,6 @@ export interface ProposalModel {
     dateCreated?: Array<number>,
     dateModified?: Array<number>,
     financialComponent?: ProposalFinanceModel,
-    investigationTeam?: Array<TeamInvestigatorModel>
+    investigationTeam?: Array<TeamInvestigatorModel>,
+    stateTransitions?: Array<StateTransitionModel>
 }

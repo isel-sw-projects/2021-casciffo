@@ -58,7 +58,8 @@ export function ProposalFormColumn(props: PFC_Props) {
         const form = event.currentTarget;
         //if a proposal is marked with having partnerships, it must have a least 1 partnership
         const isPartnershipsValid = props.formData.partnerships.length !== 0 || !props.hasPartnerships
-        if (!form.checkValidity() && isPartnershipsValid) {
+        const isInvestigatorValid = props.formData.pInvestigator.pid.length !== 0
+        if (!form.checkValidity() && !isPartnershipsValid && !isInvestigatorValid) {
             event.stopPropagation();
             return
         }
@@ -115,12 +116,11 @@ export function ProposalFormColumn(props: PFC_Props) {
                         />
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicInput">
-                        <Form.Label>Identificador do Investigador</Form.Label>
+                        <Form.Label>Investigador</Form.Label>
                         {/*<Form.Control*/}
                         {/*    key={"investigator-name-id"}*/}
                         {/*    required*/}
                         {/*    type={"text"}*/}
-                        {/*    // todo add validation with regular expression*/}
                         {/*    name={"pInvestigator.name"}*/}
                         {/*    value={props.formData.pInvestigator.name}*/}
                         {/*    onChange={(event =>*/}
@@ -138,6 +138,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                                     {...props.formData.pInvestigator, name: i.name, pid: i.id}
                                 ))}
                         />
+                        <Form.Control.Feedback type="invalid">Escolha ao clicar na lista de resultados!</Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group key={"patologia-bit"}>
                         <Form.Label>Patologia</Form.Label>

@@ -14,6 +14,8 @@ import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {PartnershipModel} from "../../model/PartnershipModel";
 import UserModel from "../../model/user/UserModel";
 import {TeamInvestigatorModel} from "../../model/TeamInvestigatorModel";
+import {useLocation, useNavigate} from "react-router-dom";
+import ApiUrls from "../../common/Links";
 
 type CP_Props = {
     service: ProposalAggregateService
@@ -45,6 +47,7 @@ export function CreateProposal(props : CP_Props) {
         },
         file: undefined
     })
+    const nagivate = useNavigate()
 
     const updateState = (key: ProposalFormKey, value: EventValue ) =>
         (
@@ -58,7 +61,7 @@ export function CreateProposal(props : CP_Props) {
     }
 
     function proposalFormToModel(proposalForm: ProposalForm) {
-        //proposalForm.team.push(proposalForm.pInvestigator)
+        proposalForm.team.push(proposalForm.pInvestigator)
         const model : ProposalModel = {
             pathologyId: proposalForm.pathologyId,
             principalInvestigatorId: parseInt(proposalForm.pInvestigator.pid),
@@ -86,13 +89,16 @@ export function CreateProposal(props : CP_Props) {
     }
 
     function handleFormSubmit() {
-            console.log(proposalForm);
-            console.log("data should have printed");
-            props.service.saveProposal(proposalFormToModel(proposalForm))
-                .then(r => alert(r))
+        console.log(proposalForm);
+        console.log("data should have printed");
+        props.service.saveProposal(proposalFormToModel(proposalForm))
+            .then((p) => {
+                nagivate(`${p.id}`)
+            })
     }
 
     return (
+        //TODO ADD FLOATING LABEL TO LOOK COOL
         <div className={"d-flex justify-content-evenly"}>
             <Row>
                 <ProposalFormColumn

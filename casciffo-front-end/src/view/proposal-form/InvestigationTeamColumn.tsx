@@ -77,16 +77,15 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                                 teamRole: TeamRoleTypes.MEMBER
                             })}
                 />
-                <Form.Control
-                    aria-required
-                    aria-describedby={"basic-addon2"}
-                    placeholder={"Identificador do Investigador i.e 1235"}
-                    type={"text"}
-                    // todo add validation with regular expression
-                    name={"name"}
-                    value={state.investigator.name}
-                    onChange={(e: any) => handleInvestigatorInputChange(e)}
-                />
+                {/*<Form.Control*/}
+                {/*    aria-required*/}
+                {/*    aria-describedby={"basic-addon2"}*/}
+                {/*    placeholder={"Identificador do Investigador i.e 1235"}*/}
+                {/*    type={"text"}*/}
+                {/*    name={"name"}*/}
+                {/*    value={state.investigator.name}*/}
+                {/*    onChange={(e: any) => handleInvestigatorInputChange(e)}*/}
+                {/*/>*/}
                 <Button
                     variant="outline-secondary"
                     id="button-addon2"

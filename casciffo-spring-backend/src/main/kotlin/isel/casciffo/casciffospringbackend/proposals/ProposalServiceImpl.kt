@@ -1,10 +1,10 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.exceptions.CannotUpdateCancelledProposalException
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
@@ -12,7 +12,6 @@ import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialSe
 import isel.casciffo.casciffospringbackend.research.Research
 import isel.casciffo.casciffospringbackend.research.ResearchService
 import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
-import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.states.StateService
 import isel.casciffo.casciffospringbackend.states.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
@@ -20,6 +19,7 @@ import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -35,6 +35,7 @@ class ProposalServiceImpl(
     @Autowired val therapeuticAreaRepository: TherapeuticAreaRepository,
     @Autowired val pathologyRepository: PathologyRepository,
     @Autowired val investigationTeamRepository: InvestigationTeamRepository,
+    @Autowired val investigationTeamService: InvestigationTeamService,
     @Autowired val userRepository: UserRepository,
     @Autowired val roleRepository: UserRoleRepository,
     @Autowired val stateService: StateService,
@@ -94,11 +95,7 @@ class ProposalServiceImpl(
                 it.proposalId = createdProposal.id!!
             }
 
-        createdProposal.investigationTeam =
-            investigationTeamRepository
-                .saveAll(proposal.investigationTeam!!)
-                .collectList()
-                .awaitSingle()
+        createdProposal.investigationTeam = investigationTeamService.saveTeam(proposal.investigationTeam!!).toList()
     }
 
     @Transactional
@@ -123,9 +120,6 @@ class ProposalServiceImpl(
     ) {
         val nextState  = States.valueOf(stateService.findById(proposal.stateId!!).name)
         val currState = States.valueOf(stateService.findById(existingProposal.stateId!!).name)
-
-        //TODO when superuser is available
-        // currState.isCancelled to not cancelled should be possible
 
         if (currState.isNextStateValid(nextState))
             throw InvalidStateTransitionException()
@@ -163,11 +157,9 @@ class ProposalServiceImpl(
     }
 
     private suspend fun loadDetails(prop: ProposalModel) {
-        prop.investigationTeam =
-            investigationTeamRepository
-                .findInvestigationTeamByProposalId(prop.id!!)
-                .collectList()
-                .awaitSingle()
+        prop.investigationTeam = investigationTeamService.findTeamByProposalId(prop.id!!).toList()
+
+        prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!).toList()
 
         prop.comments = commentsRepository
             .findByProposalId(prop.id!!)
