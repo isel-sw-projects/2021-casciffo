@@ -1,7 +1,7 @@
-import {Track} from "../model/Track";
-import {PathologyModel} from "../model/constants/PathologyModel";
-import {ServiceTypeModel} from "../model/constants/ServiceTypeModel";
-import {TherapeuticAreaModel} from "../model/constants/TherapeuticAreaModel";
+
+import {PathologyModel} from "../model/proposal-constants/PathologyModel";
+import {ServiceTypeModel} from "../model/proposal-constants/ServiceTypeModel";
+import {TherapeuticAreaModel} from "../model/proposal-constants/TherapeuticAreaModel";
 import {PromoterModel} from "../model/proposal/finance/PromoterModel";
 import {PartnershipModel} from "../model/PartnershipModel";
 
@@ -9,11 +9,6 @@ type Page = {
     pageNum: number,
     elementsLimit: number,
     searchQuery: string
-}
-
-type APIResponse = {
-    tracks: Array<Track>,
-    totalTracks: number
 }
 
 type ResearchType = {
@@ -58,4 +53,7 @@ type Filter = {
     id: string
 }
 
-export type {Page, APIResponse, ResearchType, Investigator, Constants, Filter, ProposalForm, Promoter}
+export type {
+    Page, ResearchType, Investigator,
+    Constants, Filter, ProposalForm, Promoter
+}

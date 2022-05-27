@@ -1,12 +1,14 @@
 import {StateModel} from "../state/StateModel";
-import {ServiceTypeModel} from "../constants/ServiceTypeModel";
-import {TherapeuticAreaModel} from "../constants/TherapeuticAreaModel";
-import {PathologyModel} from "../constants/PathologyModel";
+import {ServiceTypeModel} from "../proposal-constants/ServiceTypeModel";
+import {TherapeuticAreaModel} from "../proposal-constants/TherapeuticAreaModel";
+import {PathologyModel} from "../proposal-constants/PathologyModel";
 import UserModel from "../user/UserModel";
 import {ProposalFinanceModel} from "./finance/ProposalFinanceModel";
 import {Investigator} from "../../common/Types";
 import {TeamInvestigatorModel} from "../TeamInvestigatorModel";
 import {StateTransitionModel} from "../state/StateTransitionModel";
+import {ProposalCommentsModel} from "./ProposalCommentsModel";
+import {TimelineEventModel} from "../TimelineEventModel";
 
 export interface ProposalModel {
     id?: number,
@@ -27,5 +29,7 @@ export interface ProposalModel {
     dateModified?: Array<number>,
     financialComponent?: ProposalFinanceModel,
     investigationTeam?: Array<TeamInvestigatorModel>,
-    stateTransitions?: Array<StateTransitionModel>
+    stateTransitions?: Array<StateTransitionModel>,
+    comments?: Array<ProposalCommentsModel>,
+    timelineEvents?: Array<TimelineEventModel>
 }

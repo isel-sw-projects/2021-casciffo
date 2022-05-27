@@ -4,14 +4,20 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import TableComponent from "./view/util-components/TableComponent";
-import TracksModel from "./model/TracksModel";
 import App from "./view/app/App";
 
-import { createRoot } from 'react-dom/client';
-const container = document.getElementById('root');
-const root = createRoot(container!);
-root.render(<App/>);
+// import { createRoot } from 'react-dom/client';
+// const container = document.getElementById('root');
+// const root = createRoot(container!);
+// root.render(<App/>);
+
+ReactDOM.render(
+    <React.StrictMode>
+            <App />
+    </React.StrictMode>,
+    document.getElementById('root')
+);
+
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

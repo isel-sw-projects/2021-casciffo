@@ -1,4 +1,4 @@
-import {PathologyModel} from "../model/constants/PathologyModel";
+import {PathologyModel} from "../model/proposal-constants/PathologyModel";
 import ApiUrls from "../common/Links";
 
 class PathologyService {

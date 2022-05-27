@@ -1,4 +1,3 @@
-import {PathologyModel} from "../model/constants/PathologyModel";
 import ApiUrls from "../common/Links";
 import UserModel from "../model/user/UserModel";
 

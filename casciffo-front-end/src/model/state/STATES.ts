@@ -6,7 +6,7 @@ export const STATES = {
     SUBMISSAO_AO_CA: {code: 5, name: "Submissão ao CA", id: "SUBMISSAO_AO_CA", owner: "UIC"},
     VALIDACAO_INTERNA_CA: {code: 6, name: "Validação interna", id: "VALIDACAO_INTERNA_CA", owner: "CA"},
     VALIDADO: {code: 7, name: "Validado", id: "VALIDADO", owner: "CA"},
-    // CANCELADO: {code: -1, name: "Cancelado", id: "CANCELADO"},
-    // COMPLETO: {code: 10, name: "Completo", id: "COMPLETO"},
-    // ATIVO: {code: 11, name: "Ativo", id: "ATIVO"}
+    CANCELADO: {code: -1, name: "Cancelado", id: "CANCELADO", owner: "UIC"},
+    COMPLETO: {code: 10, name: "Completo", id: "COMPLETO", owner: "UIC"},
+    ATIVO: {code: 11, name: "Ativo", id: "ATIVO", owner: "UIC"}
 }

@@ -1,12 +1,11 @@
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import ApiUrls from "../common/Links";
-import {ResearchType} from "../common/Types";
-import {ResearchTypes} from "../model/ResearchTypes";
-import {PromoterTypes} from "../model/PromoterTypes";
+import {PromoterTypes, ResearchTypes} from "../common/Constants";
+import {TimelineEventModel} from "../model/TimelineEventModel";
 
 class ProposalService {
 
-    fetchByType(type: string, sort: string): Promise<Array<ProposalModel>> {
+    fetchByType(type: string, sort: string = "dateCreated"): Promise<Array<ProposalModel>> {
         return fetch(ApiUrls.proposalsByTypeUrl(type)).then(rsp => rsp.json())
     }
 
@@ -63,12 +62,36 @@ class ProposalService {
         const opt : RequestInit = {
             method: 'POST',
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(proposal)
         }
         return fetch(ApiUrls.proposalsUrl, opt)
+    }
+
+    advanceState(proposalId: string, forward :boolean): Promise<ProposalModel> {
+        const opt : RequestInit = {
+            method: 'PUT',
+        }
+        return fetch(ApiUrls.proposalsTransitionUrl(proposalId, forward), opt).then(rsp => rsp.json())
+    }
+
+    saveTimelineEvent(proposalId: string, event: TimelineEventModel): Promise<TimelineEventModel> {
+        const url = ApiUrls.proposalsTimelineEventUrl(proposalId)
+        const opt : RequestInit = {
+            headers: [['Content-type', 'application/json']],
+            method: 'POST',
+            body: JSON.stringify(event)
+        }
+        return fetch(url, opt).then(rsp => rsp.json())
+    }
+
+    fetchTimelineEvents(proposalId: string): Promise<TimelineEventModel[]> {
+        const url = ApiUrls.proposalsTimelineEventUrl(proposalId)
+        const opt : RequestInit = {
+            method: 'GET'
+        }
+        return fetch(url, opt).then(rsp => rsp.json())
     }
 }
 

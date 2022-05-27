@@ -1,6 +1,6 @@
-import {PathologyModel} from "../model/constants/PathologyModel";
+import {PathologyModel} from "../model/proposal-constants/PathologyModel";
 import ApiUrls from "../common/Links";
-import {TherapeuticAreaModel} from "../model/constants/TherapeuticAreaModel";
+import {TherapeuticAreaModel} from "../model/proposal-constants/TherapeuticAreaModel";
 
 export class TherapeuticAreaService {
     fetchAll() : Promise<Array<TherapeuticAreaModel>> {

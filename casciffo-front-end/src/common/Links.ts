@@ -20,6 +20,12 @@ const STATES_URL = `${BASE_URL}/states`
 const PROPOSALS_URL =  `${BASE_URL}/proposals`
 const PROPOSALS_URL_BY_TYPE = (type: string) => `${PROPOSALS_URL}?type=${type}`
 const DETAIL_PROPOSAL_URL = (id: string) => `${PROPOSALS_URL}/${id}`
+const PROPOSAL_TRANSITION_URL = (id: string, forward: boolean) => `${DETAIL_PROPOSAL_URL(id)}/state?forward=${forward}`
+const PROPOSALS_TIMELINE_EVENT_URL = (id: string) => `${DETAIL_PROPOSAL_URL(id)}/events`
+
+/******************** PROPOSAL COMMENTS ***********************/
+const COMMENTS_URL = (pId: string) => `${DETAIL_PROPOSAL_URL(pId)}/comments`
+const COMMENTS_BY_TYPE_URL = (pId: string, type: string) => `${COMMENTS_URL(pId)}?t=${type}`
 
 
 /************************** CONSTANTS **************************/
@@ -40,6 +46,8 @@ const ApiUrls = {
     proposalsUrl: PROPOSALS_URL,
     proposalsByTypeUrl: PROPOSALS_URL_BY_TYPE,
     buildDetailProposalUrl: DETAIL_PROPOSAL_URL,
+    commentsUrl: COMMENTS_URL,
+    commentsByTypeUrl: COMMENTS_BY_TYPE_URL,
     researchUrl: RESEARCH_URL,
     buildDetailResearchUrl: DETAIL_RESEARCH_URL,
     usersUrl: USERS_URL,
@@ -50,7 +58,10 @@ const ApiUrls = {
     serviceTypesUrl: SERVICE_TYPES_URL,
     pathologiesUrl: PATHOLOGIES_URL,
     therapeuticAreasUrl: THERAPEUTIC_AREAS_URL,
-    usersByRoleAndNameUrl: USERS_BY_ROLE_AND_NAME
+    usersByRoleAndNameUrl: USERS_BY_ROLE_AND_NAME,
+    proposalsTransitionUrl: PROPOSAL_TRANSITION_URL,
+    proposalsTimelineEventUrl: PROPOSALS_TIMELINE_EVENT_URL
+
 }
 
 export default ApiUrls

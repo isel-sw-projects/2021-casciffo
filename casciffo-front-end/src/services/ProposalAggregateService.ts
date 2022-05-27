@@ -1,16 +1,17 @@
-import PathologyService from "./PathologyService";
-import {ServiceTypeService} from "./ServiceTypeService";
-import {TherapeuticAreaService} from "./TherapeuticAreaService";
 import ProposalService from "./ProposalService";
 import {Constants} from "../common/Types";
 import ApiUrls from "../common/Links";
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import {UserService} from "./UserService";
 import UserModel from "../model/user/UserModel";
+import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
+import CommentsService from "./CommentsService";
+import {TimelineEventModel} from "../model/TimelineEventModel";
 
 export default class ProposalAggregateService {
-    proposalService = new ProposalService()
-    userService = new UserService()
+    private proposalService = new ProposalService()
+    private userService = new UserService()
+    private commentsService = new CommentsService()
 
     fetchInvestigators(name: string) : Promise<UserModel[]> {
         return fetch(ApiUrls.usersByRoleAndNameUrl(name,["UIC", "SUPERUSER"])).then(rsp => rsp.json())
@@ -24,6 +25,14 @@ export default class ProposalAggregateService {
         return this.proposalService.save(proposal).then(rsp => rsp.json())
     }
 
+    fetchProposalComments(proposalId: number, commentType: string) : Promise<ProposalCommentsModel[]> {
+        return this.commentsService.fetchAllByProposalIdAndType(proposalId, commentType)
+    }
+
+    saveProposalComment(comment: ProposalCommentsModel): Promise<ProposalCommentsModel> {
+        return this.commentsService.saveProposalComment(comment)
+    }
+
     fetchConstantsMock(): Promise<Constants> {
         return new Promise<Constants>(resolve => {
             setTimeout(() =>
@@ -33,5 +42,21 @@ export default class ProposalAggregateService {
                     therapeuticAreas: [{id: 1, name: "Terapia Cardio"}]
                 }), 1)
         })
+    }
+
+    fetchProposalById(proposalId: string): Promise<ProposalModel> {
+        return this.proposalService.fetchById(proposalId)
+    }
+
+    advanceState(proposalId: string, forward: boolean): Promise<ProposalModel> {
+        return this.proposalService.advanceState(proposalId, forward)
+    }
+
+    saveTimelineEvent(proposalId: string, event: TimelineEventModel) {
+        return this.proposalService.saveTimelineEvent(proposalId, event)
+    }
+
+    fetchProposalTimelineEvents(proposalId: string) {
+        return this.proposalService.fetchTimelineEvents(proposalId)
     }
 }

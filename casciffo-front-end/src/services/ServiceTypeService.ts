@@ -1,5 +1,5 @@
 import ApiUrls from "../common/Links";
-import {ServiceTypeModel} from "../model/constants/ServiceTypeModel";
+import {ServiceTypeModel} from "../model/proposal-constants/ServiceTypeModel";
 
 export class ServiceTypeService {
     fetchAll() : Promise<Array<ServiceTypeModel>> {
