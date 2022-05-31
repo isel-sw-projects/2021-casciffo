@@ -7,10 +7,13 @@ import isel.casciffo.casciffospringbackend.proposals.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.ProposalRepository
 import isel.casciffo.casciffospringbackend.proposals.ProposalService
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialRepository
-import isel.casciffo.casciffospringbackend.research.Research
+import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
+import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolService
+import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchRepository
 import isel.casciffo.casciffospringbackend.research.ResearchService
 import isel.casciffo.casciffospringbackend.research.patients.Participant
@@ -22,24 +25,21 @@ import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.users.User
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import isel.casciffo.casciffospringbackend.users.UserService
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@ActiveProfiles(value = ["test"])
+//@ActiveProfiles(value = ["test"])
 @SpringBootTest
 class CasciffoSpringBackendApplicationTests(
 	@Autowired val userRepo: UserRepository,
@@ -55,12 +55,31 @@ class CasciffoSpringBackendApplicationTests(
 	@Autowired val researchService: ResearchService,
 	@Autowired val participantService: ParticipantService,
 	@Autowired val participantRepository: ParticipantRepository,
+	@Autowired val protocolService: ProtocolService,
+	@Autowired val proposalCommentsRepository: ProposalCommentsRepository,
+	@Autowired val proposalCommentsService: ProposalCommentsService,
 ) {
 
 	@Test
 	fun cleanup() {
 //		userRepo.deleteAll().block()
 //		userRoleRepository.deleteAll().block()
+		runBlocking {
+
+		}
+	}
+
+	@Test
+	fun whenProposalCreated_thenFindIdInRepository() {
+		StepVerifier.create(proposalRepository.findById(1))
+			.expectSubscription()
+			.`as`("Find proposal by id")
+			.thenAwait()
+			.assertNext{
+				it.id !== null
+			}
+			.expectComplete()
+			.verifyThenAssertThat()
 	}
 
 	@Test
@@ -142,11 +161,11 @@ class CasciffoSpringBackendApplicationTests(
 
 	@Test
 	fun testResearchRepositoryCreate() {
-		val research = Research(null, 1, 1, "eudra_ct", 10, 20, "cro",
+		val researchModel = ResearchModel(null, 1, 1, "eudra_ct", 10, 20, "cro",
 			LocalDate.now(), null, null, "industry", "protocol",
 			"promotor", "1 | 4", ResearchType.CLINICAL_TRIAL)
 		runBlocking{
-			val res = researchRepository.save(research).block()
+			val res = researchRepository.save(researchModel).block()
 			println(res)
 			assert(res != null)
 			assert(res!!.id != null)
@@ -225,12 +244,14 @@ class CasciffoSpringBackendApplicationTests(
 			StepVerifier
 				.create(res)
 				.expectSubscription()
+				.thenAwait()
 				.expectNextCount(1)
-				.expectNextMatches{
+				.assertNext{
 					it.id != null
 					it.financialComponent!!.id != null
 					it.financialComponent!!.promoter!!.id != null
 				}
+				.thenConsumeWhile{true}
 				.expectComplete()
 				.verifyThenAssertThat()
 		}
@@ -250,10 +271,17 @@ class CasciffoSpringBackendApplicationTests(
 	@Test
 	fun testFinancialComponentServiceFindAll() {
 		runBlocking {
-			val res = proposalFinancialService.findComponentByProposalId(1)
+			val res = proposalFinancialService.findComponentByProposalId(1, true)
 			assert(res.id != null)
-			assert(res.partnerships!!.isNotEmpty())
 			assert(res.promoter != null)
+			StepVerifier.create(res.partnerships!!)
+				.expectSubscription()
+				.thenAwait()
+				.assertNext{
+					it.id != null && it.financeComponentId == res.id
+				}
+				.expectComplete()
+				.verifyThenAssertThat()
 		}
 	}
 }

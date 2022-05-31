@@ -38,6 +38,9 @@ const val PROPOSAL_TRANSITION_URL = "${PROPOSAL_URL}/state"
 
 const val PROPOSAL_EVENTS_URL = "${PROPOSAL_URL}/events"
 
+const val PROPOSAL_PROTOCOL_URL = "${PROPOSAL_URL}/protocol"
+
+const val PROPOSAL_PROTOCOL_COMMENTS_URL = "${PROPOSAL_URL}/protocol-comments"
 
 /*********************************** RESEARCH ******************************************/
 /***************************************************************************************/

@@ -29,7 +29,6 @@ export function PartnershipsColumn(props: PsC_Props) {
     function handlePartnershipChange(event: React.ChangeEvent<HTMLInputElement>) {
         let key = event.target.name as keyof PartnershipModel
         let value = event.target.value
-        console.log(state.partnershipToAdd)
         setState(prevState => {
             return ({
                 ...prevState,

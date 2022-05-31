@@ -1,24 +1,14 @@
 package isel.casciffo.casciffospringbackend.repository
 
-import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
-import isel.casciffo.casciffospringbackend.investigation_team.InvestigatorRole
-import isel.casciffo.casciffospringbackend.proposals.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.ProposalRepository
-import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
-import isel.casciffo.casciffospringbackend.research.Research
 import isel.casciffo.casciffospringbackend.research.ResearchRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import reactor.core.publisher.Flux
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class ResearchRepositoryIT(
     @Autowired val researchRepository: ResearchRepository,

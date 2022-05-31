@@ -71,8 +71,6 @@ export function CreateProposal(props : CP_Props) {
                 memberId: parseInt(i.id),
             }))
         }
-        console.log(proposalForm.team)
-        console.log(model.investigationTeam)
         if(proposalForm.researchType === ResearchTypes.CLINICAL_TRIAL.id) {
             model.financialComponent = {
                 file: undefined,
@@ -87,8 +85,6 @@ export function CreateProposal(props : CP_Props) {
     const navigate = useNavigate()
 
     function handleFormSubmit() {
-        console.log(proposalForm);
-        console.log("data should have printed");
         props.service.saveProposal(proposalFormToModel(proposalForm))
             .then((p) => {
                 navigate(`/propostas/${p.id}`)

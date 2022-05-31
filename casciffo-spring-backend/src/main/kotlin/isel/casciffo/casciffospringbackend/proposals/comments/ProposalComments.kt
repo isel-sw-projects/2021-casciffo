@@ -14,16 +14,16 @@ import java.time.LocalDateTime
 data class ProposalComments (
     @Id
     @Column(value = "comment_id")
-    var id: Int?,
+    var id: Int?=null,
 
-    var proposalId: Int?,
-    var authorId: Int?,
+    var proposalId: Int?=null,
+    var authorId: Int?=null,
 
     @CreatedDate
-    val dateCreated: LocalDateTime,
+    val dateCreated: LocalDateTime?=null,
 
     @LastModifiedDate
-    val dateModified: LocalDateTime?,
+    val dateModified: LocalDateTime?=null,
 
     val content: String,
 
@@ -31,5 +31,5 @@ data class ProposalComments (
 
     @Transient
     @Value("null")
-    var author: User?
+    var author: User?=null
 )

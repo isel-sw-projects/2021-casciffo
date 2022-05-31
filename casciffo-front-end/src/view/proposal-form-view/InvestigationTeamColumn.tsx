@@ -48,7 +48,6 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
     }
 
     function removeInvestigatorFromTeam(investigator: Investigator) {
-        console.log(`investigator to remove: ${investigator}`)
         let newTeam = state.team.filter(member => member !== investigator)
         props.setTeam(newTeam)
         setState(prevState => {

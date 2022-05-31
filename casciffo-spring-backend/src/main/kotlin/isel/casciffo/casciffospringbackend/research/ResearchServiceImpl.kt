@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.research
 
-import isel.casciffo.casciffospringbackend.proposals.ProposalService
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaService
@@ -10,8 +9,6 @@ import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
-import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
-import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,10 +16,10 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactor.asFlux
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 
 @Service
 class ResearchServiceImpl(
@@ -36,19 +33,19 @@ class ResearchServiceImpl(
     @Autowired val participantService: ParticipantService
 ): ResearchService {
 
-    override suspend fun getAllResearchesByType(type: ResearchType): Flow<Research> {
+    override suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchModel> {
         return researchRepository.findAllByType(type).asFlow().map(this::loadRelations)
     }
 
-    override suspend fun getResearch(researchId: Int): Research {
+    override suspend fun getResearch(researchId: Int): ResearchModel {
         val research = researchRepository.findById(researchId).awaitFirstOrNull()
             ?: throw IllegalArgumentException("research Id doesnt exist!!!")
         return loadRelations(research, true)
     }
 
     @Transactional
-    override suspend fun createResearch(research: Research): Research {
-        return researchRepository.save(research).awaitFirst()
+    override suspend fun createResearch(researchModel: ResearchModel): ResearchModel {
+        return researchRepository.save(researchModel).awaitFirst()
     }
 
     @Transactional
@@ -68,26 +65,26 @@ class ResearchServiceImpl(
     override suspend fun createAddenda(addenda: Addenda) : Addenda = addendaService.createAddenda(addenda)
 
     @Transactional
-    override suspend fun updateResearch(research: Research): Research {
-        val existingResearch = researchRepository.findById(research.id!!).awaitFirstOrNull()
+    override suspend fun updateResearch(researchModel: ResearchModel): ResearchModel {
+        val existingResearch = researchRepository.findById(researchModel.id!!).awaitFirstOrNull()
             ?: throw IllegalArgumentException("Research doesnt exist!!!")
-        val hasStateTransitioned = research.stateId == existingResearch.stateId
+        val hasStateTransitioned = researchModel.stateId == existingResearch.stateId
 
         if(hasStateTransitioned) {
             stateTransitionService
-                .newTransition(existingResearch.stateId!!, research.stateId!!, TransitionType.RESEARCH, research.id!!)
+                .newTransition(existingResearch.stateId!!, researchModel.stateId!!, TransitionType.RESEARCH, researchModel.id!!)
         }
-        return researchRepository.save(research).awaitFirstOrNull() ?: throw Exception("Idk what happened bro ngl")
+        return researchRepository.save(researchModel).awaitFirstOrNull() ?: throw Exception("Idk what happened bro ngl")
     }
 
-    suspend fun loadRelations(research: Research, isDetailedView: Boolean = false) : Research {
+    suspend fun loadRelations(researchModel: ResearchModel, isDetailedView: Boolean = false) : ResearchModel {
         //research.proposal = proposalService.getProposalById(research.proposalId!!)
 
         if(isDetailedView) {
-            research.stateTransitions = stateTransitionService.findAllByReferenceId(research.id!!).toList()
-            research.participants = participantService.getParticipantsByResearchId(research.id!!).toList()
+            researchModel.stateTransitions = stateTransitionService.findAllByReferenceId(researchModel.id!!).asFlux()
+            researchModel.participants = participantService.getParticipantsByResearchId(researchModel.id!!).asFlux()
         }
 
-        return research
+        return researchModel
     }
 }

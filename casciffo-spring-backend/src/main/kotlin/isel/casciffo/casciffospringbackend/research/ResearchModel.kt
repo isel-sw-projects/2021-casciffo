@@ -17,9 +17,9 @@ import java.time.LocalDate
 data class ResearchModel (
     @Id
     @Column("research_id")
-    var id: Int?,
+    var id: Int? = null,
 
-    var proposalId: Int?,
+    var proposalId: Int? = null,
 
     @Column("research_state_id")
     var stateId: Int? = null,

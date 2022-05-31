@@ -21,11 +21,17 @@ class InvalidStateTransitionException : Exception()
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Cannot update a cancelled proposal.")
 class CannotUpdateCancelledProposalException : Exception()
 
+@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Specified resource Id doesn't exist.")
+class ResourceNotFoundException: Exception()
+
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Proposal Id requested doesn't exist.")
 class ProposalNotFoundException: Exception()
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "State id doesn't exist.")
 class InvalidStateException: Exception()
+
+@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "ProtocolId specified doesnt exist.")
+class InvalidProtocolId: Exception()
 
 @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR, reason = "There was an error in Database.")
 class DataBaseException: Exception()

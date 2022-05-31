@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.users.UserService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
@@ -16,20 +17,26 @@ class ProposalCommentsServiceImpl(
     @Autowired val userService: UserService
     )
     : ProposalCommentsService {
-    override suspend fun createComment(comment: ProposalComments): ProposalComments? {
+    override suspend fun createComment(comment: ProposalComments): ProposalComments {
         if(comment.proposalId == null) {
             throw IllegalArgumentException("ProposalId cannot be null!!!")
         }
-        return repository.save(comment).awaitSingleOrNull()
+        //fixme this is a temp fix requires a look at @CreatedDate annotation
+        val savedComment = repository.save(comment).awaitSingle()
+        return repository.findById(savedComment.id!!).awaitSingle()
     }
 
     //fixme need a bit of thinking here
-    override suspend fun updateComment(comment: ProposalComments): ProposalComments? {
-        return repository.save(comment).awaitSingleOrNull()
+    override suspend fun updateComment(comment: ProposalComments): ProposalComments {
+        return repository.save(comment).awaitSingle()
     }
 
     override suspend fun getComments(proposalId: Int, page: Pageable): Flow<ProposalComments>{
         return repository.findByProposalId(proposalId, page).asFlow().map(this::loadAuthor)
+    }
+
+    override suspend fun getCommentsByType(proposalId: Int, type: String, page: Pageable): Flow<ProposalComments> {
+        return repository.findByProposalIdAndCommentType(proposalId, CommentType.valueOf(type), page).asFlow()
     }
 
     suspend fun loadAuthor(comment: ProposalComments): ProposalComments {

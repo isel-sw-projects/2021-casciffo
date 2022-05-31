@@ -2,7 +2,6 @@ package isel.casciffo.casciffospringbackend.proposals
 
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
-import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
@@ -10,7 +9,8 @@ import isel.casciffo.casciffospringbackend.proposals.constants.PathologyReposito
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
-import isel.casciffo.casciffospringbackend.research.Research
+import isel.casciffo.casciffospringbackend.proposals.timelineEvents.TimelineEventRepository
+import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchService
 import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
 import isel.casciffo.casciffospringbackend.states.StateService
@@ -20,18 +20,17 @@ import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitFirstOrElse
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import kotlin.math.abs
+import java.time.LocalDate
 
 @Service
 class ProposalServiceImpl(
@@ -57,9 +56,12 @@ class ProposalServiceImpl(
     }
 
     override suspend fun getProposalById(id: Int): ProposalModel {
-        val proposal = proposalRepository.findById(id).awaitSingleOrNull()
-            ?: throw IllegalArgumentException("ProposalId doesnt exist!!!")
-        return loadRelations(proposal, true)
+        try {
+            val proposal = proposalRepository.findById(id).awaitSingle()
+            return loadRelations(proposal, true)
+        } catch (e: NoSuchElementException) {
+            throw IllegalArgumentException("ProposalId doesnt exist!!!")
+        }
     }
 
     @Transactional
@@ -107,45 +109,84 @@ class ProposalServiceImpl(
 
     @Transactional
     override suspend fun updateProposal(proposal: ProposalModel): ProposalModel {
-        print(proposal)
-        val existingProposal = proposalRepository.findById(proposal.id!!).awaitSingleOrNull()
-            ?: throw ProposalNotFoundException()
+        proposalRepository.findById(proposal.id!!).awaitSingleOrNull() ?: throw ProposalNotFoundException()
 
-        val hasStateTransitioned = proposal.stateId != existingProposal.stateId
-
-        if (hasStateTransitioned) {
-            handleStateTransition(proposal, existingProposal)
-        }
+//        val hasStateTransitioned = proposal.stateId != existingProposal.stateId
+//
+//        if (hasStateTransitioned) {
+//            handleStateTransition(proposal, existingProposal)
+//        }
 
         proposalRepository.save(proposal).awaitSingleOrNull() ?: throw Exception("Idk what happened bro ngl")
         return proposal
     }
 
-    private suspend fun handleStateTransition(
-        proposal: ProposalModel,
-        existingProposal: ProposalModel
-    ) {
-        val nextState  = States.valueOf(stateService.findById(proposal.stateId!!).name)
-        val currState = States.valueOf(stateService.findById(existingProposal.stateId!!).name)
-
-        if (currState.isNextStateValid(nextState))
-            throw InvalidStateTransitionException()
-
-        if (nextState.isCompleted()) {
-            val stateAtivo = stateService.findByName(States.ATIVO.name)
-            val research = Research(null, proposal.id, stateAtivo.id)
-            researchService.createResearch(research)
-        }
-
-        stateTransitionService
-            .newTransition(existingProposal.stateId!!, proposal.stateId!!, TransitionType.PROPOSAL, proposal.id!!)
-    }
-
     @Transactional
     override suspend fun deleteProposal(proposalId: Int): ProposalModel {
         val prop = proposalRepository.findById(proposalId).awaitSingleOrNull() ?: throw ProposalNotFoundException()
-        proposalRepository.deleteById(proposalId)
+        proposalRepository.deleteById(proposalId).awaitSingle()
         return prop
+    }
+
+
+    @Transactional
+    override suspend fun advanceState(proposalId: Int, forward: Boolean): ProposalModel {
+        //FIXME this call throws NoSuchElementException despite the id existing.
+        // The error is not thrown in different contexts with the same Id,
+        // be it in the controller#getById, service#getById or repo#getById
+        val prop = getProposalById(proposalId)
+        handleStateTransition(prop, forward)
+        return prop
+    }
+
+
+    suspend fun handleStateTransition(
+        existingProposal: ProposalModel,
+        forward: Boolean
+    ) {
+
+        val currState = States.valueOf(stateService.findById(existingProposal.stateId!!).name)
+        //fixme add verification of user permissions to make sure he can or not advance
+        val nextLocalState: States? = if(forward) currState.getNextState() else currState.getPrevState()
+        if(nextLocalState === null) throw InvalidStateTransitionException()
+
+        val nextState = stateService.findByName(nextLocalState.name)
+
+        if (currState.isNextStateValid(nextLocalState))
+            throw InvalidStateTransitionException()
+
+        if (nextLocalState.isCompleted()) {
+            val stateAtivo = stateService.findByName(States.ATIVO.name)
+            val researchModel = ResearchModel(null, existingProposal.id, stateAtivo.id)
+            researchService.createResearch(researchModel)
+        }
+
+        if(existingProposal.timelineEvents !== null) {
+            updateTimelineEvent(existingProposal, nextLocalState.name)
+        }
+
+        stateTransitionService
+            .newTransition(existingProposal.stateId!!, nextState.id!!, TransitionType.PROPOSAL, existingProposal.id!!)
+    }
+
+    private fun updateTimelineEvent(
+        proposal: ProposalModel,
+        state: String
+    ) {
+        proposal.timelineEvents!!
+            .filter {
+                it.stateName === state
+            }.map {
+                it.completedDate = LocalDate.now()
+                it
+            }.map {
+                val diff = it.completedDate!!.dayOfYear - it.deadlineDate!!.dayOfYear
+                if(diff > 0)
+                    it.daysOverDue = diff
+                it
+            }.subscribe {
+                timelineEventRepository.save(it)
+            }
     }
 
 
@@ -153,7 +194,7 @@ class ProposalServiceImpl(
         var prop = loadConstantRelations(proposal)
 
         if(prop.type == ResearchType.CLINICAL_TRIAL) {
-            prop = loadFinancialComponent(prop)
+            prop = loadFinancialComponent(prop, isDetailedView)
         }
 
         if(isDetailedView) {
@@ -174,8 +215,8 @@ class ProposalServiceImpl(
         prop.timelineEvents = timelineEventRepository.findTimelineEventsByProposalId(prop.id!!)
     }
 
-    private suspend fun loadFinancialComponent(proposal: ProposalModel): ProposalModel {
-        proposal.financialComponent = proposalFinancialService.findComponentByProposalId(proposal.id!!)
+    private suspend fun loadFinancialComponent(proposal: ProposalModel, isDetailedView: Boolean): ProposalModel {
+        proposal.financialComponent = proposalFinancialService.findComponentByProposalId(proposal.id!!, isDetailedView)
         return proposal
     }
 

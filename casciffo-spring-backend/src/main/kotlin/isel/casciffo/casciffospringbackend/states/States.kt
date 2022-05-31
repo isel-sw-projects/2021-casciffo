@@ -8,9 +8,7 @@ enum class States(val code: Int) {
     CANCELADO(Int.MIN_VALUE), COMPLETO(10), ATIVO(11);
 
     fun getNextState(): States? {
-        val nextState = values().filter { (it.code - this.code) == 1 }
-
-        return nextState.ifEmpty { listOf(null) }[0]
+        return values().find { (it.code - code) == 1 }
     }
 
     fun getPrevState(): States? {

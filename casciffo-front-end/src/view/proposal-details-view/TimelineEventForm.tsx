@@ -86,7 +86,7 @@ export function TimelineEventForm(props: TimelineProps) {
 
     function onDateChanged(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setDateAsString(e.target.value)
-        const date = Util.formatStringToDate(e.target.value)
+        const date = Util.formatStringToArrayDate(e.target.value)
         setEventToAdd(updateState("deadlineDate", date))
     }
 

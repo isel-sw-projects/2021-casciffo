@@ -48,7 +48,6 @@ export function ProposalFormColumn(props: PFC_Props) {
         }
     function handleInputChange(event: ReactGeneralInputValue) {
         event.persist()
-        console.log(`Input Change!!!!\nProp name: ${event.target.name} \t value:${event.target.value}`)
         let propKey = event.target.name as keyof ProposalForm
         let value = event.target.value
         props.setFormData(updateState(propKey, value))

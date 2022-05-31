@@ -1,4 +1,3 @@
 package isel.casciffo.casciffospringbackend.repository
 
-class InvestigationTeamRepositoryIT {
-}
+class InvestigationTeamRepositoryIT

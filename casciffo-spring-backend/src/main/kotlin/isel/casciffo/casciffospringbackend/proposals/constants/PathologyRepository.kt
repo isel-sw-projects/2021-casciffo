@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository
 
 
 @Repository
-interface PathologyRepository : ReactiveCrudRepository<Pathology, Int> {
-}
+interface PathologyRepository : ReactiveCrudRepository<Pathology, Int>

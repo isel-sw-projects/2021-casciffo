@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface TimelineEventRepository : ReactiveCrudRepository<TimelineEvent, Int> {
+interface TimelineEventRepository : ReactiveCrudRepository<TimelineEventModel, Int> {
 
     @Query("select tle.* from timeline_event tle join proposal p on tle.proposal_id = p.proposal_id " +
             "where p.proposal_id=:proposalId")
-    fun findTimelineEventsByProposalId(proposalId: Int) : Flux<TimelineEvent>
+    fun findTimelineEventsByProposalId(proposalId: Int) : Flux<TimelineEventModel>
 }

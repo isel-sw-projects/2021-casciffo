@@ -7,6 +7,8 @@ import UserModel from "../model/user/UserModel";
 import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
 import CommentsService from "./CommentsService";
 import {TimelineEventModel} from "../model/TimelineEventModel";
+import {ProtocolCommentsModel} from "../model/proposal/finance/ProtocolCommentsModel";
+import {ProtocolModel} from "../model/proposal/finance/ProtocolModel";
 
 export default class ProposalAggregateService {
     private proposalService = new ProposalService()
@@ -58,5 +60,17 @@ export default class ProposalAggregateService {
 
     fetchProposalTimelineEvents(proposalId: string) {
         return this.proposalService.fetchTimelineEvents(proposalId)
+    }
+
+    fetchProtocol(proposalId: string) {
+        return this.proposalService.fetchProtocol(proposalId)
+    }
+
+    saveProtocolComment(proposalId: string, comment: ProtocolCommentsModel) {
+        return this.proposalService.saveProtocolComment(proposalId, comment)
+    }
+
+    updateProtocol(proposalId: string, protocol: ProtocolModel) {
+        return this.proposalService.updateProtocol(proposalId, protocol)
     }
 }

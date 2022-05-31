@@ -28,6 +28,11 @@ const COMMENTS_URL = (pId: string) => `${DETAIL_PROPOSAL_URL(pId)}/comments`
 const COMMENTS_BY_TYPE_URL = (pId: string, type: string) => `${COMMENTS_URL(pId)}?t=${type}`
 
 
+/************************** PROTOCOL ***************************/
+const PROPOSAL_PROTOCOL = (id: string) => `${DETAIL_PROPOSAL_URL(id)}/protocol`
+const PROPOSAL_PROTOCOL_COMMENTS = (proposalId: string) => `${DETAIL_PROPOSAL_URL(proposalId)}/protocol-comments`
+
+
 /************************** CONSTANTS **************************/
 const CONSTANTS_URL = `${BASE_URL}/constants`
 const SERVICE_TYPES_URL = `${BASE_URL}/service-types`
@@ -60,8 +65,9 @@ const ApiUrls = {
     therapeuticAreasUrl: THERAPEUTIC_AREAS_URL,
     usersByRoleAndNameUrl: USERS_BY_ROLE_AND_NAME,
     proposalsTransitionUrl: PROPOSAL_TRANSITION_URL,
-    proposalsTimelineEventUrl: PROPOSALS_TIMELINE_EVENT_URL
-
+    proposalsTimelineEventUrl: PROPOSALS_TIMELINE_EVENT_URL,
+    proposalsProtocol: PROPOSAL_PROTOCOL,
+    proposalsProtocolComments: PROPOSAL_PROTOCOL_COMMENTS
 }
 
 export default ApiUrls

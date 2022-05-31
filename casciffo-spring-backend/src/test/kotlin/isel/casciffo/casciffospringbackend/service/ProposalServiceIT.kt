@@ -1,4 +1,3 @@
 package isel.casciffo.casciffospringbackend.service
 
-class ProposalServiceIT {
-}
+class ProposalServiceIT

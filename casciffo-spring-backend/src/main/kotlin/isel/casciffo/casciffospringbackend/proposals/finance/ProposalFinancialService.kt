@@ -1,6 +1,9 @@
 package isel.casciffo.casciffospringbackend.proposals.finance
 
+import kotlinx.coroutines.flow.Flow
+
 interface ProposalFinancialService {
     suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent) : ProposalFinancialComponent
-    suspend fun findComponentByProposalId(pid: Int) : ProposalFinancialComponent
+    suspend fun findComponentByProposalId(pid: Int, loadProtocol: Boolean) : ProposalFinancialComponent
+    suspend fun findAll(): Flow<ProposalFinancialComponent>
 }

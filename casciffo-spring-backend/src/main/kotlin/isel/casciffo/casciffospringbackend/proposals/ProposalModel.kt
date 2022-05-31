@@ -6,7 +6,7 @@ import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
-import isel.casciffo.casciffospringbackend.research.Research
+import isel.casciffo.casciffospringbackend.proposals.timelineEvents.TimelineEventModel
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.User
@@ -77,11 +77,11 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var comments: Flux<ProposalComments>? = null,
+    var financialComponent: ProposalFinancialComponent? = null,
 
     @Transient
     @Value("null")
-    var financialComponent: ProposalFinancialComponent? = null,
+    var comments: Flux<ProposalComments>? = null,
 
     @Transient
     @Value("null")
@@ -89,7 +89,7 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var timelineEvents: Flux<TimelineEvent>? = null,
+    var timelineEvents: Flux<TimelineEventModel>? = null,
 
     @Transient
     @Value("null")

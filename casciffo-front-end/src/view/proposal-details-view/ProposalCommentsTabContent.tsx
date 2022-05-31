@@ -54,23 +54,22 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
     return (
         <React.Fragment>
             <Container className={"mb-3"}>
-
                 <fieldset className={"border p-3"}>
                     <legend className={"float-none w-auto p-2"}>{props.commentType.name}</legend>
                     <FormControl
                         as={"textarea"}
                         rows={2}
+                        name={"comment"}
                         value={state.comment}
                         onChange={updateComment}
                     />
                     <Button className={"w-25 float-end mt-1"} type={"button"} onClick={createComment}>
-                    {`Adicionar ${
-                        props.commentType === CommentTypes.CONTACT ?
-                            CommentTypes.CONTACT.name : CommentTypes.OBSERVATIONS.name
-                    }`}
-                </Button>
+                        {`Adicionar ${
+                            props.commentType === CommentTypes.CONTACT ?
+                                CommentTypes.CONTACT.name : CommentTypes.OBSERVATIONS.name
+                        }`}
+                    </Button>
                 </fieldset>
-
             </Container>
             <br/>
             <br/>
@@ -88,9 +87,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
                 </tr>
                 </thead>
                 <tbody>
-
-                {createRows()}
-
+                    {createRows()}
                 </tbody>
             </Table>
         </React.Fragment>

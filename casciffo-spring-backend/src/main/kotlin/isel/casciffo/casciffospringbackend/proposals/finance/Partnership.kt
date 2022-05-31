@@ -9,6 +9,7 @@ data class Partnership (
      @Id
      @Column("partnership_id")
      var id: Int?,
+     var name: String?,
      @Column("proposal_financial_id")
      var financeComponentId: Int,
      var iconUrl: String?,

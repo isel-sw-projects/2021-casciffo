@@ -6,10 +6,10 @@ import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import kotlinx.coroutines.flow.Flow
 
 interface ResearchService {
-    suspend fun createResearch(research: Research) : Research
-    suspend fun getAllResearchesByType(type: ResearchType): Flow<Research>
-    suspend fun getResearch(researchId: Int): Research
-    suspend fun updateResearch(research: Research) : Research
+    suspend fun createResearch(researchModel: ResearchModel) : ResearchModel
+    suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchModel>
+    suspend fun getResearch(researchId: Int): ResearchModel
+    suspend fun updateResearch(researchModel: ResearchModel) : ResearchModel
     suspend fun createAddenda(addenda: Addenda) : Addenda
     suspend fun createStudy(study: ScientificActivities) : ScientificActivities
     suspend fun getResearchStudies(researchId: Int): Flow<ScientificActivities>

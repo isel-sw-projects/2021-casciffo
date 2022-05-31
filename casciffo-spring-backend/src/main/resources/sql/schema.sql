@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS proposal (
     pathology_id INT NOT NULL,
     service_id INT NOT NULL,
     therapeutic_area_id INT NOT NULL,
-    protocol_state_id INT,
+--     protocol_state_id INT,
     sigla VARCHAR NOT NULL,
     principal_investigator_id INT NOT NULL,
     proposal_type VARCHAR NOT NULL, --clinical trial / observational study
@@ -92,19 +92,10 @@ CREATE TABLE IF NOT EXISTS proposal (
     CONSTRAINT fk_pathology_id FOREIGN KEY(pathology_id) REFERENCES pathology(pathology_id),
     CONSTRAINT fk_service_id FOREIGN KEY(service_id) REFERENCES service(service_id),
     CONSTRAINT fk_therapeutic_area_id FOREIGN KEY(therapeutic_area_id) REFERENCES therapeutic_area(therapeutic_area_id),
-    CONSTRAINT fk_protocol_state FOREIGN KEY(protocol_state_id) REFERENCES states(state_id),
+--     CONSTRAINT fk_protocol_state FOREIGN KEY(protocol_state_id) REFERENCES states(state_id),
     CONSTRAINT fk_principal_investigator FOREIGN KEY(principal_investigator_id) REFERENCES user_account(user_id)
 );
 
-
--- CREATE TABLE IF NOT EXISTS proposal_state_transitions (
---     id SERIAL PRIMARY KEY,
---     proposal_id INT,
---     state_transition_id INT,
---     CONSTRAINT fk_proposal_id FOREIGN KEY (proposal_id)
---         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
---     CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
--- );
 
 
 CREATE TABLE IF NOT EXISTS proposal_files (
@@ -134,10 +125,13 @@ CREATE TABLE IF NOT EXISTS timeline_event (
     proposal_id INT NOT NULL,
     event_type VARCHAR NOT NULL, -- deadline / states transition
     event_name VARCHAR NOT NULL,
+    event_description TEXT,
     deadline_date DATE NOT NULL,
     completed_date DATE,
     is_over_due BOOLEAN DEFAULT FALSE,
     days_over_due INT DEFAULT 0,
+    is_associated_to_state BOOLEAN DEFAULT FALSE,
+    state_name VARCHAR,
     CONSTRAINT  fk_te_proposal_id FOREIGN KEY(proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE
 );
@@ -178,9 +172,33 @@ CREATE TABLE IF NOT EXISTS proposal_financial_component (
     CONSTRAINT fk_pfc_promoter_id FOREIGN KEY(promoter_id) REFERENCES promoter(promoter_id)
 );
 
+CREATE TABLE IF NOT EXISTS protocol (
+    protocol_id SERIAL PRIMARY KEY,
+    internal_name VARCHAR,
+    external_name VARCHAR,
+    internal_validated BOOLEAN DEFAULT FALSE,
+    external_validated BOOLEAN DEFAULT FALSE,
+    internal_date_validated DATE,
+    external_date_validated DATE,
+    pfc_id INT,
+    CONSTRAINT fk_protocol_pfc_id FOREIGN KEY (pfc_id) REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS protocol_comments (
+    id SERIAL PRIMARY KEY,
+    protocol_id INT,
+    observation TEXT,
+    author_name VARCHAR,
+    org_name VARCHAR,
+    validated BOOLEAN DEFAULT FALSE,
+    date_created DATE DEFAULT NOW(),
+    CONSTRAINT fk_ptc_id FOREIGN KEY (protocol_id) REFERENCES protocol(protocol_id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS partnerships (
     partnership_id SERIAL PRIMARY KEY,
     proposal_financial_id INT,
+    name VARCHAR NOT NULL,
     icon_url TEXT,
     representative VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
@@ -214,17 +232,6 @@ CREATE TABLE IF NOT EXISTS clinical_research (
         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
     CONSTRAINT fk_cr_state_id FOREIGN KEY(research_state_id) REFERENCES states(state_id)
 );
-
--- CREATE TABLE IF NOT EXISTS research_state_transitions (
---     id SERIAL PRIMARY KEY,
---     research_id INT NOT NULL,
---     state_transition_id INT NOT NULL,
---     motive text NOT NULL, -- reason for canceling / reason for starting such as SIV completed
---     --PRIMARY KEY (research_id, state_transition_id),
---     CONSTRAINT fk_research_id FOREIGN KEY (research_id)
---         REFERENCES clinical_research(research_id) ON DELETE CASCADE,
---     CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
--- );
 
 
 CREATE TABLE IF NOT EXISTS dossier (
@@ -372,13 +379,3 @@ CREATE TABLE IF NOT EXISTS addenda (
     CONSTRAINT fk_addenda_state FOREIGN KEY(addenda_state_id) REFERENCES states(state_id),
     CONSTRAINT fk_a_file_id FOREIGN KEY(addenda_file_id) REFERENCES files(file_id)
 );
-
--- CREATE TABLE IF NOT EXISTS addenda_state_transitions (
---     id SERIAL PRIMARY KEY,
---     addenda_id INT NOT NULL,
---     state_transition_id INT NOT NULL,
---     observations TEXT,
---     --PRIMARY KEY (addenda_id, state_transition_id),
---     CONSTRAINT fk_addenda_id FOREIGN KEY (addenda_id) REFERENCES addenda(addenda_id) ON DELETE CASCADE,
---     CONSTRAINT fk_state_transition_id FOREIGN KEY (state_transition_id) REFERENCES state_transition(id)
--- );

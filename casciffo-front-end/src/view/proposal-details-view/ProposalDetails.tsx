@@ -43,11 +43,12 @@ function ProposalStateView(props: { element: JSX.Element, onAdvanceClick: () => 
 
 export function ProposalDetails(props: ProposalDetailsProps) {
     const {proposalId} = useParams()
-    const nagivate = useNavigate()
+    const navigate = useNavigate()
     if(proposalId === undefined) {
-        nagivate("/proposals")
+        navigate("/proposals")
         //show error and move backwards using navigate
     }
+
     const [proposal, setProposal] = useState<ProposalModel>({
         dateCreated: undefined,
         dateModified: undefined,
@@ -175,14 +176,15 @@ export function ProposalDetails(props: ProposalDetailsProps) {
     const addNewComment = (comment:string, type:string) => {
         const commentModel : ProposalCommentsModel = {
             //FIXME get author from contextApi
-            // for now using the hardcoded 1 from db
-            authorId: 0,
+            // for now using the principal investigator of proposal
+            authorId: proposal.principalInvestigatorId,
             commentType: type,
             content: comment,
-            dateCreated: [],
             proposalId: proposalId!
         }
+        //FIXME when creating comment this crashes
         props.proposalService.saveProposalComment(commentModel)
+            .then(value => {console.log(value); return value})
             .then(value => setProposal(updateState("comments", [...proposal.comments!, value])))
     };
 
@@ -351,7 +353,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
 
                 {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
                     <Tab eventKey="protocol" title="Protocolo">
-                        <ProtocolTabContent/>
+                        <ProtocolTabContent service={props.proposalService}/>
                     </Tab> :
                     <></>
                 }

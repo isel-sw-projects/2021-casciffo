@@ -95,9 +95,7 @@ export function Proposals(props: Proposals_Props) {
             setProposals(rows)
         }
 
-        console.log("fetching data...")
         service.fetchByType(researchType)
-            .then((value) => {console.log(value); return value;})
             .then(updateCheckBoxGroup)
             .then(mapToProposalRow)
             .then(displayData)

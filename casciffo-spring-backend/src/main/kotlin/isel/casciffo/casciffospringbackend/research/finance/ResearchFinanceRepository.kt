@@ -5,5 +5,4 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ResearchFinanceRepository:
-    ReactiveCrudRepository<ResearchFinance, Int> {
-}
+    ReactiveCrudRepository<ResearchFinance, Int>

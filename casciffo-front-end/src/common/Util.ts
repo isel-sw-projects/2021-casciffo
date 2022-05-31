@@ -98,13 +98,12 @@ function formatDateWithMonthName(date: Array<number>) {
  * Compares two dates in array format [year, month, day, [hour, min, sec]] hours optional
  * @param firstDate
  * @param secondDate
- * @returns 0 when dates are equal, > 0 when first is greater than second and < 0 when first is smaller than second
+ * @returns 0 when dates are equal, positive when first is greater than second and negative when first is smaller than second
  */
 function cmp(firstDate: Array<number> | undefined, secondDate: Array<number> | undefined) {
     if(isNullOrUndefined(firstDate) && isNullOrUndefined(secondDate)) return 0;
     if(isNullOrUndefined(firstDate) && !isNullOrUndefined(secondDate)) return -1;
     if(!isNullOrUndefined(firstDate) && isNullOrUndefined(secondDate)) return 1;
-    console.log(`first:${firstDate} second:${secondDate}`)
     const firstDateString = formatDate(firstDate!, false, "")
     const secondDateString = formatDate(secondDate!, false, "")
     return parseInt(firstDateString) - parseInt(secondDateString);
@@ -116,11 +115,11 @@ function isNullOrUndefined<T>(value: T | null | undefined): boolean {
 }
 
 export const Util = {
-    formatDate: formatDate,
+    formatDate,
     proposalStates: Object.values(STATES).filter(s => s.code > STATES.SUBMETIDO.code && s.code <= STATES.VALIDADO.code),
-    formatStringToDate: formatStringToArrayDate,
-    cmp: cmp,
-    formatDateWithMonthName: formatDateWithMonthName,
-    isNullOrUndefined: isNullOrUndefined,
-    getTodayDate: getTodayDate
+    formatStringToArrayDate,
+    cmp,
+    formatDateWithMonthName,
+    isNullOrUndefined,
+    getTodayDate
 }

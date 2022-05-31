@@ -8,5 +8,4 @@ class ResearchFinanceServiceImpl(
     @Autowired val researchFinanceRepository: ResearchFinanceRepository,
     @Autowired val researchMonetaryFlowRepository: ResearchMonetaryFlowRepository,
     @Autowired val researchTeamMonetaryFlowRepository: ResearchTeamMonetaryFlowRepository
-) : ResearchFinanceService {
-}
+) : ResearchFinanceService

@@ -9,7 +9,7 @@ import reactor.core.publisher.Flux
 @Repository
 interface ProposalRepository : ReactiveSortingRepository<ProposalModel, Int> {
 
-    //TODO implement pagination w/ sort
+    fun findByPrincipalInvestigatorId(id: Int): Flux<ProposalModel>
     fun findAllByType(type: ResearchType, pageable: Pageable) : Flux<ProposalModel>
     fun findAllByType(type: ResearchType) : Flux<ProposalModel>
 }

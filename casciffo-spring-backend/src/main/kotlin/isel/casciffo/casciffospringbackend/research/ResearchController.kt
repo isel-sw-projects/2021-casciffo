@@ -2,7 +2,6 @@ package isel.casciffo.casciffospringbackend.research
 
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
-import isel.casciffo.casciffospringbackend.research.patients.Participant
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import isel.casciffo.casciffospringbackend.util.*
 import kotlinx.coroutines.flow.Flow
@@ -14,41 +13,47 @@ class ResearchController(
     @Autowired val researchService: ResearchService
 ) {
 
+    val mapper: ResearchMapper = ResearchMapper()
+
     @GetMapping(RESEARCH_BASE_URL)
-    suspend fun getAllResearch(type: ResearchType) : Flow<Research> {
+    suspend fun getAllResearch(type: ResearchType) : Flow<ResearchModel> {
         return researchService.getAllResearchesByType(type)
     }
 
-    @GetMapping(RESEARCH_URI)
-    suspend fun getResearch(@PathVariable researchId: Int) : Research {
+    @GetMapping(RESEARCH_URL)
+    suspend fun getResearch(@PathVariable researchId: Int) : ResearchModel {
         return researchService.getResearch(researchId)
     }
 
-    @PatchMapping(RESEARCH_URI)
-    suspend fun updateResearch(@RequestBody research: Research) : Research {
-        return researchService.updateResearch(research)
+    @PatchMapping(RESEARCH_URL)
+    suspend fun updateResearch(@RequestBody researchDTO: ResearchDTO, @PathVariable researchId: Int) : ResearchDTO {
+        val mappedModel = mapper.mapDTOtoModel(researchDTO)
+        val model = researchService.updateResearch(mappedModel)
+        return mapper.mapModelToDTO(model)
     }
 
-    @PostMapping(RESEARCH_URI)
-    suspend fun createResearch(@RequestBody research: Research) : Research {
-        return researchService.createResearch(research)
+    @PostMapping(RESEARCH_BASE_URL)
+    suspend fun createResearch(@RequestBody researchDTO: ResearchDTO) : ResearchDTO {
+        val mappedModel = mapper.mapDTOtoModel(researchDTO)
+        val model = researchService.createResearch(mappedModel)
+        return mapper.mapModelToDTO(model)
     }
 
     @PostMapping(RESEARCH_PARTICIPANTS)
     suspend fun addParticipant(
-        @RequestParam(required = true) researchId: Int,
+        @PathVariable(required = true) researchId: Int,
         @RequestParam(required = true) participantId: Int
     ) {
         researchService.addParticipant(researchId, participantId)
     }
 
-    @PostMapping(POST_ADDENDA_URI)
+    @PostMapping(POST_ADDENDA_URL)
     suspend fun createAddenda(@PathVariable researchId: Int, @RequestBody addenda: Addenda) : Addenda {
         addenda.researchId = researchId
         return researchService.createAddenda(addenda)
     }
 
-    @PostMapping(RESEARCH_STUDIES_URI)
+    @PostMapping(RESEARCH_STUDIES_URL)
     suspend fun createStudy(
         @PathVariable researchId: Int,
         @RequestBody study: ScientificActivities
@@ -57,7 +62,7 @@ class ResearchController(
         return researchService.createStudy(study)
     }
 
-    @GetMapping(RESEARCH_STUDIES_URI)
+    @GetMapping(RESEARCH_STUDIES_URL)
     suspend fun getStudies(@PathVariable researchId: Int) : Flow<ScientificActivities> {
         return researchService.getResearchStudies(researchId)
     }

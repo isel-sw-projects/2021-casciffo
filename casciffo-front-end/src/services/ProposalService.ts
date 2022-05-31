@@ -2,6 +2,8 @@ import {ProposalModel} from "../model/proposal/ProposalModel";
 import ApiUrls from "../common/Links";
 import {PromoterTypes, ResearchTypes} from "../common/Constants";
 import {TimelineEventModel} from "../model/TimelineEventModel";
+import {ProtocolModel} from "../model/proposal/finance/ProtocolModel";
+import {ProtocolCommentsModel} from "../model/proposal/finance/ProtocolCommentsModel";
 
 class ProposalService {
 
@@ -10,7 +12,6 @@ class ProposalService {
     }
 
     fetchByTypeMock(type: string): Promise<Array<ProposalModel>> {
-        console.log("reached here")
         const proposal1: ProposalModel = {
             id: 1,
             sigla: "Javelin",
@@ -61,9 +62,7 @@ class ProposalService {
     save(proposal: ProposalModel) {
         const opt : RequestInit = {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: [['Content-Type', 'application/json']],
             body: JSON.stringify(proposal)
         }
         return fetch(ApiUrls.proposalsUrl, opt)
@@ -90,6 +89,38 @@ class ProposalService {
         const url = ApiUrls.proposalsTimelineEventUrl(proposalId)
         const opt : RequestInit = {
             method: 'GET'
+        }
+        return fetch(url, opt).then(rsp => rsp.json())
+    }
+
+    fetchProtocol(proposalId: string): Promise<ProtocolModel> {
+        const url = ApiUrls.proposalsProtocol(proposalId)
+        const opt : RequestInit = {
+            method: 'GET'
+        }
+        return fetch(url, opt).then(rsp => rsp.json())
+    }
+
+    updateProtocol(proposalId: string, protocol: ProtocolModel): Promise<ProtocolModel> {
+        const url = ApiUrls.proposalsProtocol(proposalId)
+        const opt : RequestInit = {
+            method: 'PUT',
+            headers: [['Content-Type', 'application/json']],
+            body: JSON.stringify(protocol)
+        }
+        return fetch(url, opt).then(rsp => rsp.json())
+    }
+
+    saveProtocolComment
+    (
+        proposalId: string,
+        comment: ProtocolCommentsModel
+    ): Promise<ProtocolCommentsModel> {
+        const url = ApiUrls.proposalsProtocolComments(proposalId)
+        const opt : RequestInit = {
+            method: 'POST',
+            headers: [['Content-Type', 'application/json']],
+            body: JSON.stringify(comment)
         }
         return fetch(url, opt).then(rsp => rsp.json())
     }

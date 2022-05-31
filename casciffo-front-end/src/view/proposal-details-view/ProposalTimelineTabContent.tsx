@@ -7,10 +7,7 @@ import {TimelineEventForm} from "./TimelineEventForm";
 import {Chrono} from "react-chrono";
 import {Util} from "../../common/Util";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
-import {serialize} from "v8";
 import {useParams} from "react-router-dom";
-import * as util from "util";
-import {sort} from "react-data-table-component/dist/src/DataTable/util";
 
 type TimelineProps = {
     timelineEvents: Array<TimelineEventModel>,
@@ -71,7 +68,6 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
 
         function filterEvent(e: TimelineEventModel) {
             return e.eventName.toLocaleLowerCase().includes(query.toLocaleLowerCase()) && filterByEventType(e)
-
         }
 
         function getColor(e: TimelineEventModel) {
@@ -102,8 +98,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     //     if(showForm)
     // }
     const isBetweenDateInterval = (e: TimelineEventModel): boolean => {
-        return (Util.cmp(Util.formatStringToDate(dateInterval.start), e.deadlineDate) <= 0
-            && Util.cmp(Util.formatStringToDate(dateInterval.end), e.deadlineDate) >= 0)
+        return (Util.cmp(Util.formatStringToArrayDate(dateInterval.start), e.deadlineDate) <= 0
+            && Util.cmp(Util.formatStringToArrayDate(dateInterval.end), e.deadlineDate) >= 0)
     }
 
     function mapToChronoItem(): ChronoItemType[] {
@@ -112,9 +108,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
             return  isBetweenDateInterval(e) && filterByEventType(e);
         }
 
-        console.log("-------------------------------------------------------------------------------")
         return timelineEvents
-            .map(e => {console.log(e); return e})
             .filter(filterEvents)
             .map(event => ({
                 title: Util.formatDateWithMonthName(event.deadlineDate!),
