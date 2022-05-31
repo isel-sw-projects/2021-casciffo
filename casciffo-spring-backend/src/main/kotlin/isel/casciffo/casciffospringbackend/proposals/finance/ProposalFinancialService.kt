@@ -4,6 +4,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface ProposalFinancialService {
     suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent) : ProposalFinancialComponent
-    suspend fun findComponentByProposalId(pid: Int, loadProtocol: Boolean) : ProposalFinancialComponent
+    suspend fun findComponentByProposalId(pid: Int, loadProtocol: Boolean = false) : ProposalFinancialComponent
     suspend fun findAll(): Flow<ProposalFinancialComponent>
 }

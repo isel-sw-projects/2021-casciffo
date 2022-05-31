@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals.timelineEvents
+package isel.casciffo.casciffospringbackend.proposals.timeline_events
 
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository

@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.roles
 
-import isel.casciffo.casciffospringbackend.util.USER_ROLE_BASE_URL
+import isel.casciffo.casciffospringbackend.endpoints.USER_ROLE_BASE_URL
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

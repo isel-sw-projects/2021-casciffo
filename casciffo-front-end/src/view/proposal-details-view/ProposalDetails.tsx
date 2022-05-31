@@ -353,7 +353,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
 
                 {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
                     <Tab eventKey="protocol" title="Protocolo">
-                        <ProtocolTabContent service={props.proposalService}/>
+                        <ProtocolTabContent service={props.proposalService} pfcId={proposal.financialComponent?.id}/>
                     </Tab> :
                     <></>
                 }

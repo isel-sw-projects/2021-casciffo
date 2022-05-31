@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.states
 
-import isel.casciffo.casciffospringbackend.util.STATES_URL
+import isel.casciffo.casciffospringbackend.endpoints.STATES_URL
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping

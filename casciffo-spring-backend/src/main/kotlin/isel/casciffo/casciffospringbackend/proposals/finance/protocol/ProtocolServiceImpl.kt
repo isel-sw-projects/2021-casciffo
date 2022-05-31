@@ -2,10 +2,11 @@ package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
 import isel.casciffo.casciffospringbackend.exceptions.InvalidProtocolId
 import isel.casciffo.casciffospringbackend.exceptions.ResourceNotFoundException
-import isel.casciffo.casciffospringbackend.util.buildGetResearchUrl
+import isel.casciffo.casciffospringbackend.endpoints.buildGetResearchUrl
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import java.time.LocalDate
 
 @Service
@@ -13,7 +14,7 @@ class ProtocolServiceImpl(
     @Autowired val proposalProtocolRepository: ProposalProtocolRepository,
     @Autowired val protocolCommentsRepository: ProtocolCommentsRepository
 ): ProtocolService {
-    override suspend fun findProtocolByProposalFinanceId(financeId: Int): ProposalProtocol {
+    override suspend fun findProtocolByProposalFinanceId(proposalId: Int, financeId: Int): ProposalProtocol {
         return try {
             val protocol = proposalProtocolRepository.findByFinancialComponentId(financeId).awaitSingle()
             loadComments(protocol)

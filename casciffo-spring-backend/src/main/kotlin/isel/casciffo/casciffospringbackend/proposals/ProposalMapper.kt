@@ -103,9 +103,6 @@ class ProposalMapper : Mapper<ProposalModel, ProposalDTO> {
         model.stateTransitions = dto.stateTransitions?.toFlux()
         model.timelineEvents = dto.timelineEvents?.toFlux()
         model.comments = dto.comments?.toFlux()
-
-        //todo revisit when theres financialcomponentDTO with partnership list instead of flux...
-        // proposalModel.financialComponent!!.partnerships = proposalDTO.financialComponentDTO!!.partnerships!!.toFlux()
     }
     override suspend fun mapModelNonListPropertiesToDTO(model: ProposalModel, dto: ProposalDTO) {
         dto.id = model.id

@@ -1,9 +1,9 @@
 package isel.casciffo.casciffospringbackend.proposals.constants
 
-import isel.casciffo.casciffospringbackend.util.CONSTANTS_BASE_URL
-import isel.casciffo.casciffospringbackend.util.PATHOLOGY_URL
-import isel.casciffo.casciffospringbackend.util.SERVICE_TYPE_URL
-import isel.casciffo.casciffospringbackend.util.THERAPEUTIC_AREA_URL
+import isel.casciffo.casciffospringbackend.endpoints.CONSTANTS_BASE_URL
+import isel.casciffo.casciffospringbackend.endpoints.PATHOLOGY_URL
+import isel.casciffo.casciffospringbackend.endpoints.SERVICE_TYPE_URL
+import isel.casciffo.casciffospringbackend.endpoints.THERAPEUTIC_AREA_URL
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle

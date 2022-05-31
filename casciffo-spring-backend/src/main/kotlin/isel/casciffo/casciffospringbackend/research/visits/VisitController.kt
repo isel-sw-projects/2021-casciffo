@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.visits
 
-import isel.casciffo.casciffospringbackend.util.RESEARCH_VISIT_PATIENTS
-import isel.casciffo.casciffospringbackend.util.RESEARCH_VISIT_URL
+import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_PATIENTS
+import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_URL
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

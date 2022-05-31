@@ -1,12 +1,11 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.util.PROPOSAL_URL
-import isel.casciffo.casciffospringbackend.util.PROPOSAL_BASE_URL
-import isel.casciffo.casciffospringbackend.util.PROPOSAL_TRANSITION_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_BASE_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_TRANSITION_URL
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController

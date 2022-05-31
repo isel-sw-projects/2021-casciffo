@@ -93,8 +93,8 @@ class ProposalService {
         return fetch(url, opt).then(rsp => rsp.json())
     }
 
-    fetchProtocol(proposalId: string): Promise<ProtocolModel> {
-        const url = ApiUrls.proposalsProtocol(proposalId)
+    fetchProtocol(proposalId: string, pfcId: string): Promise<ProtocolModel> {
+        const url = ApiUrls.proposalsProtocol(proposalId, pfcId)
         const opt : RequestInit = {
             method: 'GET'
         }
@@ -102,7 +102,7 @@ class ProposalService {
     }
 
     updateProtocol(proposalId: string, protocol: ProtocolModel): Promise<ProtocolModel> {
-        const url = ApiUrls.proposalsProtocol(proposalId)
+        const url = ApiUrls.proposalsProtocol(proposalId, protocol.financialComponentId!+"")
         const opt : RequestInit = {
             method: 'PUT',
             headers: [['Content-Type', 'application/json']],
@@ -114,13 +114,23 @@ class ProposalService {
     saveProtocolComment
     (
         proposalId: string,
+        pfcId: string,
         comment: ProtocolCommentsModel
     ): Promise<ProtocolCommentsModel> {
-        const url = ApiUrls.proposalsProtocolComments(proposalId)
+        const url = ApiUrls.proposalsProtocolComments(proposalId, pfcId)
         const opt : RequestInit = {
             method: 'POST',
             headers: [['Content-Type', 'application/json']],
             body: JSON.stringify(comment)
+        }
+        return fetch(url, opt).then(rsp => rsp.json())
+    }
+
+    updateTimelineEvent(proposalId: string, eventId: string, completed: boolean): Promise<TimelineEventModel> {
+        const url = ApiUrls.proposalsTimelineEventUpdateUrl(proposalId, eventId, completed)
+        const opt : RequestInit = {
+            method: 'PUT',
+            headers: [['Content-Type', 'application/json']],
         }
         return fetch(url, opt).then(rsp => rsp.json())
     }

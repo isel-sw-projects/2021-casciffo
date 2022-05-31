@@ -8,7 +8,7 @@ import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.Partnership
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolComments
-import isel.casciffo.casciffospringbackend.proposals.timelineEvents.TimelineEventModel
+import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.User

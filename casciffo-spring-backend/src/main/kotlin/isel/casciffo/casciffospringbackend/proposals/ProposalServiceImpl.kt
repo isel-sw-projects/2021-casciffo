@@ -9,7 +9,7 @@ import isel.casciffo.casciffospringbackend.proposals.constants.PathologyReposito
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
-import isel.casciffo.casciffospringbackend.proposals.timelineEvents.TimelineEventRepository
+import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventRepository
 import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchService
 import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
@@ -21,7 +21,6 @@ import isel.casciffo.casciffospringbackend.users.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
-import kotlinx.coroutines.reactive.awaitFirstOrElse
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull

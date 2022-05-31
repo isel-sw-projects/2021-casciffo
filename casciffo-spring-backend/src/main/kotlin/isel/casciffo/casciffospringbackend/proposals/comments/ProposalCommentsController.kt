@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
-import isel.casciffo.casciffospringbackend.util.PROPOSAL_COMMENTS
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_COMMENTS
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest

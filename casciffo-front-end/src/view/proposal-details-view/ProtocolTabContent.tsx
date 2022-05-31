@@ -8,14 +8,17 @@ import {ProtocolCommentsModel} from "../../model/proposal/finance/ProtocolCommen
 import {BiCheckboxChecked, BiCheckboxMinus} from "react-icons/bi";
 
 type PPT_Props = {
-    service: ProposalAggregateService
+    service: ProposalAggregateService,
+    pfcId?: string
 }
 
 export function ProtocolTabContent(props: PPT_Props) {
 
     const headers = ["Criado", "Nome\n(Empresa/Papel)","Observação","Validado"]
     const {proposalId} = useParams()
-    const [protocol, setProtocol] = useState<ProtocolModel>({})
+    const [protocol, setProtocol] = useState<ProtocolModel>({
+        comments: []
+    })
     const [displayData, setDisplayData] = useState(false)
     const [comment, setComment] = useState<ProtocolCommentsModel>({
         authorName: "",
@@ -28,10 +31,10 @@ export function ProtocolTabContent(props: PPT_Props) {
 
     useEffect(() => {
         props.service
-            .fetchProtocol(proposalId!)
+            .fetchProtocol(proposalId!, props.pfcId!)
             .then(setProtocol)
             .then(() => setDisplayData(true))
-    }, [props.service, proposalId])
+    }, [props.service, proposalId, props.pfcId])
 
     const getBackgroundColor = (validated: boolean) => ({backgroundColor:validated ? "#0BDA51" : "#98c3fa"})
 
@@ -39,7 +42,7 @@ export function ProtocolTabContent(props: PPT_Props) {
 
     function mapRowElements() {
         if(!displayData) return (<tr><td colSpan={4}>A carregar comentários...</td></tr>)
-        if(protocol.comments!.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
+        if(Util.isNullOrUndefined(protocol.comments) || protocol.comments!.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
         return protocol.comments!
             .sort(sortByDate)
             .map(c => {
@@ -78,7 +81,7 @@ export function ProtocolTabContent(props: PPT_Props) {
 
 
     const saveComment = () => {
-        return props.service.saveProtocolComment(proposalId!, comment)
+        return props.service.saveProtocolComment(proposalId!, props.pfcId!, comment)
             .then(comment => setProtocol(prevState => ({...prevState, comments: [...prevState.comments!, comment]})))
     }
 

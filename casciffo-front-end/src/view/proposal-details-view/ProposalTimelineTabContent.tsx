@@ -8,6 +8,7 @@ import {Chrono} from "react-chrono";
 import {Util} from "../../common/Util";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import {useParams} from "react-router-dom";
+import {BiCheck, BiCheckboxMinus} from "react-icons/bi";
 
 type TimelineProps = {
     timelineEvents: Array<TimelineEventModel>,
@@ -28,7 +29,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     const [showForm, setShowForm] = useState(true)
     const [timelineEvents, setTimelineEvents] = useState<TimelineEventModel[]>([])
     const [hasEvents, setHasEvents] = useState(false)
-    const headers = ["Título", "Data completo", "Data limite", "Descrição"]
+    const headers = ["Título", "Data completo", "Data limite", "Descrição", "Completar"]
     const {proposalId} = useParams()
 
     const sortEvents = (a: TimelineEventModel, b: TimelineEventModel) => Util.cmp(a.deadlineDate!, b.deadlineDate!)
@@ -59,14 +60,20 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
         return (e.eventType === selectedEventType || selectedEventType === EventTypes.ALL.id)
     }
 
+    function getCompletedButtonVariant(e: TimelineEventModel) {
+        //fixme dont show success when completedDate is overdue
+        return Util.isNullOrUndefined(e.completedDate) ? "outline-primary" :
+            Util.cmp(e.completedDate, e.deadlineDate) > 0 ? "outline-warning" : "outline-success";
+    }
+
     function mapEventsToRow() {
         let events = props.timelineEvents
 
         if(events === undefined || events.length === 0) {
-            return <tr key={"row-no-events"}><td colSpan={4}>Sem histórico de eventos</td></tr>
+            return <tr key={"row-no-events"}><td colSpan={5}>Sem histórico de eventos</td></tr>
         }
 
-        function filterEvent(e: TimelineEventModel) {
+        function filterEventNameIsLike(e: TimelineEventModel) {
             return e.eventName.toLocaleLowerCase().includes(query.toLocaleLowerCase()) && filterByEventType(e)
         }
 
@@ -77,14 +84,36 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
             return "inherit"
         }
 
+        const updateTimelineEvent = (e: TimelineEventModel) => () => {
+            props.service.updateTimelineEvent(proposalId!, e.id!, true)
+                .then(event => timelineEvents.map(ev => ev.id !== e.id ? ev : event))
+                .then(setTimelineEvents)
+        }
+
         return events
-            .filter(filterEvent)
+            .filter(filterEventNameIsLike)
             .map(e =>
                 <tr key={e.id}>
                     <td>{e.eventName}</td>
-                    <td style={{backgroundColor: getColor(e)}}>{e.completedDate}</td>
+                    <td style={{backgroundColor: getColor(e)}}>
+                        {Util.isNullOrUndefined(e.completedDate) ? "":Util.formatDate(e.completedDate!)}
+                    </td>
                     <td>{Util.formatDate(e.deadlineDate!)}</td>
                     <td>{e.eventDescription}</td>
+                    <td className={"text-center"}>
+                        <Button
+                            variant={getCompletedButtonVariant(e)}
+                            disabled={!Util.isNullOrUndefined(e.completedDate)}
+                            onClick={updateTimelineEvent(e)}
+                        >
+                            {Util.isNullOrUndefined(e.completedDate)
+                                ? <BiCheck className={"d-flex"} size={25}/>
+                                : Util.cmp(e.completedDate, e.deadlineDate) > 0
+                                    ? <BiCheckboxMinus className={"d-flex"} size={25}/>
+                                    : <BiCheck className={"d-flex"} size={25}/>
+                            }
+                        </Button>
+                    </td>
                 </tr>
             )
     }
@@ -104,12 +133,12 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
 
     function mapToChronoItem(): ChronoItemType[] {
 
-        function filterEvents(e: TimelineEventModel) {
+        function filterEventsByTypeAndDate(e: TimelineEventModel) {
             return  isBetweenDateInterval(e) && filterByEventType(e);
         }
 
         return timelineEvents
-            .filter(filterEvents)
+            .filter(filterEventsByTypeAndDate)
             .map(event => ({
                 title: Util.formatDateWithMonthName(event.deadlineDate!),
                 cardTitle: event.eventName,
@@ -227,7 +256,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                     <col span={1} style={{width: "20%"}}/>
                     <col span={1} style={{width: "15%"}}/>
                     <col span={1} style={{width: "10%"}}/>
-                    <col span={1} style={{width: "55%"}}/>
+                    <col span={1} style={{width: "50%"}}/>
+                    <col span={1} style={{width: "5%"}}/>
                 </colgroup>
                 <thead key={"timeline-history-headers"}>
                 <tr>

@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals.timelineEvents
+package isel.casciffo.casciffospringbackend.proposals.timeline_events
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column

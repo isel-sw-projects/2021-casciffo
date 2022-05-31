@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
-import isel.casciffo.casciffospringbackend.util.PROPOSAL_PROTOCOL_COMMENTS_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_PROTOCOL_COMMENTS_URL
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 

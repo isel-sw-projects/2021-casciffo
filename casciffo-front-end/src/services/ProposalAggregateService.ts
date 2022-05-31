@@ -62,15 +62,19 @@ export default class ProposalAggregateService {
         return this.proposalService.fetchTimelineEvents(proposalId)
     }
 
-    fetchProtocol(proposalId: string) {
-        return this.proposalService.fetchProtocol(proposalId)
+    fetchProtocol(proposalId: string, pfcId: string) {
+        return this.proposalService.fetchProtocol(proposalId, pfcId)
     }
 
-    saveProtocolComment(proposalId: string, comment: ProtocolCommentsModel) {
-        return this.proposalService.saveProtocolComment(proposalId, comment)
+    saveProtocolComment(proposalId: string, pfcId: string, comment: ProtocolCommentsModel) {
+        return this.proposalService.saveProtocolComment(proposalId, pfcId, comment)
     }
 
     updateProtocol(proposalId: string, protocol: ProtocolModel) {
         return this.proposalService.updateProtocol(proposalId, protocol)
+    }
+
+    updateTimelineEvent(proposalId: string, eventId: string, completed: boolean) {
+        return this.proposalService.updateTimelineEvent(proposalId, eventId, completed)
     }
 }

@@ -33,6 +33,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
@@ -65,7 +66,17 @@ class CasciffoSpringBackendApplicationTests(
 //		userRepo.deleteAll().block()
 //		userRoleRepository.deleteAll().block()
 		runBlocking {
+			val propList = proposalRepository.findAllByType(ResearchType.CLINICAL_TRIAL).collectList().block()
+			val financialList = proposalFinancialRepository.findAll().collectList().block()
 
+			propList?.forEach{ p ->
+				println(p)
+				var hasFinancialComponent = false
+				financialList?.forEach { pfc ->
+						if(pfc.proposalId === p.id) hasFinancialComponent = true
+				}
+				println("proposal [${p.id}] has financialComponent ? $hasFinancialComponent")
+			}
 		}
 	}
 
