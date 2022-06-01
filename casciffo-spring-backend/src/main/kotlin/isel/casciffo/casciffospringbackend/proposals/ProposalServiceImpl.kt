@@ -130,9 +130,6 @@ class ProposalServiceImpl(
 
     @Transactional
     override suspend fun advanceState(proposalId: Int, forward: Boolean): ProposalModel {
-        //FIXME this call throws NoSuchElementException despite the id existing.
-        // The error is not thrown in different contexts with the same Id,
-        // be it in the controller#getById, service#getById or repo#getById
         val prop = getProposalById(proposalId)
         handleStateTransition(prop, forward)
         return prop
@@ -151,7 +148,7 @@ class ProposalServiceImpl(
 
         val nextState = stateService.findByName(nextLocalState.name)
 
-        if (currState.isNextStateValid(nextLocalState))
+        if (!currState.isNextStateValid(nextLocalState))
             throw InvalidStateTransitionException()
 
         if (nextLocalState.isCompleted()) {

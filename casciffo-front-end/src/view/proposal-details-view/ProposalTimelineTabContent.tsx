@@ -151,7 +151,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
         // props.setNewTimeLineEvent(event)
         props.service
             .saveTimelineEvent(proposalId!, event)
-            .then(event => setTimelineEvents(prevState => ([...prevState, event].sort(sortEvents))))
+            .then(event => {setTimelineEvents(prevState => ([...prevState, event].sort(sortEvents))); return event})
+            .then(props.setNewTimeLineEvent)
     }
 
     type DateInterval = {
@@ -238,10 +239,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                 {/*<Container className={"content"}>*/}
                 {/*    <Button onClick={handleShowFormChange}>{showForm ? "Cancelar" : "Adicionar evento à cronologia"}</Button>*/}
                 {/*</Container>*/}
-                {showForm ?
-                    <TimelineEventForm
-                        onEventAdded={handleEventSubmit}/>
-                    :<></>
+                {showForm && <TimelineEventForm onEventAdded={handleEventSubmit}/>
+
                 }
             </Container>
             <br/>
