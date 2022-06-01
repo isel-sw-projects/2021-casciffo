@@ -23,7 +23,7 @@ class ProposalCommentsServiceImpl(
         }
         //fixme this is a temp fix requires a look at @CreatedDate annotation
         val savedComment = repository.save(comment).awaitSingle()
-        return repository.findById(savedComment.id!!).awaitSingle()
+        return loadAuthor(repository.findById(savedComment.id!!).awaitSingle())
     }
 
     //fixme need a bit of thinking here

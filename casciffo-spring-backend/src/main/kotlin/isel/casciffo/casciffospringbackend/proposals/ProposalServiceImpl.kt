@@ -131,15 +131,14 @@ class ProposalServiceImpl(
     @Transactional
     override suspend fun advanceState(proposalId: Int, forward: Boolean): ProposalModel {
         val prop = getProposalById(proposalId)
-        handleStateTransition(prop, forward)
-        return prop
+        return handleStateTransition(prop, forward)
     }
 
 
     suspend fun handleStateTransition(
         existingProposal: ProposalModel,
         forward: Boolean
-    ) {
+    ): ProposalModel {
 
         val currState = States.valueOf(stateService.findById(existingProposal.stateId!!).name)
         //fixme add verification of user permissions to make sure he can or not advance
@@ -163,6 +162,10 @@ class ProposalServiceImpl(
 
         stateTransitionService
             .newTransition(existingProposal.stateId!!, nextState.id!!, TransitionType.PROPOSAL, existingProposal.id!!)
+
+        existingProposal.stateId = nextState.id
+        proposalRepository.save(existingProposal).awaitSingle()
+        return getProposalById(existingProposal.id!!)
     }
 
     private fun updateTimelineEvent(

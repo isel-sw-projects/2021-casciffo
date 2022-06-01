@@ -85,12 +85,14 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         navigate("/propostas")
     }
 
+    const log = (value: any) => {
+        console.log(value);
+        return value
+    }
+
     useEffect(() => {
         props.proposalService.fetchProposalById(proposalId!)
-            // .then(value => {
-            //     console.log(value);
-            //     return value
-            // })
+            .then(log)
             .then(checkComments)
             .then(setProposal)
             .then(() => setDataReady(true))
@@ -98,7 +100,9 @@ export function ProposalDetails(props: ProposalDetailsProps) {
     }, [proposalId, props.proposalService, navigate])
 
     function advanceState() {
-        props.proposalService.advanceState(proposalId!, true).then(setProposal)
+        props.proposalService.advanceState(proposalId!, true)
+            .then(setProposal)
+            .then(() => alert("Operação sucedida!"))
     }
     function showStates() {
 
@@ -107,9 +111,17 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         function getDeadlineDateForState(stateName: string) {
             const event = proposal.timelineEvents?.find(e => e.stateName === stateName)
             if (event === undefined) {
-                return "Limite ---"
+                return "Limite: ---"
             }
-            return Util.formatDate(event!.deadlineDate!)
+            return "Limite: "+ Util.formatDate(event!.deadlineDate!)
+        }
+
+        function getTransitionDate(stateName: string) {
+            const transition = proposal.stateTransitions?.find(st => st.newState?.name === stateName)
+
+            if(Util.isNullOrUndefined(transition)) return <span>{"---"}</span>
+
+            return <span>{Util.formatDate(transition!.transitionDate)}</span>
         }
 
         return (<Container>
@@ -144,20 +156,16 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                     key={`${state}-${i}`}
                                     id={`radio-${i}`}
                                     type="radio"
-                                    variant={proposal.stateTransitions?.every(st => st.stateAfter?.name !== state.id) ? 'outline-dark' : 'outline-primary'}
+                                    variant={proposal.stateTransitions?.every(st => st.newState?.name !== state.id) ? 'outline-dark' : 'outline-primary'}
                                     name="radio"
                                     value={state.id}
                                     checked={selectedState === state.id}
-                                    disabled={proposal.stateTransitions?.every(st => st.stateAfter?.name !== state.id)}
+                                    disabled={proposal.stateTransitions?.every(st => st.newState?.name !== state.id)}
                                     onChange={(e) => setSelectedState(e.currentTarget.value)}
                                 >
                                     <Stack direction={"vertical"}>
                                         <span>{state.name}</span>
-                                        {proposal.stateTransitions?.find(st => st.stateAfter?.name === state.id) ?
-                                            <span>{Util.formatDate(proposal.stateTransitions!.find(st => st.stateAfter?.name === state.id)!.transitionDate)}</span>
-                                            :
-                                            <span>{"---"}</span>
-                                        }
+                                        {getTransitionDate(state.id)}
                                         <span>{getDeadlineDateForState(state.id)}</span>
                                         <span>{state.owner}</span>
                                     </Stack>

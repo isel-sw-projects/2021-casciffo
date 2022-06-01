@@ -14,7 +14,7 @@ data class StateTransition(
     var id: Int?,
 
     @Column("state_id_before")
-    var stateBeforeId: Int?,
+    var previousStateId: Int?,
 
     @Column("state_id_after")
     var newStateId: Int?,
@@ -28,9 +28,9 @@ data class StateTransition(
 
     @Transient
     @Value("null")
-    var stateBefore: State? = null,
+    var previousState: State? = null,
 
     @Transient
     @Value("null")
-    var stateAfter: State? = null
+    var newState: State? = null
 )

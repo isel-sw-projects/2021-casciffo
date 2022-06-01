@@ -1,6 +1,6 @@
 import {Button, Container, Form, FormControl, FormGroup, Table} from "react-bootstrap";
 import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {CommentTypes} from "../../common/Constants";
 import {Util} from "../../common/Util";
 
@@ -18,10 +18,14 @@ type MyState = {
 export function ProposalCommentsTabContent(props: PCT_Props) {
 
     const headers = ["Data", "Autor", "Comentário"]
+    const [comments, setComments] = useState<ProposalCommentsModel[]>([])
     const [state, setState] = useState<MyState>({
         addComment: false,
         comment: ""
     })
+    useEffect(() => {
+        setComments(props.comments)
+    }, [props.comments])
 
     function updateComment(e: React.ChangeEvent<HTMLTextAreaElement>) {
         const key = e.target.name as keyof MyState
@@ -38,7 +42,10 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
     }
 
     function createRows() {
-        return props.comments?.filter(c => c.commentType === props.commentType.id).map(mapToRowElement);
+        if(Util.isNullOrUndefined(comments) || comments.length === 0)
+            return <tr key={"zero-comments"}><td colSpan={3}>Sem resultados</td></tr>
+
+        return comments.filter(c => c.commentType === props.commentType.id).map(mapToRowElement);
     }
 
     function mapToRowElement(comment: ProposalCommentsModel) {

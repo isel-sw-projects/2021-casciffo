@@ -2,11 +2,11 @@ import {StateModel} from "./StateModel";
 
 export interface StateTransitionModel {
     id: number,
-    stateBeforeId: number,
+    previousStateId: number,
     newStateId: number,
     transitionDate: Array<number>,
     transitionType: string,
     referenceId: number,
-    stateBefore?: StateModel,
-    stateAfter?: StateModel,
+    previousState?: StateModel,
+    newState?: StateModel,
 }
