@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.visits.investigators
 
-import isel.casciffo.casciffospringbackend.users.User
+import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
@@ -14,5 +14,5 @@ data class VisitInvestigators (
     val investigatorId: Int,
 
     @Transient
-    var investigator: User?
+    var investigator: UserModel?
 )

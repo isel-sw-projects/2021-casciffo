@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_PROTOCOL_URL
 import isel.casciffo.casciffospringbackend.proposals.ProtocolDTO
 import isel.casciffo.casciffospringbackend.proposals.ProtocolMapper
-import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_PROTOCOL_URL
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*

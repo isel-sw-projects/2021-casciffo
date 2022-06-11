@@ -9,7 +9,6 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Mono
 
 @RestController(value = "Constants")
 @RequestMapping(headers = ["Accept=application/json"])

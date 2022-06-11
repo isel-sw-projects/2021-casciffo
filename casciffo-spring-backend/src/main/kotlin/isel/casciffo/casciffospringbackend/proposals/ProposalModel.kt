@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
@@ -9,21 +9,19 @@ import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialCo
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
-import isel.casciffo.casciffospringbackend.users.User
-import lombok.AllArgsConstructor
+import isel.casciffo.casciffospringbackend.users.UserModel
 import lombok.ToString
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
-import org.springframework.data.annotation.Transient
 
 @ToString
-@AllArgsConstructor
 @Table(value = "proposal")
 data class ProposalModel(
     @Id
@@ -73,7 +71,7 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var principalInvestigator: User? = null,
+    var principalInvestigator: UserModel? = null,
 
     @Transient
     @Value("null")

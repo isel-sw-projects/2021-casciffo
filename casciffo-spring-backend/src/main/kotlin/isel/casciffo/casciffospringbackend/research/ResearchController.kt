@@ -1,9 +1,9 @@
 package isel.casciffo.casciffospringbackend.research
 
+import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
-import isel.casciffo.casciffospringbackend.endpoints.*
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*

@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_BASE_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_TRANSITION_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_URL
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired

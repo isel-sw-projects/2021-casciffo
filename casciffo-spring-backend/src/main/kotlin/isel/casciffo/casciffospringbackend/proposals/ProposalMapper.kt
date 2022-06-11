@@ -56,12 +56,8 @@ class ProposalMapper : Mapper<ProposalModel, ProposalDTO> {
                 id = model.financialComponent?.protocol?.id,
                 financialComponentId = model.financialComponent?.protocol?.financialComponentId,
                 comments = model.financialComponent?.protocol?.comments?.collectList()?.awaitSingle(),
-                externalName = model.financialComponent?.protocol?.externalName!!,
-                externalDateValidated = model.financialComponent?.protocol?.externalDateValidated,
-                externalValidated = model.financialComponent?.protocol?.externalValidated!!,
-                internalName = model.financialComponent?.protocol?.internalName!!,
-                internalDateValidated = model.financialComponent?.protocol?.internalDateValidated,
-                internalValidated = model.financialComponent?.protocol?.internalValidated!!
+                isValidated = model.financialComponent?.protocol?.isValidated!!,
+                validatedDate = model.financialComponent?.protocol?.validatedDate
             )
     }
 
@@ -83,18 +79,14 @@ class ProposalMapper : Mapper<ProposalModel, ProposalDTO> {
     fun mapProtocolDTOToModel(
         dto: ProposalModel
     ): ProposalProtocol? {
-        return if (dto.financialComponent!!.protocol == null)
+        return if (dto.financialComponent?.protocol == null)
             null
         else ProposalProtocol(
             id = dto.financialComponent?.protocol?.id,
             financialComponentId = dto.financialComponent?.protocol?.financialComponentId,
             comments = dto.financialComponent?.protocol?.comments?.toFlux(),
-            externalName = dto.financialComponent?.protocol?.externalName!!,
-            externalDateValidated = dto.financialComponent?.protocol?.externalDateValidated,
-            externalValidated = dto.financialComponent?.protocol?.externalValidated!!,
-            internalName = dto.financialComponent?.protocol?.internalName!!,
-            internalDateValidated = dto.financialComponent?.protocol?.internalDateValidated,
-            internalValidated = dto.financialComponent?.protocol?.internalValidated!!
+            isValidated = dto.financialComponent?.protocol?.isValidated!!,
+            validatedDate = dto.financialComponent?.protocol?.validatedDate
         )
     }
 

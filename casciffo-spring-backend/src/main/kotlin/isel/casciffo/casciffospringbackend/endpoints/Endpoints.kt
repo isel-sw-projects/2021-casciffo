@@ -1,10 +1,20 @@
 package isel.casciffo.casciffospringbackend.endpoints
 
-
 /************************************** ROLES ******************************************/
 /***************************************************************************************/
 
 const val USER_ROLE_BASE_URL = "/roles"
+
+
+/************************************** USERS ******************************************/
+/***************************************************************************************/
+
+const val USER_BASE_URL = "/users"
+const val LOGIN_URL = "${USER_BASE_URL}/login"
+const val REGISTER_URL = "${USER_BASE_URL}/register"
+const val GET_USER_URL = "${USER_BASE_URL}/{userId}"
+const val SEARCH_USER_URL = "${USER_BASE_URL}/search"
+
 
 /*********************************** CONSTANTS *****************************************/
 /***************************************************************************************/

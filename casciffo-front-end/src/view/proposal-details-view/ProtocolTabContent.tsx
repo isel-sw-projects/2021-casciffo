@@ -17,6 +17,7 @@ export function ProtocolTabContent(props: PPT_Props) {
     const headers = ["Criado", "Nome\n(Empresa/Papel)","Observação","Validado"]
     const {proposalId} = useParams()
     const [protocol, setProtocol] = useState<ProtocolModel>({
+        financialComponentId: 0, id: "", isValidated: false, validatedDate: [],
         comments: []
     })
     const [displayData, setDisplayData] = useState(false)
@@ -26,7 +27,6 @@ export function ProtocolTabContent(props: PPT_Props) {
         observation: "",
         validated: false
     })
-    const [stateToUpdate, setStateToUpdate] = useState("internalName")
     const [showCommentForm, setShowCommentForm] = useState(false)
 
     useEffect(() => {
@@ -92,9 +92,7 @@ export function ProtocolTabContent(props: PPT_Props) {
     }, [proposalId, props.service, protocol])
 
     const submitForm = () => {
-        console.log(stateToUpdate)
-        if(stateToUpdate === "internalName") protocol.internalValidated = comment.validated
-        else if(stateToUpdate === "externalName") protocol.externalValidated = comment.validated
+        protocol.isValidated = comment.validated || false
         saveComment()
             .then(() => {
                 if(comment.validated)
@@ -109,7 +107,6 @@ export function ProtocolTabContent(props: PPT_Props) {
             }))
     }
 
-    const handleSelectedState = (e: React.ChangeEvent<HTMLSelectElement>) => setStateToUpdate(e.target.value)
 
     function commentForm() {
         return (
@@ -146,19 +143,6 @@ export function ProtocolTabContent(props: PPT_Props) {
                         />
                     </Form.Group>
 
-                    <Form.Group style={{display: comment.validated ? "inherit": "none"}}>
-                        <Form.Label>Associar a</Form.Label>
-                        <Form.Select
-                            key={"state-associated-selection"}
-                            aria-label="state selection"
-                            name={"stateName"}
-                            defaultValue={0}
-                            onChange={handleSelectedState}
-                        >
-                            <option key={0} value={"internalName"}>Comissão de Ética</option>
-                            <option key={1} value={"externalName"}>INFARMED, L.P</option>
-                        </Form.Select>
-                    </Form.Group>
                     <Form.Group>
                         <Form.Label>Observação</Form.Label>
                         <Form.Control
@@ -184,24 +168,13 @@ export function ProtocolTabContent(props: PPT_Props) {
                     <Button
                         className={"float-start m-3"}
                         variant={"primary"}
-                        style={getBackgroundColor(protocol.internalValidated!)}
+                        style={getBackgroundColor(protocol.isValidated!)}
                         disabled
                     >
-                        {protocol.internalName}
+                        CEIC
                         <br/>
-                        {Util.isNullOrUndefined(protocol.internalDateValidated) ? "---"
-                            : Util.formatDate(protocol.internalDateValidated!)}
-                    </Button>
-                    <Button
-                        className={"float-end m-3"}
-                        variant={"primary"}
-                        style={getBackgroundColor(protocol.externalValidated!)}
-                        disabled
-                    >
-                        {protocol.externalName}
-                        <br/>
-                        {Util.isNullOrUndefined(protocol.externalDateValidated) ? "---"
-                            : Util.formatDate(protocol.externalDateValidated!)}
+                        {Util.isNullOrUndefined(protocol.validatedDate) ? "---"
+                            : Util.formatDate(protocol.validatedDate!)}
                     </Button>
                 </Stack>
                 : <p>A carregar estado do protocolo...</p>

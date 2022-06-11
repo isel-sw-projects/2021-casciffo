@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.investigation_team
 
-import isel.casciffo.casciffospringbackend.users.User
+import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -19,5 +19,5 @@ data class InvestigationTeam(
 
     @Transient
     @Value("null")
-    var member: User? = null
+    var member: UserModel? = null
 )

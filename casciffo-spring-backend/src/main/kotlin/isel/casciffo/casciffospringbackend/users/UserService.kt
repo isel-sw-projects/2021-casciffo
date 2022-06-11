@@ -1,16 +1,20 @@
 package isel.casciffo.casciffospringbackend.users
 
 
+import isel.casciffo.casciffospringbackend.security.BearerToken
+import isel.casciffo.casciffospringbackend.security.JwtDTO
 import kotlinx.coroutines.flow.Flow
-import reactor.core.publisher.Flux
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService
+import org.springframework.security.core.userdetails.UserDetails
 import reactor.core.publisher.Mono
 
-interface UserService {
+interface UserService: ReactiveUserDetailsService {
 
-    suspend fun getAllUsers() : Flow<User?>
-    suspend fun getUser(id: Int) : User?
-    suspend fun createUser(user: User) : User?
-    suspend fun verifyCredentials(userId: Int, password: String): Boolean
-    suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<User?>
-    suspend fun searchUsers(name: String, roles: List<String>): Flow<User?>
+    override fun findByUsername(username: String?): Mono<UserDetails>
+    suspend fun getAllUsers() : Flow<UserModel?>
+    suspend fun getUser(id: Int) : UserModel?
+    suspend fun createUser(userModel: UserModel) : BearerToken
+    suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel?>
+    suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?>
+    suspend fun loginUser(userModel: UserModel): BearerToken
 }

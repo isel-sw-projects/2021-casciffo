@@ -8,11 +8,10 @@ import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
-import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
+import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull

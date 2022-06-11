@@ -19,12 +19,12 @@ fun main(args: Array<String>) {
 }
 
 @Bean
-fun initializer(connectionFactory: ConnectionFactory?): ConnectionFactoryInitializer? {
+fun initializer(connectionFactory: ConnectionFactory?): ConnectionFactoryInitializer {
 	val initializer = ConnectionFactoryInitializer()
 	initializer.setConnectionFactory(connectionFactory!!)
 	val populator = CompositeDatabasePopulator()
 	populator.addPopulators(ResourceDatabasePopulator(ClassPathResource("sql/schema.sql")))
-	populator.addPopulators(ResourceDatabasePopulator(ClassPathResource("sql/data.sql")))
+	populator.addPopulators(ResourceDatabasePopulator(ClassPathResource("sql/data-postgres.sql")))
 	initializer.setDatabasePopulator(populator)
 	return initializer
 }

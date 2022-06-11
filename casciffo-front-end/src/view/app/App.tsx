@@ -10,7 +10,6 @@ import ProposalService from "../../services/ProposalService";
 import {ProposalDetails} from "../proposal-details-view/ProposalDetails";
 import {StateService} from "../../services/StateService";
 
-
 function NavigationBar() {
     return (
         <Navbar bg="primary" variant="dark">
@@ -52,7 +51,6 @@ function CreateRoutes() {
 
 function DisplayPath() {
     const path = useLocation()
-
     let pathVariables = [path.pathname]
     if(path.pathname.length > 1) pathVariables = path.pathname.split("/")
 

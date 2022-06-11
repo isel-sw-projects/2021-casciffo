@@ -2,11 +2,9 @@ package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
 import isel.casciffo.casciffospringbackend.exceptions.InvalidProtocolId
 import isel.casciffo.casciffospringbackend.exceptions.ResourceNotFoundException
-import isel.casciffo.casciffospringbackend.endpoints.buildGetResearchUrl
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Flux
 import java.time.LocalDate
 
 @Service
@@ -24,6 +22,7 @@ class ProtocolServiceImpl(
     }
 
     private fun loadComments(protocol: ProposalProtocol): ProposalProtocol {
+        //comments will be subscribed to, by being used, during mapping in the controller
         val comments = protocolCommentsRepository.findAllByProtocolId(protocol.id!!)
         protocol.comments = comments
         return protocol
@@ -36,11 +35,8 @@ class ProtocolServiceImpl(
 
     override suspend fun updateProtocol(protocol: ProposalProtocol): ProposalProtocol {
         proposalProtocolRepository.findById(protocol.id!!).awaitSingle() ?: throw InvalidProtocolId()
-        if(protocol.externalValidated && protocol.externalDateValidated === null) {
-            protocol.externalDateValidated = LocalDate.now()
-        }
-        if(protocol.internalValidated && protocol.internalDateValidated === null) {
-            protocol.internalDateValidated = LocalDate.now()
+        if(protocol.isValidated && protocol.validatedDate === null) {
+            protocol.validatedDate = LocalDate.now()
         }
         return proposalProtocolRepository.save(protocol).awaitSingle()
     }

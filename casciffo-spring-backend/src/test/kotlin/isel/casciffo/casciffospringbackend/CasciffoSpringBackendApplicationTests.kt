@@ -1,5 +1,8 @@
 package isel.casciffo.casciffospringbackend
 
+import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.io.Encoders
+import io.jsonwebtoken.security.Keys
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigatorRole
@@ -22,7 +25,7 @@ import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.roles.UserRole
 import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
-import isel.casciffo.casciffospringbackend.users.User
+import isel.casciffo.casciffospringbackend.users.UserModel
 import isel.casciffo.casciffospringbackend.users.UserRepository
 import isel.casciffo.casciffospringbackend.users.UserService
 import kotlinx.coroutines.flow.first
@@ -40,7 +43,7 @@ import reactor.test.StepVerifier
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-//@ActiveProfiles(value = ["test"])
+@ActiveProfiles(value = ["test"])
 @SpringBootTest
 class CasciffoSpringBackendApplicationTests(
 	@Autowired val userRepo: UserRepository,
@@ -62,21 +65,10 @@ class CasciffoSpringBackendApplicationTests(
 ) {
 
 	@Test
-	fun cleanup() {
-//		userRepo.deleteAll().block()
-//		userRoleRepository.deleteAll().block()
-		runBlocking {
-			val propList = proposalRepository.findAllByType(ResearchType.CLINICAL_TRIAL).collectList().block()
-			val financialList = proposalFinancialRepository.findAll().collectList().block()
-
-			propList?.forEach{ p ->
-				println(p)
-				var hasFinancialComponent = false
-				financialList?.forEach { pfc ->
-						if(pfc.proposalId === p.id) hasFinancialComponent = true
-				}
-				println("proposal [${p.id}] has financialComponent ? $hasFinancialComponent")
-			}
+	fun genKeys() {
+		for(index in 1..10) {
+			val key = Keys.secretKeyFor(SignatureAlgorithm.HS512)
+			println(Encoders.BASE64.encode(key.encoded))
 		}
 	}
 
@@ -109,11 +101,11 @@ class CasciffoSpringBackendApplicationTests(
 
 		val roles = resRole.collectList().block()
 		assert(roles != null)
-		val user = User(null, "hermelindo", "hermelindo2@gmail.com", "123",
+		val userModel = UserModel(null, "hermelindo", "hermelindo2@gmail.com", "123",
 			roleId = roles!![0].roleId, role = null)
-		val user2 = User(null, "eric brown", "eric.brown@gmail.com", "password",
+		val userModel2 = UserModel(null, "eric brown", "eric.brown@gmail.com", "password",
 			roleId = roles[1].roleId, role = null)
-		val usersFlux: Flux<User> = userRepo.saveAll(listOf(user, user2))
+		val usersFlux: Flux<UserModel> = userRepo.saveAll(listOf(userModel, userModel2))
 
 		StepVerifier
 			.create(usersFlux)
@@ -139,9 +131,9 @@ class CasciffoSpringBackendApplicationTests(
 		val resUserRole = resRole.block()
 		println(resUserRole)
 
-		val user = User(null, "hermelindo", "hermelindo@gmail.com", "123",
+		val userModel = UserModel(null, "hermelindo", "hermelindo@gmail.com", "123",
 			roleId = resUserRole!!.roleId, role = null)
-		val res: Mono<User> = userRepo.save(user)
+		val res: Mono<UserModel> = userRepo.save(userModel)
 		val resUser = res.block()
 		println(resUser)
 	}

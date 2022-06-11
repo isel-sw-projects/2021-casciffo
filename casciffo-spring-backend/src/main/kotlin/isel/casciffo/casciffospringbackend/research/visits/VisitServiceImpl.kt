@@ -2,18 +2,14 @@ package isel.casciffo.casciffospringbackend.research.visits
 
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsRepository
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsService
-import isel.casciffo.casciffospringbackend.users.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
-import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 @Service
 class VisitServiceImpl(

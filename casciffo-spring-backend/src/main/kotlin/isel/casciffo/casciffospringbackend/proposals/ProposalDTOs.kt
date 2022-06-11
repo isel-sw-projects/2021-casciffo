@@ -11,7 +11,7 @@ import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolCo
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
-import isel.casciffo.casciffospringbackend.users.User
+import isel.casciffo.casciffospringbackend.users.UserModel
 import lombok.AllArgsConstructor
 import lombok.Data
 import java.time.LocalDate
@@ -38,7 +38,7 @@ data class ProposalDTO (
     var serviceType: ServiceType? = null,
     var therapeuticArea: TherapeuticArea? = null,
     var pathology: Pathology? = null,
-    var principalInvestigator: User? = null,
+    var principalInvestigator: UserModel? = null,
     var financialComponent: ProposalFinancialComponentDTO? = null,
     var investigationTeam: List<InvestigationTeam>? = listOf(),
     var stateTransitions: List<StateTransition>? = null,
@@ -62,12 +62,8 @@ data class ProposalFinancialComponentDTO(
 @AllArgsConstructor
 data class ProtocolDTO(
     var id: Int? = null,
-    var internalName: String = "Comissão de Ética para Investigação Clínica",
-    var externalName: String = "INFARMED, I.P",
-    var internalDateValidated: LocalDate?=null,
-    var externalDateValidated: LocalDate?=null,
-    var externalValidated: Boolean = false,
-    var internalValidated: Boolean = false,
+    var validatedDate: LocalDate? = null,
+    var isValidated: Boolean = false,
     var financialComponentId: Int?=null,
     var comments: List<ProtocolComments>? = null
 )

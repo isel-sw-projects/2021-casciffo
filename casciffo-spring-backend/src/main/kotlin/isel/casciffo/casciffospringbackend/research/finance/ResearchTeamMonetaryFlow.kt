@@ -1,12 +1,11 @@
 package isel.casciffo.casciffospringbackend.research.finance
 
-import isel.casciffo.casciffospringbackend.users.User
+import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import reactor.core.publisher.Flux
 import java.time.LocalDateTime
 
 @Table("research_team_financial_scope")
@@ -35,5 +34,5 @@ data class ResearchTeamMonetaryFlow(
 
     @Transient
     @Value("null")
-    var investigator: User?
+    var investigator: UserModel?
 )

@@ -1,7 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
 import kotlinx.coroutines.flow.Flow
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
 interface ProposalCommentsService {

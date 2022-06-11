@@ -174,12 +174,8 @@ CREATE TABLE IF NOT EXISTS proposal_financial_component (
 
 CREATE TABLE IF NOT EXISTS protocol (
     protocol_id SERIAL PRIMARY KEY,
-    internal_name VARCHAR,
-    external_name VARCHAR,
-    internal_validated BOOLEAN DEFAULT FALSE,
-    external_validated BOOLEAN DEFAULT FALSE,
-    internal_date_validated DATE,
-    external_date_validated DATE,
+    is_validated BOOLEAN DEFAULT FALSE,
+    validated_date DATE,
     pfc_id INT,
     CONSTRAINT fk_protocol_pfc_id FOREIGN KEY (pfc_id) REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE
 );

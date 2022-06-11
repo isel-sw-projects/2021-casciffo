@@ -13,12 +13,8 @@ data class ProposalProtocol(
     @Id
     @Column("protocol_id")
     var id: Int? = null,
-    var internalName: String = "Comissão de Ética para Investigação Clínica",
-    var externalName: String = "INFARMED, I.P",
-    var internalDateValidated: LocalDate?=null,
-    var externalDateValidated: LocalDate?=null,
-    var externalValidated: Boolean = false,
-    var internalValidated: Boolean = false,
+    var validatedDate: LocalDate? = null,
+    var isValidated: Boolean = false,
     @Column("pfc_id")
     var financialComponentId: Int?=null,
 

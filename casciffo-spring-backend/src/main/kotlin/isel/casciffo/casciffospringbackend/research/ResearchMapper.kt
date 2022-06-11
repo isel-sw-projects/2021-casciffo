@@ -1,7 +1,5 @@
 package isel.casciffo.casciffospringbackend.research
 
-import isel.casciffo.casciffospringbackend.proposals.ProposalDTO
-import isel.casciffo.casciffospringbackend.proposals.ProposalModel
 import kotlinx.coroutines.reactor.awaitSingle
 import reactor.kotlin.core.publisher.toFlux
 
