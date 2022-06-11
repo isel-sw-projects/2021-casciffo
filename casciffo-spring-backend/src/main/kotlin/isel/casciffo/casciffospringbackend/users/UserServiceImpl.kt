@@ -1,28 +1,26 @@
 package isel.casciffo.casciffospringbackend.users
 
+import isel.casciffo.casciffospringbackend.common.EMAIL_AUTH
+import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
 import isel.casciffo.casciffospringbackend.roles.UserRoleService
 import isel.casciffo.casciffospringbackend.security.BearerToken
-import isel.casciffo.casciffospringbackend.security.JwtDTO
 import isel.casciffo.casciffospringbackend.security.JwtSupport
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Mono
-import java.util.*
 
 
 @Service
@@ -80,12 +78,15 @@ class UserServiceImpl(
 
     /**
      * This method pertain to spring security configuration
+     * fixme Currently passing the user email on the arg username, it's confusing, needs rework
      */
     override fun findByUsername(username: String?): Mono<UserDetails> {
-        if(username === null)
+        //leaving it like this for now to avoid confusion
+        val email = username
+        if(email === null)
             throw org.springframework.security.core.userdetails.UsernameNotFoundException("username cant be null!!!")
 
-        return userRepository.findByName(username)
+        return userRepository.findByEmail(email)
             .switchIfEmpty(
                 Mono.error(
                     org.springframework.security.core.userdetails.UsernameNotFoundException("username cant be null!!!")
@@ -102,7 +103,10 @@ class UserServiceImpl(
                 userModel.role = it
                 userModel
             }.map {
-                val authorities = listOf(SimpleGrantedAuthority(it.role!!.roleName))
+                val authorities = listOf(
+                    SimpleGrantedAuthority("$ROLE_AUTH${it.role!!.roleName}"),
+                    SimpleGrantedAuthority("$EMAIL_AUTH${it.email}")
+                )
                 org.springframework.security.core.userdetails.User(it.name, it.password, authorities)
             }
     }

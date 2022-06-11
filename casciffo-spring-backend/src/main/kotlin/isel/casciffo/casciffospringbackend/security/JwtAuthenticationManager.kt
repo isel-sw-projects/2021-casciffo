@@ -29,7 +29,6 @@ class JwtAuthenticationManager(
         val user = users.findByUsername(username).awaitSingleOrNull()
 
         if (jwtSupport.isValid(token, user)) {
-            //TODO FIND WAY TO INCLUDE EMAIL RATHER THAN USERNAME
             return UsernamePasswordAuthenticationToken(user!!.username, user.password, user.authorities)
         }
 

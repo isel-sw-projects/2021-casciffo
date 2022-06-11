@@ -11,7 +11,6 @@ import reactor.core.publisher.Mono
 class JwtServerAuthenticationConverter : ServerAuthenticationConverter {
 
     override fun convert(exchange: ServerWebExchange): Mono<Authentication> {
-        println("Converter called")
         return Mono.justOrEmpty(exchange.request.headers.getFirst(HttpHeaders.AUTHORIZATION))
             .filter { it.startsWith("Bearer ") }
             .map(this::skipToToken)

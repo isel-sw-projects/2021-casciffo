@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
+import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
@@ -42,9 +43,14 @@ class WebSecurityConfig {
 
         val filter = AuthenticationWebFilter(authManager)
         filter.setServerAuthenticationConverter(converter)
-        //TODO DISABLE WEB SESSION
 
         http
+            //Work around to disabling spring web session
+            .requestCache()
+            .requestCache(NoOpServerRequestCache.getInstance())
+            .and()
+            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+            //handling default unauthorized exception, show the user that auth is made with Bearer token
             .exceptionHandling()
             .authenticationEntryPoint { exchange, _ ->
                 Mono.fromRunnable {

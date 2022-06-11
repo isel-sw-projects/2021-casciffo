@@ -2,10 +2,7 @@ package isel.casciffo.casciffospringbackend.security
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import isel.casciffo.casciffospringbackend.common.dateNow
-import isel.casciffo.casciffospringbackend.common.frontEnd
-import isel.casciffo.casciffospringbackend.common.newExpirationTime
-import isel.casciffo.casciffospringbackend.common.tokenIssuer
+import isel.casciffo.casciffospringbackend.common.*
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.userdetails.UserDetails
@@ -46,12 +43,22 @@ class JwtSupport {
         return parser.parseClaimsJws(token.value).body.subject
     }
 
+    /**
+     * @param user Holds the user details information used by spring security, username will have the userEmail instead
+     */
     fun isValid(token: BearerToken, user: UserDetails?): Boolean {
         val claims = parser.parseClaimsJws(token.value).body
         val isNotExpired = claims.expiration.after(Date.from(Instant.now()))
-        val doesUserNameMatch = claims.subject == user?.username
+        val email =
+            user?.authorities!!
+                .filter {
+                    it.authority.startsWith(EMAIL_AUTH)
+                }.map {
+                    it.authority.substringAfter(AUTH_DELIM)
+                }.first()
+        val doesUserEmailMatch = claims.subject == email
 
-        return isNotExpired && doesUserNameMatch
+        return isNotExpired && doesUserEmailMatch
     }
 
 }

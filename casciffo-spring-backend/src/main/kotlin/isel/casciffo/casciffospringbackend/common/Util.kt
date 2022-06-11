@@ -13,3 +13,8 @@ val dateNow: Date = Date.from(Instant.now())
 const val tokenIssuer = "Casciffo-back-end"
 
 const val frontEnd = "https://casciffo-react-pwa.herokuapp.com/"
+
+const val AUTH_DELIM = ":"
+
+const val EMAIL_AUTH = "EMAIL$AUTH_DELIM"
+const val ROLE_AUTH = "ROLE$AUTH_DELIM"
