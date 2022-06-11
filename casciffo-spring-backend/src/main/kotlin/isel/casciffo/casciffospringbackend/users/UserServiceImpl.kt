@@ -48,17 +48,18 @@ class UserServiceImpl(
         return userRepository.findAll().asFlow().onEach(this::loadRelations)
     }
 
-    override suspend fun getUser(id: Int): UserModel? {
+    override suspend fun getUser(id: Int, loadDetails: Boolean): UserModel? {
         val user = userRepository.findById(id).awaitFirstOrNull()
             ?: throw UserNotFoundException()
 
-        return loadRelations(user)
+        return if(loadDetails) loadRelations(user) else user
     }
 
     @Transactional
     override suspend fun createUser(userModel: UserModel): BearerToken {
         userModel.password = encoder.encode(userModel.password)
-        val user = userRepository.save(userModel).awaitSingleOrNull() ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
+        val user = userRepository.save(userModel).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
         return jwtSupport.generate(user.email!!)
     }
 

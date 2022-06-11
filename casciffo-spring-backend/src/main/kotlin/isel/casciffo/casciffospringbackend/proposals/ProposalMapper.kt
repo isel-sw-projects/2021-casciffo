@@ -1,15 +1,30 @@
 package isel.casciffo.casciffospringbackend.proposals
 
 import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamDTO
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
+import isel.casciffo.casciffospringbackend.users.UserDTO
+import isel.casciffo.casciffospringbackend.users.UserModel
+import kotlinx.coroutines.reactive.awaitSingleOrNull
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toFlux
 
 @Suppress("ReactiveStreamsUnusedPublisher") //values are used in service
-class ProposalMapper : Mapper<ProposalModel, ProposalDTO> {
+@Component
+class ProposalMapper(
+    @Autowired private val userMapper: Mapper<UserModel, UserDTO>,
+    @Autowired private val invTeamMapper: Mapper<InvestigationTeamModel, InvestigationTeamDTO>,
+    @Autowired private val commentsMapper: Mapper<ProposalComments, ProposalCommentsDTO>,
+) : Mapper<ProposalModel, ProposalDTO> {
 
-    override suspend fun mapDTONonListPropertiesToModel(dto: ProposalDTO, model: ProposalModel) {
+    suspend fun mapDTONonListPropertiesToModel(dto: ProposalDTO, model: ProposalModel) {
         model.id = dto.id
         model.dateCreated = dto.dateCreated
         model.lastUpdated = dto.lastUpdated
@@ -24,7 +39,7 @@ class ProposalMapper : Mapper<ProposalModel, ProposalDTO> {
         model.stateId = dto.stateId
         model.state = dto.state
         model.principalInvestigatorId = dto.principalInvestigatorId
-        model.principalInvestigator = dto.principalInvestigator
+        model.principalInvestigator = userMapper.mapDTOtoModel(dto.principalInvestigator)
         //financial component mapping
         if(dto.financialComponent != null)
             mapFinancialDTOToModel(model, dto)
@@ -90,13 +105,13 @@ class ProposalMapper : Mapper<ProposalModel, ProposalDTO> {
         )
     }
 
-    override suspend fun mapDTOListPropertiesToModel(dto: ProposalDTO, model: ProposalModel)  {
-        model.investigationTeam = dto.investigationTeam?.toFlux()
+    suspend fun mapDTOListPropertiesToModel(dto: ProposalDTO, model: ProposalModel)  {
+        model.investigationTeamModel = dto.investigationTeam?.map{invTeamMapper.mapDTOtoModel(it)}?.toFlux()
         model.stateTransitions = dto.stateTransitions?.toFlux()
         model.timelineEvents = dto.timelineEvents?.toFlux()
-        model.comments = dto.comments?.toFlux()
+        model.comments = dto.comments?.map{commentsMapper.mapDTOtoModel(it)}?.toFlux()
     }
-    override suspend fun mapModelNonListPropertiesToDTO(model: ProposalModel, dto: ProposalDTO) {
+    suspend fun mapModelNonListPropertiesToDTO(model: ProposalModel, dto: ProposalDTO) {
         dto.id = model.id
         dto.dateCreated = model.dateCreated
         dto.lastUpdated = model.lastUpdated
@@ -111,35 +126,32 @@ class ProposalMapper : Mapper<ProposalModel, ProposalDTO> {
         dto.stateId = model.stateId
         dto.state = model.state
         dto.principalInvestigatorId = model.principalInvestigatorId
-        dto.principalInvestigator = model.principalInvestigator
+        dto.principalInvestigator = userMapper.mapModelToDTO(model.principalInvestigator)
         //financial component mapping
         if(model.financialComponent != null)
             mapFinancialModelToDTO(dto, model)
     }
 
-    override suspend fun mapModelListPropertiesToDTO(model: ProposalModel, dto: ProposalDTO) {
-        dto.investigationTeam = model.investigationTeam?.collectList()?.awaitSingle()
-        dto.stateTransitions = model.stateTransitions?.collectList()?.awaitSingle()
-        dto.timelineEvents = model.timelineEvents?.collectList()?.awaitSingle()
-        dto.comments = model.comments?.collectList()?.awaitSingle()
+    suspend fun mapModelListPropertiesToDTO(model: ProposalModel, dto: ProposalDTO) {
+        dto.investigationTeam = model.investigationTeamModel?.collectList()?.awaitSingleOrNull()?.map { invTeamMapper.mapModelToDTO(it) }
+        dto.stateTransitions = model.stateTransitions?.collectList()?.awaitSingleOrNull()
+        dto.timelineEvents = model.timelineEvents?.collectList()?.awaitSingleOrNull()
+        dto.comments = model.comments?.collectList()?.awaitSingleOrNull()?.map { commentsMapper.mapModelToDTO(it) }
     }
 
-    override suspend fun mapDTOtoModel(dto: ProposalDTO): ProposalModel {
+    override suspend fun mapDTOtoModel(dto: ProposalDTO?): ProposalModel {
+        if(dto === null) return ProposalModel()
         val proposalModel = ProposalModel()
         mapDTONonListPropertiesToModel(dto, proposalModel)
         mapDTOListPropertiesToModel(dto, proposalModel)
         return proposalModel
     }
 
-    override suspend fun mapModelToDTO(model: ProposalModel): ProposalDTO {
+    override suspend fun mapModelToDTO(model: ProposalModel?): ProposalDTO {
+        if(model === null) return ProposalDTO()
         val proposalDTO = ProposalDTO()
         mapModelNonListPropertiesToDTO(model, proposalDTO)
         mapModelListPropertiesToDTO(model, proposalDTO)
         return proposalDTO
     }
-
-    // USE IF NEEDED
-//    fun patch(proposalDTO: ProposalDTO, proposalModel: ProposalModel): ProposalModel {
-//        if(pro)
-//    }
 }

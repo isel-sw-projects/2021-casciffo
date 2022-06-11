@@ -12,7 +12,7 @@ interface UserService: ReactiveUserDetailsService {
 
     override fun findByUsername(username: String?): Mono<UserDetails>
     suspend fun getAllUsers() : Flow<UserModel?>
-    suspend fun getUser(id: Int) : UserModel?
+    suspend fun getUser(id: Int, loadDetails: Boolean = false) : UserModel?
     suspend fun createUser(userModel: UserModel) : BearerToken
     suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel?>
     suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?>

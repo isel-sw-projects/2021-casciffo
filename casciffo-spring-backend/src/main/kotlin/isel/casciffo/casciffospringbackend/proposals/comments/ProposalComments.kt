@@ -25,9 +25,9 @@ data class ProposalComments (
     @LastModifiedDate
     val dateModified: LocalDateTime?=null,
 
-    val content: String,
+    val content: String?=null,
 
-    val commentType: CommentType,
+    val commentType: CommentType?=null,
 
     @Transient
     @Value("null")

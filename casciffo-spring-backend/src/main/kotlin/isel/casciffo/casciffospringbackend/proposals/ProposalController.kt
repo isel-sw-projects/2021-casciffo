@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals
 
+import isel.casciffo.casciffospringbackend.Mapper
 import isel.casciffo.casciffospringbackend.common.SUPERUSER_AUTHORITY
 import isel.casciffo.casciffospringbackend.config.IsSuperuser
 import isel.casciffo.casciffospringbackend.config.IsUIC
@@ -15,10 +16,9 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping(headers = ["Accept=application/json"])
 class ProposalController(
-    @Autowired val service: ProposalService
+    @Autowired val service: ProposalService,
+    @Autowired val mapper: Mapper<ProposalModel, ProposalDTO>
     ) {
-
-    val mapper: ProposalMapper = ProposalMapper()
 
     @GetMapping(PROPOSAL_BASE_URL)
     suspend fun getAllProposals(@RequestParam(required = true) type: ResearchType): Flow<ProposalDTO> {
@@ -26,7 +26,7 @@ class ProposalController(
     }
 
     @GetMapping(PROPOSAL_URL)
-    @IsSuperuser
+    @IsUIC
     suspend fun getProposal(@PathVariable(required = true) proposalId: Int) : ProposalDTO {
         val proposal = service.getProposalById(proposalId)
         return mapper.mapModelToDTO(proposal)
@@ -41,7 +41,7 @@ class ProposalController(
     }
 
     @PatchMapping(PROPOSAL_URL)
-    @PreAuthorize("hasRole('SUPERUSER')")
+    @IsUIC
     suspend fun updateProposal(
         @PathVariable(required = true) proposalId: Int,
         @RequestBody(required = true) proposal: ProposalDTO
@@ -51,6 +51,9 @@ class ProposalController(
         return mapper.mapModelToDTO(res)
     }
 
+    //TODO some thinking is required since all roles can update the state of a proposal
+    // however which states they can update is role-locked
+    // proposal: create more role-authorized endpoints and call same updateState function
     @PutMapping(PROPOSAL_TRANSITION_URL)
     suspend fun transitionProposalState(
         @PathVariable(required = true) proposalId: Int,

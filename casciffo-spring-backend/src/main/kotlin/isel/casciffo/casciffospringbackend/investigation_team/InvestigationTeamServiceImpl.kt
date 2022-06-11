@@ -13,18 +13,18 @@ class InvestigationTeamServiceImpl(
     @Autowired val investigationTeamRepository: InvestigationTeamRepository,
     @Autowired val userService: UserService
 ): InvestigationTeamService {
-    override suspend fun findTeamByProposalId(id: Int): Flow<InvestigationTeam> {
+    override suspend fun findTeamByProposalId(id: Int): Flow<InvestigationTeamModel> {
         return investigationTeamRepository
             .findInvestigationTeamByProposalId(id)
             .asFlow()
             .map(this::loadMember)
     }
 
-    override suspend fun saveTeam(team: Flux<InvestigationTeam>): Flow<InvestigationTeam> {
+    override suspend fun saveTeam(team: Flux<InvestigationTeamModel>): Flow<InvestigationTeamModel> {
         return investigationTeamRepository.saveAll(team).asFlow()
     }
 
-    private suspend fun loadMember(member: InvestigationTeam): InvestigationTeam {
+    private suspend fun loadMember(member: InvestigationTeamModel): InvestigationTeamModel {
         member.member = userService.getUser(member.memberId!!)
         return member
     }

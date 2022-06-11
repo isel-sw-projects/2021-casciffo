@@ -3,7 +3,7 @@ package isel.casciffo.casciffospringbackend
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Encoders
 import io.jsonwebtoken.security.Keys
-import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigatorRole
 import isel.casciffo.casciffospringbackend.proposals.ProposalModel
@@ -207,12 +207,12 @@ class CasciffoSpringBackendApplicationTests(
 
 		val proposal = ProposalModel(null, "sigla2", ResearchType.OBSERVATIONAL_STUDY,
 			LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,1,
-			investigationTeam = Flux.fromIterable(listOf(InvestigationTeam(proposalId = 0,memberRole = InvestigatorRole.PRINCIPAL, memberId = 1))),
+			investigationTeamModel = Flux.fromIterable(listOf(InvestigationTeamModel(proposalId = 0,memberRole = InvestigatorRole.PRINCIPAL, memberId = 1))),
 			financialComponent = ProposalFinancialComponent(promoterId = 1, financialContractId = 1))
 		runBlocking {
 			val res = proposalService.create(proposal)
-			assert(res.investigationTeam != null)
-			val investigationTeam = res.investigationTeam!!
+			assert(res.investigationTeamModel != null)
+			val investigationTeam = res.investigationTeamModel!!
 
 			StepVerifier
 				.create(investigationTeam)

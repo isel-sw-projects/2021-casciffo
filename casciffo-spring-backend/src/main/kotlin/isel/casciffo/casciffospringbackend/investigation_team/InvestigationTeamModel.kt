@@ -8,7 +8,7 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
 @Table(value = "investigation_team")
-data class InvestigationTeam(
+data class InvestigationTeamModel(
     @Id
     @Column(value = "team_id")
     var id: Int? = null,

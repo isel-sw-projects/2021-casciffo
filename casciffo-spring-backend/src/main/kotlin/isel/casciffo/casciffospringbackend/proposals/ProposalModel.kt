@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeam
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
@@ -91,5 +91,5 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var investigationTeam: Flux<InvestigationTeam>? = null
+    var investigationTeamModel: Flux<InvestigationTeamModel>? = null
 )

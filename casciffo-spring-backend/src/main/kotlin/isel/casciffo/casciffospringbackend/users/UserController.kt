@@ -27,7 +27,7 @@ class UserController(@Autowired val service : UserService) {
 
     @GetMapping(GET_USER_URL)
     suspend fun getUser(@PathVariable userId : Int): UserModel? {
-        return service.getUser(userId)
+        return service.getUser(userId, loadDetails = true)
     }
 
     @GetMapping(USER_BASE_URL)
