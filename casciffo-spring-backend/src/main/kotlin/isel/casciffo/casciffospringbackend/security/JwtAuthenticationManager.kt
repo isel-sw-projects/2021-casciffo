@@ -5,6 +5,7 @@ import kotlinx.coroutines.reactor.mono
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -16,7 +17,6 @@ class JwtAuthenticationManager(
 ) : ReactiveAuthenticationManager {
 
     override fun authenticate(authentication: Authentication?): Mono<Authentication> {
-        print("Authenticate called")
         return Mono.justOrEmpty(authentication)
             .filter { auth -> auth is BearerToken }
             .cast(BearerToken::class.java)
@@ -27,9 +27,11 @@ class JwtAuthenticationManager(
     private suspend fun validate(token: BearerToken): Authentication {
         val username = jwtSupport.getUserEmail(token)
         val user = users.findByUsername(username).awaitSingleOrNull()
-
+        println(user)
         if (jwtSupport.isValid(token, user)) {
-            return UsernamePasswordAuthenticationToken(user!!.username, user.password, user.authorities)
+            val auth = UsernamePasswordAuthenticationToken(user!!.username, user.password, user.authorities)
+            SecurityContextHolder.getContext().authentication = auth
+            return auth
         }
 
         throw IllegalArgumentException("Token is not valid.")

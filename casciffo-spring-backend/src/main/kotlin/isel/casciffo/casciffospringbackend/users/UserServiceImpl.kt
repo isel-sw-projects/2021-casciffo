@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -78,18 +79,18 @@ class UserServiceImpl(
 
     /**
      * This method pertain to spring security configuration
-     * fixme Currently passing the user email on the arg username, it's confusing, needs rework
+     * fixme Currently passing the user email on the arg username, it's confusing
      */
     override fun findByUsername(username: String?): Mono<UserDetails> {
         //leaving it like this for now to avoid confusion
         val email = username
         if(email === null)
-            throw org.springframework.security.core.userdetails.UsernameNotFoundException("username cant be null!!!")
+            throw org.springframework.security.core.userdetails.UsernameNotFoundException("User email can't be null!!!")
 
         return userRepository.findByEmail(email)
             .switchIfEmpty(
                 Mono.error(
-                    org.springframework.security.core.userdetails.UsernameNotFoundException("username cant be null!!!")
+                    org.springframework.security.core.userdetails.UsernameNotFoundException("User email can't be null!!!")
                 ))
             .flatMap(this::buildUserDetails)
     }
@@ -97,7 +98,7 @@ class UserServiceImpl(
     /**
      * This method will load the role and build the UserDetails to be used by spring security
      */
-    private fun buildUserDetails(userModel: UserModel): Mono<org.springframework.security.core.userdetails.User> {
+    private fun buildUserDetails(userModel: UserModel): Mono<UserDetails> {
         return roleService.findByIdMono(userModel.roleId!!)
             .map{
                 userModel.role = it
@@ -107,7 +108,7 @@ class UserServiceImpl(
                     SimpleGrantedAuthority("$ROLE_AUTH${it.role!!.roleName}"),
                     SimpleGrantedAuthority("$EMAIL_AUTH${it.email}")
                 )
-                org.springframework.security.core.userdetails.User(it.name, it.password, authorities)
+                User(it.name, it.password, authorities)
             }
     }
 }

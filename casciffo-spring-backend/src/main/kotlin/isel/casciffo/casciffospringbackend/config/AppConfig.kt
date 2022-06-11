@@ -22,15 +22,3 @@ class AppConfig : WebFluxConfigurer {
             .allowedOrigins("*")
     }
 }
-
-//@Bean
-//class
-//fun initializer(connectionFactory: ConnectionFactory?): ConnectionFactoryInitializer? {
-//    val initializer = ConnectionFactoryInitializer()
-//    if (connectionFactory != null) {
-//        initializer.setConnectionFactory(connectionFactory)
-//    }
-//    val populator = ResourceDatabasePopulator(ClassPathResource("sql/create.sql"))
-//    initializer.setDatabasePopulator(populator)
-//    return initializer
-//}

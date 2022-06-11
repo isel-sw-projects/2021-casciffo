@@ -1,11 +1,15 @@
 package isel.casciffo.casciffospringbackend.proposals
 
+import isel.casciffo.casciffospringbackend.common.SUPERUSER_AUTHORITY
+import isel.casciffo.casciffospringbackend.config.IsSuperuser
+import isel.casciffo.casciffospringbackend.config.IsUIC
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_BASE_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_TRANSITION_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_URL
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -22,12 +26,14 @@ class ProposalController(
     }
 
     @GetMapping(PROPOSAL_URL)
+    @IsSuperuser
     suspend fun getProposal(@PathVariable(required = true) proposalId: Int) : ProposalDTO {
         val proposal = service.getProposalById(proposalId)
         return mapper.mapModelToDTO(proposal)
     }
 
     @PostMapping(PROPOSAL_BASE_URL)
+    @IsUIC
     suspend fun createProposal(@RequestBody(required = true) proposal: ProposalDTO): ProposalDTO {
         val p = mapper.mapDTOtoModel(proposal)
         val res = service.create(p)
@@ -35,6 +41,7 @@ class ProposalController(
     }
 
     @PatchMapping(PROPOSAL_URL)
+    @PreAuthorize("hasRole('SUPERUSER')")
     suspend fun updateProposal(
         @PathVariable(required = true) proposalId: Int,
         @RequestBody(required = true) proposal: ProposalDTO
