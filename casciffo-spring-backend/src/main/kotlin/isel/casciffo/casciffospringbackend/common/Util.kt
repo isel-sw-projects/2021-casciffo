@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.common
 
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -9,7 +10,7 @@ const val amountOfTime: Long = 15
 val dateNow: Date = Date.from(Instant.now())
 
 
-
+const val PT_TIMEZONE = "Europe/Lisbon"
 
 /************************ Authorization related constants *******************************/
 /***************************************************************************************/

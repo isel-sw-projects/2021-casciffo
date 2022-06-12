@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toFlux
 
 @Component
-class ProtocolMapper: Mapper<ProposalProtocol, ProtocolDTO> {
+class ProtocolMapper : Mapper<ProposalProtocol, ProtocolDTO> {
     override suspend fun mapDTOtoModel(dto: ProtocolDTO?): ProposalProtocol {
         return if (dto === null) ProposalProtocol()
         else ProposalProtocol(

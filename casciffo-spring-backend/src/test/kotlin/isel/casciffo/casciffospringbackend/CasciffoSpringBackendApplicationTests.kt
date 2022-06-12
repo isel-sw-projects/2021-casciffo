@@ -16,6 +16,8 @@ import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialCo
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolService
+import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventRepository
+import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventService
 import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchRepository
 import isel.casciffo.casciffospringbackend.research.ResearchService
@@ -32,6 +34,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -43,7 +46,7 @@ import reactor.test.StepVerifier
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@ActiveProfiles(value = ["test"])
+//@ActiveProfiles(value = ["test"])
 @SpringBootTest
 class CasciffoSpringBackendApplicationTests(
 	@Autowired val userRepo: UserRepository,
@@ -62,8 +65,27 @@ class CasciffoSpringBackendApplicationTests(
 	@Autowired val protocolService: ProtocolService,
 	@Autowired val proposalCommentsRepository: ProposalCommentsRepository,
 	@Autowired val proposalCommentsService: ProposalCommentsService,
+	@Autowired val timelineEventService: TimelineEventService,
+	@Autowired val timelineEventRepository: TimelineEventRepository
 ) {
 
+
+	@Test
+	fun updateOverDueDeadLines() {
+		runBlocking {
+			val events = timelineEventRepository
+				.findAllByDeadlineDateBeforeAndCompletedDateIsNull().collectList().awaitSingleOrNull()
+			assert(!events.isNullOrEmpty())
+			val updatedEvents = timelineEventService
+				.updateOverDueDeadline()
+				.collectList().awaitSingleOrNull()
+			assert(!updatedEvents.isNullOrEmpty())
+			updatedEvents!!.forEach{
+				assert(it.isOverDue!!)
+				assert(it.daysOverDue!! > 0)
+			}
+		}
+	}
 	@Test
 	fun genKeys() {
 		for(index in 1..10) {

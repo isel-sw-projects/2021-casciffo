@@ -44,7 +44,12 @@ const val PROPOSAL_COMMENTS = "${PROPOSAL_URL}/comments"
 
 val buildSingleCommentUrl = {id: Int -> "${PROPOSAL_URL}/comments/${id}"}
 
-const val PROPOSAL_TRANSITION_URL = "${PROPOSAL_URL}/state"
+//TODO link these role-based endpoints to advance certains parts of the state of a proposal
+const val PROPOSAL_TRANSITION_URL = "${PROPOSAL_URL}/state/superuser"
+const val PROPOSAL_TRANSITION_SUPERUSER_URL = "${PROPOSAL_URL}/state/superuser"
+const val PROPOSAL_TRANSITION_CA_URL = "${PROPOSAL_URL}/state/ca"
+const val PROPOSAL_TRANSITION_UIC_URL = "${PROPOSAL_URL}/state/uic"
+const val PROPOSAL_TRANSITION_FINANCE_URL = "${PROPOSAL_URL}/state/finance"
 
 const val PROPOSAL_EVENTS_URL = "${PROPOSAL_URL}/events"
 

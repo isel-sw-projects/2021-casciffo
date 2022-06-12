@@ -30,6 +30,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Service
 class ProposalServiceImpl(
@@ -164,6 +165,7 @@ class ProposalServiceImpl(
             .newTransition(existingProposal.stateId!!, nextState.id!!, TransitionType.PROPOSAL, existingProposal.id!!)
 
         existingProposal.stateId = nextState.id
+        existingProposal.lastUpdated = LocalDateTime.now()
         proposalRepository.save(existingProposal).awaitSingle()
         return getProposalById(existingProposal.id!!)
     }
