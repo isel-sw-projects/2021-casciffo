@@ -97,13 +97,13 @@ class ProposalServiceImpl(
         createdProposal: ProposalModel
     ) {
         val investigators =
-            proposal.investigationTeamModel!!
+            proposal.investigationTeam!!
                 .map {
                     it.proposalId = createdProposal.id!!
                     it
                 }
 
-        createdProposal.investigationTeamModel = investigationTeamService.saveTeam(investigators).asFlux()
+        createdProposal.investigationTeam = investigationTeamService.saveTeam(investigators).asFlux()
     }
 
     @Transactional
@@ -204,7 +204,7 @@ class ProposalServiceImpl(
     }
 
     private suspend fun loadDetails(prop: ProposalModel) {
-        prop.investigationTeamModel = investigationTeamService.findTeamByProposalId(prop.id!!).asFlux()
+        prop.investigationTeam = investigationTeamService.findTeamByProposalId(prop.id!!).asFlux()
 
         prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!).asFlux()
 

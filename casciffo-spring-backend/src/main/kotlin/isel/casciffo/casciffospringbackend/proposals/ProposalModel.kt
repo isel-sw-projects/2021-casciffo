@@ -91,5 +91,5 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var investigationTeamModel: Flux<InvestigationTeamModel>? = null
+    var investigationTeam: Flux<InvestigationTeamModel>? = null
 )

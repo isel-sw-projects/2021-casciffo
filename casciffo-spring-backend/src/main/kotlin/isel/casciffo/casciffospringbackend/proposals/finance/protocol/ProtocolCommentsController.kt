@@ -12,7 +12,11 @@ class ProtocolCommentsController(
     @Autowired val service: ProtocolCommentsService
 ) {
     @PostMapping(PROPOSAL_PROTOCOL_COMMENTS_URL)
-    suspend fun createComment(@PathVariable proposalId: Int, @RequestBody comments: ProtocolComments): ProtocolComments {
+    suspend fun createComment(
+        @PathVariable proposalId: Int,
+        @PathVariable pfcId: Int,
+        @RequestBody comments: ProtocolComments
+    ): ProtocolComments {
         comments.protocolId = proposalId
         return service.saveComment(comments)
     }
