@@ -12,7 +12,7 @@ class DailyProcedures(
 ) {
     private val logger = Logger.getLogger(this.javaClass.simpleName)
     @Scheduled(cron = "0 0 0 * * *")
-    open fun verifyAndUpdateOverDueDeadlines() {
+    fun verifyAndUpdateOverDueDeadlines() {
         timelineEventService
             .updateOverDueDeadline()
             .subscribe{

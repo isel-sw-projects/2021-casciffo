@@ -22,7 +22,7 @@ class InvalidStateTransitionException : Exception()
 class CannotUpdateCancelledProposalException : Exception()
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Specified resource Id doesn't exist.")
-class ResourceNotFoundException: Exception()
+class ResourceNotFoundException(msg: String): Exception(msg)
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Proposal Id requested doesn't exist.")
 class ProposalNotFoundException: Exception()

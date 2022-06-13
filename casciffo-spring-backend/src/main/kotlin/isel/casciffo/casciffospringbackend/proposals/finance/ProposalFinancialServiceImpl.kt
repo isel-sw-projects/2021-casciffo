@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -60,7 +61,7 @@ class ProposalFinancialServiceImpl(
 
     override suspend fun findComponentByProposalId(pid: Int, loadProtocol: Boolean): ProposalFinancialComponent {
         val component = proposalFinancialRepository.findByProposalId(pid).awaitFirstOrNull()
-            ?: throw IllegalArgumentException("No financial component for provided proposal Id!!!")
+            ?: throw IllegalArgumentException("No financial component for proposal Id:$pid!!!")
         return loadRelations(component, loadProtocol)
     }
 
@@ -69,7 +70,7 @@ class ProposalFinancialServiceImpl(
     }
 
     private suspend fun loadRelations(pfc: ProposalFinancialComponent, loadProtocol: Boolean = false): ProposalFinancialComponent {
-        pfc.promoter = promoterRepository.findById(pfc.promoterId!!).awaitFirstOrNull()
+        pfc.promoter = promoterRepository.findById(pfc.promoterId!!).awaitSingleOrNull()
         pfc.partnerships = partnershipRepository.findByFinanceComponentId(pfc.id!!)
         if(loadProtocol) {
             pfc.protocol = protocolService.findProtocolByProposalFinanceId(pfc.proposalId!!,pfc.id!!)

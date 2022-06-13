@@ -29,8 +29,8 @@ INSERT INTO therapeutic_area(therapeutic_area_name) VALUES ('Terapia Cardio');
 --PROPOSAL
 INSERT INTO
     proposal(state_id, pathology_id, service_id, therapeutic_area_id, sigla, principal_investigator_id, proposal_type)
-    VALUES (1, 1, 1, 1,'Observações',1,'OBSERVATIONAL_STUDY'),
-           (1, 1, 1, 1,'APOLLO',1,'CLINICAL_TRIAL');
+    VALUES (1, 1, 1, 1,'APOLLO',1,'CLINICAL_TRIAL'),
+           (1, 1, 1, 1,'Observações',1,'OBSERVATIONAL_STUDY');
 
 --INVESTIGATION TEAM
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'PRINCIPAL', 1);
@@ -59,4 +59,6 @@ INSERT INTO partnerships(proposal_financial_id, icon_url, representative, email,
 --PROTOCOL
 INSERT INTO protocol(is_validated, validated_date, pfc_id) VALUES (FALSE, NULL, 1);
 
---TIMELINE EVENTS
+--CLINICAL TRIALS
+INSERT INTO clinical_research(proposal_id, research_state_id, type)
+    VALUES (1, (SELECT state_id FROM states WHERE state_name = 'ATIVO'), 'CLINICAL_TRIAL')

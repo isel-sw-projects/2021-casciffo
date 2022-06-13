@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingleOrNull
-import lombok.extern.slf4j.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -25,7 +24,6 @@ import reactor.core.publisher.Mono
 
 
 @Service
-@Slf4j
 class UserServiceImpl(
     @Autowired val userRepository: UserRepository,
     @Autowired val roleService: UserRoleService,

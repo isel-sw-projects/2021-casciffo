@@ -10,12 +10,8 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.UserDTO
-import lombok.AllArgsConstructor
-import lombok.Data
 import java.time.LocalDateTime
 
-@Data
-@AllArgsConstructor
 data class ProposalDTO (
     var id: Int? = null,
 

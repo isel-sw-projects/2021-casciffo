@@ -9,7 +9,7 @@ import java.time.LocalDate
 data class TimelineEventModel (
     @Id
     @Column("event_id")
-    var id: Int?,
+    var id: Int? = null,
 
     var proposalId: Int? = null,
 

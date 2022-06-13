@@ -6,13 +6,13 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("participant")
 data class Participant (
     @Id
-    var id: Int?,
+    var id: Int? = null,
 
-    val processId: Int,
+    val processId: Int? = null,
 
-    val fullName: String,
+    val fullName: String? = null,
 
-    val gender: String,
+    val gender: String? = null,
 
-    val age: Int
+    val age: Int? = null
 )

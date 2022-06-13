@@ -10,7 +10,6 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.UserModel
-import lombok.ToString
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
@@ -21,7 +20,6 @@ import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
 
-@ToString
 @Table(value = "proposal")
 data class ProposalModel(
     @Id
