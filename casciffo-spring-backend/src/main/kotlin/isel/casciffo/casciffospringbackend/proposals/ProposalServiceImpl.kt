@@ -12,7 +12,7 @@ import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialSe
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventRepository
 import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchService
-import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
+import isel.casciffo.casciffospringbackend.roles.RoleRepository
 import isel.casciffo.casciffospringbackend.states.StateService
 import isel.casciffo.casciffospringbackend.states.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
@@ -41,7 +41,7 @@ class ProposalServiceImpl(
     @Autowired val investigationTeamRepository: InvestigationTeamRepository,
     @Autowired val investigationTeamService: InvestigationTeamService,
     @Autowired val userRepository: UserRepository,
-    @Autowired val roleRepository: UserRoleRepository,
+    @Autowired val roleRepository: RoleRepository,
     @Autowired val stateService: StateService,
     @Autowired val stateTransitionService: StateTransitionService,
     @Autowired val commentsService: ProposalCommentsService,
@@ -141,8 +141,8 @@ class ProposalServiceImpl(
         forward: Boolean
     ): ProposalModel {
 
-        val currState = States.valueOf(stateService.findById(existingProposal.stateId!!).name)
-        //fixme add verification of user permissions to make sure he can or not advance
+        val currStateName = stateService.findById(existingProposal.stateId!!).name!!
+        val currState = States.valueOf(currStateName)
         val nextLocalState: States? = if(forward) currState.getNextState() else currState.getPrevState()
         if(nextLocalState === null) throw InvalidStateTransitionException()
 

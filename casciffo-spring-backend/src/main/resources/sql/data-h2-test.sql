@@ -1,25 +1,53 @@
 -- ROLES
-INSERT INTO user_role(role_name) VALUES ('SUPERUSER'), ('CA'), ('UIC'), ('FINANCE');
+INSERT INTO roles(role_name) VALUES ('SUPERUSER'), ('CA'), ('UIC'), ('FINANCE');
+
 -- USERS
-INSERT INTO user_account(user_name, user_email, password, user_role_id)
-    VALUES ('admin', 'admin@admin.pt', '123456', 1),
-           ('Fernando', 'Fernando@casciffo.pt', '123456', 2),
-           ('admin', 'admin.diferente@casciffo.pt', '123456', 1),
-           ('José', 'jose.guerreiro@casciffo.pt', '123456', 4);
+INSERT INTO user_account(user_name, user_email, user_password)
+    VALUES ('admin', 'admin@admin.pt', '123456'),
+           ('Fernando', 'Fernando@casciffo.pt', '123456'),
+           ('admin', 'admin.diferente@casciffo.pt', '123456'),
+           ('José', 'jose.guerreiro@casciffo.pt', '123456');
+
+--USER ROLES
+INSERT INTO user_roles(user_id, role_id)
+    VALUES (1, 1),
+           (2, 2),
+           (3, 1),
+           (4, 4);
+
 
 -- STATES
-INSERT INTO states(state_name, role_responsible_for_advancing_id)
-    VALUES ('SUBMETIDO', 3),
-           ('NEGOCIACAO_DE_CF', 3),
-           ('VALIDACAO_INTERNA_DEPARTMENTS', 4),
-           ('VALIDACAO_EXTERNA', 3),
-           ('SUBMISSAO_AO_CA', 3),
-           ('VALIDACAO_INTERNA_CA', 2),
-           ('VALIDADO', 1),
-           ('CANCELADO', 1),
-           ('COMPLETO', 1),
-           ('ATIVO', 2);
+INSERT INTO states(state_name)
+    VALUES ('SUBMETIDO'),
+           ('NEGOCIACAO_DE_CF'),
+           ('VALIDACAO_INTERNA_DEPARTMENTS'),
+           ('VALIDACAO_EXTERNA'),
+           ('SUBMISSAO_AO_CA'),
+           ('VALIDACAO_INTERNA_CA'),
+           ('VALIDADO'),
+           ('CANCELADO'),
+           ('COMPLETO'),
+           ('ATIVO');
 
+--LINK STATES WITH ROLES
+INSERT INTO state_roles(state_id, role_id)
+    VALUES (1, 3),
+           (1, 1),
+           (2, 3),
+           (2, 1),
+           (3, 4),
+           (3, 1),
+           (4, 3),
+           (4, 1),
+           (5, 3),
+           (5, 1),
+           (6, 2),
+           (6, 1),
+           (7, 1),
+           (8, 1),
+           (9, 1),
+           (10, 2),
+           (10, 1);
 
 --SOME CONSTANTS
 INSERT INTO service(service_name) VALUES ('Cardiologia');
@@ -46,7 +74,7 @@ INSERT INTO proposal_comments(proposal_id, author_id, content, comment_type)
 INSERT INTO files(file_name, file_path, file_size)
     VALUES ('contrato-apollo-trial-pfizer', '[DRIVE]:\\PATH\TO\FILE', 51235);
 
-INSERT INTO promoter(name, promoter_type, email)
+INSERT INTO promoter(promoter_name, promoter_type, promoter_email)
     VALUES ('PFIZER', 'COMMERCIAL', 'pfizer.no.more.@covid.com');
 
 INSERT INTO proposal_financial_component(proposal_id, financial_contract_id, promoter_id) VALUES (1, 1, 1);

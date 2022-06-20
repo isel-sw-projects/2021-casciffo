@@ -14,6 +14,8 @@ class InvalidUserCredentialsException : Exception()
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Proposal with given id not found.")
 class NonExistentProposalException : Exception()
+@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Role specified doesn't exist.")
+class NonExistentResourceException(reason: String) : Exception(reason)
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Attempted State transition is invalid.")
 class InvalidStateTransitionException : Exception()

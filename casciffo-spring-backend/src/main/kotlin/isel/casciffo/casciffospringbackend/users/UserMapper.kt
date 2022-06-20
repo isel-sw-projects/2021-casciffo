@@ -1,7 +1,9 @@
 package isel.casciffo.casciffospringbackend.users
 
 import isel.casciffo.casciffospringbackend.Mapper
+import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.stereotype.Component
+import reactor.kotlin.core.publisher.toFlux
 
 @Component
 class UserMapper: Mapper<UserModel, UserDTO> {
@@ -12,7 +14,8 @@ class UserMapper: Mapper<UserModel, UserDTO> {
                 userId = dto.userId,
                 name = dto.name,
                 email = dto.email,
-                roleId = dto.roleId
+                password = dto.password,
+                roles = dto.roles?.toFlux()
             )
         }
     }
@@ -24,7 +27,7 @@ class UserMapper: Mapper<UserModel, UserDTO> {
                 userId = model.userId,
                 name = model.name,
                 email = model.email,
-                roleId = model.roleId
+                roles = model.roles?.collectList()?.awaitSingle()
             )
         }
     }

@@ -29,5 +29,6 @@ data class ProposalFinancialComponent (
 
     @Transient
     @Value("null")
-    var protocol: ProposalProtocol? = null
+    var protocol: ProposalProtocol? = null,
+
 )

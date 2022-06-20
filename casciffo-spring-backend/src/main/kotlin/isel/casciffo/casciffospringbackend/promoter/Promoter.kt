@@ -8,10 +8,11 @@ import org.springframework.data.relational.core.mapping.Table
 data class Promoter (
     @Id
     @Column(value = "promoter_id")
-    var id: Int?,
+    var id: Int? = null,
 
-    val name: String,
-    val email: String,
-    @Column(value = "promoter_type")
-    val promoterType: PromoterType
+    @Column("promoter_name")
+    val name: String? = null,
+    @Column("promoter_email")
+    val email: String? = null,
+    val promoterType: PromoterType? = null
 )

@@ -3,6 +3,9 @@ package isel.casciffo.casciffospringbackend
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Encoders
 import io.jsonwebtoken.security.Keys
+import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregateRepo
+import isel.casciffo.casciffospringbackend.aggregates.user.UserRoles
+import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesRepo
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigatorRole
@@ -27,8 +30,7 @@ import isel.casciffo.casciffospringbackend.research.patients.Participant
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantRepository
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.roles.Role
-import isel.casciffo.casciffospringbackend.roles.UserRole
-import isel.casciffo.casciffospringbackend.roles.UserRoleRepository
+import isel.casciffo.casciffospringbackend.roles.RoleRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.users.UserModel
 import isel.casciffo.casciffospringbackend.users.UserRepository
@@ -40,22 +42,20 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.logging.Logger
 
 @ActiveProfiles(value = ["test"])
 @SpringBootTest
 class CasciffoSpringBackendApplicationTests(
     @Autowired val userRepo: UserRepository,
-    @Autowired val userRoleRepository: UserRoleRepository,
+    @Autowired val roleRepository: RoleRepository,
     @Autowired val userService: UserService,
     @Autowired val proposalService: ProposalService,
     @Autowired val proposalRepository: ProposalRepository,
@@ -71,10 +71,12 @@ class CasciffoSpringBackendApplicationTests(
     @Autowired val proposalCommentsRepository: ProposalCommentsRepository,
     @Autowired val proposalCommentsService: ProposalCommentsService,
     @Autowired val timelineEventService: TimelineEventService,
-    @Autowired val timelineEventRepository: TimelineEventRepository
+    @Autowired val timelineEventRepository: TimelineEventRepository,
+    @Autowired val aggregateRepo: ProposalAggregateRepo,
+    @Autowired val userRolesRepo: UserRolesRepo
 ) {
 
-    val logger = LoggerFactory.getLogger(this.javaClass.simpleName)
+    val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
 
     @Test
     fun genKeys() {
@@ -85,10 +87,47 @@ class CasciffoSpringBackendApplicationTests(
     }
 
     @Test
+    fun testAggregateRepository() {
+
+        StepVerifier
+            .create(aggregateRepo.findAllByType(ResearchType.CLINICAL_TRIAL))
+            .expectSubscription()
+            .`as`("Test findAllByType expect no error in query")
+            .consumeNextWith {
+                assert(it.dateCreated != null)
+                assert(it.pathologyName != null)
+                assert(it.therapeuticAreaName != null)
+                assert(it.serviceName != null)
+                assert(it.stateName != null)
+                assert(it.piName != null)
+                assert(it.promoterName != null)
+                assert(it.proposalType != null)
+            }.thenConsumeWhile { true }
+            .expectComplete()
+            .verifyThenAssertThat()
+
+        StepVerifier
+            .create(aggregateRepo.findByProposalId(1))
+            .expectSubscription()
+            .`as`("Test findById expect proposal details properly mapped")
+            .consumeNextWith {
+                assert(it.pfcId != null)
+                assert(it.stateName != null)
+                assert(it.stateId != null)
+                assert(it.promoterName != null)
+                assert(it.promoterEmail != null)
+                assert(it.piId != null)
+                assert(it.piEmail != null)
+            }
+            .expectComplete()
+            .verifyThenAssertThat()
+    }
+
+    @Test
     fun whenRolesAndUsersCreated_thenSearchUsersByRoleNames() {
-        val userRole = UserRole(roleName = "MockRole1")
-        val userRole2 = UserRole(roleName = "MockRole2")
-        val resRole: Flux<UserRole> = userRoleRepository.saveAll(listOf(userRole, userRole2))
+        val userRole = Role(roleName = "MockRole1")
+        val userRole2 = Role(roleName = "MockRole2")
+        val resRole: Flux<Role> = roleRepository.saveAll(listOf(userRole, userRole2))
 
         StepVerifier
             .create(resRole)
@@ -106,18 +145,18 @@ class CasciffoSpringBackendApplicationTests(
 
         val roles = resRole.collectList().block()
         assert(roles != null)
+
         val userModel = UserModel(
             name = "hermelindo",
             email = "hermelindo2@gmail.com",
-            password = "123",
-            roleId = roles!![0].roleId
+            password = "123"
         )
         val userModel2 = UserModel(
             name = "eric brown",
             email = "eric.brown@gmail.com",
-            password = "password",
-            roleId = roles[1].roleId
+            password = "password"
         )
+
         val usersFlux: Flux<UserModel> = userRepo.saveAll(listOf(userModel, userModel2))
 
         StepVerifier
@@ -127,7 +166,6 @@ class CasciffoSpringBackendApplicationTests(
             .expectNextCount(2)
             .thenConsumeWhile {
                 if (it === null) return@thenConsumeWhile false
-                assert(roles.any { role -> it.roleId === role.roleId })
                 assert(listOf("hermelindo", "eric brown").contains(it.name))
                 logger.debug("$it")
                 true
@@ -135,30 +173,38 @@ class CasciffoSpringBackendApplicationTests(
             .expectComplete()
             .verifyThenAssertThat()
 
+        val users = usersFlux.collectList().block()
+        val userRoles = userRolesRepo.saveAll(
+            listOf(
+                UserRoles(user_id = users!![0].userId, role_id =  roles!![0].roleId),
+                UserRoles(user_id = users[1].userId, role_id = roles[1].roleId)
+            )
+        )
 
         StepVerifier
-            .create(userRepo.findAllByRoleNameIsIn(roles.map { it.roleName!! }))
+            .create(userRoles)
             .expectSubscription()
-            .`as`("Verify users created properly by searching by their role")
-            .expectNextCount(2)
+            .`as`("Expect role association to users to be correct")
             .thenConsumeWhile {
-                if (it === null) return@thenConsumeWhile false
-                assert(it.roleId !== null)
-                assert(roles.any { role -> it.roleId === role.roleId })
-                logger.debug("$it")
+                assert(it.role_id != null)
+                assert(it.user_id != null)
                 true
             }
             .expectComplete()
             .verifyThenAssertThat()
 
-//		Clean up no longer needed
-//		runBlocking {
-//			val test = userService.getAllUsersByRoleNames(roles.map { it.roleName }).toList()
-//			assert(test.isNotEmpty())
-//			assert(test.count() == 2)
-//			userRepo.deleteAllById(test.map { it!!.roleId }).awaitSingleOrNull()
-//			userRoleRepository.deleteAllById(roles.map { it.roleId }).awaitSingleOrNull()
-//		}
+        StepVerifier
+            .create(userRepo.findAllByRoleNameIsIn(listOf(roles[0].roleName!!)))
+            .expectSubscription()
+            .`as`("Search for created users by their role")
+            .expectNextCount(1)
+            .thenConsumeWhile {
+                assert(users[0].userId === it.userId)
+                logger.debug("$it")
+                true
+            }
+            .expectComplete()
+            .verifyThenAssertThat()
     }
 
     @Test
@@ -197,46 +243,6 @@ class CasciffoSpringBackendApplicationTests(
     }
 
     @Test
-    fun testUserAndUserRoleRepositoryCreate() {
-        val userRole = UserRole(null, roleName = "superuser")
-        val resRole: Mono<UserRole> = userRoleRepository.save(userRole)
-        val resUserRole = resRole.block()
-        println(resUserRole)
-
-        val userModel = UserModel(
-            null, "hermelindo", "hermelindo@gmail.com", "123",
-            roleId = resUserRole!!.roleId, role = null
-        )
-        val res: Mono<UserModel> = userRepo.save(userModel)
-        val resUser = res.block()
-        println(resUser)
-    }
-
-    @Test
-    fun testUserRepositoryFindAll() {
-        val users = userRepo.findAll().collectList().block()
-        println(users)
-    }
-
-    @Test
-    fun testInvestigationTeamRepositoryFindAll() {
-        val teams = investigationTeamRepository.findAll().collectList().block()
-        print(teams)
-    }
-
-    @Test
-    fun testInvestigationTeamRepositoryFindAllByProposal() {
-        val teams = investigationTeamRepository.findInvestigationTeamByProposalId(1).collectList().block()
-        print(teams)
-    }
-
-    @Test
-    fun testProposalRepositoryFindAll() {
-        val res = proposalRepository.findAll().collectList().block()
-        println(res)
-    }
-
-    @Test
     fun testResearchRepositoryCreate() {
         val researchModel = ResearchModel(
             null, 1, 1, "eudra_ct", 10, 20, "cro",
@@ -244,8 +250,7 @@ class CasciffoSpringBackendApplicationTests(
             "promotor", "1 | 4", ResearchType.CLINICAL_TRIAL
         )
         runBlocking {
-            val res = researchRepository.save(researchModel).block()
-            println(res)
+            val res = researchRepository.save(researchModel).awaitSingle()
             assert(res != null)
             assert(res!!.id != null)
         }

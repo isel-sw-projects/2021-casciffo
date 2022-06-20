@@ -1,11 +1,12 @@
 package isel.casciffo.casciffospringbackend.users
 
-import isel.casciffo.casciffospringbackend.roles.UserRole
+import isel.casciffo.casciffospringbackend.roles.Role
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import reactor.core.publisher.Flux
 
 @Table(value = "user_account")
 data class UserModel(
@@ -18,12 +19,10 @@ data class UserModel(
     @Column(value = "user_email")
     val email: String? = null,
 
+    @Column(value = "user_password")
     var password: String? = null,
-
-    @Column(value = "user_role_id")
-    var roleId: Int? = null,
 
     @Transient
     @Value("null")
-    var role: UserRole? = null
+    var roles: Flux<Role>? = null
 )

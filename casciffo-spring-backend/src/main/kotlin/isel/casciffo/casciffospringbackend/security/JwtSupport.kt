@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.*
 
+data class BearerTokenWrapper(val token: BearerToken, val userId: Int)
+
 class BearerToken(val value: String) : AbstractAuthenticationToken(AuthorityUtils.NO_AUTHORITIES) {
     override fun getCredentials(): Any = value
     override fun getPrincipal(): Any = value
@@ -49,14 +51,8 @@ class JwtSupport {
     fun isValid(token: BearerToken, user: UserDetails?): Boolean {
         val claims = parser.parseClaimsJws(token.value).body
         val isNotExpired = claims.expiration.after(Date.from(Instant.now()))
-        val email =
-            user?.authorities!!
-                .filter {
-                    it.authority.startsWith(EMAIL_AUTH)
-                }.map {
-                    it.authority.substringAfter(AUTH_DELIM)
-                }.first()
-        val doesUserEmailMatch = claims.subject == email
+        //email is currently being used in place of username, to alter see UserServiceImpl#buildUserDetails
+        val doesUserEmailMatch = claims.subject == user!!.username
 
         return isNotExpired && doesUserEmailMatch
     }

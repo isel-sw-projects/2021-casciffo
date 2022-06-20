@@ -10,8 +10,8 @@ import org.springframework.data.relational.core.mapping.Table
 data class Pathology (
     @Id
     @Column(value = "pathology_id")
-    var id: Int?,
+    var id: Int? = null,
 
     @Column(value = "pathology_name")
-    val name: String
+    val name: String? = null
 )

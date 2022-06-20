@@ -10,8 +10,8 @@ import org.springframework.data.relational.core.mapping.Table
 data class TherapeuticArea (
     @Id
     @Column(value = "therapeutic_area_id")
-    var id: Int?,
+    var id: Int? = null,
 
     @Column(value = "therapeutic_area_name")
-    val name: String
+    val name: String? = null
 )

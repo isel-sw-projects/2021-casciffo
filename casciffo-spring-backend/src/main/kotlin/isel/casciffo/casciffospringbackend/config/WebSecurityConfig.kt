@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.config
 
-import isel.casciffo.casciffospringbackend.roles.Role
 import isel.casciffo.casciffospringbackend.security.JwtAuthenticationManager
 import isel.casciffo.casciffospringbackend.security.JwtServerAuthenticationConverter
 import kotlinx.coroutines.reactor.mono
@@ -20,7 +19,6 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
 
 
 @Component
@@ -30,43 +28,10 @@ import reactor.core.publisher.Mono
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig {
 
-//    @Bean
-//    fun customHasAuthority(auths: String) {
-//
-//    }
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
-//TODO sometime in the future take a look at role hierarchy in spring webflux, it currently doesn't work
-// Current implementation can be looked at in #CustomAnnotations where the authorities are manually input
-
-//    @Bean
-//    fun roleHierarchy(): RoleHierarchy {
-//        val r = RoleHierarchyImpl()
-//        r.setHierarchy(
-//            "${Role.SUPERUSER} > ${Role.CA} " +
-//            "${Role.SUPERUSER} > ${Role.UIC} " +
-//            "${Role.SUPERUSER} > ${Role.FINANCE} "
-//        )
-//        return r
-//    }
-//
-//    @Bean
-//    fun defaultAccessDecisionManager(roleHierarchy: RoleHierarchy?): AffirmativeBased? {
-//        val decisionVoters: MutableList<AccessDecisionVoter<*>> = ArrayList()
-//
-//        val webExpressionVoter = WebExpressionVoter()
-//        val expressionHandler = DefaultWebSecurityExpressionHandler()
-//        expressionHandler.setRoleHierarchy(roleHierarchy)
-//        webExpressionVoter.setExpressionHandler(expressionHandler)
-//        decisionVoters.add(webExpressionVoter)
-//        decisionVoters.add(roleHierarchyVoter(roleHierarchy))
-//        return AffirmativeBased(decisionVoters)
-//    }
-//
-//    @Bean
-//    fun roleHierarchyVoter(roleHierarchy: RoleHierarchy?): RoleHierarchyVoter = RoleHierarchyVoter(roleHierarchy)
 
     @Bean
     fun springSecurityFilterChain(
@@ -80,6 +45,7 @@ class WebSecurityConfig {
 
         http
             //Work around to disabling spring web session
+            //see https://stackoverflow.com/questions/56056404/disable-websession-creation-when-using-spring-security-with-spring-webflux
             .requestCache()
             .requestCache(NoOpServerRequestCache.getInstance())
             .and()

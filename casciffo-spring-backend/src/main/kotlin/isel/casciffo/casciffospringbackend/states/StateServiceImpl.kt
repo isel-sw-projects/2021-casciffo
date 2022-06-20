@@ -1,8 +1,7 @@
 package isel.casciffo.casciffospringbackend.states
 
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateException
-import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
-import isel.casciffo.casciffospringbackend.roles.UserRoleService
+import isel.casciffo.casciffospringbackend.roles.RoleService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
@@ -13,27 +12,26 @@ import org.springframework.stereotype.Service
 @Service
 class StateServiceImpl(
     @Autowired val stateRepository: StateRepository,
-    @Autowired val userRoleService: UserRoleService
+    @Autowired val roleService: RoleService
 ): StateService {
 
     override suspend fun findByName(stateName: String): State {
         return stateRepository.findByName(stateName).awaitSingle()
     }
 
-    override suspend fun findNextState(stateName: String): State {
-        val nextState = States.valueOf(stateName).getNextState() ?: throw InvalidStateTransitionException()
-        return stateRepository.findByName(nextState.name).awaitSingle()
+    override suspend fun findNextState(stateId: Int): Flow<State> {
+        return stateRepository.findNextStatesById(stateId).asFlow()
     }
 
     override suspend fun findById(stateId: Int): State =
         stateRepository.findById(stateId).awaitSingle() ?: throw InvalidStateException()
 
     override suspend fun findAll(): Flow<State> {
-        return stateRepository.findAll().asFlow().map(this::loadRole)
+        return stateRepository.findAll().asFlow().map(this::loadRoles)
     }
 
-    suspend fun loadRole(state: State): State {
-        state.owner = userRoleService.findById(state.ownerId)
+    suspend fun loadRoles(state: State): State {
+        state.roles = roleService.findByStateId(state.id!!)
         return state
     }
 }

@@ -2,41 +2,66 @@
 ---------------------------------------------------------------------------------------
 ---------------------------------STATE AND USER ROLES----------------------------------
 ---------------------------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS user_role (
-    role_id SERIAL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS roles (
+    role_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     role_name VARCHAR NOT NULL UNIQUE
 );
 
+
 CREATE TABLE IF NOT EXISTS user_account (
-    user_id SERIAL PRIMARY KEY,
+    user_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_name VARCHAR NOT NULL,
     user_email VARCHAR NOT NULL UNIQUE,
-    password VARCHAR NOT NULL,
-    user_role_id INT,
-    CONSTRAINT fk_user_role_id FOREIGN KEY(user_role_id) REFERENCES user_role(role_id)
+    user_password VARCHAR NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS user_roles (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL,
+    role_id INT NOT NULL,
+    UNIQUE (user_id, role_id),
+    CONSTRAINT fk_ur_user_id FOREIGN KEY(user_id) REFERENCES user_account(user_id),
+    CONSTRAINT fk_ur_role_id FOREIGN KEY(role_id) REFERENCES roles(role_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS user_notification (
-    notification_id SERIAL PRIMARY KEY,
+    notification_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     notified_user INT NOT NULL,
     title VARCHAR NOT NULL,
     description TEXT NOT NULL,
+    viewed BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_notified_user FOREIGN KEY(notified_user) REFERENCES user_account(user_id)
 );
 
 
 CREATE TABLE IF NOT EXISTS states (
-    state_id SERIAL PRIMARY KEY,
-    state_name VARCHAR NOT NULL UNIQUE,
-    role_responsible_for_advancing_id INT NOT NULL,
-    CONSTRAINT fk_role_id FOREIGN KEY(role_responsible_for_advancing_id) REFERENCES user_role(role_id)
+    state_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    state_name VARCHAR NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS state_roles (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    state_id INT NOT NULL,
+    role_id INT NOT NULL,
+    CONSTRAINT fk_state_id FOREIGN KEY (state_id) REFERENCES states(state_id),
+    CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(role_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS next_possible_states (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    origin_state_id INT NOT NULL,
+    next_state_id INT NOT NULL,
+    CONSTRAINT fk_origin_state FOREIGN KEY (origin_state_id) REFERENCES states(state_id),
+    CONSTRAINT fk_possible_state_id FOREIGN KEY (next_state_id) REFERENCES states(state_id)
 );
 
 CREATE TABLE IF NOT EXISTS state_transition (
-    id SERIAL PRIMARY KEY,
-    transition_type VARCHAR NOT NULL,
-    reference_id INT NOT NULL, --id referencing to the type addenda/proposal/research
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    transition_type VARCHAR NOT NULL, --proposal / addenda / research
+    reference_id INT NOT NULL, --id referencing to the type
     state_id_before INT NOT NULL,
     state_id_after INT NOT NULL,
     transition_date TIMESTAMP DEFAULT NOW(),
@@ -49,7 +74,7 @@ CREATE TABLE IF NOT EXISTS state_transition (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS files (
-    file_id SERIAL PRIMARY KEY,
+    file_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     file_name VARCHAR NOT NULL,
     file_path TEXT NOT NULL,
     file_size INT NOT NULL
@@ -60,24 +85,24 @@ CREATE TABLE IF NOT EXISTS files (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS pathology (
-    pathology_id SERIAL PRIMARY KEY,
+    pathology_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     pathology_name VARCHAR
 );
 
 
 CREATE TABLE IF NOT EXISTS service (
-    service_id SERIAL PRIMARY KEY,
+    service_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_name VARCHAR
 );
 
 CREATE TABLE IF NOT EXISTS therapeutic_area (
-    therapeutic_area_id SERIAL PRIMARY KEY,
+    therapeutic_area_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     therapeutic_area_name VARCHAR
 );
 
 
 CREATE TABLE IF NOT EXISTS proposal (
-    proposal_id SERIAL PRIMARY KEY,
+    proposal_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     state_id INT NOT NULL,
     pathology_id INT NOT NULL,
     service_id INT NOT NULL,
@@ -88,18 +113,18 @@ CREATE TABLE IF NOT EXISTS proposal (
     proposal_type VARCHAR NOT NULL, --clinical trial / observational study
     date_created TIMESTAMP DEFAULT NOW(),
     last_update TIMESTAMP DEFAULT NOW(),
-    CONSTRAINT fk_state_id FOREIGN KEY(state_id) REFERENCES states(state_id),
-    CONSTRAINT fk_pathology_id FOREIGN KEY(pathology_id) REFERENCES pathology(pathology_id),
-    CONSTRAINT fk_service_id FOREIGN KEY(service_id) REFERENCES service(service_id),
-    CONSTRAINT fk_therapeutic_area_id FOREIGN KEY(therapeutic_area_id) REFERENCES therapeutic_area(therapeutic_area_id),
+    CONSTRAINT fk_p_state_id FOREIGN KEY(state_id) REFERENCES states(state_id),
+    CONSTRAINT fk_p_pathology_id FOREIGN KEY(pathology_id) REFERENCES pathology(pathology_id),
+    CONSTRAINT fk_p_service_id FOREIGN KEY(service_id) REFERENCES service(service_id),
+    CONSTRAINT fk_p_therapeutic_area_id FOREIGN KEY(therapeutic_area_id) REFERENCES therapeutic_area(therapeutic_area_id),
 --     CONSTRAINT fk_protocol_state FOREIGN KEY(protocol_state_id) REFERENCES states(state_id),
-    CONSTRAINT fk_principal_investigator FOREIGN KEY(principal_investigator_id) REFERENCES user_account(user_id)
+    CONSTRAINT fk_p_principal_investigator FOREIGN KEY(principal_investigator_id) REFERENCES user_account(user_id)
 );
 
 
 
 CREATE TABLE IF NOT EXISTS proposal_files (
-    id SERIAL PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT,
     file_id INT,
     CONSTRAINT fk_proposal_id FOREIGN KEY(proposal_id)
@@ -109,7 +134,7 @@ CREATE TABLE IF NOT EXISTS proposal_files (
 
 
 CREATE TABLE IF NOT EXISTS proposal_comments (
-    comment_id SERIAL PRIMARY KEY,
+    comment_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT NOT NULL,
     author_id INT NOT NULL,
     date_created TIMESTAMP DEFAULT NOW(),
@@ -121,7 +146,7 @@ CREATE TABLE IF NOT EXISTS proposal_comments (
 );
 
 CREATE TABLE IF NOT EXISTS timeline_event (
-    event_id SERIAL PRIMARY KEY,
+    event_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT NOT NULL,
     event_type VARCHAR NOT NULL, -- deadline / states transition
     event_name VARCHAR NOT NULL,
@@ -141,7 +166,7 @@ CREATE TABLE IF NOT EXISTS timeline_event (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS investigation_team (
-    team_id SERIAL PRIMARY KEY,
+    team_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT NOT NULL,
     member_role VARCHAR(50) NOT NULL,
     member_id INT NOT NULL,
@@ -156,24 +181,25 @@ CREATE TABLE IF NOT EXISTS investigation_team (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS promoter (
-    promoter_id SERIAL PRIMARY KEY,
-    name VARCHAR NOT NULL,
+    promoter_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    promoter_name VARCHAR NOT NULL,
     promoter_type VARCHAR NOT NULL,
-    email VARCHAR NOT NULL
+    promoter_email VARCHAR NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS proposal_financial_component (
-    proposal_financial_id SERIAL PRIMARY KEY,
+    proposal_financial_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT,
     financial_contract_id INT,
     promoter_id INT,
+    has_partnerships BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_pfc_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
     CONSTRAINT fk_pfc_financial_contract_id FOREIGN KEY (financial_contract_id) REFERENCES files(file_id),
     CONSTRAINT fk_pfc_promoter_id FOREIGN KEY(promoter_id) REFERENCES promoter(promoter_id)
 );
 
 CREATE TABLE IF NOT EXISTS protocol (
-    protocol_id SERIAL PRIMARY KEY,
+    protocol_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     is_validated BOOLEAN DEFAULT FALSE,
     validated_date DATE,
     pfc_id INT,
@@ -181,7 +207,7 @@ CREATE TABLE IF NOT EXISTS protocol (
 );
 
 CREATE TABLE IF NOT EXISTS protocol_comments (
-    id SERIAL PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     protocol_id INT,
     observation TEXT,
     author_name VARCHAR,
@@ -192,7 +218,7 @@ CREATE TABLE IF NOT EXISTS protocol_comments (
 );
 
 CREATE TABLE IF NOT EXISTS partnerships (
-    partnership_id SERIAL PRIMARY KEY,
+    partnership_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_financial_id INT,
     name VARCHAR NOT NULL,
     icon_url TEXT,
@@ -209,7 +235,7 @@ CREATE TABLE IF NOT EXISTS partnerships (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS clinical_research (
-    research_id SERIAL PRIMARY KEY,
+    research_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT NOT NULL,
     research_state_id INT NOT NULL,
     eudra_ct VARCHAR,
@@ -231,7 +257,7 @@ CREATE TABLE IF NOT EXISTS clinical_research (
 
 
 CREATE TABLE IF NOT EXISTS dossier (
-    dossier_id SERIAL PRIMARY KEY,
+    dossier_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     clinical_research_id INT,
     volume VARCHAR NOT NULL,
     label VARCHAR NOT NULL,
@@ -243,7 +269,7 @@ CREATE TABLE IF NOT EXISTS dossier (
 
 
 CREATE TABLE IF NOT EXISTS scientific_activities (
-    activity_id SERIAL PRIMARY KEY,
+    activity_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     research_id INT NOT NULL,
     date_published DATE,
     author VARCHAR,
@@ -264,7 +290,7 @@ CREATE TABLE IF NOT EXISTS scientific_activities (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS participant (
-    id SERIAL PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     process_id BIGINT UNIQUE,
     full_name VARCHAR NOT NULL,
     gender VARCHAR NOT NULL,
@@ -273,7 +299,7 @@ CREATE TABLE IF NOT EXISTS participant (
 
 
 CREATE TABLE IF NOT EXISTS research_participants (
-    id SERIAL PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     participant_id BIGINT,
     research_id INT,
     join_date TIMESTAMP DEFAULT NOW(),
@@ -290,7 +316,7 @@ CREATE TABLE IF NOT EXISTS research_participants (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS clinical_visit (
-    visit_id SERIAL PRIMARY KEY,
+    visit_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     research_id INT,
     participant_id INT,
     visit_type VARCHAR NOT NULL,
@@ -308,7 +334,7 @@ CREATE TABLE IF NOT EXISTS clinical_visit (
 
 
 CREATE TABLE IF NOT EXISTS visit_assigned_investigators (
-    id SERIAL PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     visit_id INT NOT NULL,
     investigator_id INT NOT NULL,
     --PRIMARY KEY (visit_id, investigator_id),
@@ -322,7 +348,7 @@ CREATE TABLE IF NOT EXISTS visit_assigned_investigators (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS trial_financial_component (
-    financial_id SERIAL PRIMARY KEY,
+    financial_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     research_id INT,
     value_per_participant INT,
     role_value_per_participant INT,
@@ -333,7 +359,7 @@ CREATE TABLE IF NOT EXISTS trial_financial_component (
 );
 
 CREATE TABLE IF NOT EXISTS research_team_financial_scope (
-    team_finance_id SERIAL PRIMARY KEY,
+    team_finance_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     trial_financial_component_id INT,
     investigator_id INT, 
     type_of_flow VARCHAR NOT NULL,
@@ -350,7 +376,7 @@ CREATE TABLE IF NOT EXISTS research_team_financial_scope (
 );
 
 CREATE TABLE IF NOT EXISTS research_finance (
-    research_finance_id SERIAL PRIMARY KEY,
+    research_finance_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     trial_financial_component_id INT,
     transaction_date TIMESTAMP DEFAULT NOW(),
     type_of_flow VARCHAR NOT NULL,
@@ -367,7 +393,7 @@ CREATE TABLE IF NOT EXISTS research_finance (
 ---------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS addenda (
-    addenda_id SERIAL PRIMARY KEY,
+    addenda_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     research_id INT NOT NULL,
     addenda_state_id INT NOT NULL,
     addenda_file_id INT NOT NULL,

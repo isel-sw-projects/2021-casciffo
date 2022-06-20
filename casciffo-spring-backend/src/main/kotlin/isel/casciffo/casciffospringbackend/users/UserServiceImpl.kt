@@ -1,15 +1,18 @@
 package isel.casciffo.casciffospringbackend.users
 
-import isel.casciffo.casciffospringbackend.common.EMAIL_AUTH
+
+import isel.casciffo.casciffospringbackend.aggregates.user.UserRoles
+import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesRepo
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
-import isel.casciffo.casciffospringbackend.roles.UserRoleService
-import isel.casciffo.casciffospringbackend.security.BearerToken
+import isel.casciffo.casciffospringbackend.roles.RoleService
+import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtSupport
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -26,20 +29,27 @@ import reactor.core.publisher.Mono
 @Service
 class UserServiceImpl(
     @Autowired val userRepository: UserRepository,
-    @Autowired val roleService: UserRoleService,
+    @Autowired val roleService: RoleService,
     @Autowired private val encoder: PasswordEncoder,
-    @Autowired val jwtSupport: JwtSupport
+    @Autowired val jwtSupport: JwtSupport,
+    @Autowired val userRolesRepo: UserRolesRepo
 ) : UserService {
 
-    override suspend fun loginUser(userModel: UserModel): BearerToken {
+    override suspend fun loginUser(userModel: UserModel): BearerTokenWrapper {
         val existingUser = userRepository.findByEmail(userModel.email!!).awaitSingleOrNull()
 
         existingUser?.let {
             if(encoder.matches(userModel.password, it.password))
-                return jwtSupport.generate(it.email!!)
+                return BearerTokenWrapper(jwtSupport.generate(it.email!!), existingUser.userId!!)
         }
 
         throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login credentials incorrect!")
+    }
+
+    override suspend fun deleteUser(userId: Int): UserModel {
+        val deletedUser = getUser(userId)!!
+        userRepository.deleteById(userId).subscribe()
+        return deletedUser
     }
 
     override suspend fun getAllUsers(): Flow<UserModel?> {
@@ -54,11 +64,20 @@ class UserServiceImpl(
     }
 
     @Transactional
-    override suspend fun createUser(userModel: UserModel): BearerToken {
+    override suspend fun registerUser(userModel: UserModel): BearerTokenWrapper {
         userModel.password = encoder.encode(userModel.password)
         val user = userRepository.save(userModel).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
-        return jwtSupport.generate(user.email!!)
+                ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
+
+        val roles = userRolesRepo
+            .saveAll(
+                userModel.roles!!
+                    .map {
+                        UserRoles(user_id = user.userId, role_id = it.roleId)
+                    }
+            ).collectList().awaitSingle()
+        println(roles)
+        return BearerTokenWrapper(jwtSupport.generate(user.email!!), user.userId!!)
     }
 
     override suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel?> {
@@ -72,13 +91,14 @@ class UserServiceImpl(
     }
 
     private suspend fun loadRelations(userModel: UserModel): UserModel {
-        userModel.role = roleService.findById(userModel.roleId!!)
+        //publisher is used during mapping to DTO
+        userModel.roles = roleService.findByUserId(userModel.userId!!)
         return userModel
     }
 
     /**
      * This method pertain to spring security configuration
-     * fixme Currently passing the user email on the arg username, it's confusing
+     * Currently passing the user email on the arg username, since username is not unique
      */
     override fun findByUsername(username: String?): Mono<UserDetails> {
         //leaving it like this for now to avoid confusion
@@ -98,16 +118,12 @@ class UserServiceImpl(
      * This method will load the role and build the UserDetails to be used by spring security
      */
     private fun buildUserDetails(userModel: UserModel): Mono<UserDetails> {
-        return roleService.findByIdMono(userModel.roleId!!)
-            .map{
-                userModel.role = it
-                userModel
-            }.map {
-                val authorities = listOf(
-                    SimpleGrantedAuthority("$ROLE_AUTH${it.role!!.roleName}"),
-                    SimpleGrantedAuthority("$EMAIL_AUTH${it.email}")
-                )
-                User(it.name, it.password, authorities)
+        return roleService
+            .findByUserId(userModel.userId!!)
+            .collectList()
+            .map { it ->
+                val authorities = it.map { SimpleGrantedAuthority("$ROLE_AUTH${it.roleName}") }
+                User(userModel.email, userModel.password, authorities)
             }
     }
 }

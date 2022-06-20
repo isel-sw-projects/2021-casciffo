@@ -10,8 +10,8 @@ import org.springframework.data.relational.core.mapping.Table
 data class ServiceType (
     @Id
     @Column(value = "service_id")
-    var id: Int?,
+    var id: Int? = null,
 
     @Column(value = "service_name")
-    val name: String
+    val name: String? = null
 )

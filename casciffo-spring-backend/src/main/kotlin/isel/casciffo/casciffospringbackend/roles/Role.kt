@@ -1,5 +1,12 @@
 package isel.casciffo.casciffospringbackend.roles
 
-enum class Role {
-    UIC,CA,FINANCE,SUPERUSER
-}
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
+
+
+@Table(value = "roles")
+data class Role (
+    @Id
+    var roleId : Int? = null,
+    val roleName: String? = null
+)
