@@ -2,22 +2,37 @@ package isel.casciffo.casciffospringbackend.common
 
 
 import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 const val amountOfTime: Long = 15
 
 /**
  * Utility datetime function
  * Returns the difference in days between the first date and second date.
- * If first date > second date: return positive amount of days.
- * If first date < second date: return negative amount of days.
+ * If first date < second date: return positive amount of days.
+ * If first date > second date: return negative amount of days.
  * If first date = second date: return 0.
  * @param date First date
  * @param other Second date
  */
-val dateDiffInDays = { date: Date, other: Date -> TimeUnit.MILLISECONDS.toDays(date.time - other.time).toInt()}
+val datetimeDiffInDays = { date: LocalDateTime, other: LocalDateTime -> date.until(other, ChronoUnit.DAYS).toInt() }
+
+/**
+ * Utility date function
+ * Returns the difference in days between the first date and second date.
+ * If first date < second date: return positive amount of days.
+ * If first date > second date: return negative amount of days.
+ * If first date = second date: return 0.
+ * @param date First date
+ * @param other Second date
+ */
+val dateDiffInDays = { date: LocalDate, other: LocalDate -> date.until(other, ChronoUnit.DAYS).toInt() }
+
+const val DATE_FORMAT = "yyyy-MM-dd"
+const val DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 /************************ Authorization related constants *******************************/
 /***************************************************************************************/

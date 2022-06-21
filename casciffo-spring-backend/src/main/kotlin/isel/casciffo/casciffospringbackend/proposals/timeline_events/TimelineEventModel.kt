@@ -3,6 +3,8 @@ package isel.casciffo.casciffospringbackend.proposals.timeline_events
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 
 @Table("timeline_event")
@@ -16,8 +18,8 @@ data class TimelineEventModel (
     var eventType: ProposalEventType? = null,
     var eventName: String? = null,
     var eventDescription: String? = null,
-    var deadlineDate: Date? = null,
-    var completedDate: Date? = null,
+    var deadlineDate: LocalDate? = null,
+    var completedDate: LocalDate? = null,
     var isOverDue: Boolean? = null,
     var daysOverDue: Int? = null,
     var isAssociatedToState: Boolean = false,

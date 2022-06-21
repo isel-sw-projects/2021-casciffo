@@ -50,6 +50,7 @@ import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.time.Instant
+import java.time.LocalDate
 import java.util.Date
 
 @ActiveProfiles(value = ["test"])
@@ -406,14 +407,15 @@ class CasciffoSpringBackendApplicationTests(
     @Test
     fun updateOverDueDeadLines() {
         runBlocking {
-            timelineEventRepository.save(
-                TimelineEventModel(
-                    proposalId = 1,
-                    eventType = ProposalEventType.DEADLINE,
-                    eventName = "toUpdateSoon",
-                    deadlineDate = Date.from(Instant.parse("2022-01-01T00:00:00Z"))
-                )
-            ).awaitSingleOrNull()
+            val savedEvent =
+                timelineEventRepository.save(
+                    TimelineEventModel(
+                        proposalId = 1,
+                        eventType = ProposalEventType.DEADLINE,
+                        eventName = "toUpdateSoon",
+                        deadlineDate = LocalDate.of(2022,1,1))
+                    ).awaitSingleOrNull()
+            assert (savedEvent != null)
             val events = timelineEventRepository
                 .findAllByDeadlineDateBeforeAndCompletedDateIsNull().collectList().awaitSingleOrNull()
             assert(!events.isNullOrEmpty())

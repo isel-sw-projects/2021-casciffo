@@ -11,14 +11,13 @@ import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
-import java.util.Date
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Table(value = "proposal")
 data class ProposalModel(
@@ -33,12 +32,10 @@ data class ProposalModel(
     var type: ResearchType? = null,
 
     @Column(value = "date_created")
-    @CreatedDate
-    var dateCreated: Date? = null,
+    var dateCreated: LocalDate? = null,
 
     @Column(value = "last_update")
-    @LastModifiedDate
-    var lastUpdated: Date? = null,
+    var lastUpdated: LocalDateTime? = null,
 
     @Column(value = "state_id")
     var stateId: Int? = null,

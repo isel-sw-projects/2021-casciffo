@@ -9,14 +9,25 @@ import org.springframework.web.reactive.result.method.annotation.RequestMappingH
 data class Endpoint(val path: String)
 
 @RestController
-@RequestMapping("/")
+@RequestMapping(ENDPOINTS_URL)
 class EndpointController(
     @Autowired val handlerMapping: RequestMappingHandlerMapping
 ) {
 
-    //todo eventually add descriptions to each path
+    //todo eventually add descriptions and allowed methods to each path
     @GetMapping
     suspend fun getEndpoints(): Any? {
-        return handlerMapping.handlerMethods.keys.stream().map { Endpoint(it.patternsCondition.patterns.first().patternString) }
+        return handlerMapping
+            .handlerMethods
+            .keys
+            .stream()
+            .map {
+                Endpoint(it.patternsCondition.patterns.first().patternString)
+            }
+            .distinct()
+            .sorted(compareBy {
+                it.path
+            })
+
     }
 }

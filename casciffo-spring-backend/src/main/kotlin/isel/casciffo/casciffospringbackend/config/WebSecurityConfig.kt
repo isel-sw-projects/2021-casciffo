@@ -63,6 +63,9 @@ class WebSecurityConfig {
                 }
             }
             .and()
+            .authorizeExchange()
+            .pathMatchers(HttpMethod.GET, ENDPOINTS_URL).permitAll()
+            .and()
             //jwt filter
             .addFilterAt(filter, SecurityWebFiltersOrder.AUTHENTICATION)
             .httpBasic().disable()

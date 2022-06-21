@@ -8,6 +8,7 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import java.util.Date
 
 @Service
@@ -21,7 +22,7 @@ class ParticipantServiceImpl(
         val participant = participantRepository.findById(participantId).awaitSingleOrNull()
             ?: throw IllegalArgumentException("The patient Id doesnt exist in the db!!!")
 
-        val researchParticipant = ResearchParticipants(null, participantId, researchId, Date())
+        val researchParticipant = ResearchParticipants(null, participantId, researchId, LocalDateTime.now())
         researchParticipantsRepository.save(researchParticipant).awaitSingle()
         return participant
     }

@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import java.time.LocalDateTime
 import java.util.Date
 
 @Table("research_team_financial_scope")
@@ -20,7 +21,7 @@ data class ResearchTeamMonetaryFlow(
     var financialComponentId: Int?,
 
     @CreatedDate
-    val transactionDate: Date,
+    val transactionDate: LocalDateTime,
 
     val typeOfFlow: TypeOfMonetaryFlow,
 

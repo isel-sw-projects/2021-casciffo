@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
+import java.time.LocalDateTime
 import java.util.Date
 
 @Table("clinical_visit")
@@ -21,11 +22,11 @@ data class Visit (
 
     val visitType: VisitType,
 
-    val scheduledDate: Date,
+    val scheduledDate: LocalDateTime,
 
-    val startDate: Date?,
+    val startDate: LocalDateTime?,
 
-    val endDate: Date?,
+    val endDate: LocalDateTime?,
 
     val periodicity: String?,
 

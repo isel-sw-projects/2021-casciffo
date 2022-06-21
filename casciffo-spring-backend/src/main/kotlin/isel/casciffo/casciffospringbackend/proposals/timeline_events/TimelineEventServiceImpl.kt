@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 import java.util.concurrent.TimeUnit
 
@@ -28,7 +30,7 @@ class TimelineEventServiceImpl(
     override suspend fun updateEvent(proposalId: Int, eventId: Int, complete: Boolean): TimelineEventModel {
         val event = timelineEventRepository.findById(eventId).awaitSingle()
         if(complete) {
-            event.completedDate = Date()
+            event.completedDate = LocalDate.now()
         }
         val diff = dateDiffInDays(event.completedDate!!, event.deadlineDate!!)
         if(diff > 0) {
@@ -44,7 +46,7 @@ class TimelineEventServiceImpl(
             timelineEventRepository
                 .findAllByDeadlineDateBeforeAndCompletedDateIsNull()
                 .map {
-                    it.daysOverDue = dateDiffInDays(Date(), it.deadlineDate!!)
+                    it.daysOverDue = dateDiffInDays(LocalDate.now(), it.deadlineDate!!)
                     it.isOverDue = it.daysOverDue!! > 0
                     it
                 }

@@ -31,6 +31,8 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 
 @Service
@@ -166,7 +168,7 @@ class ProposalServiceImpl(
             .newTransition(existingProposal.stateId!!, nextState.id!!, TransitionType.PROPOSAL, existingProposal.id!!)
 
         existingProposal.stateId = nextState.id
-        existingProposal.lastUpdated = Date()
+        existingProposal.lastUpdated = LocalDateTime.now()
         proposalRepository.save(existingProposal).awaitSingle()
         return getProposalById(existingProposal.id!!)
     }
@@ -190,14 +192,14 @@ class ProposalServiceImpl(
 
     private fun setOverDueDays(event: TimelineEventModel): TimelineEventModel {
         val diff = dateDiffInDays(event.completedDate!!, event.deadlineDate!!)
-        if (event.completedDate!!.after(event.deadlineDate)) {
+        if (diff > 0) {
             event.daysOverDue = diff
         }
         return event
     }
 
     private fun setEventCompleted(event: TimelineEventModel): TimelineEventModel {
-        event.completedDate = Date()
+        event.completedDate = LocalDate.now()
         return event
     }
 

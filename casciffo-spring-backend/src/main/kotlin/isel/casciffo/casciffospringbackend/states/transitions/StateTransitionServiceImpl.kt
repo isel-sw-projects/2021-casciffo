@@ -7,6 +7,7 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import java.util.Date
 
 @Service
@@ -25,7 +26,7 @@ class StateTransitionServiceImpl(
                 null
                 , oldStateId
                 , newStateId
-                , Date()
+                , LocalDateTime.now()
                 , transitionType
                 , referenceId
             )

@@ -11,6 +11,8 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.Date
 
 @Table("clinical_research")
@@ -32,11 +34,11 @@ data class ResearchModel (
 
     var cro: String? = null,
 
-    var startDate: Date? = null,
+    var startDate: LocalDate? = null,
 
-    var endDate: Date? = null,
+    var endDate: LocalDate? = null,
 
-    var estimatedEndDate: Date? = null,
+    var estimatedEndDate: LocalDate? = null,
 
     var industry: String? = null,
 
