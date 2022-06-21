@@ -11,5 +11,5 @@ interface TimelineEventService {
 
     suspend fun updateEvent(proposalId: Int, eventId: Int, complete: Boolean): TimelineEventModel
 
-    fun updateOverDueDeadline(): Flux<TimelineEventModel>
+    fun updateOverDueDeadlines(): Flux<TimelineEventModel>
 }

@@ -1,7 +1,6 @@
 package isel.casciffo.casciffospringbackend.users
 
 import isel.casciffo.casciffospringbackend.Mapper
-import isel.casciffo.casciffospringbackend.config.IsSuperuser
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.security.JwtDTO
 import kotlinx.coroutines.flow.Flow
@@ -37,13 +36,12 @@ class UserController(
         return service.getUser(userId, loadDetails = true)
     }
 
-    @GetMapping(USER_BASE_URL)
-    @IsSuperuser
+    @GetMapping(USERS_URL)
     suspend fun getAllUsers(@RequestParam(required = false) roles: List<String>?): Flow<UserDTO?> {
         return service.getAllUsers().map(mapper::mapModelToDTO)
     }
 
-    @GetMapping(SEARCH_USER_URL)
+    @GetMapping(USER_SEARCH_URL)
     suspend fun searchUsers(@RequestParam roles: List<String>, name: String): Flow<UserDTO?> {
         return service.searchUsers(name, roles).map(mapper::mapModelToDTO)
     }

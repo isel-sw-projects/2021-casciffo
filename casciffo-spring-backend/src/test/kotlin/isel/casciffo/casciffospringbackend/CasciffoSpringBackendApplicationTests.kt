@@ -49,7 +49,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
-import java.time.LocalDate
+import java.time.Instant
+import java.util.Date
 
 @ActiveProfiles(value = ["test"])
 @SpringBootTest
@@ -246,7 +247,7 @@ class CasciffoSpringBackendApplicationTests(
     fun testResearchRepositoryCreate() {
         val researchModel = ResearchModel(
             null, 1, 1, "eudra_ct", 10, 20, "cro",
-            LocalDate.now(), null, null, "industry", "protocol",
+            Date(), null, null, "industry", "protocol",
             "promotor", "1 | 4", ResearchType.CLINICAL_TRIAL
         )
         runBlocking {
@@ -410,14 +411,14 @@ class CasciffoSpringBackendApplicationTests(
                     proposalId = 1,
                     eventType = ProposalEventType.DEADLINE,
                     eventName = "toUpdateSoon",
-                    deadlineDate = LocalDate.of(2022, 1, 1)
+                    deadlineDate = Date.from(Instant.parse("2022-01-01T00:00:00Z"))
                 )
             ).awaitSingleOrNull()
             val events = timelineEventRepository
                 .findAllByDeadlineDateBeforeAndCompletedDateIsNull().collectList().awaitSingleOrNull()
             assert(!events.isNullOrEmpty())
             val updatedEvents = timelineEventService
-                .updateOverDueDeadline()
+                .updateOverDueDeadlines()
                 .collectList().awaitSingleOrNull()
             assert(!updatedEvents.isNullOrEmpty())
             updatedEvents!!.forEach {

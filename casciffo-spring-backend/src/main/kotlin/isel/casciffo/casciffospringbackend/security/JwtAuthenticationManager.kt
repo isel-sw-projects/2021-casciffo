@@ -5,7 +5,6 @@ import kotlinx.coroutines.reactor.mono
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -28,10 +27,9 @@ class JwtAuthenticationManager(
         val username = jwtSupport.getUserEmail(token)
         val user = users.findByUsername(username).awaitSingleOrNull()
         println(user)
+        println("user roles: ${user!!.authorities.map { it.authority }}")
         if (jwtSupport.isValid(token, user)) {
-            val auth = UsernamePasswordAuthenticationToken(user!!.username, user.password, user.authorities)
-            SecurityContextHolder.getContext().authentication = auth
-            return auth
+            return UsernamePasswordAuthenticationToken(user!!.username, user.password, user.authorities)
         }
 
         throw IllegalArgumentException("Token is not valid.")

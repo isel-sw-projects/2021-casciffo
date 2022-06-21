@@ -5,7 +5,7 @@ import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.research.patients.Participant
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
-import java.time.LocalDate
+import java.util.Date
 
 data class ResearchDTO(
     var id: Int? = null,
@@ -15,9 +15,9 @@ data class ResearchDTO(
     var sampleSize: Int? = null,
     var duration: Int? = null,
     var cro: String? = null,
-    var startDate: LocalDate? = null,
-    var endDate: LocalDate? = null,
-    var estimatedEndDate: LocalDate? = null,
+    var startDate: Date? = null,
+    var endDate: Date? = null,
+    var estimatedEndDate: Date? = null,
     var industry: String? = null,
     var protocol: String? = null,
     var initiativeBy: String? = null,

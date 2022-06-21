@@ -15,7 +15,7 @@ class ResearchController(
 
     val mapper: ResearchMapper = ResearchMapper()
 
-    @GetMapping(RESEARCH_BASE_URL)
+    @GetMapping(RESEARCHES_URL)
     suspend fun getAllResearch(type: ResearchType) : Flow<ResearchModel> {
         return researchService.getAllResearchesByType(type)
     }
@@ -32,7 +32,7 @@ class ResearchController(
         return mapper.mapModelToDTO(model)
     }
 
-    @PostMapping(RESEARCH_BASE_URL)
+    @PostMapping(RESEARCHES_URL)
     suspend fun createResearch(@RequestBody researchDTO: ResearchDTO) : ResearchDTO {
         val mappedModel = mapper.mapDTOtoModel(researchDTO)
         val model = researchService.createResearch(mappedModel)

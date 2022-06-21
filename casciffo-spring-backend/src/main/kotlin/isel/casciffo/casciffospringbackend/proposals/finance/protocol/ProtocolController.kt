@@ -1,7 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
 import isel.casciffo.casciffospringbackend.Mapper
-import isel.casciffo.casciffospringbackend.config.IsUIC
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_PROTOCOL_URL
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -18,7 +17,6 @@ class ProtocolController(
     }
 
     @PutMapping(PROPOSAL_PROTOCOL_URL)
-    @IsUIC
     suspend fun updateProtocol(
         @PathVariable proposalId: Int,
         @PathVariable pfcId: Int,

@@ -3,28 +3,28 @@ package isel.casciffo.casciffospringbackend.endpoints
 /************************************** ROLES ******************************************/
 /***************************************************************************************/
 
-const val ROLE_BASE_URL = "/roles"
-const val ROLE_DELETE_URL = "$ROLE_BASE_URL/{roleId}"
+const val ROLES_URL = "/roles"
+const val ROLE_DELETE_URL = "$ROLES_URL/{roleId}"
 
 
 /************************************** USERS ******************************************/
 /***************************************************************************************/
 
-const val USER_BASE_URL = "/users"
-const val LOGIN_URL = "$USER_BASE_URL/login"
-const val REGISTER_URL = "$USER_BASE_URL/register"
-const val USER_DETAIL_URL = "$USER_BASE_URL/{userId}"
-const val SEARCH_USER_URL = "$USER_BASE_URL/search"
+const val USERS_URL = "/users"
+const val LOGIN_URL = "$USERS_URL/login"
+const val REGISTER_URL = "$USERS_URL/register"
+const val USER_DETAIL_URL = "$USERS_URL/{userId}"
+const val USER_SEARCH_URL = "$USERS_URL/search"
 
 
 /*********************************** CONSTANTS *****************************************/
 /***************************************************************************************/
 
-const val CONSTANTS_BASE_URL = "/constants"
+const val CONSTANTS_URL = "/constants"
 
-const val SERVICE_TYPE_URL = "$CONSTANTS_BASE_URL/service"
-const val THERAPEUTIC_AREA_URL = "$CONSTANTS_BASE_URL/therapeutic-area"
-const val PATHOLOGY_URL = "$CONSTANTS_BASE_URL/pathology"
+const val SERVICE_TYPE_URL = "$CONSTANTS_URL/service"
+const val THERAPEUTIC_AREA_URL = "$CONSTANTS_URL/therapeutic-area"
+const val PATHOLOGY_URL = "$CONSTANTS_URL/pathology"
 
 
 /************************************ STATES *******************************************/
@@ -35,22 +35,22 @@ const val STATES_URL = "/states"
 /*********************************** PROPOSAL ******************************************/
 /***************************************************************************************/
 
-const val PROPOSAL_BASE_URL = "/proposals"
+const val PROPOSALS_URL = "/proposals"
 
-const val PROPOSAL_URL = "$PROPOSAL_BASE_URL/{proposalId}"
+const val PROPOSAL_URL = "$PROPOSALS_URL/{proposalId}"
 
-val buildGetProposalUrl = { id: Int -> "/${PROPOSAL_BASE_URL}/${id}"}
+val buildGetProposalUrl = { id: Int -> "/${PROPOSALS_URL}/${id}"}
 
 const val PROPOSAL_COMMENTS = "$PROPOSAL_URL/comments"
 
 val buildSingleCommentUrl = {id: Int -> "${PROPOSAL_URL}/comments/${id}"}
 
 //TODO link these role-based endpoints to advance certains parts of the state of a proposal
-const val PROPOSAL_TRANSITION_URL = "$PROPOSAL_URL/state/superuser"
-const val PROPOSAL_TRANSITION_SUPERUSER_URL = "$PROPOSAL_URL/state/superuser"
-const val PROPOSAL_TRANSITION_CA_URL = "$PROPOSAL_URL/state/ca"
-const val PROPOSAL_TRANSITION_UIC_URL = "$PROPOSAL_URL/state/uic"
-const val PROPOSAL_TRANSITION_FINANCE_URL = "$PROPOSAL_URL/state/finance"
+const val PROPOSAL_TRANSITION_URL = "$PROPOSAL_URL/state"
+const val PROPOSAL_TRANSITION_SUPERUSER_URL = "$PROPOSAL_TRANSITION_URL/superuser"
+const val PROPOSAL_TRANSITION_CA_URL = "$$PROPOSAL_TRANSITION_URL/ca"
+const val PROPOSAL_TRANSITION_UIC_URL = "$$PROPOSAL_TRANSITION_URL/uic"
+const val PROPOSAL_TRANSITION_FINANCE_URL = "$$PROPOSAL_TRANSITION_URL/finance"
 
 const val PROPOSAL_EVENTS_URL = "$PROPOSAL_URL/events"
 
@@ -63,11 +63,11 @@ const val PROPOSAL_PROTOCOL_COMMENTS_URL = "$PROPOSAL_URL/pfc/{pfcId}/protocol-c
 /*********************************** RESEARCH ******************************************/
 /***************************************************************************************/
 
-const val RESEARCH_BASE_URL = "/research"
+const val RESEARCHES_URL = "/research"
 
-const val RESEARCH_URL = "${RESEARCH_BASE_URL}/{researchId}"
+const val RESEARCH_URL = "${RESEARCHES_URL}/{researchId}"
 
-val buildGetResearchUrl = { id: Int -> "/${RESEARCH_BASE_URL}/${id}"}
+val buildGetResearchUrl = { id: Int -> "/${RESEARCHES_URL}/${id}"}
 
 const val POST_ADDENDA_URL = "${RESEARCH_URL}/addenda"
 const val GET_ADDENDA_URL = "${POST_ADDENDA_URL}/{addendaId}"

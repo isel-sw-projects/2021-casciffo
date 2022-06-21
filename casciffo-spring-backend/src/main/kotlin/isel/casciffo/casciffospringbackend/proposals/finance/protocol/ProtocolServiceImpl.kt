@@ -6,7 +6,7 @@ import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import java.time.LocalDate
+import java.util.Date
 
 @Service
 class ProtocolServiceImpl(
@@ -38,7 +38,7 @@ class ProtocolServiceImpl(
     override suspend fun updateProtocol(protocol: ProposalProtocol): ProposalProtocol {
         proposalProtocolRepository.findById(protocol.id!!).awaitSingle() ?: throw InvalidProtocolId()
         if(protocol.isValidated && protocol.validatedDate === null) {
-            protocol.validatedDate = LocalDate.now()
+            protocol.validatedDate = Date()
         }
         return proposalProtocolRepository.save(protocol).awaitSingle()
     }

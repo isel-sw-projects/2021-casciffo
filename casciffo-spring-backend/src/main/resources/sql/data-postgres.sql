@@ -28,16 +28,18 @@ $$
         finance_role_id := (SELECT role_id FROM roles WHERE role_name='FINANCE' LIMIT 1);
         superuser_role_id := (SELECT role_id FROM roles WHERE role_name='SUPERUSER' LIMIT 1);
 
-        -- USERS
+        -- USERS password is 123456 encrypted
         INSERT INTO user_account(user_name, user_email, user_password)
-        VALUES ('admin', 'casciffo.admin@admin.pt', '123456')
+        VALUES ('admin', 'casciffo.admin@admin.pt', '$2a$10$2X2vmd5NthkKodbVnEGw8./LW0pdx46vr8MqlCg2tc742rPRbDwgG')
         ON CONFLICT (user_email) DO NOTHING;
 
-        first_admin_id := (SELECT user_id FROM user_account WHERE user_email='admin@admin.pt' LIMIT 1);
+        first_admin_id := (SELECT user_id FROM user_account WHERE user_email='casciffo.admin@admin.pt' LIMIT 1);
 
         INSERT INTO user_roles(user_id, role_id)
         VALUES (first_admin_id, superuser_role_id)
         ON CONFLICT DO NOTHING;
+
+        raise notice 'Value: %', first_admin_id;
 
         -- STATES
         INSERT INTO states(state_name)

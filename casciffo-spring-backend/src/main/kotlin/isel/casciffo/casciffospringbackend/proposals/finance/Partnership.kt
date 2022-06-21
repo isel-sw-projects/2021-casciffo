@@ -8,14 +8,14 @@ import org.springframework.data.relational.core.mapping.Table
 data class Partnership (
      @Id
      @Column("partnership_id")
-     var id: Int?,
-     var name: String?,
+     var id: Int? = null,
+     var name: String? = null,
      @Column("proposal_financial_id")
-     var financeComponentId: Int,
-     var iconUrl: String?,
-     var siteUrl: String?,
-     var representative: String?,
-     var email: String,
-     var phoneContact: String,
-     var description: String?
+     var financeComponentId: Int? = null,
+     var iconUrl: String? = null,
+     var siteUrl: String? = null,
+     var representative: String? = null,
+     var email: String? = null,
+     var phoneContact: String? = null,
+     var description: String? = null
 )

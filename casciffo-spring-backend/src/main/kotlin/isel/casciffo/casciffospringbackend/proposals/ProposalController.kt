@@ -1,8 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals
 
 import isel.casciffo.casciffospringbackend.Mapper
-import isel.casciffo.casciffospringbackend.config.IsUIC
-import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_BASE_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSALS_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_TRANSITION_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_URL
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +16,7 @@ class ProposalController(
     @Autowired val mapper: Mapper<ProposalModel, ProposalDTO>
     ) {
 
-    @GetMapping(PROPOSAL_BASE_URL)
+    @GetMapping(PROPOSALS_URL)
     suspend fun getAllProposals(@RequestParam(required = true) type: ResearchType): Flow<ProposalDTO> {
         return service.getAllProposals(type).map(mapper::mapModelToDTO)
     }
@@ -28,8 +27,7 @@ class ProposalController(
         return mapper.mapModelToDTO(proposal)
     }
 
-    @PostMapping(PROPOSAL_BASE_URL)
-    @IsUIC
+    @PostMapping(PROPOSALS_URL)
     suspend fun createProposal(@RequestBody(required = true) proposal: ProposalDTO): ProposalDTO {
         val p = mapper.mapDTOtoModel(proposal)
         val res = service.create(p)
@@ -37,7 +35,6 @@ class ProposalController(
     }
 
     @PatchMapping(PROPOSAL_URL)
-    @IsUIC
     suspend fun updateProposal(
         @PathVariable(required = true) proposalId: Int,
         @RequestBody(required = true) proposal: ProposalDTO
@@ -47,9 +44,6 @@ class ProposalController(
         return mapper.mapModelToDTO(res)
     }
 
-    //TODO some thinking is required since all roles can update the state of a proposal
-    // however which states they can update is role-locked
-    // proposal: create more role-authorized endpoints and call same updateState function
     @PutMapping(PROPOSAL_TRANSITION_URL)
     suspend fun transitionProposalState(
         @PathVariable(required = true) proposalId: Int,
@@ -61,7 +55,6 @@ class ProposalController(
 
 
     @DeleteMapping(PROPOSAL_URL)
-    @IsUIC
     suspend fun deleteProposal(@PathVariable proposalId: Int): ProposalDTO {
         val res = service.deleteProposal(proposalId)
         return mapper.mapModelToDTO(res)

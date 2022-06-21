@@ -14,7 +14,7 @@ class DailyProcedures(
     @Scheduled(cron = "0 0 0 * * *")
     fun verifyAndUpdateOverDueDeadlines() {
         timelineEventService
-            .updateOverDueDeadline()
+            .updateOverDueDeadlines()
             .subscribe{
                 logger.info("TimelineEvent [${it.id}]; IsOverDue:${it.isOverDue}; DaysOverDue:${it.daysOverDue}")
             }

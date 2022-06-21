@@ -3,7 +3,7 @@ package isel.casciffo.casciffospringbackend.aggregates.proposal
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
-import java.time.LocalDateTime
+import java.util.Date
 
 data class ProposalAggregate (
     //proposal
@@ -11,8 +11,8 @@ data class ProposalAggregate (
     var proposalId: Int? = null,
     var sigla: String? = null,
     var proposalType: ResearchType? = null,
-    var dateCreated: LocalDateTime? = null,
-    var lastUpdated: LocalDateTime? = null,
+    var dateCreated: Date? = null,
+    var lastUpdated: Date? = null,
 
     //state
     var stateId: Int? = null,

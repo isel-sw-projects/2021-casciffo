@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals
 
+import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
@@ -9,6 +10,7 @@ import isel.casciffo.casciffospringbackend.proposals.constants.PathologyReposito
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
+import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventRepository
 import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchService
@@ -29,8 +31,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDate
-import java.time.LocalDateTime
+import java.util.Date
 
 @Service
 class ProposalServiceImpl(
@@ -165,7 +166,7 @@ class ProposalServiceImpl(
             .newTransition(existingProposal.stateId!!, nextState.id!!, TransitionType.PROPOSAL, existingProposal.id!!)
 
         existingProposal.stateId = nextState.id
-        existingProposal.lastUpdated = LocalDateTime.now()
+        existingProposal.lastUpdated = Date()
         proposalRepository.save(existingProposal).awaitSingle()
         return getProposalById(existingProposal.id!!)
     }
@@ -175,19 +176,29 @@ class ProposalServiceImpl(
         state: String
     ) {
         proposal.timelineEvents!!
-            .filter {
-                it.stateName === state
-            }.map {
-                it.completedDate = LocalDate.now()
-                it
-            }.map {
-                val diff = it.completedDate!!.dayOfYear - it.deadlineDate!!.dayOfYear
-                if(diff > 0)
-                    it.daysOverDue = diff
-                it
-            }.subscribe {
-                timelineEventRepository.save(it)
+            .filter {filterEventsByState(it, state)}
+            .map (this::setEventCompleted)
+            .map (this::setOverDueDays)
+            .subscribe {
+                timelineEventRepository.save(it).subscribe()
             }
+    }
+
+    private fun filterEventsByState(event: TimelineEventModel, state:String) =
+        event.isAssociatedToState && event.stateName === state
+
+
+    private fun setOverDueDays(event: TimelineEventModel): TimelineEventModel {
+        val diff = dateDiffInDays(event.completedDate!!, event.deadlineDate!!)
+        if (event.completedDate!!.after(event.deadlineDate)) {
+            event.daysOverDue = diff
+        }
+        return event
+    }
+
+    private fun setEventCompleted(event: TimelineEventModel): TimelineEventModel {
+        event.completedDate = Date()
+        return event
     }
 
 

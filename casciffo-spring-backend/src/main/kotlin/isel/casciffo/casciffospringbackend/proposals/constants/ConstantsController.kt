@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.constants
 
-import isel.casciffo.casciffospringbackend.endpoints.CONSTANTS_BASE_URL
+import isel.casciffo.casciffospringbackend.endpoints.CONSTANTS_URL
 import isel.casciffo.casciffospringbackend.endpoints.PATHOLOGY_URL
 import isel.casciffo.casciffospringbackend.endpoints.SERVICE_TYPE_URL
 import isel.casciffo.casciffospringbackend.endpoints.THERAPEUTIC_AREA_URL
@@ -18,7 +18,7 @@ class ConstantsController(
     @Autowired val therapeuticAreaRepository: TherapeuticAreaRepository
 ) {
 
-    @GetMapping(CONSTANTS_BASE_URL)
+    @GetMapping(CONSTANTS_URL)
     suspend fun getConstants() : ConstantsDTO {
         val constantsDTO = ConstantsDTO()
         constantsDTO.serviceTypes = serviceTypeRepository.findAll().collectList().awaitSingle()

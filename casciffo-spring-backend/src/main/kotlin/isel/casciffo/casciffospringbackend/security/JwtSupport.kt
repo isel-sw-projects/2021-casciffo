@@ -32,7 +32,7 @@ class JwtSupport {
     fun generate(username: String): BearerToken {
         val builder = Jwts.builder()
             .setSubject(username)
-            .setIssuedAt(dateNow)
+            .setIssuedAt(Date())
             .setIssuer(tokenIssuer)
             .setExpiration(newExpirationTime)
             .setAudience(frontEnd)

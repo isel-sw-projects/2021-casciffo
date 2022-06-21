@@ -10,13 +10,13 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.UserDTO
-import java.time.LocalDateTime
+import java.util.Date
 
 data class ProposalDTO (
     var id: Int? = null,
 
-    var dateCreated: LocalDateTime?=null,
-    var lastUpdated: LocalDateTime? = null,
+    var dateCreated: Date?=null,
+    var lastUpdated: Date? = null,
 
     var sigla: String? = null,
 

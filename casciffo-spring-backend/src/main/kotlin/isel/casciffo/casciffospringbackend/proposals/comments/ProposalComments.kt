@@ -8,7 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import java.time.LocalDateTime
+import java.util.Date
 
 @Table(value = "proposal_comments")
 data class ProposalComments (
@@ -20,10 +20,10 @@ data class ProposalComments (
     var authorId: Int?=null,
 
     @CreatedDate
-    val dateCreated: LocalDateTime?=null,
+    val dateCreated: Date?=null,
 
     @LastModifiedDate
-    val dateModified: LocalDateTime?=null,
+    val dateModified: Date?=null,
 
     val content: String?=null,
 

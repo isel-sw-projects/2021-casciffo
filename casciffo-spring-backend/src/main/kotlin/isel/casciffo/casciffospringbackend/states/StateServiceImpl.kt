@@ -27,11 +27,12 @@ class StateServiceImpl(
         stateRepository.findById(stateId).awaitSingle() ?: throw InvalidStateException()
 
     override suspend fun findAll(): Flow<State> {
-        return stateRepository.findAll().asFlow().map(this::loadRoles)
+        return stateRepository.findAll().asFlow().map(this::loadRelations)
     }
 
-    suspend fun loadRoles(state: State): State {
+    suspend fun loadRelations(state: State): State {
         state.roles = roleService.findByStateId(state.id!!)
+        state.nextStates = stateRepository.findNextStatesById(state.id!!)
         return state
     }
 }

@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.timeline_events
 
-import isel.casciffo.casciffospringbackend.common.PT_TIMEZONE
+
+import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
@@ -8,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
-import java.time.LocalDate
-import java.time.ZoneId
+import java.util.Date
+import java.util.concurrent.TimeUnit
 
 @Service
 class TimelineEventServiceImpl(
@@ -27,9 +28,9 @@ class TimelineEventServiceImpl(
     override suspend fun updateEvent(proposalId: Int, eventId: Int, complete: Boolean): TimelineEventModel {
         val event = timelineEventRepository.findById(eventId).awaitSingle()
         if(complete) {
-            event.completedDate = LocalDate.now()
+            event.completedDate = Date()
         }
-        val diff = event.completedDate!!.dayOfYear - event.deadlineDate!!.dayOfYear
+        val diff = dateDiffInDays(event.completedDate!!, event.deadlineDate!!)
         if(diff > 0) {
             event.daysOverDue = diff
             event.isOverDue = true
@@ -38,14 +39,12 @@ class TimelineEventServiceImpl(
     }
 
     @Transactional
-    override fun updateOverDueDeadline(): Flux<TimelineEventModel> {
+    override fun updateOverDueDeadlines(): Flux<TimelineEventModel> {
         val events =
             timelineEventRepository
                 .findAllByDeadlineDateBeforeAndCompletedDateIsNull()
                 .map {
-                    it.daysOverDue = LocalDate.now(ZoneId.of(PT_TIMEZONE)).dayOfYear - it.deadlineDate!!.dayOfYear
-                    it
-                }.map {
+                    it.daysOverDue = dateDiffInDays(Date(), it.deadlineDate!!)
                     it.isOverDue = it.daysOverDue!! > 0
                     it
                 }

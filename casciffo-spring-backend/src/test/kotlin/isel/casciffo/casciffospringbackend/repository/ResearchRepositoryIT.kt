@@ -27,7 +27,7 @@ class ResearchRepositoryIT(
 
 //        //set up proposal
 //        val proposal = ProposalModel(null, "sigla2", ResearchType.CLINICAL_TRIAL,
-//            LocalDateTime.now(), LocalDateTime.now(), 1, 1,1,1,
+//            Date.now(), Date.now(), 1, 1,1,1,
 //            1,
 //            investigationTeam = listOf(InvestigationTeam(null,0, InvestigatorRole.PRINCIPAL,1,null)),
 //            financialComponent = ProposalFinancialComponent(null, null, 1, 1, null, null)
@@ -39,7 +39,7 @@ class ResearchRepositoryIT(
     @Test
     fun testResearchRepositoryCreate() {
 //        val research = Research(null, 1, 1, "eudra_ct", 10, 20, "cro",
-//            LocalDate.now(), null, null, "industry", "protocol",
+//            Date.now(), null, null, "industry", "protocol",
 //            "promotor", "1 | 4", ResearchType.OBSERVATIONAL_STUDY)
 //        runBlocking{
 //            val res = researchRepository.save(research).block()

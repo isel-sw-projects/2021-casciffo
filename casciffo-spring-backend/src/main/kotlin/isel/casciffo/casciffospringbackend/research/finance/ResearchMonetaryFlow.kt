@@ -4,7 +4,7 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import java.time.LocalDateTime
+import java.util.Date
 
 @Table("research_finance")
 data class ResearchMonetaryFlow(
@@ -16,7 +16,7 @@ data class ResearchMonetaryFlow(
     var researchFinancialComponentId: Int?,
 
     @CreatedDate
-    var transactionDate: LocalDateTime,
+    var transactionDate: Date,
 
     var typeOfMonetaryFlow: TypeOfMonetaryFlow,
 

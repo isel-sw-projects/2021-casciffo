@@ -1,16 +1,23 @@
 package isel.casciffo.casciffospringbackend.common
 
+
 import java.time.Instant
-import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 const val amountOfTime: Long = 15
 
-val dateNow: Date = Date.from(Instant.now())
-
-
-const val PT_TIMEZONE = "Europe/Lisbon"
+/**
+ * Utility datetime function
+ * Returns the difference in days between the first date and second date.
+ * If first date > second date: return positive amount of days.
+ * If first date < second date: return negative amount of days.
+ * If first date = second date: return 0.
+ * @param date First date
+ * @param other Second date
+ */
+val dateDiffInDays = { date: Date, other: Date -> TimeUnit.MILLISECONDS.toDays(date.time - other.time).toInt()}
 
 /************************ Authorization related constants *******************************/
 /***************************************************************************************/

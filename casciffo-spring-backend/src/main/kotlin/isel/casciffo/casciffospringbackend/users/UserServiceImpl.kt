@@ -76,7 +76,6 @@ class UserServiceImpl(
                         UserRoles(user_id = user.userId, role_id = it.roleId)
                     }
             ).collectList().awaitSingle()
-        println(roles)
         return BearerTokenWrapper(jwtSupport.generate(user.email!!), user.userId!!)
     }
 
