@@ -1,7 +1,11 @@
 package isel.casciffo.casciffospringbackend.proposals
 
+import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
+import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregateRepo
 import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
+import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
@@ -10,6 +14,7 @@ import isel.casciffo.casciffospringbackend.proposals.constants.PathologyReposito
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
+import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventRepository
 import isel.casciffo.casciffospringbackend.research.ResearchModel
@@ -33,35 +38,32 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Date
-
 @Service
 class ProposalServiceImpl(
     @Autowired val proposalRepository: ProposalRepository,
-    @Autowired val serviceTypeRepository: ServiceTypeRepository,
-    @Autowired val therapeuticAreaRepository: TherapeuticAreaRepository,
-    @Autowired val pathologyRepository: PathologyRepository,
-    @Autowired val investigationTeamRepository: InvestigationTeamRepository,
+    @Autowired val proposalAggregateRepo: ProposalAggregateRepo,
+    @Autowired val proposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate>,
     @Autowired val investigationTeamService: InvestigationTeamService,
-    @Autowired val userRepository: UserRepository,
-    @Autowired val roleRepository: RoleRepository,
     @Autowired val stateService: StateService,
     @Autowired val stateTransitionService: StateTransitionService,
     @Autowired val commentsService: ProposalCommentsService,
     @Autowired val proposalFinancialService: ProposalFinancialService,
     @Autowired val timelineEventRepository: TimelineEventRepository,
-    @Autowired val researchService: ResearchService
+    @Autowired val researchService: ResearchService,
+    @Autowired val partnershipService: PartnershipService,
 )
     : ProposalService {
 
     override suspend fun getAllProposals(type: ResearchType): Flow<ProposalModel> {
-        return proposalRepository.findAllByType(type).asFlow().map(this::loadRelations)
+        return proposalAggregateRepo.findAllByType(type).asFlow().map(proposalAggregateMapper::mapDTOtoModel)
     }
 
     override suspend fun getProposalById(id: Int): ProposalModel {
         try {
-            val proposal = proposalRepository.findById(id).awaitSingle()
-            return loadRelations(proposal, true)
+            val proposalAggregate = proposalAggregateRepo.findByProposalId(id).awaitSingleOrNull()
+                    ?: throw NonExistentProposalException()
+            val model = proposalAggregateMapper.mapDTOtoModel(proposalAggregate)
+            return loadDetails(model)
         } catch (e: NoSuchElementException) {
             throw IllegalArgumentException("ProposalId doesnt exist!!!")
         }
@@ -113,12 +115,6 @@ class ProposalServiceImpl(
     @Transactional
     override suspend fun updateProposal(proposal: ProposalModel): ProposalModel {
         proposalRepository.findById(proposal.id!!).awaitSingleOrNull() ?: throw ProposalNotFoundException()
-
-//        val hasStateTransitioned = proposal.stateId != existingProposal.stateId
-//
-//        if (hasStateTransitioned) {
-//            handleStateTransition(proposal, existingProposal)
-//        }
 
         proposalRepository.save(proposal).awaitSingleOrNull() ?: throw Exception("Idk what happened bro ngl")
         return proposal
@@ -178,7 +174,7 @@ class ProposalServiceImpl(
         state: String
     ) {
         proposal.timelineEvents!!
-            .filter {filterEventsByState(it, state)}
+            .filter(filterEventsByState(state))
             .map (this::setEventCompleted)
             .map (this::setOverDueDays)
             .subscribe {
@@ -186,8 +182,10 @@ class ProposalServiceImpl(
             }
     }
 
-    private fun filterEventsByState(event: TimelineEventModel, state:String) =
-        event.isAssociatedToState && event.stateName === state
+    private fun filterEventsByState(state:String) = {
+        event: TimelineEventModel -> event.isAssociatedToState && event.stateName === state
+    }
+
 
 
     private fun setOverDueDays(event: TimelineEventModel): TimelineEventModel {
@@ -203,22 +201,7 @@ class ProposalServiceImpl(
         return event
     }
 
-
-    private suspend fun loadRelations(proposal: ProposalModel, isDetailedView: Boolean = false): ProposalModel {
-        var prop = loadConstantRelations(proposal)
-
-        if(prop.type == ResearchType.CLINICAL_TRIAL) {
-            prop = loadFinancialComponent(prop, isDetailedView)
-        }
-
-        if(isDetailedView) {
-            loadDetails(prop)
-        }
-
-        return prop
-    }
-
-    private suspend fun loadDetails(prop: ProposalModel) {
+    private suspend fun loadDetails(prop: ProposalModel): ProposalModel {
         prop.investigationTeam = investigationTeamService.findTeamByProposalId(prop.id!!).asFlux()
 
         prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!).asFlux()
@@ -227,24 +210,12 @@ class ProposalServiceImpl(
         prop.comments = commentsService.getComments(prop.id!!, page).asFlux()
 
         prop.timelineEvents = timelineEventRepository.findTimelineEventsByProposalId(prop.id!!)
-    }
 
-    private suspend fun loadFinancialComponent(proposal: ProposalModel, isDetailedView: Boolean): ProposalModel {
-        proposal.financialComponent = proposalFinancialService.findComponentByProposalId(proposal.id!!, isDetailedView)
-        return proposal
-    }
-
-    private suspend fun loadConstantRelations(proposal: ProposalModel): ProposalModel {
-        proposal.serviceType = serviceTypeRepository.findById(proposal.serviceTypeId!!).awaitSingle()
-
-        proposal.pathology = pathologyRepository.findById(proposal.pathologyId!!).awaitSingle()
-
-        proposal.therapeuticArea = therapeuticAreaRepository.findById(proposal.therapeuticAreaId!!).awaitSingle()
-
-        proposal.state = stateService.findById(proposal.stateId!!)
-
-        proposal.principalInvestigator = userRepository.findById(proposal.principalInvestigatorId!!).awaitSingle()
-
-        return proposal
+        if(prop.financialComponent != null) {
+            prop.financialComponent!!.partnerships = partnershipService
+                .findAllByProposalFinancialComponentId(prop.financialComponent!!.id!!)
+        }
+        return prop
     }
 }
+

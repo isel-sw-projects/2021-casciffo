@@ -9,7 +9,7 @@ data class ProposalCommentsDTO (
     var id: Int?=null,
     var proposalId: Int?=null,
     var authorId: Int?=null,
-    val dateCreated: LocalDate?=null,
+    val dateCreated: LocalDateTime?=null,
     val dateModified: LocalDateTime?=null,
     val content: String?=null,
     val commentType: CommentType?=null,

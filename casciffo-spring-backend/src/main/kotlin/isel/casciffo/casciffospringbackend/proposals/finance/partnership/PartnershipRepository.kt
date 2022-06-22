@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals.finance
+package isel.casciffo.casciffospringbackend.proposals.finance.partnership
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository

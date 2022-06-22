@@ -1,36 +1,26 @@
-package isel.casciffo.casciffospringbackend.proposals.comments
+package isel.casciffo.casciffospringbackend.aggregates.comments
 
+import isel.casciffo.casciffospringbackend.proposals.comments.CommentType
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
-import java.time.LocalDate
 import java.time.LocalDateTime
 
-@Table(value = "proposal_comments")
-data class ProposalComments(
+
+data class ProposalCommentsAggregate (
     @Id
-    @Column(value = "comment_id")
     var id: Int?=null,
 
     var proposalId: Int?=null,
     var authorId: Int?=null,
-
-    @CreatedDate
     var dateCreated: LocalDateTime? =null,
-
-    @LastModifiedDate
     var dateModified: LocalDateTime?=null,
-
     var content: String?=null,
-
     var commentType: CommentType?=null,
-
-    @Transient
-    @Value("null")
-    var author: UserModel?=null
+    @Column("user_name")
+    var authorName: String?=null,
+    @Column("user_email")
+    var authorEmail: String?=null
 )

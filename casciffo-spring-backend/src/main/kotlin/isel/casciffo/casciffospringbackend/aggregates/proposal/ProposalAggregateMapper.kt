@@ -9,7 +9,9 @@ import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.users.UserModel
+import org.springframework.stereotype.Component
 
+@Component
 class ProposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate> {
     override suspend fun mapDTOtoModel(dto: ProposalAggregate?): ProposalModel {
         if (dto == null) return ProposalModel()

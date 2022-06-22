@@ -1,5 +1,8 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
+import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.aggregates.comments.ProposalCommentsAggregate
+import isel.casciffo.casciffospringbackend.aggregates.comments.ProposalCommentsAggregateRepo
 import isel.casciffo.casciffospringbackend.users.UserService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -8,20 +11,25 @@ import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class ProposalCommentsServiceImpl(
     @Autowired val repository: ProposalCommentsRepository,
-    @Autowired val userService: UserService
+    @Autowired val aggregateRepo: ProposalCommentsAggregateRepo,
+    @Autowired val mapper: Mapper<ProposalComments, ProposalCommentsAggregate>
     )
     : ProposalCommentsService {
     override suspend fun createComment(comment: ProposalComments): ProposalComments {
         if(comment.proposalId == null) {
             throw IllegalArgumentException("ProposalId cannot be null!!!")
         }
-        //fixme this is a temp fix requires a look at @CreatedDate annotation
-        val savedComment = repository.save(comment).awaitSingle()
-        return loadAuthor(repository.findById(savedComment.id!!).awaitSingle())
+        comment.dateCreated = LocalDateTime.now()
+        return repository.save(comment)
+            .map {
+                it.author = comment.author
+                it
+            }.awaitSingle()
     }
 
     //fixme need a bit of thinking here
@@ -30,15 +38,16 @@ class ProposalCommentsServiceImpl(
     }
 
     override suspend fun getComments(proposalId: Int, page: Pageable): Flow<ProposalComments>{
-        return repository.findByProposalId(proposalId, page).asFlow().map(this::loadAuthor)
+        return aggregateRepo
+                    .findByProposalId(proposalId, page.pageNumber, page.pageSize)
+                    .asFlow()
+                    .map(mapper::mapDTOtoModel)
     }
 
     override suspend fun getCommentsByType(proposalId: Int, type: String, page: Pageable): Flow<ProposalComments> {
-        return repository.findByProposalIdAndCommentType(proposalId, CommentType.valueOf(type), page).asFlow()
-    }
-
-    suspend fun loadAuthor(comment: ProposalComments): ProposalComments {
-        comment.author = userService.getUser(comment.authorId!!)
-        return comment
+        return aggregateRepo
+            .findByProposalIdAndCommentType(proposalId, CommentType.valueOf(type), page.pageNumber, page.pageSize)
+            .asFlow()
+            .map(mapper::mapDTOtoModel)
     }
 }

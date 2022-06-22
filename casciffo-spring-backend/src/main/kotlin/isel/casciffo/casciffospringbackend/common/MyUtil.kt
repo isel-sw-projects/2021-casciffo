@@ -31,8 +31,6 @@ val datetimeDiffInDays = { date: LocalDateTime, other: LocalDateTime -> date.unt
  */
 val dateDiffInDays = { date: LocalDate, other: LocalDate -> date.until(other, ChronoUnit.DAYS).toInt() }
 
-const val DATE_FORMAT = "yyyy-MM-dd"
-const val DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
 /************************ Authorization related constants *******************************/
 /***************************************************************************************/

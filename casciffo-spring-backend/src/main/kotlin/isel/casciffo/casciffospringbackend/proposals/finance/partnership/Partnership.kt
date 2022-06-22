@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals.finance
+package isel.casciffo.casciffospringbackend.proposals.finance.partnership
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column

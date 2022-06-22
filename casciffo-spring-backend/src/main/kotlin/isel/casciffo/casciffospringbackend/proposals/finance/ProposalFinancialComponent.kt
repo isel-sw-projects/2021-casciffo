@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.finance
 
 import isel.casciffo.casciffospringbackend.promoter.Promoter
+import isel.casciffo.casciffospringbackend.proposals.finance.partnership.Partnership
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
@@ -31,4 +32,4 @@ data class ProposalFinancialComponent (
     @Value("null")
     var protocol: ProposalProtocol? = null,
 
-)
+    )

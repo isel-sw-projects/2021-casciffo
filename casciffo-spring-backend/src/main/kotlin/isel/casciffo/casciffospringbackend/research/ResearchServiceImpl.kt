@@ -77,7 +77,6 @@ class ResearchServiceImpl(
     }
 
     suspend fun loadRelations(researchModel: ResearchModel, isDetailedView: Boolean = false) : ResearchModel {
-        //research.proposal = proposalService.getProposalById(research.proposalId!!)
 
         if(isDetailedView) {
             researchModel.stateTransitions = stateTransitionService.findAllByReferenceId(researchModel.id!!).asFlux()

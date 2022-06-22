@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.finance
 
 import isel.casciffo.casciffospringbackend.promoter.PromoterRepository
+import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class ProposalFinancialServiceImpl(
     @Autowired val proposalFinancialRepository: ProposalFinancialRepository,
     @Autowired val promoterRepository: PromoterRepository,
-    @Autowired val partnershipRepository: PartnershipRepository,
+    @Autowired val partnershipService: PartnershipService,
     @Autowired val protocolService: ProtocolService
 ) : ProposalFinancialService {
 
@@ -42,7 +43,7 @@ class ProposalFinancialServiceImpl(
         pfc: ProposalFinancialComponent,
         createdPfc: ProposalFinancialComponent
     ) {
-        pfc.partnerships = partnershipRepository.saveAll(
+        pfc.partnerships = partnershipService.saveAll(
             pfc.partnerships!!.map {
                 it.financeComponentId = createdPfc.id!!
                 it
@@ -71,7 +72,7 @@ class ProposalFinancialServiceImpl(
 
     private suspend fun loadRelations(pfc: ProposalFinancialComponent, loadProtocol: Boolean = false): ProposalFinancialComponent {
         pfc.promoter = promoterRepository.findById(pfc.promoterId!!).awaitSingleOrNull()
-        pfc.partnerships = partnershipRepository.findByFinanceComponentId(pfc.id!!)
+        pfc.partnerships = partnershipService.findAllByProposalFinancialComponentId(pfc.id!!)
         if(loadProtocol) {
             pfc.protocol = protocolService.findProtocolByProposalFinanceId(pfc.proposalId!!,pfc.id!!)
         }
