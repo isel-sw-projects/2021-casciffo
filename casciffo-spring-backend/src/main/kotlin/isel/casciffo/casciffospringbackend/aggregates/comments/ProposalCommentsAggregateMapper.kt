@@ -3,7 +3,9 @@ package isel.casciffo.casciffospringbackend.aggregates.comments
 import isel.casciffo.casciffospringbackend.Mapper
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.users.UserModel
+import org.springframework.stereotype.Component
 
+@Component
 class ProposalCommentsAggregateMapper : Mapper<ProposalComments, ProposalCommentsAggregate> {
     override suspend fun mapDTOtoModel(dto: ProposalCommentsAggregate?): ProposalComments {
         if (dto == null) return ProposalComments()
