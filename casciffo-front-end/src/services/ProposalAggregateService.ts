@@ -24,7 +24,7 @@ export default class ProposalAggregateService {
     }
 
     saveProposal(proposal: ProposalModel): Promise<ProposalModel> {
-        return this.proposalService.save(proposal).then(rsp => rsp.json())
+        return this.proposalService.save(proposal)
     }
 
     fetchProposalComments(proposalId: number, commentType: string) : Promise<ProposalCommentsModel[]> {

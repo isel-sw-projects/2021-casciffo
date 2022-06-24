@@ -88,6 +88,11 @@ export function CreateProposal(props : CP_Props) {
             .then((p) => {
                 navigate(`/propostas/${p.id}`)
             })
+            .catch(error => {
+                console.log("Error saving the proposal.");
+                console.log(error.message);
+                navigate(`/propostas`)
+            })
     }
 
     return (

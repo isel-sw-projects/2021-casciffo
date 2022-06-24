@@ -127,8 +127,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     //     if(showForm)
     // }
     const isBetweenDateInterval = (e: TimelineEventModel): boolean => {
-        return (Util.cmp(Util.formatStringToArrayDate(dateInterval.start), e.deadlineDate) <= 0
-            && Util.cmp(Util.formatStringToArrayDate(dateInterval.end), e.deadlineDate) >= 0)
+        return (Util.cmp(dateInterval.start, e.deadlineDate) <= 0
+            && Util.cmp(dateInterval.end, e.deadlineDate) >= 0)
     }
 
     function mapToChronoItem(): ChronoItemType[] {

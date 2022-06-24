@@ -4,7 +4,7 @@ export interface StateTransitionModel {
     id: number,
     previousStateId: number,
     newStateId: number,
-    transitionDate: Array<number>,
+    transitionDate: string,
     transitionType: string,
     referenceId: number,
     previousState?: StateModel,

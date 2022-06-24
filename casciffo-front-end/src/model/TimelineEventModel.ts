@@ -4,8 +4,8 @@ export interface TimelineEventModel {
     eventName: string,
     eventDescription?: string,
     eventType: string,
-    deadlineDate?: Array<number>,
-    completedDate?: Array<number>,
+    deadlineDate?: string,
+    completedDate?: string,
     daysOverDue?: number,
     isOverDue?: boolean
     stateName?: string,

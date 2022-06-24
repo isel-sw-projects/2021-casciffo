@@ -10,7 +10,7 @@ export function Example(msg: string) {
             <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
                 <Toast.Header>
                     <img
-                        src="../logo.svg?text=%20"
+                        src="../../logo.svg?text=%20"
                         className="rounded me-2"
                         alt=""
                         width={20}

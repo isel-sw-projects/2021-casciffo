@@ -4,11 +4,16 @@ import './App.css';
 import {Container, Nav, Navbar, Stack} from 'react-bootstrap';
 import {BrowserRouter as Router, Link, Route, Routes, useLocation} from "react-router-dom";
 import {CreateProposal} from '../proposal-form-view/CreateProposal'
-import { Proposals } from '../proposals-view/Proposals';
+import {Proposals} from '../proposals-view/Proposals';
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import ProposalService from "../../services/ProposalService";
 import {ProposalDetails} from "../proposal-details-view/ProposalDetails";
 import {StateService} from "../../services/StateService";
+import RequiresAuth from "../login/RequiresAuth";
+import {Dashboard} from "./Dashboard";
+import {Login} from "../login/Login";
+import {UserService} from "../../services/UserService";
+import {useToken} from "../../custom_hooks/useToken";
 
 function NavigationBar() {
     return (
@@ -28,26 +33,30 @@ function NavigationBar() {
 }
 
 function CreateRoutes() {
+    const [_, setToken] = useToken()
+
     return (
         <Routes>
-            <Route path={"/"} element={<>Home</>}/>
+            <Route path={"/"} element={<Dashboard/>}/>
+            <Route path={"/login"} element={<Login UserService={new UserService()} setToken={setToken}/>}/>
             <Route path={"/propostas"} element={<Proposals service={new ProposalService()}/>}/>
             <Route
                 path={"/propostas/criar"}
-                element={<CreateProposal
+                element={RequiresAuth(<CreateProposal
                     service={new ProposalAggregateService()}
-                />}
+                />)}
             />
             <Route
                 path={"/propostas/:proposalId"}
-                element={<ProposalDetails
+                element={RequiresAuth(<ProposalDetails
                     proposalService={new ProposalAggregateService()}
                     stateService={new StateService()}
-                />}
+                />)}
             />
         </Routes>
     );
 }
+
 
 function DisplayPath() {
     const path = useLocation()

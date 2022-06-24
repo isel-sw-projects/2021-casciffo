@@ -4,11 +4,13 @@ import {PromoterTypes, ResearchTypes} from "../common/Constants";
 import {TimelineEventModel} from "../model/TimelineEventModel";
 import {ProtocolModel} from "../model/proposal/finance/ProtocolModel";
 import {ProtocolCommentsModel} from "../model/proposal/finance/ProtocolCommentsModel";
+import {httpGet, httpPost, httpPut} from "../common/Util";
 
 class ProposalService {
 
     fetchByType(type: string, sort: string = "dateCreated"): Promise<Array<ProposalModel>> {
-        return fetch(ApiUrls.proposalsByTypeUrl(type)).then(rsp => rsp.json())
+        const url = ApiUrls.proposalsByTypeUrl(type)
+        return httpGet(url)
     }
 
     fetchByTypeMock(type: string): Promise<Array<ProposalModel>> {
@@ -26,7 +28,7 @@ class ProposalService {
             pathology: {name: "Refluxo gastroesofágico"},
             serviceType: {name: "Gastrenterologia"},
             therapeuticArea: {name: "Gastrenterologia"},
-            dateCreated: [],
+            dateCreated: "",
             financialComponent: {
                 promoter: {id: "1", name:"Merck KGaA", email:"abc@promotor1.com", promoterType: PromoterTypes.COMMERCIAL.id},
                 partnerships: [{name:"abc", description: "abc", phoneContact: "abc", siteUrl: "abc", representative: "abc", email: "abc"}]
@@ -46,7 +48,7 @@ class ProposalService {
             pathology: {name: "patologia2"},
             serviceType: {name: "serviço2"},
             therapeuticArea: {name: "area terapeutica 2"},
-            dateCreated: [],
+            dateCreated: "",
         }
         return new Promise(resolve => { setTimeout(() =>
             resolve(
@@ -56,59 +58,38 @@ class ProposalService {
     }
 
     fetchById(id: string | undefined) : Promise<ProposalModel> {
-        return fetch(ApiUrls.buildDetailProposalUrl(`${id}`)).then(rsp => rsp.json())
+        const url = ApiUrls.buildDetailProposalUrl(`${id}`)
+        return httpGet(url)
     }
 
-    save(proposal: ProposalModel) {
-        const opt : RequestInit = {
-            method: 'POST',
-            headers: [['Content-Type', 'application/json']],
-            body: JSON.stringify(proposal)
-        }
-        return fetch(ApiUrls.proposalsUrl, opt)
+    save(proposal: ProposalModel): Promise<ProposalModel> {
+        const url = ApiUrls.proposalsUrl
+        return httpPost(url, proposal)
     }
 
     advanceState(proposalId: string, forward :boolean): Promise<ProposalModel> {
-        const opt : RequestInit = {
-            method: 'PUT',
-        }
-        return fetch(ApiUrls.proposalsTransitionUrl(proposalId, forward), opt).then(rsp => rsp.json())
+        const url = ApiUrls.proposalsTransitionUrl(proposalId, forward)
+        return httpPut(url)
     }
 
     saveTimelineEvent(proposalId: string, event: TimelineEventModel): Promise<TimelineEventModel> {
         const url = ApiUrls.proposalsTimelineEventUrl(proposalId)
-        const opt : RequestInit = {
-            headers: [['Content-type', 'application/json']],
-            method: 'POST',
-            body: JSON.stringify(event)
-        }
-        return fetch(url, opt).then(rsp => rsp.json())
+        return httpPost(url, event)
     }
 
     fetchTimelineEvents(proposalId: string): Promise<TimelineEventModel[]> {
         const url = ApiUrls.proposalsTimelineEventUrl(proposalId)
-        const opt : RequestInit = {
-            method: 'GET'
-        }
-        return fetch(url, opt).then(rsp => rsp.json())
+        return httpGet(url)
     }
 
     fetchProtocol(proposalId: string, pfcId: string): Promise<ProtocolModel> {
         const url = ApiUrls.proposalsProtocol(proposalId, pfcId)
-        const opt : RequestInit = {
-            method: 'GET'
-        }
-        return fetch(url, opt).then(rsp => rsp.json())
+        return httpGet(url)
     }
 
     updateProtocol(proposalId: string, protocol: ProtocolModel): Promise<ProtocolModel> {
         const url = ApiUrls.proposalsProtocol(proposalId, protocol.financialComponentId!+"")
-        const opt : RequestInit = {
-            method: 'PUT',
-            headers: [['Content-Type', 'application/json']],
-            body: JSON.stringify(protocol)
-        }
-        return fetch(url, opt).then(rsp => rsp.json())
+        return httpPut(url, protocol)
     }
 
     saveProtocolComment
@@ -118,21 +99,12 @@ class ProposalService {
         comment: ProtocolCommentsModel
     ): Promise<ProtocolCommentsModel> {
         const url = ApiUrls.proposalsProtocolComments(proposalId, pfcId)
-        const opt : RequestInit = {
-            method: 'POST',
-            headers: [['Content-Type', 'application/json']],
-            body: JSON.stringify(comment)
-        }
-        return fetch(url, opt).then(rsp => rsp.json())
+        return httpPost(url, comment)
     }
 
     updateTimelineEvent(proposalId: string, eventId: string, completed: boolean): Promise<TimelineEventModel> {
         const url = ApiUrls.proposalsTimelineEventUpdateUrl(proposalId, eventId, completed)
-        const opt : RequestInit = {
-            method: 'PUT',
-            headers: [['Content-Type', 'application/json']],
-        }
-        return fetch(url, opt).then(rsp => rsp.json())
+        return httpPut(url)
     }
 }
 

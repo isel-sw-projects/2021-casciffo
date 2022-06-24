@@ -101,15 +101,6 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                                     teamRole: TeamRoleTypes.MEMBER
                                 }))}
                     />
-                    {/*<Form.Control*/}
-                    {/*    aria-required*/}
-                    {/*    aria-describedby={"basic-addon2"}*/}
-                    {/*    placeholder={"Identificador do Investigador i.e 1235"}*/}
-                    {/*    type={"text"}*/}
-                    {/*    name={"name"}*/}
-                    {/*    value={state.investigator.name}*/}
-                    {/*    onChange={(e: any) => handleInvestigatorInputChange(e)}*/}
-                    {/*/>*/}
                     <Button
                         className={"btn-plus"}
                         variant="outline-secondary"

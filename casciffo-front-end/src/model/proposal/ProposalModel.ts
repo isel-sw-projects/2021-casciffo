@@ -25,8 +25,8 @@ export interface ProposalModel {
     pathology?: PathologyModel,
     principalInvestigator?: UserModel,
     //date comes formatted as [year, month, day, hour, min, sec, milis]
-    dateCreated?: Array<number>,
-    dateModified?: Array<number>,
+    dateCreated?: string,
+    dateModified?: string,
     financialComponent?: ProposalFinanceModel,
     investigationTeam?: Array<TeamInvestigatorModel>,
     stateTransitions?: Array<StateTransitionModel>,

@@ -53,7 +53,13 @@ type Filter = {
     id: string
 }
 
+type UserToken = {
+    token: string,
+    userId: string
+}
+
 export type {
     Page, ResearchType, Investigator,
-    Constants, Filter, ProposalForm, Promoter
+    Constants, Filter, ProposalForm, Promoter,
+    UserToken
 }

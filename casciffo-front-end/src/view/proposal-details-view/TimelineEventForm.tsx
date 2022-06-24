@@ -16,7 +16,7 @@ export function TimelineEventForm(props: TimelineProps) {
     const [eventToAdd, setEventToAdd] = useState<TimelineEventModel>({
         completedDate: undefined,
         daysOverDue: 0,
-        deadlineDate: [],
+        deadlineDate: "",
         eventDescription: "",
         eventName: "",
         eventType: "",
@@ -49,9 +49,9 @@ export function TimelineEventForm(props: TimelineProps) {
         eventToAdd.eventType = eventToAdd.isAssociatedToState ? EventTypes.STATES.id : EventTypes.DEADLINES.id
         props.onEventAdded(eventToAdd)
         setEventToAdd({
-            completedDate: [],
+            completedDate: "",
             daysOverDue: 0,
-            deadlineDate: [],
+            deadlineDate: "",
             eventDescription: "",
             eventName: "",
             eventType: "",
@@ -86,7 +86,7 @@ export function TimelineEventForm(props: TimelineProps) {
 
     function onDateChanged(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         setDateAsString(e.target.value)
-        const date = Util.formatStringToArrayDate(e.target.value)
+        const date = e.target.value
         setEventToAdd(updateState("deadlineDate", date))
     }
 

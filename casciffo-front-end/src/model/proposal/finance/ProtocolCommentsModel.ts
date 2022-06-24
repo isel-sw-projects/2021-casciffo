@@ -5,5 +5,5 @@ export interface ProtocolCommentsModel {
     authorName?: string,
     orgName?: string,
     validated?: boolean
-    dateCreated?: number[];
+    dateCreated?: string;
 }

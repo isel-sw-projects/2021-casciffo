@@ -26,8 +26,7 @@ class JwtAuthenticationManager(
     private suspend fun validate(token: BearerToken): Authentication {
         val username = jwtSupport.getUserEmail(token)
         val user = users.findByUsername(username).awaitSingleOrNull()
-        println(user)
-        println("user roles: ${user!!.authorities.map { it.authority }}")
+
         if (jwtSupport.isValid(token, user)) {
             return UsernamePasswordAuthenticationToken(user!!.username, user.password, user.authorities)
         }

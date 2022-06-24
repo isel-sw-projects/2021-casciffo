@@ -1,14 +1,16 @@
 import {PathologyModel} from "../model/proposal-constants/PathologyModel";
 import ApiUrls from "../common/Links";
+import {httpGet, httpPost} from "../common/Util";
 
 class PathologyService {
     fetchAll() : Promise<Array<PathologyModel>> {
-        return fetch(ApiUrls.pathologiesUrl)
-            .then(rsp => rsp.json())
+        const url = ApiUrls.pathologiesUrl
+        return httpGet(url)
     }
 
-    save(pathology: PathologyModel): void {
-        //TODO
+    save(pathology: PathologyModel): Promise<PathologyModel> {
+        const url = ApiUrls.pathologiesUrl
+        return httpPost(url, pathology)
     }
 }
 

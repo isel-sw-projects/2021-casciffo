@@ -17,7 +17,7 @@ export function ProtocolTabContent(props: PPT_Props) {
     const headers = ["Criado", "Nome\n(Empresa/Papel)","Observação","Validado"]
     const {proposalId} = useParams()
     const [protocol, setProtocol] = useState<ProtocolModel>({
-        financialComponentId: 0, id: "", isValidated: false, validatedDate: [],
+        financialComponentId: 0, id: "", isValidated: false, validatedDate: "",
         comments: []
     })
     const [displayData, setDisplayData] = useState(false)
