@@ -1,5 +1,4 @@
 import {STATES} from "../model/state/STATES";
-import {UserToken} from "./Types";
 
 function padTo2Digits(num: number) {
     return num.toString().padStart(2, '0');
@@ -7,7 +6,7 @@ function padTo2Digits(num: number) {
 const isoDatetimeDelimiterIdx = 10
 const isoDateDelim = '-'
 
-const month = [
+const months = [
     "Janeiro",
     "Fevereiro",
     "Março",
@@ -43,49 +42,11 @@ function getTodayDate(): string {
     return (new Date()).toISOString().slice(0, isoDatetimeDelimiterIdx)
 }
 
-function formatStringToISODate(
-    value: string,
-    withHours: boolean = false,
-    dateDelim: string = "-",
-    hourDelim: string = ":",
-    jointDateDelim: string = "T"
-): string {
-    // let dateSplit: string[]
-    //
-    // if(withHours) {
-    //     // value = '2022-11-31T19:19'
-    //     const tmp = value.split(jointDateDelim)
-    //     // tmp = ['2022-11-31', '19:19:19']
-    //     dateSplit = [...tmp[0].split(dateDelim), ...tmp[1].split(hourDelim)]
-    //     // dateSplit = ['2022', '11', '31', '19', '19', '19']
-    // } else {
-    //     dateSplit = value.split(dateDelim)
-    // }
-    //
-    // const date = [
-    //     parseInt(dateSplit[dateIndexes.year]),
-    //     parseInt(dateSplit[dateIndexes.month]),
-    //     parseInt(dateSplit[dateIndexes.day]),
-    // ]
-    //
-    // if(!withHours) return date
-    //
-    // const hours =
-    //     [
-    //         parseInt(dateSplit[dateIndexes.hour]),
-    //         parseInt(dateSplit[dateIndexes.min]),
-    //         dateSplit[dateIndexes.sec] === undefined ? 0 : parseInt(dateSplit[dateIndexes.sec])
-    //     ]
-    //
-    // return [...date, ...hours]
-    return ''
-}
-
 function formatDateWithMonthName(date: string) {
     const datePart = date.length > 10 ? date.substring(0, isoDatetimeDelimiterIdx) : date
 
     let dateWithMonth = datePart.split(isoDateDelim)
-    dateWithMonth[1] = month[parseInt(dateWithMonth[1])-1]
+    dateWithMonth[1] = months[parseInt(dateWithMonth[1])-1]
 
     return dateWithMonth.join('-')
 }
@@ -97,23 +58,12 @@ function formatDateWithMonthName(date: string) {
  * @returns 0 when dates are equal, positive when first is more recent than second and negative otherwise.
  */
 function cmp(firstDate: string | undefined | null, secondDate: string | undefined | null) {
-    if(isNullOrUndefined(firstDate) && isNullOrUndefined(secondDate)) return 0;
-    if(isNullOrUndefined(firstDate) && !isNullOrUndefined(secondDate)) return -1;
-    if(!isNullOrUndefined(firstDate) && isNullOrUndefined(secondDate)) return 1;
+    if(firstDate == null && secondDate == null) return 0;
+    if(firstDate == null && secondDate != null) return -1;
+    if(firstDate != null && secondDate == null) return 1;
     const firstDateString = formatDate(firstDate!, false).replaceAll('-', '')
     const secondDateString = formatDate(secondDate!, false).replaceAll('-', '')
     return parseInt(firstDateString) - parseInt(secondDateString);
-}
-
-/**
- * Utility function
- *
- * Checks whether a given value is null or undefined using a juggle check.
- * @param value Value to check, can be anything.
- * @returns true when value is null or undefined, false otherwise.
- */
-function isNullOrUndefined<T>(value: T | null | undefined): boolean {
-    return value == null
 }
 
 const APPLICATION_CONTENT_TYPE = 'application/json'
@@ -121,7 +71,20 @@ const HEADER_ACCEPT_JSON = ['Accept', APPLICATION_CONTENT_TYPE]
 const HEADER_CONTENT_TYPE = ['Content-Type', APPLICATION_CONTENT_TYPE]
 const HEADER_AUTHORIZATION = (token: string) => ['Authorization', token]
 
-function _httpFetch<T>(url: string, method: string, headers: HeadersInit, body: unknown = null,): Promise<T> {
+
+
+function _httpFetch<T>(
+    url: string,
+    method: string,
+    token: string | undefined = undefined,
+    headers: string[][] = [],
+    body: unknown = null
+
+): Promise<T> {
+    headers.push(HEADER_ACCEPT_JSON)
+    if(token != null) {
+        headers.push(HEADER_AUTHORIZATION(token))
+    }
     const opt : RequestInit = {
         headers: headers,
         method: method
@@ -131,24 +94,27 @@ function _httpFetch<T>(url: string, method: string, headers: HeadersInit, body: 
     }
     return fetch(url, opt).then(rsp => rsp.json())
 }
-export function httpGet<T>(url: string) : Promise<T> {
-    return _httpFetch(url, 'GET', [HEADER_ACCEPT_JSON])
+
+export function httpGet<T>(url: string, token: string | undefined = undefined) : Promise<T> {
+    return _httpFetch(url, 'GET', token)
 }
-export function httpDelete<T>(url: string) : Promise<T> {
-    return _httpFetch(url, 'DELETE', [HEADER_ACCEPT_JSON])
+
+export function httpDelete<T>(url: string, token: string | undefined = undefined) : Promise<T> {
+    return _httpFetch(url, 'DELETE', token)
 }
-export function httpPost<T>(url: string, body: unknown): Promise<T> {
-    return _httpFetch(url, 'POST', [HEADER_CONTENT_TYPE], body)
+
+export function httpPost<T>(url: string, body: unknown, token: string | undefined = undefined): Promise<T> {
+    return _httpFetch(url, 'POST', token, [HEADER_CONTENT_TYPE], body)
 }
-export function httpPut<T>(url: string, body: unknown = null): Promise<T> {
-    return _httpFetch(url, 'PUT', [HEADER_CONTENT_TYPE, HEADER_ACCEPT_JSON], body)
+
+export function httpPut<T>(url: string, body: unknown = null, token: string | undefined = undefined): Promise<T> {
+    return _httpFetch(url, 'PUT', token, [HEADER_CONTENT_TYPE], body)
 }
+
 export const Util = {
     formatDate,
     proposalStates: Object.values(STATES).filter(s => s.code > STATES.SUBMETIDO.code && s.code <= STATES.VALIDADO.code),
-    formatStringToISODate,
     cmp,
     formatDateWithMonthName,
-    isNullOrUndefined,
     getTodayDate,
 }

@@ -75,6 +75,7 @@ export function CreateProposal(props : CP_Props) {
             model.financialComponent = {
                 file: undefined,
                 partnerships: proposalForm.partnerships,
+                hasPartnerships: hasPartnerships,
                 promoter: proposalForm.promoter,
             }
         }

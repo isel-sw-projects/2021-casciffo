@@ -4,7 +4,8 @@ import {PartnershipModel} from "../../PartnershipModel";
 export interface ProposalFinanceModel {
     id?: string,
     promoterId?: string,
-    promoter: PromoterModel,
+    promoter?: PromoterModel,
     partnerships?: Array<PartnershipModel>,
+    hasPartnerships: boolean,
     file?: unknown
 }

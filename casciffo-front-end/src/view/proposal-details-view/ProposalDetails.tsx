@@ -29,7 +29,6 @@ import React from "react";
 
 type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
-    stateService: StateService
 }
 
 function ProposalStateView(props: { element: JSX.Element, onAdvanceClick: () => void }) {
@@ -119,7 +118,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         function getTransitionDate(stateName: string) {
             const transition = proposal.stateTransitions?.find(st => st.newState?.name === stateName)
 
-            if(Util.isNullOrUndefined(transition)) return <span>{"---"}</span>
+            if(transition == null) return <span>{"---"}</span>
 
             return <span>{Util.formatDate(transition!.transitionDate)}</span>
         }
@@ -257,7 +256,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                                         <Form.Control
                                                             type={"text"}
                                                             name={"investigator"}
-                                                            value={proposal.principalInvestigator?.name}
+                                                            value={proposal.principalInvestigator?.userName}
                                                             disabled
                                                         />
                                                     </Form.Group>
@@ -293,7 +292,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                                             <Form.Control
                                                                 type={"text"}
                                                                 name={"promoterName"}
-                                                                value={proposal.financialComponent?.promoter.name}
+                                                                value={proposal.financialComponent?.promoter!.name}
                                                                 disabled
                                                             />
                                                         </Form.Group>
@@ -313,12 +312,12 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                                     as="li"
                                                     className="d-flex justify-content-between align-items-start"
                                                     style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
-                                                    key={`${team.member?.name}-${idx}`}
+                                                    key={`${team.member?.userName}-${idx}`}
                                                 >
                                                     <small>
                                                         <div className="ms-2 me-auto">
-                                                            <div className="fw-bold">{team.member?.name}</div>
-                                                            {team.member?.email}
+                                                            <div className="fw-bold">{team.member?.userName}</div>
+                                                            {team.member?.userEmail}
                                                         </div>
                                                     </small>
                                                 </ListGroup.Item>

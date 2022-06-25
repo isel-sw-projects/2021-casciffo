@@ -1,6 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import "../../assets/css/main/app.css";
+import "../../assets/css/shared/iconly.css";
 import {Container, Nav, Navbar, Stack} from 'react-bootstrap';
 import {BrowserRouter as Router, Link, Route, Routes, useLocation} from "react-router-dom";
 import {CreateProposal} from '../proposal-form-view/CreateProposal'
@@ -8,23 +9,25 @@ import {Proposals} from '../proposals-view/Proposals';
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import ProposalService from "../../services/ProposalService";
 import {ProposalDetails} from "../proposal-details-view/ProposalDetails";
-import {StateService} from "../../services/StateService";
-import RequiresAuth from "../login/RequiresAuth";
+import RequiresAuth from "../login-view/RequiresAuth";
 import {Dashboard} from "./Dashboard";
-import {Login} from "../login/Login";
+import {Login} from "../login-view/Login";
 import {UserService} from "../../services/UserService";
 import {useToken} from "../../custom_hooks/useToken";
+import {Research} from "../researches-view/Research";
+import {ResearchAggregateService} from "../../services/ResearchAggregateService";
+import {ResearchDetails} from "../researches-view/ResearchDetails";
 
 function NavigationBar() {
     return (
         <Navbar bg="primary" variant="dark">
             <Container>
                 <Navbar.Collapse>
-                    <Navbar.Brand href="#home">Casciffo</Navbar.Brand>
+                    <Navbar.Brand as={Link} to={"/"}>Casciffo</Navbar.Brand>
                     <Nav className="me-auto">
+                        <Nav.Link as={Link} to={"/"}>Dashboard</Nav.Link>
                         <Nav.Link as={Link} to={"/propostas"}>Propostas</Nav.Link>
-                        <Nav.Link as={Link} to={"/"}>Inicio</Nav.Link>
-                        <Nav.Link as={Link} to={"/research"}>Ensaios e Estudos</Nav.Link>
+                        <Nav.Link as={Link} to={"/ensaios"}>Ensaios Clínicos</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>
@@ -38,20 +41,22 @@ function CreateRoutes() {
     return (
         <Routes>
             <Route path={"/"} element={<Dashboard/>}/>
-            <Route path={"/login"} element={<Login UserService={new UserService()} setToken={setToken}/>}/>
-            <Route path={"/propostas"} element={<Proposals service={new ProposalService()}/>}/>
-            <Route
-                path={"/propostas/criar"}
+            <Route path={"/login-view"} element={<Login UserService={new UserService()} setToken={setToken}/>}/>
+            <Route path={"/propostas"}
+                   element={RequiresAuth(<Proposals service={new ProposalService()}/>)}/>
+            <Route path={"/propostas/criar"}
                 element={RequiresAuth(<CreateProposal
                     service={new ProposalAggregateService()}
                 />)}
             />
-            <Route
-                path={"/propostas/:proposalId"}
-                element={RequiresAuth(<ProposalDetails
-                    proposalService={new ProposalAggregateService()}
-                    stateService={new StateService()}
-                />)}
+            <Route path={"/propostas/:proposalId"}
+                   element={RequiresAuth(<ProposalDetails proposalService={new ProposalAggregateService()}/>)}
+            />
+            <Route path={"/ensaios"}
+                element={RequiresAuth(<Research researchService={new ResearchAggregateService()}/>)}
+            />
+            <Route path={"/ensaios/:researchId"}
+                element={RequiresAuth(<ResearchDetails researchService={new ResearchAggregateService()}/>)}
             />
         </Routes>
     );

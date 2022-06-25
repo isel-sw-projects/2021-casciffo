@@ -42,7 +42,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
     }
 
     function createRows() {
-        if(Util.isNullOrUndefined(comments) || comments.length === 0)
+        if(comments == null || comments.length === 0)
             return <tr key={"zero-comments"}><td colSpan={3}>Sem resultados</td></tr>
 
         return comments.filter(c => c.commentType === props.commentType.id).map(mapToRowElement);
@@ -52,7 +52,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
         return (
             <tr key={comment.id}>
                 <td>{Util.formatDate(comment.dateCreated!,true)}</td>
-                <td>{comment.author?.name}</td>
+                <td>{comment.author?.userName}</td>
                 <td>{comment.content}</td>
             </tr>
         )

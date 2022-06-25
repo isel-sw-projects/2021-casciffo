@@ -42,7 +42,7 @@ export function ProtocolTabContent(props: PPT_Props) {
 
     function mapRowElements() {
         if(!displayData) return (<tr><td colSpan={4}>A carregar comentários...</td></tr>)
-        if(Util.isNullOrUndefined(protocol.comments) || protocol.comments!.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
+        if(protocol.comments == null || protocol.comments!.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
         return protocol.comments!
             .sort(sortByDate)
             .map(c => {
@@ -173,7 +173,7 @@ export function ProtocolTabContent(props: PPT_Props) {
                     >
                         CEIC
                         <br/>
-                        {Util.isNullOrUndefined(protocol.validatedDate) ? "---"
+                        {protocol.validatedDate == null ? "---"
                             : Util.formatDate(protocol.validatedDate!)}
                     </Button>
                 </Stack>

@@ -20,7 +20,7 @@ class ProposalService {
             stateId: 0,
             pathologyId: 0,
             principalInvestigatorId: 0,
-            principalInvestigator: {name:"Dr. Nuno", email:"outro email bue fixe"},
+            principalInvestigator: {userName:"Dr. Nuno", userEmail:"outro email bue fixe"},
             serviceTypeId: 0,
             therapeuticAreaId: 0,
             type: ResearchTypes.CLINICAL_TRIAL.id,
@@ -31,7 +31,8 @@ class ProposalService {
             dateCreated: "",
             financialComponent: {
                 promoter: {id: "1", name:"Merck KGaA", email:"abc@promotor1.com", promoterType: PromoterTypes.COMMERCIAL.id},
-                partnerships: [{name:"abc", description: "abc", phoneContact: "abc", siteUrl: "abc", representative: "abc", email: "abc"}]
+                partnerships: [{name:"abc", description: "abc", phoneContact: "abc", siteUrl: "abc", representative: "abc", email: "abc"}],
+                hasPartnerships: true
             }
         }
         const proposal2: ProposalModel = {
@@ -39,7 +40,7 @@ class ProposalService {
             stateId: 0,
             pathologyId: 0,
             principalInvestigatorId: 0,
-            principalInvestigator: {name:"Dr. Hermilindo", email:"1email bue fixe"},
+            principalInvestigator: {userName:"Dr. Hermilindo", userEmail:"1email bue fixe"},
             serviceTypeId: 0,
             sigla: "Firefly",
             therapeuticAreaId: 0,

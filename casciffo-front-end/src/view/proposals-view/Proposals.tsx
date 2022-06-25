@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import ProposalService from "../../services/ProposalService";
-import {SearchComponent} from "../util-view-components/SearchComponent";
-import {PaginationComponent} from "../util-view-components/PaginationComponent";
+import {SearchComponent} from "../components/SearchComponent";
+import {PaginationComponent} from "../components/PaginationComponent";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {Util} from "../../common/Util";
 import {Link, useNavigate} from "react-router-dom";
@@ -86,10 +86,10 @@ export function Proposals(props: Proposals_Props) {
                     pathology: p.pathology!.name,
                     serviceType: p.serviceType!.name,
                     therapeuticArea: p.therapeuticArea!.name,
-                    principalInvestigator: p.principalInvestigator!.name,
+                    principalInvestigator: p.principalInvestigator!.userName!,
                     type: p.type,
-                    promoter: hasFinancialComponent ? p.financialComponent!.promoter.name : undefined,
-                    partnerships: hasFinancialComponent && p.financialComponent!.partnerships !== undefined ? "Sim" : "Não"
+                    promoter: hasFinancialComponent ? p.financialComponent!.promoter!.name : undefined,
+                    partnerships: hasFinancialComponent && p.financialComponent!.hasPartnerships ? "Sim" : "Não"
                 }
             }))
             setProposals(rows)

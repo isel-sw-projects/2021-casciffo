@@ -72,7 +72,7 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
         setSelectedUser({email: "", id: "", name: ""})
         props.requestUsers(query)
             .then((users) => {
-                const usersInfo = users.map(user => ({name: user.name, id: user.userId!, email: user.email}))
+                const usersInfo = users.map(user => ({name: user.userName!, id: user.userId!, email: user.userEmail}))
                 requestCache.set(query, usersInfo);
 
                 setOptions(usersInfo);

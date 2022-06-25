@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {TimelineEventModel} from "../../model/TimelineEventModel";
-import {SearchComponent} from "../util-view-components/SearchComponent";
+import {SearchComponent} from "../components/SearchComponent";
 import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import {EventTypes, ResearchTypes} from "../../common/Constants";
 import {TimelineEventForm} from "./TimelineEventForm";
@@ -35,6 +35,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     const sortEvents = (a: TimelineEventModel, b: TimelineEventModel) => Util.cmp(a.deadlineDate!, b.deadlineDate!)
 
     useEffect(() => {
+        //TODO clean up this ugly code
         props.service
             .fetchProposalTimelineEvents(proposalId!)
             .then(e => e.sort(sortEvents))
@@ -61,8 +62,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     }
 
     function getCompletedButtonVariant(e: TimelineEventModel) {
-        //fixme dont show success when completedDate is overdue
-        return Util.isNullOrUndefined(e.completedDate) ? "outline-primary" :
+        return e.completedDate == null ? "outline-primary" :
             Util.cmp(e.completedDate, e.deadlineDate) > 0 ? "outline-warning" : "outline-success";
     }
 
@@ -96,17 +96,17 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                 <tr key={e.id}>
                     <td>{e.eventName}</td>
                     <td style={{backgroundColor: getColor(e)}}>
-                        {Util.isNullOrUndefined(e.completedDate) ? "":Util.formatDate(e.completedDate!)}
+                        {e.completedDate == null ? "":Util.formatDate(e.completedDate!)}
                     </td>
                     <td>{Util.formatDate(e.deadlineDate!)}</td>
                     <td>{e.eventDescription}</td>
                     <td className={"text-center"}>
                         <Button
                             variant={getCompletedButtonVariant(e)}
-                            disabled={!Util.isNullOrUndefined(e.completedDate)}
+                            disabled={e.completedDate != null}
                             onClick={updateTimelineEvent(e)}
                         >
-                            {Util.isNullOrUndefined(e.completedDate)
+                            {e.completedDate == null
                                 ? <BiCheck className={"d-flex"} size={25}/>
                                 : Util.cmp(e.completedDate, e.deadlineDate) > 0
                                     ? <BiCheckboxMinus className={"d-flex"} size={25}/>
