@@ -2,12 +2,12 @@ package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
 import isel.casciffo.casciffospringbackend.exceptions.InvalidProtocolId
 import isel.casciffo.casciffospringbackend.exceptions.ResourceNotFoundException
+import isel.casciffo.casciffospringbackend.proposals.finance.protocol.comments.ProtocolCommentsRepository
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.Date
 
 @Service
 class ProtocolServiceImpl(

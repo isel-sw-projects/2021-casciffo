@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
+import isel.casciffo.casciffospringbackend.proposals.finance.protocol.comments.ProtocolComments
 import java.time.LocalDateTime
-import java.util.Date
 
 data class ProtocolDTO(
     var id: Int? = null,

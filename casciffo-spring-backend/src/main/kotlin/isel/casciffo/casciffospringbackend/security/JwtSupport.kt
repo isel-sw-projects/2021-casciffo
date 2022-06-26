@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.security
 
+import io.jsonwebtoken.Header
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import isel.casciffo.casciffospringbackend.common.*
@@ -21,7 +22,7 @@ class BearerToken(val value: String) : AbstractAuthenticationToken(AuthorityUtil
 class JwtSupport {
 
     /**
-     * Enconded with HS512
+     * Encoded with HS512
      */
     private val key =
         Keys.hmacShaKeyFor(
@@ -31,6 +32,7 @@ class JwtSupport {
 
     fun generate(username: String): BearerToken {
         val builder = Jwts.builder()
+            .setHeaderParam("typ", Header.JWT_TYPE)
             .setSubject(username)
             .setIssuedAt(Date())
             .setIssuer(tokenIssuer)

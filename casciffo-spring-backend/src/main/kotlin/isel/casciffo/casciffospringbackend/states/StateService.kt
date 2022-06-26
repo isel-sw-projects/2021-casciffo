@@ -7,4 +7,5 @@ interface StateService {
     suspend fun findNextState(stateId: Int): Flow<State>
     suspend fun findById(stateId: Int): State
     suspend fun findAll(): Flow<State>
+    suspend fun findStateChainByType(type: StateType): Flow<State>
 }

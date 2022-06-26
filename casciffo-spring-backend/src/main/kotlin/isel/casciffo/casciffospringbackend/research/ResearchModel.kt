@@ -12,8 +12,6 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.Date
 
 @Table("clinical_research")
 data class ResearchModel (

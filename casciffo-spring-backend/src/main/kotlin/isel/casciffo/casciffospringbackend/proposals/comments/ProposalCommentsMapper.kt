@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
-import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.users.UserDTO
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.beans.factory.annotation.Autowired

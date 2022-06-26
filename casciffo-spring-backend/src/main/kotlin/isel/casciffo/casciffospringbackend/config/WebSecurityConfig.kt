@@ -5,14 +5,13 @@ import isel.casciffo.casciffospringbackend.common.FINANCE_AUTHORITY
 import isel.casciffo.casciffospringbackend.common.SUPERUSER_AUTHORITY
 import isel.casciffo.casciffospringbackend.common.UIC_AUTHORITY
 import isel.casciffo.casciffospringbackend.endpoints.*
+import isel.casciffo.casciffospringbackend.exceptions.CustomAuthenticationDeniedHandler
+import isel.casciffo.casciffospringbackend.exceptions.CustomAuthenticationEntryPoint
 import isel.casciffo.casciffospringbackend.security.JwtAuthenticationManager
 import isel.casciffo.casciffospringbackend.security.JwtServerAuthenticationConverter
-import kotlinx.coroutines.reactor.mono
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
@@ -21,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache
 import org.springframework.stereotype.Component
 
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component
 @Component
 
 @Configuration
-@EnableWebFluxSecurity
+//@EnableWebFluxSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig {
 
@@ -41,7 +41,9 @@ class WebSecurityConfig {
     fun springSecurityFilterChain(
         converter: JwtServerAuthenticationConverter,
         http: ServerHttpSecurity,
-        authManager: JwtAuthenticationManager
+        authManager: JwtAuthenticationManager,
+        authEntryPoint: CustomAuthenticationEntryPoint,
+        authExceptionHandler: CustomAuthenticationDeniedHandler
     ): SecurityWebFilterChain {
 
         val filter = AuthenticationWebFilter(authManager)
@@ -53,15 +55,12 @@ class WebSecurityConfig {
             .requestCache()
             .requestCache(NoOpServerRequestCache.getInstance())
             .and()
+            .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
             //handling default unauthorized exception, show the user that auth is made with Bearer token
             .exceptionHandling()
-            .authenticationEntryPoint { exchange, _ ->
-                mono {
-                    exchange.response.statusCode = HttpStatus.UNAUTHORIZED
-                    exchange.response.headers.set(HttpHeaders.WWW_AUTHENTICATE, "Bearer")
-                    null
-                }
-            }
+            // configure response body, see https://stackoverflow.com/questions/45211431/webexceptionhandler-how-to-write-a-body-with-spring-webflux
+            .authenticationEntryPoint(authEntryPoint)
+            .accessDeniedHandler(authExceptionHandler)
             .and()
             .authorizeExchange()
             .pathMatchers(HttpMethod.GET, ENDPOINTS_URL).permitAll()
@@ -73,6 +72,7 @@ class WebSecurityConfig {
             .logout().disable()
             .csrf().disable()
 
+        statesRoutesAuth(http)
         usersRoutesAuth(http)
         rolesRoutesAuth(http)
         constantsRoutesAuth(http)
@@ -82,11 +82,18 @@ class WebSecurityConfig {
         return http.build()
     }
 
+    private fun statesRoutesAuth(http: ServerHttpSecurity) {
+        http
+            .authorizeExchange()
+            .pathMatchers(HttpMethod.GET, STATES_URL, STATES_CHAIN_TYPE_URL).authenticated()
+    }
+
     private fun usersRoutesAuth(http: ServerHttpSecurity) {
         http
             .authorizeExchange()
             .pathMatchers(HttpMethod.POST, LOGIN_URL, REGISTER_URL).permitAll()
-            .pathMatchers(HttpMethod.GET, USERS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.GET, USERS_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, USER_DETAIL_URL).hasAuthority(SUPERUSER_AUTHORITY)
             .pathMatchers(USER_DETAIL_URL, USER_SEARCH_URL).authenticated()
     }
 
@@ -94,15 +101,15 @@ class WebSecurityConfig {
         http
             .authorizeExchange()
             .pathMatchers(HttpMethod.GET, ROLES_URL).permitAll()
-            .pathMatchers(HttpMethod.POST, ROLES_URL).hasAnyAuthority(SUPERUSER_AUTHORITY)
-            .pathMatchers(HttpMethod.DELETE, ROLES_URL).hasAnyAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.POST, ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
     }
 
     private fun constantsRoutesAuth(http: ServerHttpSecurity) {
         http
             .authorizeExchange()
             .pathMatchers(HttpMethod.GET, CONSTANTS_URL).permitAll()
-            .pathMatchers(HttpMethod.POST, "$CONSTANTS_URL/*").hasAnyAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.POST, "$CONSTANTS_URL/*").hasAuthority(SUPERUSER_AUTHORITY)
     }
 
     private fun proposalRoutesAuth(http: ServerHttpSecurity) {

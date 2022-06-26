@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.research
 
-import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaService
 import isel.casciffo.casciffospringbackend.research.finance.ResearchFinanceService
@@ -9,7 +8,7 @@ import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesRepository
 import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
-import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
+import isel.casciffo.casciffospringbackend.states.StateType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
@@ -32,7 +31,7 @@ class ResearchServiceImpl(
     @Autowired val participantService: ParticipantService
 ): ResearchService {
 
-    override suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchModel> {
+    override suspend fun getAllResearchesByType(type: isel.casciffo.casciffospringbackend.proposals.ResearchType): Flow<ResearchModel> {
         return researchRepository.findAllByType(type).asFlow().map(this::loadRelations)
     }
 
@@ -71,7 +70,7 @@ class ResearchServiceImpl(
 
         if(hasStateTransitioned) {
             stateTransitionService
-                .newTransition(existingResearch.stateId!!, researchModel.stateId!!, TransitionType.RESEARCH, researchModel.id!!)
+                .newTransition(existingResearch.stateId!!, researchModel.stateId!!, StateType.RESEARCH, researchModel.id!!)
         }
         return researchRepository.save(researchModel).awaitFirstOrNull() ?: throw Exception("Idk what happened bro ngl")
     }

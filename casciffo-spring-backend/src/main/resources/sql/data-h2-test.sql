@@ -1,5 +1,5 @@
 -- ROLES
-INSERT INTO roles(role_name) VALUES ('SUPERUSER'), ('CA'), ('UIC'), ('FINANCE');
+INSERT INTO roles(role_name) VALUES ('SUPERUSER'), ('CA'), ('UIC'), ('FINANCE'), ('JURIDICAL');
 
 -- USERS
 INSERT INTO user_account(user_name, user_email, user_password)
@@ -29,25 +29,67 @@ INSERT INTO states(state_name)
            ('COMPLETO'),
            ('ATIVO');
 
+--TYPES OF STATES
+INSERT INTO type_of_states(state_id, state_type)
+    VALUES (1, 'FINANCE_PROPOSAL'),     --SUBMETIDO
+           (1, 'PROPOSAL'),             --SUBMETIDO
+           (1, 'ADDENDA'),              --SUBMETIDO
+           (2, 'FINANCE_PROPOSAL'),     --NEGOCIACAO_DE_CF
+           (3, 'FINANCE_PROPOSAL'),     --VALIDACAO_INTERNA_DEPARTMENTS
+           (4, 'PROPOSAL'),             --VALIDACAO_EXTERNA
+           (5, 'FINANCE_PROPOSAL'),     --SUBMISSAO_AO_CA
+           (6, 'PROPOSAL'),             --VALIDAO_INTERNA_CA
+           (6, 'ADDENDA'),              --VALIDAO_INTERNA_CA
+           (7, 'PROPOSAL'),             --VALIDADO
+           (7, 'ADDENDA'),              --VALIDADO
+           (8, 'ALL'),                  --CANCELADO
+           (9, 'ENSAIO'),               --COMPLETO
+           (10, 'ENSAIO');              --ATIVO
+
 --LINK STATES WITH ROLES
 INSERT INTO state_roles(state_id, role_id)
-    VALUES (1, 3),
-           (1, 1),
-           (2, 3),
-           (2, 1),
-           (3, 4),
-           (3, 1),
-           (4, 3),
-           (4, 1),
-           (5, 3),
-           (5, 1),
-           (6, 2),
-           (6, 1),
-           (7, 1),
-           (8, 1),
-           (9, 1),
-           (10, 2),
-           (10, 1);
+    VALUES (1, 3),                      --SUBMETIDO                         UIC
+           (1, 1),                      --SUBMETIDO                         SUPERUSER
+           (2, 3),                      --NEGOCIACAO_DE_CF                  UIC
+           (2, 1),                      --NEGOCIACAO_DE_CF                  SUPERUSER
+           (3, 1),                      --VALIDACAO_INTERNA_DEPARTMENTS     SUPERUSER
+           (3, 4),                      --VALIDACAO_INTERNA_DEPARTMENTS     FINANCE
+           (3, 5),                      --VALIDACAO_INTERNA_DEPARTMENTS     JURIDICAL
+           (4, 3),                      --VALIDACAO_EXTERNA                 UIC
+           (4, 1),                      --VALIDACAO_EXTERNA                 SUPERUSER
+           (5, 3),                      --SUBMISSAO_AO_CA                   UIC
+           (5, 1),                      --SUBMISSAO_AO_CA                   SUPERUSER
+           (6, 2),                      --VALIDAO_INTERNA_CA                CA
+           (6, 1),                      --VALIDAO_INTERNA_CA                SUPERUSER
+           (7, 1),                      --VALIDADO                          SUPERUSER
+           (8, 1),                      --CANCELADO                         SUPERUSER
+           (9, 1),                      --COMPLETO                          SUPERUSER
+           (10, 3),                     --ATIVO                             UIC
+           (10, 1);                     --ATIVO                             SUPERUSER
+
+--NEXT STATES
+INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, terminal_state)
+VALUES
+    --FINANCE PROPOSAL
+    (1, 2, 'FINANCE_PROPOSAL', FALSE),
+    (2, 3, 'FINANCE_PROPOSAL', FALSE),
+    (3, 4, 'FINANCE_PROPOSAL', FALSE),
+    (4, 5, 'FINANCE_PROPOSAL', FALSE),
+    (5, 6, 'FINANCE_PROPOSAL', FALSE),
+    (6, 7, 'FINANCE_PROPOSAL', FALSE),
+    --STUDY PROPOSAL
+    (1, 6, 'STUDY_PROPOSAL', FALSE),
+    (6, 7, 'STUDY_PROPOSAL', FALSE),
+    (7, NULL, 'STUDY_PROPOSAL', TRUE),
+    --ADDENDA
+    (1, 6, 'ADDENDA', FALSE),
+    (6, 7, 'ADDENDA', FALSE),
+    (7, NULL, 'ADDENDA', TRUE),
+    --ENSAIO
+    (10, 9, 'ENSAIO', FALSE),
+    (9, NULL, 'ENSAIO', TRUE),
+    --ALL
+    (8, NULL, 'ALL', TRUE);
 
 --SOME CONSTANTS
 INSERT INTO service(service_name) VALUES ('Cardiologia');
@@ -59,6 +101,10 @@ INSERT INTO
     proposal(state_id, pathology_id, service_id, therapeutic_area_id, sigla, principal_investigator_id, proposal_type)
     VALUES (1, 1, 1, 1,'APOLLO',1,'CLINICAL_TRIAL'),
            (1, 1, 1, 1,'Observações',1,'OBSERVATIONAL_STUDY');
+
+INSERT INTO
+    timeline_event (proposal_id, event_type, event_name, event_description, deadline_date, completed_date)
+    VALUES (1, 'DEADLINE', 'Testing overdue deadline routine', 'Title says it all', '2022-01-01');
 
 --INVESTIGATION TEAM
 INSERT INTO investigation_team(proposal_id, member_role, member_id) VALUES (1, 'PRINCIPAL', 1);
@@ -86,6 +132,7 @@ INSERT INTO partnerships(proposal_financial_id, icon_url, representative, email,
 
 --PROTOCOL
 INSERT INTO protocol(is_validated, validated_date, pfc_id) VALUES (FALSE, NULL, 1);
+
 
 --CLINICAL TRIALS
 INSERT INTO clinical_research(proposal_id, research_state_id, type)

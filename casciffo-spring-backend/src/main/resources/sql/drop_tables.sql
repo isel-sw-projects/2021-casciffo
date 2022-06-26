@@ -25,6 +25,7 @@ drop table if exists proposal;
 drop table if exists service;
 drop table if exists state_roles;
 drop table if exists next_possible_states;
+drop table if exists type_of_states;
 drop table if exists states;
 drop table if exists pathology;
 drop table if exists therapeutic_area;

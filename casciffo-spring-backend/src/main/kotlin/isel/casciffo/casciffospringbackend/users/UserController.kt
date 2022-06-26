@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.users
 
-import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.security.JwtDTO
 import kotlinx.coroutines.flow.Flow

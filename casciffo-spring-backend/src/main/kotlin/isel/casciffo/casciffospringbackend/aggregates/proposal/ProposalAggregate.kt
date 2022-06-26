@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.Date
 
 data class ProposalAggregate (
     //proposal

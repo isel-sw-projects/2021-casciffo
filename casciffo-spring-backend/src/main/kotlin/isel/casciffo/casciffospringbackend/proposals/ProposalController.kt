@@ -1,9 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.Mapper
-import isel.casciffo.casciffospringbackend.endpoints.PROPOSALS_URL
-import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_TRANSITION_URL
-import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_URL
+import isel.casciffo.casciffospringbackend.mappers.Mapper
+import isel.casciffo.casciffospringbackend.endpoints.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,6 +44,38 @@ class ProposalController(
 
     @PutMapping(PROPOSAL_TRANSITION_URL)
     suspend fun transitionProposalState(
+        @PathVariable(required = true) proposalId: Int,
+        @RequestParam(required = true) forward: Boolean
+    ): ProposalDTO {
+        val res = service.advanceState(proposalId, forward)
+        return mapper.mapModelToDTO(res)
+    }
+    @PutMapping(PROPOSAL_TRANSITION_SUPERUSER_URL)
+    suspend fun superuserTransitionProposalState(
+        @PathVariable(required = true) proposalId: Int,
+        @RequestParam(required = true) forward: Boolean
+    ): ProposalDTO {
+        val res = service.advanceState(proposalId, forward)
+        return mapper.mapModelToDTO(res)
+    }
+    @PutMapping(PROPOSAL_TRANSITION_UIC_URL)
+    suspend fun uicTransitionProposalState(
+        @PathVariable(required = true) proposalId: Int,
+        @RequestParam(required = true) forward: Boolean
+    ): ProposalDTO {
+        val res = service.advanceState(proposalId, forward)
+        return mapper.mapModelToDTO(res)
+    }
+    @PutMapping(PROPOSAL_TRANSITION_FINANCE_URL)
+    suspend fun financeTransitionProposalState(
+        @PathVariable(required = true) proposalId: Int,
+        @RequestParam(required = true) forward: Boolean
+    ): ProposalDTO {
+        val res = service.advanceState(proposalId, forward)
+        return mapper.mapModelToDTO(res)
+    }
+    @PutMapping(PROPOSAL_TRANSITION_CA_URL)
+    suspend fun caTransitionProposalState(
         @PathVariable(required = true) proposalId: Int,
         @RequestParam(required = true) forward: Boolean
     ): ProposalDTO {

@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend
+package isel.casciffo.casciffospringbackend.mappers
 
 interface Mapper<Model, DTO> {
     suspend fun mapDTOtoModel(dto: DTO?): Model

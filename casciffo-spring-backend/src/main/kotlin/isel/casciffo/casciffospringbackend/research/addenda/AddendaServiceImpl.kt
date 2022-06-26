@@ -2,7 +2,7 @@ package isel.casciffo.casciffospringbackend.research.addenda
 
 import isel.casciffo.casciffospringbackend.states.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
-import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
+import isel.casciffo.casciffospringbackend.states.StateType
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -26,7 +26,7 @@ class AddendaServiceImpl(
 
         if(hasStateTransitioned) {
             stateTransitionService
-                .newTransition(existingAddenda.stateId!!, addenda.stateId!!, TransitionType.ADDENDA, addenda.id!!)
+                .newTransition(existingAddenda.stateId!!, addenda.stateId!!, StateType.ADDENDA, addenda.id!!)
         }
 
         return addendaRepository.save(addenda).awaitFirstOrNull() ?: throw Exception("Idk what happened bro ngl")

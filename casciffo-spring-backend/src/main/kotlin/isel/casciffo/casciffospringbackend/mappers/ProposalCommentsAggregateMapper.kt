@@ -1,6 +1,6 @@
-package isel.casciffo.casciffospringbackend.aggregates.comments
+package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.aggregates.comments.ProposalCommentsAggregate
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.stereotype.Component

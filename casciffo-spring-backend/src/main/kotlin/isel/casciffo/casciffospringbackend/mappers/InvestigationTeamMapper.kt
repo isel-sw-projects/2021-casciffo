@@ -1,6 +1,7 @@
-package isel.casciffo.casciffospringbackend.investigation_team
+package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamDTO
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.users.UserDTO
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.beans.factory.annotation.Autowired

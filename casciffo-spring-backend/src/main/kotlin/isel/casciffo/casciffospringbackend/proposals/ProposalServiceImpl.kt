@@ -1,30 +1,24 @@
 package isel.casciffo.casciffospringbackend.proposals
 
-import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregateRepo
 import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
-import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
-import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialService
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventRepository
 import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchService
-import isel.casciffo.casciffospringbackend.roles.RoleRepository
 import isel.casciffo.casciffospringbackend.states.StateService
 import isel.casciffo.casciffospringbackend.states.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
-import isel.casciffo.casciffospringbackend.states.transitions.TransitionType
-import isel.casciffo.casciffospringbackend.users.UserRepository
+import isel.casciffo.casciffospringbackend.states.StateType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
@@ -54,7 +48,7 @@ class ProposalServiceImpl(
 )
     : ProposalService {
 
-    override suspend fun getAllProposals(type: ResearchType): Flow<ProposalModel> {
+    override suspend fun getAllProposals(type: isel.casciffo.casciffospringbackend.proposals.ResearchType): Flow<ProposalModel> {
         return proposalAggregateRepo.findAllByType(type).asFlow().map(proposalAggregateMapper::mapDTOtoModel)
     }
 
@@ -128,6 +122,7 @@ class ProposalServiceImpl(
     }
 
 
+    //TODO ADVANCE STATE TO NEXT GIVEN STATE
     @Transactional
     override suspend fun advanceState(proposalId: Int, forward: Boolean): ProposalModel {
         val prop = getProposalById(proposalId)
@@ -152,7 +147,7 @@ class ProposalServiceImpl(
 
         if (nextLocalState.isCompleted()) {
             val stateAtivo = stateService.findByName(States.ATIVO.name)
-            val researchModel = ResearchModel(null, existingProposal.id, stateAtivo.id)
+            val researchModel = ResearchModel(proposalId = existingProposal.id, stateId = stateAtivo.id)
             researchService.createResearch(researchModel)
         }
 
@@ -160,8 +155,11 @@ class ProposalServiceImpl(
             updateTimelineEvent(existingProposal, nextLocalState.name)
         }
 
+        val transitionType: StateType = if(existingProposal.type === ResearchType.CLINICAL_TRIAL) StateType.FINANCE_PROPOSAL
+        else StateType.STUDY_PROPOSAL
+
         stateTransitionService
-            .newTransition(existingProposal.stateId!!, nextState.id!!, TransitionType.PROPOSAL, existingProposal.id!!)
+            .newTransition(existingProposal.stateId!!, nextState.id!!, transitionType, existingProposal.id!!)
 
         existingProposal.stateId = nextState.id
         existingProposal.lastUpdated = LocalDateTime.now()

@@ -18,11 +18,14 @@ data class State(
     @Column(value = "state_name")
     var name: String? = null,
 
-    @Transient
-    @Value("null")
-    var roles: Flux<Role>? = null,
+    @Column(value = "state_type")
+    var type: StateType? = null,
 
     @Transient
     @Value("null")
-    var nextStates: Flux<State>? = null
+    var roles: Flux<String>? = null,
+
+    @Transient
+    @Value("null")
+    var nextStates: Flux<StateCoreInfo>? = null
 )

@@ -49,9 +49,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
-import java.time.Instant
 import java.time.LocalDate
-import java.util.Date
 
 @ActiveProfiles(value = ["test"])
 @SpringBootTest
@@ -248,7 +246,7 @@ class CasciffoSpringBackendApplicationTests(
     fun testResearchRepositoryCreate() {
         val researchModel = ResearchModel(
             null, 1, 1, "eudra_ct", 10, 20, "cro",
-            Date(), null, null, "industry", "protocol",
+            LocalDate.now(), null, null, "industry", "protocol",
             "promotor", "1 | 4", ResearchType.CLINICAL_TRIAL
         )
         runBlocking {

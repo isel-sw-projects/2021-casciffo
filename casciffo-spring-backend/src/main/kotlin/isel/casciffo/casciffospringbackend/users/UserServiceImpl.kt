@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -66,16 +66,18 @@ class UserServiceImpl(
     @Transactional
     override suspend fun registerUser(userModel: UserModel): BearerTokenWrapper {
         userModel.password = encoder.encode(userModel.password)
+        val p = BCryptPasswordEncoder()
+
         val user = userRepository.save(userModel).awaitSingleOrNull()
                 ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
 
-        val roles = userRolesRepo
+        userRolesRepo
             .saveAll(
                 userModel.roles!!
                     .map {
                         UserRoles(user_id = user.userId, role_id = it.roleId)
                     }
-            ).collectList().awaitSingle()
+            ).subscribe()
         return BearerTokenWrapper(jwtSupport.generate(user.email!!), user.userId!!)
     }
 
@@ -90,7 +92,7 @@ class UserServiceImpl(
     }
 
     private suspend fun loadRelations(userModel: UserModel): UserModel {
-        //publisher is used during mapping to DTO
+        //value is used during mapping to DTO
         userModel.roles = roleService.findByUserId(userModel.userId!!)
         return userModel
     }

@@ -1,7 +1,7 @@
-package isel.casciffo.casciffospringbackend.proposals.finance.protocol
+package isel.casciffo.casciffospringbackend.mappers
 
-import io.netty.handler.ssl.ApplicationProtocolConfig.Protocol
-import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
+import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolDTO
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toFlux

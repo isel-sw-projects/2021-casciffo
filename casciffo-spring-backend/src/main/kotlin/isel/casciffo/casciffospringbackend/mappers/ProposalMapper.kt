@@ -1,17 +1,15 @@
-package isel.casciffo.casciffospringbackend.proposals
+package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.Mapper
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamDTO
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
+import isel.casciffo.casciffospringbackend.proposals.ProposalDTO
+import isel.casciffo.casciffospringbackend.proposals.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponentDTO
-import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
-import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolDTO
 import isel.casciffo.casciffospringbackend.users.UserDTO
 import isel.casciffo.casciffospringbackend.users.UserModel
-import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

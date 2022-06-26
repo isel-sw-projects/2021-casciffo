@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.security
 
+import isel.casciffo.casciffospringbackend.exceptions.InvalidBearerTokenException
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.reactor.mono
 import org.springframework.security.authentication.ReactiveAuthenticationManager
@@ -20,7 +21,7 @@ class JwtAuthenticationManager(
             .filter { auth -> auth is BearerToken }
             .cast(BearerToken::class.java)
             .flatMap { jwt -> mono { validate(jwt) } }
-            .onErrorMap { error -> InvalidBearerToken(error.message) }
+            .onErrorMap { error -> InvalidBearerTokenException(error.message) }
     }
 
     private suspend fun validate(token: BearerToken): Authentication {

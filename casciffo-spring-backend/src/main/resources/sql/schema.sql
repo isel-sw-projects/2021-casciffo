@@ -21,8 +21,8 @@ CREATE TABLE IF NOT EXISTS user_roles (
     user_id INT NOT NULL,
     role_id INT NOT NULL,
     UNIQUE (user_id, role_id),
-    CONSTRAINT fk_ur_user_id FOREIGN KEY(user_id) REFERENCES user_account(user_id),
-    CONSTRAINT fk_ur_role_id FOREIGN KEY(role_id) REFERENCES roles(role_id)
+    CONSTRAINT fk_ur_user_id FOREIGN KEY(user_id) REFERENCES user_account(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ur_role_id FOREIGN KEY(role_id) REFERENCES roles(role_id) ON DELETE CASCADE
 );
 
 
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS user_notification (
     title VARCHAR NOT NULL,
     description TEXT NOT NULL,
     viewed BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_notified_user FOREIGN KEY(notified_user) REFERENCES user_account(user_id)
+    CONSTRAINT fk_notified_user FOREIGN KEY(notified_user) REFERENCES user_account(user_id) ON DELETE CASCADE
 );
 
 
@@ -45,17 +45,28 @@ CREATE TABLE IF NOT EXISTS state_roles (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     state_id INT NOT NULL,
     role_id INT NOT NULL,
-    CONSTRAINT fk_state_id FOREIGN KEY (state_id) REFERENCES states(state_id),
-    CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(role_id)
+    CONSTRAINT fk_state_id FOREIGN KEY (state_id) REFERENCES states(state_id) ON DELETE CASCADE,
+    CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS type_of_states (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    state_id INT NOT NULL,
+    state_type VARCHAR NOT NULL,
+    UNIQUE (state_id, state_type),
+    CONSTRAINT fk_tos_state_id FOREIGN KEY (state_id) REFERENCES states(state_id) ON DELETE CASCADE
 );
 
 
 CREATE TABLE IF NOT EXISTS next_possible_states (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     origin_state_id INT NOT NULL,
-    next_state_id INT NOT NULL,
-    CONSTRAINT fk_origin_state FOREIGN KEY (origin_state_id) REFERENCES states(state_id),
-    CONSTRAINT fk_possible_state_id FOREIGN KEY (next_state_id) REFERENCES states(state_id)
+    next_state_id INT,
+    terminal_state BOOLEAN DEFAULT FALSE,
+    state_type VARCHAR NOT NULL,
+    CONSTRAINT check_validity CHECK ( NOT (next_state_id IS NULL AND terminal_state = FALSE) ),
+    CONSTRAINT fk_origin_state FOREIGN KEY (origin_state_id) REFERENCES states(state_id) ON DELETE CASCADE,
+    CONSTRAINT fk_possible_state_id FOREIGN KEY (next_state_id) REFERENCES states(state_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS state_transition (
@@ -157,8 +168,7 @@ CREATE TABLE IF NOT EXISTS timeline_event (
     days_over_due INT DEFAULT 0,
     is_associated_to_state BOOLEAN DEFAULT FALSE,
     state_name VARCHAR,
-    CONSTRAINT  fk_te_proposal_id FOREIGN KEY(proposal_id)
-        REFERENCES proposal(proposal_id) ON DELETE CASCADE
+    CONSTRAINT  fk_te_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE
 );
 
 ---------------------------------------------------------------------------------------
@@ -171,8 +181,7 @@ CREATE TABLE IF NOT EXISTS investigation_team (
     member_role VARCHAR(50) NOT NULL,
     member_id INT NOT NULL,
     CONSTRAINT fk_it_member FOREIGN KEY (member_id) REFERENCES user_account(user_id),
-    CONSTRAINT fk_it_proposal FOREIGN KEY (proposal_id)
-        REFERENCES proposal(proposal_id) ON DELETE CASCADE
+    CONSTRAINT fk_it_proposal FOREIGN KEY (proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE
 );
 
 
@@ -203,7 +212,8 @@ CREATE TABLE IF NOT EXISTS protocol (
     is_validated BOOLEAN DEFAULT FALSE,
     validated_date DATE,
     pfc_id INT,
-    CONSTRAINT fk_protocol_pfc_id FOREIGN KEY (pfc_id) REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE
+    CONSTRAINT fk_protocol_pfc_id FOREIGN KEY (pfc_id)
+        REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS protocol_comments (
@@ -304,9 +314,7 @@ CREATE TABLE IF NOT EXISTS research_participants (
     research_id INT,
     join_date TIMESTAMP DEFAULT NOW(),
     --PRIMARY KEY (participant_id, research_id),
-    CONSTRAINT fk_rp_research_id FOREIGN KEY(research_id)
-        REFERENCES clinical_research(research_id)
-        ON DELETE CASCADE,
+    CONSTRAINT fk_rp_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
     CONSTRAINT fk_rp_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
 );
 

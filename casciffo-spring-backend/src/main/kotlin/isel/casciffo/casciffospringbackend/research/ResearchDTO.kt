@@ -6,8 +6,6 @@ import isel.casciffo.casciffospringbackend.research.patients.Participant
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.Date
 
 data class ResearchDTO(
     var id: Int? = null,

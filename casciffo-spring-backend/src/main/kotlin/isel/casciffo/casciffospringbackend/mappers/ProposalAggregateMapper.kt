@@ -1,6 +1,6 @@
-package isel.casciffo.casciffospringbackend.aggregates.proposal
+package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.Mapper
+import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
 import isel.casciffo.casciffospringbackend.promoter.Promoter
 import isel.casciffo.casciffospringbackend.proposals.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology

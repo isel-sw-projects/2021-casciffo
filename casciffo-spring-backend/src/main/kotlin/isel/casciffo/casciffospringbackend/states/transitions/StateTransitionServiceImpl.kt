@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
 import isel.casciffo.casciffospringbackend.states.StateService
+import isel.casciffo.casciffospringbackend.states.StateType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
@@ -8,7 +9,6 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.util.Date
 
 @Service
 class StateTransitionServiceImpl(
@@ -18,7 +18,7 @@ class StateTransitionServiceImpl(
     override suspend fun newTransition(
         oldStateId: Int,
         newStateId: Int,
-        transitionType: TransitionType,
+        stateType: StateType,
         referenceId: Int
     ): Boolean {
         val stateTransition =
@@ -27,7 +27,7 @@ class StateTransitionServiceImpl(
                 , oldStateId
                 , newStateId
                 , LocalDateTime.now()
-                , transitionType
+                , stateType
                 , referenceId
             )
         stateTransitionRepository.save(stateTransition).awaitFirstOrNull() ?: return false

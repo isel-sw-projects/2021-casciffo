@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.research
 
 import isel.casciffo.casciffospringbackend.endpoints.*
+import isel.casciffo.casciffospringbackend.mappers.ResearchMapper
 import isel.casciffo.casciffospringbackend.proposals.ResearchType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities

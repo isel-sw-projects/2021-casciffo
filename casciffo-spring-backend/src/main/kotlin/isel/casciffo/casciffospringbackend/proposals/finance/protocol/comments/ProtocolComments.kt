@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals.finance.protocol
+package isel.casciffo.casciffospringbackend.proposals.finance.protocol.comments
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id

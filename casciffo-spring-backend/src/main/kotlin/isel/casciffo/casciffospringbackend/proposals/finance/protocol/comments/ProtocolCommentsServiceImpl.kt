@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals.finance.protocol
+package isel.casciffo.casciffospringbackend.proposals.finance.protocol.comments
 
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
