@@ -95,6 +95,7 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.GET, USERS_URL).hasAuthority(SUPERUSER_AUTHORITY)
             .pathMatchers(HttpMethod.DELETE, USER_DETAIL_URL).hasAuthority(SUPERUSER_AUTHORITY)
             .pathMatchers(USER_DETAIL_URL, USER_SEARCH_URL).authenticated()
+            .pathMatchers(HttpMethod.PUT, USER_ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
     }
 
     private fun rolesRoutesAuth(http: ServerHttpSecurity) {
@@ -102,7 +103,7 @@ class WebSecurityConfig {
             .authorizeExchange()
             .pathMatchers(HttpMethod.GET, ROLES_URL).permitAll()
             .pathMatchers(HttpMethod.POST, ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
-            .pathMatchers(HttpMethod.DELETE, ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, ROLE_DELETE_URL).hasAuthority(SUPERUSER_AUTHORITY)
     }
 
     private fun constantsRoutesAuth(http: ServerHttpSecurity) {

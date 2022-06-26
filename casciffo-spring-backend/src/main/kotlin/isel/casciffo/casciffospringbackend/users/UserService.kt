@@ -1,13 +1,10 @@
 package isel.casciffo.casciffospringbackend.users
 
 
-import isel.casciffo.casciffospringbackend.security.BearerToken
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
-import isel.casciffo.casciffospringbackend.security.JwtDTO
 import kotlinx.coroutines.flow.Flow
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface UserService: ReactiveUserDetailsService {
@@ -21,4 +18,5 @@ interface UserService: ReactiveUserDetailsService {
     suspend fun loginUser(userModel: UserModel): BearerTokenWrapper
 
     suspend fun deleteUser(userId: Int): UserModel
+    suspend fun updateUserRoles(roles: List<Int>, userId: Int)
 }

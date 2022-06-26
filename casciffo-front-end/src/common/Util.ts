@@ -73,6 +73,14 @@ const HEADER_AUTHORIZATION = (token: string) => ['Authorization', token]
 
 
 
+function checkAndRaiseError(rsp: Response): Response {
+    if(!rsp.ok) {
+        //TODO RAISE ERROR
+        throw {status: rsp.status, path: rsp.url}
+    }
+    return rsp
+}
+
 function _httpFetch<T>(
     url: string,
     method: string,
@@ -92,7 +100,9 @@ function _httpFetch<T>(
     if(body != null) {
         opt.body = JSON.stringify(body)
     }
-    return fetch(url, opt).then(rsp => rsp.json())
+    return fetch(url, opt)
+        .then(checkAndRaiseError)
+        .then(rsp => rsp.json())
 }
 
 export function httpGet<T>(url: string, token: string | undefined = undefined) : Promise<T> {

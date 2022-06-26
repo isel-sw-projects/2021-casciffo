@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.users
 
 
-import isel.casciffo.casciffospringbackend.aggregates.user.UserRoles
-import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesRepo
+import isel.casciffo.casciffospringbackend.users.user_roles.UserRoles
+import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
 import isel.casciffo.casciffospringbackend.roles.RoleService
@@ -52,6 +52,10 @@ class UserServiceImpl(
         return deletedUser
     }
 
+    override suspend fun updateUserRoles(roles: List<Int>, userId: Int) {
+        userRolesRepo.saveAll(roles.map { UserRoles(userId = userId, roleId = it) }).subscribe()
+    }
+
     override suspend fun getAllUsers(): Flow<UserModel?> {
         return userRepository.findAll().asFlow().onEach(this::loadRelations)
     }
@@ -66,18 +70,10 @@ class UserServiceImpl(
     @Transactional
     override suspend fun registerUser(userModel: UserModel): BearerTokenWrapper {
         userModel.password = encoder.encode(userModel.password)
-        val p = BCryptPasswordEncoder()
 
         val user = userRepository.save(userModel).awaitSingleOrNull()
                 ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
 
-        userRolesRepo
-            .saveAll(
-                userModel.roles!!
-                    .map {
-                        UserRoles(user_id = user.userId, role_id = it.roleId)
-                    }
-            ).subscribe()
         return BearerTokenWrapper(jwtSupport.generate(user.email!!), user.userId!!)
     }
 

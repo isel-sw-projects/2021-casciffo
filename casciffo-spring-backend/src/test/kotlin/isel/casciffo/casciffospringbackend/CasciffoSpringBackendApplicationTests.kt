@@ -4,8 +4,8 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Encoders
 import io.jsonwebtoken.security.Keys
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregateRepo
-import isel.casciffo.casciffospringbackend.aggregates.user.UserRoles
-import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesRepo
+import isel.casciffo.casciffospringbackend.users.user_roles.UserRoles
+import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigatorRole

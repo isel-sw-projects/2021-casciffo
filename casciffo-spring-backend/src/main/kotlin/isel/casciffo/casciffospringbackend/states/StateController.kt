@@ -21,7 +21,7 @@ class StateController(
     }
 
     @GetMapping(STATES_CHAIN_TYPE_URL)
-    suspend fun getChainForType(@PathVariable(required = true) chainType: StateType): Flow<StateDTO> {
+    suspend fun git(@PathVariable(required = true) chainType: StateType): Flow<StateDTO> {
         return stateService.findStateChainByType(chainType).map(mapper::mapModelToDTO)
     }
 }

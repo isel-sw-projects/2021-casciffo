@@ -12,6 +12,16 @@
 				{
 					"name": "all users",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -27,6 +37,49 @@
 					"response": []
 				},
 				{
+					"name": "login superuser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json()\r",
+									"pm.environment.set(\"superuser_jwt\", jsonData.token)\r",
+									"pm.environment.set(\"created_superuser_id\", jsonData.userId)"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"email\":\"casciffo.admin@admin.pt\",\r\n\t\"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/users/login",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "register new user",
 					"event": [
 						{
@@ -34,8 +87,8 @@
 							"script": {
 								"exec": [
 									"let jsonData = pm.response.json()\r",
-									"pm.environment.set(\"jwt\", jsonData.token)\r",
-									"pm.environment.set(\"created_user_id\", jsonData.userId)"
+									"pm.environment.set(\"uic_jwt\", jsonData.token)\r",
+									"pm.environment.set(\"created_uic_user_id\", jsonData.userId)"
 								],
 								"type": "text/javascript"
 							}
@@ -46,7 +99,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"name\":\"Mohammed Christ\",\r\n\t\"password\": \"123456\",\r\n\t\"email\": \"biggest.religion@crossover.com\",\r\n\t\"roles\": [{\r\n\t\t\"roleId\": {{superuser_role_id}}\r\n\t}]\r\n}",
+							"raw": "{\r\n\t\"name\":\"UIC man\",\r\n\t\"password\": \"123456\",\r\n\t\"email\": \"fan.da.uic.@casciffo.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -74,7 +127,8 @@
 							"script": {
 								"exec": [
 									"let jsonData = pm.response.json()\r",
-									"pm.environment.set(\"jwt\", jsonData.token)"
+									"pm.environment.set(\"uic_jwt\", jsonData.token)\r",
+									"pm.environment.set(\"created_uic_user_id\", jsonData.userId)"
 								],
 								"type": "text/javascript"
 							}
@@ -88,7 +142,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n\t\"email\":\"biggest.religion@crossover.com\",\r\n\t\"password\": \"123456\"\r\n}",
+							"raw": "{\r\n\t\"email\":\"fan.da.uic.@casciffo.com\",\r\n\t\"password\": \"123456\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -109,18 +163,150 @@
 					"response": []
 				},
 				{
-					"name": "delete created user",
+					"name": "give uic role to new user",
 					"request": {
-						"method": "DELETE",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[{{uic_role_id}}]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{localhost}}/users/{{created_user_id}}",
+							"raw": "{{localhost}}/users/{{created_uic_user_id}}/roles",
 							"host": [
 								"{{localhost}}"
 							],
 							"path": [
 								"users",
-								"{{created_user_id}}"
+								"{{created_uic_user_id}}",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/users/{{created_uic_user_id}}",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"users",
+								"{{created_uic_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete created uic user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/users/{{created_uic_user_id}}",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"users",
+								"{{created_uic_user_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete user with expired jwt",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{expired_jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/users/{{created_superuser_id}}",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"users",
+								"{{created_superuser_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete user with uic jwt",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{uic_jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/users/{{created_superuser_id}}",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"users",
+								"{{created_superuser_id}}"
 							]
 						}
 					},
@@ -134,6 +320,16 @@
 				{
 					"name": "create service",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -161,6 +357,16 @@
 				{
 					"name": "create pathology",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -188,6 +394,16 @@
 				{
 					"name": "create therapeutic area",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -216,7 +432,16 @@
 					"name": "constants",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/constants",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"constants"
+							]
+						}
 					},
 					"response": []
 				}
@@ -240,6 +465,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{uic_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -412,6 +647,83 @@
 							],
 							"cookie": [],
 							"body": "[\n    {\n        \"id\": 4,\n        \"dateCreated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"lastUpdated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"sigla\": \"APOLLO\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 12,\n        \"serviceTypeId\": 2,\n        \"therapeuticAreaId\": 2,\n        \"pathologyId\": 2,\n        \"principalInvestigatorId\": 9,\n        \"state\": {\n            \"id\": 12,\n            \"name\": \"SUBMETIDO\",\n            \"ownerId\": 11,\n            \"owner\": null\n        },\n        \"serviceType\": {\n            \"id\": 2,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 2,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 2,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 9,\n            \"name\": \"admin\",\n            \"email\": \"admin@admin.pt\",\n            \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n            \"roleId\": 9,\n            \"role\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"promoterId\": 1,\n            \"financialContractId\": 1,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"PFIZER\",\n                \"email\": \"pfizer.no.more.@covid.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"An amazing partnership\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                    \"siteUrl\": \"https://www.example.com/\",\n                    \"representative\": \"ze manel\",\n                    \"email\": \"ze.manel@home.pt\",\n                    \"phoneContact\": \"923722883\",\n                    \"description\": null\n                }\n            ],\n            \"protocol\": null\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
+						},
+						{
+							"name": "all proposals",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{localhost}}/proposals?type={{proposal_trial_type}}",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{proposal_trial_type}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "transfer-encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1 ; mode=block"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "no-referrer"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"id\": 1,\n        \"dateCreated\": \"2022-06-21\",\n        \"lastUpdated\": \"2022-06-21T18:15:27.684208\",\n        \"sigla\": \"Pfizer\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 1,\n        \"serviceTypeId\": 1,\n        \"therapeuticAreaId\": 1,\n        \"pathologyId\": 1,\n        \"principalInvestigatorId\": 2,\n        \"state\": {\n            \"id\": 1,\n            \"name\": \"SUBMETIDO\",\n            \"roles\": null,\n            \"nextStates\": null\n        },\n        \"serviceType\": {\n            \"id\": 1,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 1,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 1,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 2,\n            \"name\": \"admin\",\n            \"email\": \"casciffo.admin@admin.pt\",\n            \"password\": null,\n            \"roles\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 1,\n            \"promoterId\": 1,\n            \"financialContractId\": null,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"Universo\",\n                \"email\": \"promoter.universo@hotmail.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"Goggle\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://media.flaticon.com/dist/min/img/favicon.ico\",\n                    \"siteUrl\": \"Goggle.com\",\n                    \"representative\": \"Homem do leme\",\n                    \"email\": \"goggle.man@goggle.com\",\n                    \"phoneContact\": \"123456789\",\n                    \"description\": \"Goggle is independent from Google, it is its own site and enterprise.\"\n                }\n            ],\n            \"protocol\": {\n                \"id\": null,\n                \"validatedDate\": null,\n                \"financialComponentId\": null,\n                \"comments\": null,\n                \"validated\": false\n            }\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
 						}
 					]
 				},
@@ -423,7 +735,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt}}",
+									"value": "{{uic_jwt}}",
 									"type": "string"
 								}
 							]
@@ -519,8 +831,33 @@
 				{
 					"name": "create proposal",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{uic_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"sigla\": \"Pfizer\",\r\n    \"type\": \"CLINICAL_TRIAL\" ,\r\n    \"stateId\": 1 ,\r\n    \"serviceTypeId\": 1 ,\r\n    \"therapeuticAreaId\": 1 ,\r\n    \"pathologyId\": 1 ,\r\n    \"principalInvestigatorId\": 2 ,\r\n    \"financialComponent\": {\r\n\t\t\"promoter\": {\r\n\t\t\t\"name\": \"Universo\",\r\n\t\t\t\"email\": \"promoter.universo@hotmail.com\",\r\n\t\t\t\"promoterType\": \"COMMERCIAL\"\r\n\t\t},\r\n\t\t\"partnerships\": [{\r\n\t\t\t\t\"name\": \"Goggle\",\r\n\t\t\t\t\"iconUrl\": \"https://media.flaticon.com/dist/min/img/favicon.ico\",\r\n\t\t\t\t\"siteUrl\":\"Goggle.com\",\r\n\t\t\t\t\"representative\": \"Homem do leme\",\r\n\t\t\t\t\"email\": \"goggle.man@goggle.com\",\r\n\t\t\t\t\"phoneContact\": \"123456789\",\r\n\t\t\t\t\"description\": \"Goggle is independent from Google, it is its own site and enterprise.\"\r\n\t\t}]\r\n\t},\r\n    \"investigationTeam\": [{\r\n\t\t\t\"memberRole\": \"PRINCIPAL\",\r\n\t\t\t\"memberId\": 2\r\n\t}]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{localhost}}/proposals",
 							"host": [
@@ -734,6 +1071,9 @@
 									"\tif (r.roleName === 'SUPERUSER') {\r",
 									"\t\tpm.environment.set('superuser_role_id', r.roleId);\r",
 									"\t}\r",
+									"\telse if (r.roleName === 'UIC') {\r",
+									"\t\tpm.environment.set('uic_role_id', r.roleId);\r",
+									"\t}\r",
 									"}"
 								],
 								"type": "text/javascript"
@@ -770,6 +1110,16 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -796,6 +1146,16 @@
 				{
 					"name": "delete mock role",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -814,7 +1174,67 @@
 			]
 		},
 		{
-			"name": "Echo",
+			"name": "States",
+			"item": [
+				{
+					"name": "all states",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{uic_jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/states",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"states"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "all states for proposal flow",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{superuser_jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/states/finance_proposal",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"states",
+								"finance_proposal"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Endpoints",
 			"event": [
 				{
 					"listen": "test",
@@ -830,14 +1250,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://postman-echo.com/get",
-					"protocol": "https",
+					"raw": "{{localhost}}/",
 					"host": [
-						"postman-echo",
-						"com"
+						"{{localhost}}"
 					],
 					"path": [
-						"get"
+						""
 					]
 				}
 			},

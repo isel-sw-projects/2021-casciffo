@@ -16,6 +16,7 @@ const val USERS_URL = "/users"
 const val LOGIN_URL = "$USERS_URL/login"
 const val REGISTER_URL = "$USERS_URL/register"
 const val USER_DETAIL_URL = "$USERS_URL/{userId}"
+const val USER_ROLES_URL = "$USER_DETAIL_URL/roles"
 const val USER_SEARCH_URL = "$USERS_URL/search"
 
 

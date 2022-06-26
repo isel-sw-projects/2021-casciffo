@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -30,10 +31,16 @@ class UserController(
         return JwtDTO(tokenWrapper.token.value, tokenWrapper.userId)
     }
 
+    @PutMapping(USER_ROLES_URL)
+    suspend fun updateUserRoles(@RequestBody(required = true) roles: List<Int>, @PathVariable userId: Int): ResponseEntity<Unit> {
+        service.updateUserRoles(roles, userId)
+        return ResponseEntity.ok().build()
+    }
+
 
     @GetMapping(USER_DETAIL_URL)
-    suspend fun getUser(@PathVariable userId : Int): UserModel? {
-        return service.getUser(userId, loadDetails = true)
+    suspend fun getUser(@PathVariable userId : Int): UserDTO? {
+        return mapper.mapModelToDTO(service.getUser(userId, loadDetails = true))
     }
 
     @GetMapping(USERS_URL)

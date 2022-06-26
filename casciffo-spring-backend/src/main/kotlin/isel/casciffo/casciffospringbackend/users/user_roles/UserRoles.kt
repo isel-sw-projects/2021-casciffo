@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.aggregates.user
+package isel.casciffo.casciffospringbackend.users.user_roles
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
@@ -7,6 +7,6 @@ import org.springframework.data.relational.core.mapping.Table
 data class UserRoles (
     @Id
     var id: Int? = null,
-    var user_id: Int? = null,
-    var role_id: Int? = null
+    var userId: Int? = null,
+    var roleId: Int? = null
 )
