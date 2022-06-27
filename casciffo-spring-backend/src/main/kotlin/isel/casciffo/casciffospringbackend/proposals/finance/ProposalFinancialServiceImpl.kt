@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.finance
 
-import isel.casciffo.casciffospringbackend.promoter.PromoterRepository
+import isel.casciffo.casciffospringbackend.proposals.finance.promoter.PromoterRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolService
 import kotlinx.coroutines.flow.Flow
@@ -23,9 +23,6 @@ class ProposalFinancialServiceImpl(
 
     @Transactional
     override suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): ProposalFinancialComponent {
-        //assure id is null and not default 0 for entity creation
-        pfc.id = null
-
         verifyAndCreatePromoter(pfc)
 
         val createdPfc = proposalFinancialRepository.save(pfc).awaitSingle()
@@ -54,10 +51,13 @@ class ProposalFinancialServiceImpl(
     private suspend fun verifyAndCreatePromoter(pfc: ProposalFinancialComponent) {
         if (pfc.proposalId == null) throw IllegalArgumentException("Proposal Id must not be null here!!!")
         if (pfc.promoter == null && pfc.promoterId == null) throw IllegalArgumentException("Promoter must not be null here!!!")
-        if (pfc.promoterId == null) {
+        val promoter = promoterRepository.findByEmail(pfc.promoter!!.email!!).awaitSingleOrNull()
+        if (promoter == null) {
             pfc.promoter = promoterRepository.save(pfc.promoter!!).awaitSingle()
-            pfc.promoterId = pfc.promoter!!.id!!
+        } else {
+            pfc.promoter = promoter
         }
+        pfc.promoterId = pfc.promoter!!.id!!
     }
 
     override suspend fun findComponentByProposalId(pid: Int, loadProtocol: Boolean): ProposalFinancialComponent {

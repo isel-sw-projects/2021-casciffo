@@ -1,5 +1,9 @@
 package isel.casciffo.casciffospringbackend.roles
 
 enum class Roles {
-    UIC,CA,FINANCE,SUPERUSER
+      SUPERUSER
+    , CA
+    , UIC
+    , FINANCE
+    , JURIDICAL
 }

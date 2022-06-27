@@ -23,7 +23,7 @@ class ProposalCommentsServiceImpl(
         if(comment.proposalId == null) {
             throw IllegalArgumentException("ProposalId cannot be null!!!")
         }
-        comment.dateCreated = LocalDateTime.now()
+
         return repository.save(comment)
             .map {
                 it.author = comment.author
@@ -43,9 +43,9 @@ class ProposalCommentsServiceImpl(
                     .map(mapper::mapDTOtoModel)
     }
 
-    override suspend fun getCommentsByType(proposalId: Int, type: String, page: Pageable): Flow<ProposalComments> {
+    override suspend fun getCommentsByType(proposalId: Int, type: CommentType, page: Pageable): Flow<ProposalComments> {
         return aggregateRepo
-            .findByProposalIdAndCommentType(proposalId, CommentType.valueOf(type), page.pageNumber, page.pageSize)
+            .findByProposalIdAndCommentType(proposalId, type, page.pageNumber, page.pageSize)
             .asFlow()
             .map(mapper::mapDTOtoModel)
     }

@@ -18,9 +18,6 @@ data class State(
     @Column(value = "state_name")
     var name: String? = null,
 
-    @Column(value = "state_type")
-    var type: StateType? = null,
-
     @Transient
     @Value("null")
     var roles: Flux<String>? = null,

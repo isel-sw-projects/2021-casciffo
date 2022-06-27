@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.proposals
 
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.endpoints.*
+import isel.casciffo.casciffospringbackend.roles.Roles
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
@@ -35,51 +36,57 @@ class ProposalController(
     @PatchMapping(PROPOSAL_URL)
     suspend fun updateProposal(
         @PathVariable(required = true) proposalId: Int,
-        @RequestBody(required = true) proposal: ProposalDTO
+        @RequestBody(required = true) proposal: ProposalDTO,
     ): ProposalDTO {
         val p = mapper.mapDTOtoModel(proposal)
         val res = service.updateProposal(p)
         return mapper.mapModelToDTO(res)
     }
 
-    @PutMapping(PROPOSAL_TRANSITION_URL)
-    suspend fun transitionProposalState(
-        @PathVariable(required = true) proposalId: Int,
-        @RequestParam(required = true) forward: Boolean
-    ): ProposalDTO {
-        val res = service.advanceState(proposalId, forward)
-        return mapper.mapModelToDTO(res)
-    }
     @PutMapping(PROPOSAL_TRANSITION_SUPERUSER_URL)
     suspend fun superuserTransitionProposalState(
         @PathVariable(required = true) proposalId: Int,
-        @RequestParam(required = true) forward: Boolean
+        @RequestParam(required = true) nextStateId: Int
     ): ProposalDTO {
-        val res = service.advanceState(proposalId, forward)
-        return mapper.mapModelToDTO(res)
+        return transitionState(proposalId, nextStateId, Roles.SUPERUSER)
     }
     @PutMapping(PROPOSAL_TRANSITION_UIC_URL)
     suspend fun uicTransitionProposalState(
         @PathVariable(required = true) proposalId: Int,
-        @RequestParam(required = true) forward: Boolean
+        @RequestParam(required = true) nextStateId: Int
     ): ProposalDTO {
-        val res = service.advanceState(proposalId, forward)
-        return mapper.mapModelToDTO(res)
+        return transitionState(proposalId, nextStateId, Roles.UIC)
     }
-    @PutMapping(PROPOSAL_TRANSITION_FINANCE_URL)
+    @PutMapping(PROPOSAL_FINANCE_VALIDATION_URL)
     suspend fun financeTransitionProposalState(
         @PathVariable(required = true) proposalId: Int,
-        @RequestParam(required = true) forward: Boolean
+        @RequestParam(required = true) nextStateId: Int
     ): ProposalDTO {
-        val res = service.advanceState(proposalId, forward)
-        return mapper.mapModelToDTO(res)
+        return transitionState(proposalId, nextStateId, Roles.FINANCE)
     }
+
+    @PutMapping(PROPOSAL_JURIDICAL_VALIDATION_URL)
+    suspend fun juridicalTransitionProposalState(
+        @PathVariable(required = true) proposalId: Int,
+        @RequestParam(required = true) nextStateId: Int
+    ): ProposalDTO {
+        return transitionState(proposalId, nextStateId, Roles.JURIDICAL)
+    }
+
     @PutMapping(PROPOSAL_TRANSITION_CA_URL)
     suspend fun caTransitionProposalState(
         @PathVariable(required = true) proposalId: Int,
-        @RequestParam(required = true) forward: Boolean
+        @RequestParam(required = true) nextStateId: Int
     ): ProposalDTO {
-        val res = service.advanceState(proposalId, forward)
+        return transitionState(proposalId, nextStateId, Roles.CA)
+    }
+
+    private suspend fun transitionState(
+        proposalId: Int,
+        nextStateId: Int,
+        role: Roles
+    ): ProposalDTO {
+        val res = service.transitionState(proposalId, nextStateId, role)
         return mapper.mapModelToDTO(res)
     }
 

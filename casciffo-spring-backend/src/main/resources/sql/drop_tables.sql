@@ -1,3 +1,13 @@
+--TRIGGERS
+DROP TRIGGER IF EXISTS t_update_last_modified ON proposal_comments;
+drop trigger if exists t_validate_comment on proposal_comments;
+drop trigger if exists t_update_last_modified on proposal;
+
+--FUNCTIONS
+drop function if exists f_update_last_modified_column;
+drop function if exists f_validate_comment;
+
+--TABLES
 drop table if exists user_notification;
 drop table if exists proposal_files;
 drop table if exists proposal_comments;

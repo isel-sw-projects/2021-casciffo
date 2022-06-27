@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals
 
+import isel.casciffo.casciffospringbackend.roles.Roles
 import kotlinx.coroutines.flow.Flow
 
 interface ProposalService {
@@ -8,5 +9,5 @@ interface ProposalService {
     suspend fun create(proposal: ProposalModel) : ProposalModel
     suspend fun updateProposal(proposal: ProposalModel) : ProposalModel
     suspend fun deleteProposal(proposalId: Int): ProposalModel
-    suspend fun advanceState(proposalId: Int, forward: Boolean): ProposalModel
+    suspend fun transitionState(proposalId: Int, nextStateId: Int, role: Roles): ProposalModel
 }

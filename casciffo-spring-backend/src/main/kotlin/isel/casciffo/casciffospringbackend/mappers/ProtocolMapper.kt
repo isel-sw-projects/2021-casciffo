@@ -13,7 +13,6 @@ class ProtocolMapper : Mapper<ProposalProtocol, ProtocolDTO> {
         else ProposalProtocol(
             id = dto.id,
             financialComponentId = dto.financialComponentId,
-            comments = dto.comments?.toFlux(),
             isValidated = dto.isValidated,
             validatedDate = dto.validatedDate
         )
@@ -24,7 +23,6 @@ class ProtocolMapper : Mapper<ProposalProtocol, ProtocolDTO> {
         else ProtocolDTO(
             id = model.id,
             financialComponentId = model.financialComponentId,
-            comments = model.comments?.collectList()?.awaitSingleOrNull(),
             isValidated = model.isValidated,
             validatedDate = model.validatedDate
         )

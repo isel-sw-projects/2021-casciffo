@@ -2,12 +2,14 @@ package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_PROTOCOL_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_PROTOCOL_VALIDATION_URL
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class ProtocolController(
-    @Autowired val service: ProtocolService, @Autowired val mapper: Mapper<ProposalProtocol, ProtocolDTO>
+    @Autowired val service: ProtocolService,
+    @Autowired val mapper: Mapper<ProposalProtocol, ProtocolDTO>
 ) {
 
     @GetMapping(PROPOSAL_PROTOCOL_URL)
@@ -16,13 +18,19 @@ class ProtocolController(
         return mapper.mapModelToDTO(protocol)
     }
 
+//    @PutMapping(PROPOSAL_PROTOCOL_URL)
+//    suspend fun updateProtocol(
+//        @PathVariable proposalId: Int,
+//        @PathVariable pfcId: Int,
+//        @RequestBody body: ProtocolDTO
+//    ): ProtocolDTO {
+//        val protocol = mapper.mapDTOtoModel(body)
+//        return mapper.mapModelToDTO(service.updateProtocol(protocol))
+//    }
+
     @PutMapping(PROPOSAL_PROTOCOL_URL)
     suspend fun updateProtocol(
         @PathVariable proposalId: Int,
-        @PathVariable pfcId: Int,
-        @RequestBody body: ProtocolDTO
-    ): ProtocolDTO {
-        val protocol = mapper.mapDTOtoModel(body)
-        return mapper.mapModelToDTO(service.updateProtocol(protocol))
-    }
+        @RequestBody
+    )
 }

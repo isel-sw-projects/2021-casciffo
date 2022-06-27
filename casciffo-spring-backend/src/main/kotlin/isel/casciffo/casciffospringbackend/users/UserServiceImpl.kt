@@ -94,7 +94,7 @@ class UserServiceImpl(
     }
 
     /**
-     * This method pertain to spring security configuration
+     * This method is used by spring security
      * Currently passing the user email on the arg username, since username is not unique
      */
     override fun findByUsername(username: String?): Mono<UserDetails> {

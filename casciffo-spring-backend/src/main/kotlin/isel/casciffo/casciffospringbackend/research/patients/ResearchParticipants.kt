@@ -15,6 +15,5 @@ data class ResearchParticipants (
 
     var researchId: Int?,
 
-    @CreatedDate
     var joinDate: LocalDateTime
 )

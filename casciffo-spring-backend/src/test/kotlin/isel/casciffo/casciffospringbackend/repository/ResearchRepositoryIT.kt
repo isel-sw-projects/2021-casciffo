@@ -19,23 +19,6 @@ class ResearchRepositoryIT(
     @Autowired val therapeuticAreaRepository: TherapeuticAreaRepository,
 ) {
 
-    //todo maybe tie up tests better to run smoother and only execute some statements once
-    @BeforeAll
-    fun setup() {
-        //set up constants
-
-
-//        //set up proposal
-//        val proposal = ProposalModel(null, "sigla2", ResearchType.CLINICAL_TRIAL,
-//            Date.now(), Date.now(), 1, 1,1,1,
-//            1,
-//            investigationTeam = listOf(InvestigationTeam(null,0, InvestigatorRole.PRINCIPAL,1,null)),
-//            financialComponent = ProposalFinancialComponent(null, null, 1, 1, null, null)
-//        )
-//        val res = proposalRepository.save(proposal).block()
-
-    }
-
     @Test
     fun testResearchRepositoryCreate() {
 //        val research = Research(null, 1, 1, "eudra_ct", 10, 20, "cro",

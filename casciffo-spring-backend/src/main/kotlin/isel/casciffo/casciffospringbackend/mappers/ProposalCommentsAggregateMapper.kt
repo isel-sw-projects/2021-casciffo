@@ -14,8 +14,8 @@ class ProposalCommentsAggregateMapper : Mapper<ProposalComments, ProposalComment
             authorId = dto.authorId,
             commentType = dto.commentType,
             proposalId = dto.proposalId,
-            dateCreated = dto.dateCreated,
-            dateModified = dto.dateModified,
+            createdDate = dto.createdDate,
+            lastModified = dto.LastModified,
             content = dto.content,
             author = UserModel(
                 userId = dto.authorId,

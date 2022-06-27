@@ -42,8 +42,6 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -76,8 +74,6 @@ class CasciffoSpringBackendApplicationTests(
     @Autowired val userRolesRepo: UserRolesRepo
 ) {
 
-    val logger: Logger = LoggerFactory.getLogger(this.javaClass.simpleName)
-
     @Test
     fun genKeys() {
         for (index in 1..10) {
@@ -94,7 +90,7 @@ class CasciffoSpringBackendApplicationTests(
             .expectSubscription()
             .`as`("Test findAllByType expect no error in query")
             .consumeNextWith {
-                assert(it.dateCreated != null)
+                assert(it.createdDate != null)
                 assert(it.pathologyName != null)
                 assert(it.therapeuticAreaName != null)
                 assert(it.serviceName != null)
@@ -137,7 +133,6 @@ class CasciffoSpringBackendApplicationTests(
             .thenConsumeWhile {
                 if (it === null) return@thenConsumeWhile false
                 assert(listOf(userRole, userRole2).any { role -> role.roleName === it.roleName })
-                logger.debug("$it")
                 true
             }
             .expectComplete()
@@ -167,7 +162,6 @@ class CasciffoSpringBackendApplicationTests(
             .thenConsumeWhile {
                 if (it === null) return@thenConsumeWhile false
                 assert(listOf("hermelindo", "eric brown").contains(it.name))
-                logger.debug("$it")
                 true
             }
             .expectComplete()
@@ -176,8 +170,8 @@ class CasciffoSpringBackendApplicationTests(
         val users = usersFlux.collectList().block()
         val userRoles = userRolesRepo.saveAll(
             listOf(
-                UserRoles(user_id = users!![0].userId, role_id =  roles!![0].roleId),
-                UserRoles(user_id = users[1].userId, role_id = roles[1].roleId)
+                UserRoles(userId = users!![0].userId, roleId =  roles!![0].roleId),
+                UserRoles(userId = users[1].userId, roleId = roles[1].roleId)
             )
         )
 
@@ -186,8 +180,8 @@ class CasciffoSpringBackendApplicationTests(
             .expectSubscription()
             .`as`("Expect role association to users to be correct")
             .thenConsumeWhile {
-                assert(it.role_id != null)
-                assert(it.user_id != null)
+                assert(it.roleId != null)
+                assert(it.userId != null)
                 true
             }
             .expectComplete()
@@ -200,7 +194,6 @@ class CasciffoSpringBackendApplicationTests(
             .expectNextCount(1)
             .thenConsumeWhile {
                 assert(users[0].userId === it.userId)
-                logger.debug("$it")
                 true
             }
             .expectComplete()
@@ -226,7 +219,6 @@ class CasciffoSpringBackendApplicationTests(
             .consumeNextWith {
                 assert(it.id !== null)
                 proposal.id = it.id
-                logger.debug("$it was created properly")
             }
             .expectComplete()
             .verifyThenAssertThat()
@@ -290,7 +282,7 @@ class CasciffoSpringBackendApplicationTests(
                 .awaitSingleOrNull()
                 ?.let {
                     assert(it.id != null)
-                    logger.debug("$it created as expected.")
+                    null
                 }
         }
     }
@@ -331,7 +323,6 @@ class CasciffoSpringBackendApplicationTests(
                     assert(it.memberId == 1)
                     assert(res.financialComponent!!.id != null)
                     assert(res.financialComponent!!.protocol != null)
-                    logger.debug("Investigation team, FinancialComponent and Protocol was created alongside proposal as expected.")
                 }
                 .expectComplete()
                 .verifyThenAssertThat()
@@ -365,10 +356,6 @@ class CasciffoSpringBackendApplicationTests(
                     assert(it.financialComponent!!.id != null)
                     assert(it.financialComponent!!.promoter!!.id != null)
                     assert(it.financialComponent!!.partnerships != null)
-                    logger.debug(
-                        "ProposalService#findAll loaded complex " +
-                                "relationships:[financialComponent, Promoter, Partnerships] properly"
-                    )
                 }
                 .expectComplete()
                 .verifyThenAssertThat()

@@ -1,9 +1,6 @@
 package isel.casciffo.casciffospringbackend.config
 
-import isel.casciffo.casciffospringbackend.common.CA_AUTHORITY
-import isel.casciffo.casciffospringbackend.common.FINANCE_AUTHORITY
-import isel.casciffo.casciffospringbackend.common.SUPERUSER_AUTHORITY
-import isel.casciffo.casciffospringbackend.common.UIC_AUTHORITY
+import isel.casciffo.casciffospringbackend.common.*
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.exceptions.CustomAuthenticationDeniedHandler
 import isel.casciffo.casciffospringbackend.exceptions.CustomAuthenticationEntryPoint
@@ -12,8 +9,6 @@ import isel.casciffo.casciffospringbackend.security.JwtServerAuthenticationConve
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -29,7 +24,7 @@ import org.springframework.stereotype.Component
 
 @Configuration
 //@EnableWebFluxSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true) allows PreAuthorize()
 class WebSecurityConfig {
 
 
@@ -120,9 +115,10 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.POST, PROPOSALS_URL, PROPOSAL_EVENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.PATCH, PROPOSALS_URL, PROPOSAL_EVENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_CA_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, CA_AUTHORITY)
-            .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_FINANCE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, FINANCE_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_SUPERUSER_URL).hasAnyAuthority(SUPERUSER_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_UIC_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, PROPOSAL_FINANCE_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, FINANCE_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, PROPOSAL_JURIDICAL_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, JURIDICAL_AUTHORITY)
     }
 
     private fun researchRoutesAuth(http: ServerHttpSecurity) {

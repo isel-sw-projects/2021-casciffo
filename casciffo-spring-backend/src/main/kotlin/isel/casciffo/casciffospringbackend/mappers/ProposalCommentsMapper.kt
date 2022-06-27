@@ -1,6 +1,7 @@
-package isel.casciffo.casciffospringbackend.proposals.comments
+package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.mappers.Mapper
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
 import isel.casciffo.casciffospringbackend.users.UserDTO
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,8 +16,8 @@ class ProposalCommentsMapper(
             id = dto?.id,
             proposalId = dto?.proposalId,
             authorId = dto?.authorId,
-            dateCreated = dto?.dateCreated,
-            dateModified = dto?.dateModified,
+            createdDate = dto?.createdDate,
+            lastModified = dto?.lastModified,
             content = dto?.content,
             commentType = dto?.commentType,
             author = userMapper.mapDTOtoModel(dto?.author)
@@ -28,8 +29,8 @@ class ProposalCommentsMapper(
             id = model?.id,
             proposalId = model?.proposalId,
             authorId = model?.authorId,
-            dateCreated = model?.dateCreated,
-            dateModified = model?.dateModified,
+            createdDate = model?.createdDate,
+            lastModified = model?.lastModified,
             content = model?.content,
             commentType = model?.commentType,
             author = userMapper.mapModelToDTO(model?.author)

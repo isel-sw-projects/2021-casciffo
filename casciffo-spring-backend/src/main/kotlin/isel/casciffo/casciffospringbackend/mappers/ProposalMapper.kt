@@ -28,8 +28,8 @@ class ProposalMapper(
         return if(dto === null) return ProposalModel()
         else ProposalModel(
             id = dto.id,
-            dateCreated = dto.dateCreated,
-            lastUpdated = dto.lastUpdated,
+            createdDate = dto.createdDate,
+            lastModified = dto.lastModified,
             sigla = dto.sigla,
             type = dto.type,
             pathologyId = dto.pathologyId,
@@ -42,7 +42,7 @@ class ProposalMapper(
             state = dto.state,
             principalInvestigatorId = dto.principalInvestigatorId,
             principalInvestigator = userMapper.mapDTOtoModel(dto.principalInvestigator),
-            financialComponent = pfcMapper.mapDTOtoModel(dto.financialComponent),
+            financialComponent = pfcModelOrNull(dto.financialComponent),
             comments = dto.comments?.map{commentsMapper.mapDTOtoModel(it)}?.toFlux(),
             investigationTeam = dto.investigationTeam?.map{invTeamMapper.mapDTOtoModel(it)}?.toFlux(),
             stateTransitions = dto.stateTransitions?.toFlux(),
@@ -50,12 +50,22 @@ class ProposalMapper(
         )
     }
 
+    private suspend fun pfcModelOrNull(financialComponent: ProposalFinancialComponentDTO?): ProposalFinancialComponent? {
+        return if(financialComponent == null) null
+        else pfcMapper.mapDTOtoModel(financialComponent)
+    }
+
+    private suspend fun pfcDTOorNull(financialComponent: ProposalFinancialComponent?): ProposalFinancialComponentDTO? {
+        return if(financialComponent == null) null
+        else pfcMapper.mapModelToDTO(financialComponent)
+    }
+
     override suspend fun mapModelToDTO(model: ProposalModel?): ProposalDTO {
         return if(model === null) return ProposalDTO()
         else ProposalDTO(
             id = model.id,
-            dateCreated = model.dateCreated,
-            lastUpdated = model.lastUpdated,
+            createdDate = model.createdDate,
+            lastModified = model.lastModified,
             sigla = model.sigla,
             type = model.type,
             pathologyId = model.pathologyId,
@@ -68,7 +78,7 @@ class ProposalMapper(
             state = model.state,
             principalInvestigatorId = model.principalInvestigatorId,
             principalInvestigator = userMapper.mapModelToDTO(model.principalInvestigator),
-            financialComponent = pfcMapper.mapModelToDTO(model.financialComponent),
+            financialComponent = pfcDTOorNull(model.financialComponent),
             comments = model.comments?.collectList()?.awaitSingleOrNull()?.map { commentsMapper.mapModelToDTO(it) },
             investigationTeam = model.investigationTeam?.collectList()?.awaitSingleOrNull()?.map { invTeamMapper.mapModelToDTO(it) },
             stateTransitions = model.stateTransitions?.collectList()?.awaitSingleOrNull(),

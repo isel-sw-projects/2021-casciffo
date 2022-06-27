@@ -49,10 +49,7 @@ INSERT INTO type_of_states(state_id, state_type)
 --LINK STATES WITH ROLES
 INSERT INTO state_roles(state_id, role_id)
     VALUES (1, 3),                      --SUBMETIDO                         UIC
-           (1, 1),                      --SUBMETIDO                         SUPERUSER
            (2, 3),                      --NEGOCIACAO_DE_CF                  UIC
-           (2, 1),                      --NEGOCIACAO_DE_CF                  SUPERUSER
-           (3, 1),                      --VALIDACAO_INTERNA_DEPARTMENTS     SUPERUSER
            (3, 4),                      --VALIDACAO_INTERNA_DEPARTMENTS     FINANCE
            (3, 5),                      --VALIDACAO_INTERNA_DEPARTMENTS     JURIDICAL
            (4, 3),                      --VALIDACAO_EXTERNA                 UIC
@@ -60,15 +57,20 @@ INSERT INTO state_roles(state_id, role_id)
            (5, 3),                      --SUBMISSAO_AO_CA                   UIC
            (5, 1),                      --SUBMISSAO_AO_CA                   SUPERUSER
            (6, 2),                      --VALIDAO_INTERNA_CA                CA
-           (6, 1),                      --VALIDAO_INTERNA_CA                SUPERUSER
            (7, 1),                      --VALIDADO                          SUPERUSER
            (8, 1),                      --CANCELADO                         SUPERUSER
            (9, 1),                      --COMPLETO                          SUPERUSER
            (10, 3),                     --ATIVO                             UIC
-           (10, 1);                     --ATIVO                             SUPERUSER
+           (10, 1),                     --ATIVO                             SUPERUSER
+           (1, 1),                      --SUBMETIDO                         SUPERUSER
+           (2, 1),                      --NEGOCIACAO_DE_CF                  SUPERUSER
+           (3, 1),                      --VALIDACAO_INTERNA_DEPARTMENTS     SUPERUSER
+           (4, 1),                      --VALIDACAO_EXTERNA                 SUPERUSER
+           (5, 1),                      --SUBMISSAO_AO_CA                   SUPERUSER
+           (6, 1);                      --VALIDAO_INTERNA_CA                SUPERUSER
 
 --NEXT STATES
-INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, terminal_state)
+INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, is_terminal_state)
 VALUES
     --FINANCE PROPOSAL
     (1, 2, 'FINANCE_PROPOSAL', FALSE),

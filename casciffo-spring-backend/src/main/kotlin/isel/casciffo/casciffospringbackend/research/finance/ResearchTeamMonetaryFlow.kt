@@ -20,7 +20,6 @@ data class ResearchTeamMonetaryFlow(
     @Column("trial_financial_component_id")
     var financialComponentId: Int?,
 
-    @CreatedDate
     val transactionDate: LocalDateTime,
 
     val typeOfFlow: TypeOfMonetaryFlow,

@@ -18,7 +18,7 @@ class NonExistentProposalException : Exception()
 class NonExistentResourceException(reason: String) : Exception(reason)
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Attempted State transition is invalid.")
-class InvalidStateTransitionException : Exception()
+class InvalidStateTransitionException(s: String, throwable: Throwable? = null) : Exception(s, throwable)
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "Cannot update a cancelled proposal.")
 class CannotUpdateCancelledProposalException : Exception()
@@ -30,7 +30,7 @@ class ResourceNotFoundException(msg: String): Exception(msg)
 class ProposalNotFoundException: Exception()
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "State id doesn't exist.")
-class InvalidStateException: Exception()
+class InvalidStateException(s: String) : Exception()
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "ProtocolId specified doesnt exist.")
 class InvalidProtocolId: Exception()

@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.protocol
 
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.comments.ProtocolComments
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
@@ -15,11 +16,7 @@ data class ProposalProtocol(
     @Column("protocol_id")
     var id: Int? = null,
     var validatedDate: LocalDateTime? = null,
-    var isValidated: Boolean = false,
+    var isValidated: Boolean? = null,
     @Column("pfc_id")
     var financialComponentId: Int?=null,
-
-    @Transient
-    @Value("null")
-    var comments: Flux<ProtocolComments>? = null
 )

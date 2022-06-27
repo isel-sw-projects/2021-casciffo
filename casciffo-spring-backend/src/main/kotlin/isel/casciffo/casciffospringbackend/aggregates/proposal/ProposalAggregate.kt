@@ -12,8 +12,8 @@ data class ProposalAggregate (
     var proposalId: Int? = null,
     var sigla: String? = null,
     var proposalType: ResearchType? = null,
-    var dateCreated: LocalDate? = null,
-    var lastUpdated: LocalDateTime? = null,
+    var createdDate: LocalDate? = null,
+    var lastModified: LocalDateTime? = null,
 
     //state
     var stateId: Int? = null,
@@ -40,9 +40,14 @@ data class ProposalAggregate (
     var pfcId: Int? = null,
     var promoterId: Int? = null,
     var financialContractId: Int? = null,
-    var hasPartnerships: Boolean? = false,
+    var hasPartnerships: Boolean? = null,
 
     //promoter
     var promoterName: String? = null,
     var promoterEmail: String? = null,
+
+    //protocol
+    var protocolId: Int? = null,
+    var validatedDate: LocalDateTime? = null,
+    var isValidated: Boolean? = null,
 )

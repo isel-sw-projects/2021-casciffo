@@ -14,7 +14,7 @@ class PFCMapper(
     @Autowired val protocolMapper: Mapper<ProposalProtocol, ProtocolDTO>
 ): Mapper<ProposalFinancialComponent, ProposalFinancialComponentDTO> {
     override suspend fun mapDTOtoModel(dto: ProposalFinancialComponentDTO?): ProposalFinancialComponent {
-        return if (dto === null) ProposalFinancialComponent()
+        return if (dto == null) ProposalFinancialComponent()
         else ProposalFinancialComponent(
             id = dto.id,
             proposalId = dto.proposalId,
@@ -27,7 +27,7 @@ class PFCMapper(
     }
 
     override suspend fun mapModelToDTO(model: ProposalFinancialComponent?): ProposalFinancialComponentDTO {
-        return if (model === null) ProposalFinancialComponentDTO()
+        return if (model == null) ProposalFinancialComponentDTO()
         else ProposalFinancialComponentDTO(
             id = model.id,
             proposalId = model.proposalId,

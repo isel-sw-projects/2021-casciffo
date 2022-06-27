@@ -20,7 +20,6 @@ data class StateTransition(
     @Column("state_id_after")
     var newStateId: Int?,
 
-    @CreatedDate
     var transitionDate: LocalDateTime,
 
     var stateType: StateType,

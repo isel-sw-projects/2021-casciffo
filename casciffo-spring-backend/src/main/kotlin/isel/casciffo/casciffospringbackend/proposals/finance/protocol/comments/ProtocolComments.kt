@@ -6,6 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.Date
 
+//TODO TO DELETE
 @Table("protocol_comments")
 data class ProtocolComments (
     @Id
@@ -15,6 +16,5 @@ data class ProtocolComments (
     var authorName: String? = null,
     var orgName: String? = null,
     var validated: Boolean = false,
-    @CreatedDate
     var dateCreated: LocalDateTime? = null
 )

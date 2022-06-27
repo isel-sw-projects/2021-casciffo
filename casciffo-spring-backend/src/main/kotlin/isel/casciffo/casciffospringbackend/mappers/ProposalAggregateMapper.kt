@@ -1,12 +1,13 @@
 package isel.casciffo.casciffospringbackend.mappers
 
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
-import isel.casciffo.casciffospringbackend.promoter.Promoter
+import isel.casciffo.casciffospringbackend.proposals.finance.promoter.Promoter
 import isel.casciffo.casciffospringbackend.proposals.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
+import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
 import isel.casciffo.casciffospringbackend.states.State
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.stereotype.Component
@@ -19,8 +20,8 @@ class ProposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate> {
             id = dto.proposalId,
             sigla = dto.sigla,
             type = dto.proposalType,
-            dateCreated = dto.dateCreated,
-            lastUpdated = dto.lastUpdated,
+            createdDate = dto.createdDate,
+            lastModified = dto.lastModified,
             stateId = dto.stateId,
             serviceTypeId = dto.serviceId,
             therapeuticAreaId = dto.therapeuticAreaId,
@@ -35,13 +36,16 @@ class ProposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate> {
         )
     }
 
-    private fun mapPFC(dto: ProposalAggregate): ProposalFinancialComponent {
-        return ProposalFinancialComponent(
-            id = dto.pfcId,
-            proposalId = dto.proposalId,
-            promoterId = dto.promoterId,
-            financialContractId = dto.financialContractId,
-            promoter = Promoter(id = dto.promoterId, name = dto.promoterName, email= dto.promoterEmail)
+    private fun mapPFC(dto: ProposalAggregate): ProposalFinancialComponent? {
+        return if(dto.pfcId == null) null
+        else ProposalFinancialComponent(
+                id = dto.pfcId,
+                proposalId = dto.proposalId,
+                promoterId = dto.promoterId,
+                financialContractId = dto.financialContractId,
+                promoter = Promoter(id = dto.promoterId, name = dto.promoterName, email= dto.promoterEmail),
+                protocol = ProposalProtocol(id = dto.protocolId, isValidated = dto.isValidated,
+                validatedDate = dto.validatedDate, financialComponentId = dto.pfcId)
         )
     }
 

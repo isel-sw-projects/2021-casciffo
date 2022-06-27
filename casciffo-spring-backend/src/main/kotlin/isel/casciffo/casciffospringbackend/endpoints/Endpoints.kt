@@ -49,19 +49,24 @@ const val PROPOSAL_COMMENTS = "$PROPOSAL_URL/comments"
 
 val buildSingleCommentUrl = {id: Int -> "${PROPOSAL_URL}/comments/${id}"}
 
-//TODO link these role-based endpoints to advance certains parts of the state of a proposal
+//role-based endpoints to advance certains parts of the state of a proposal
 const val PROPOSAL_TRANSITION_URL = "$PROPOSAL_URL/state"
 const val PROPOSAL_TRANSITION_SUPERUSER_URL = "$PROPOSAL_TRANSITION_URL/superuser"
 const val PROPOSAL_TRANSITION_CA_URL = "$$PROPOSAL_TRANSITION_URL/ca"
 const val PROPOSAL_TRANSITION_UIC_URL = "$$PROPOSAL_TRANSITION_URL/uic"
-const val PROPOSAL_TRANSITION_FINANCE_URL = "$$PROPOSAL_TRANSITION_URL/finance"
+
+const val PROPOSAL_VALIDATION_URL = "$PROPOSALS_URL/validate"
+const val PROPOSAL_FINANCE_VALIDATION_URL = "$$PROPOSAL_VALIDATION_URL/finance"
+const val PROPOSAL_JURIDICAL_VALIDATION_URL = "$$PROPOSAL_VALIDATION_URL/juridical"
+const val PROPOSAL_PROTOCOL_VALIDATION_URL = "$PROPOSAL_VALIDATION_URL/protocol"
 
 const val PROPOSAL_EVENTS_URL = "$PROPOSAL_URL/events"
 
 const val PROPOSAL_COMPLETE_EVENTS_URL = "$PROPOSAL_EVENTS_URL/{eventId}" //?complete=true
+const val PROPOSAL_PROTOCOL_URL = "$PROPOSAL_URL/protocol"
+//const val PROPOSAL_PROTOCOL_URL = "$PROPOSAL_URL/pfc/{pfcId}/protocol"
 
-const val PROPOSAL_PROTOCOL_URL = "$PROPOSAL_URL/pfc/{pfcId}/protocol"
-
+//TODO TO DELETE SOON
 const val PROPOSAL_PROTOCOL_COMMENTS_URL = "$PROPOSAL_URL/pfc/{pfcId}/protocol-comments"
 
 /*********************************** RESEARCH ******************************************/

@@ -15,14 +15,14 @@ class ProposalCommentsController(
     suspend fun getAllCommentsByProposal
                 (
         @PathVariable proposalId: Int,
-        @RequestParam(defaultValue = "") t: String,
+        @RequestParam(defaultValue = "ALL") t: CommentType,
         @RequestParam(defaultValue = "20") n: Int,
         @RequestParam(defaultValue = "0") p: Int
     ):
             Flow<ProposalComments> {
-        val page = PageRequest.of(p, n, Sort.by("dateCreated").descending())
-        return if (t.isEmpty()) {
-            return commentsService.getComments(proposalId = proposalId, page)
+        val page = PageRequest.of(p, n, Sort.by("createdDate").descending())
+        return if (t == CommentType.ALL) {
+            commentsService.getComments(proposalId = proposalId, page)
         } else
             commentsService.getCommentsByType(
                 proposalId = proposalId,

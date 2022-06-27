@@ -16,7 +16,6 @@ data class ResearchMonetaryFlow(
     @Column("trial_financial_component_id")
     var researchFinancialComponentId: Int?,
 
-    @CreatedDate
     var transactionDate: LocalDateTime,
 
     var typeOfMonetaryFlow: TypeOfMonetaryFlow,

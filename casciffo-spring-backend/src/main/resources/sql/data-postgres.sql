@@ -81,7 +81,13 @@ $$
                (state_completo_id, superuser_role_id),
                (state_cancelado_id, superuser_role_id),
                (state_ativo_id, uic_role_id),
-               (state_ativo_id, superuser_role_id)
+               (state_ativo_id, superuser_role_id),
+               (state_submetido_id, superuser_role_id),
+               (state_negociacao_cf_id, superuser_role_id),
+               (state_validacao_interna_deps_id, superuser_role_id),
+               (state_validacao_externa_id, superuser_role_id),
+               (state_submissao_ao_ca_id, superuser_role_id),
+               (state_validacao_interna_ca_id, superuser_role_id)
         ON CONFLICT DO NOTHING;
 
         --STATE TYPES
@@ -107,7 +113,7 @@ $$
 
         --TODO DISCUSS TERMINAL STATE, ITS KINDA USELESS
         --NEXT STATES
-        INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, terminal_state)
+        INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, is_terminal_state)
         VALUES
                 --FINANCE PROPOSAL
                 (state_submetido_id, state_negociacao_cf_id, 'FINANCE_PROPOSAL', FALSE),
@@ -133,7 +139,7 @@ $$
 
                 --ALL
                 (state_cancelado_id, NULL, 'ALL', TRUE)
-        ON CONFLICT DO NOTHING;
+        ON CONFLICT(origin_state_id, next_state_id, state_type) DO NOTHING;
     END
 $$;
 

@@ -31,11 +31,11 @@ data class ProposalModel(
     @Column(value = "proposal_type")
     var type: ResearchType? = null,
 
-    @Column(value = "date_created")
-    var dateCreated: LocalDate? = null,
+    @Column(value = "created_date")
+    var createdDate: LocalDate? = null,
 
-    @Column(value = "last_update")
-    var lastUpdated: LocalDateTime? = null,
+    @Column(value = "last_modified")
+    var lastModified: LocalDateTime? = null,
 
     @Column(value = "state_id")
     var stateId: Int? = null,

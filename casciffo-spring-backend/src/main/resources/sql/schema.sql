@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS state_roles (
     CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
 );
 
+--FIXME KINDA USELESS MAY DELETE IN FUTURE
 CREATE TABLE IF NOT EXISTS type_of_states (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     state_id INT NOT NULL,
@@ -62,9 +63,10 @@ CREATE TABLE IF NOT EXISTS next_possible_states (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     origin_state_id INT NOT NULL,
     next_state_id INT,
-    terminal_state BOOLEAN DEFAULT FALSE,
+    is_terminal_state BOOLEAN DEFAULT FALSE,
     state_type VARCHAR NOT NULL,
-    CONSTRAINT check_validity CHECK ( NOT (next_state_id IS NULL AND terminal_state = FALSE) ),
+    CONSTRAINT unique_transition_type UNIQUE (origin_state_id, next_state_id, state_type),
+    CONSTRAINT check_validity CHECK ( NOT (next_state_id IS NULL AND is_terminal_state = FALSE) ),
     CONSTRAINT fk_origin_state FOREIGN KEY (origin_state_id) REFERENCES states(state_id) ON DELETE CASCADE,
     CONSTRAINT fk_possible_state_id FOREIGN KEY (next_state_id) REFERENCES states(state_id) ON DELETE CASCADE
 );
@@ -122,8 +124,8 @@ CREATE TABLE IF NOT EXISTS proposal (
     sigla VARCHAR NOT NULL,
     principal_investigator_id INT NOT NULL,
     proposal_type VARCHAR NOT NULL, --clinical trial / observational study
-    date_created TIMESTAMP DEFAULT NOW(),
-    last_update TIMESTAMP DEFAULT NOW(),
+    created_date TIMESTAMP DEFAULT NOW(),
+    last_modified TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_p_state_id FOREIGN KEY(state_id) REFERENCES states(state_id),
     CONSTRAINT fk_p_pathology_id FOREIGN KEY(pathology_id) REFERENCES pathology(pathology_id),
     CONSTRAINT fk_p_service_id FOREIGN KEY(service_id) REFERENCES service(service_id),
@@ -131,8 +133,6 @@ CREATE TABLE IF NOT EXISTS proposal (
 --     CONSTRAINT fk_protocol_state FOREIGN KEY(protocol_state_id) REFERENCES states(state_id),
     CONSTRAINT fk_p_principal_investigator FOREIGN KEY(principal_investigator_id) REFERENCES user_account(user_id)
 );
-
-
 
 CREATE TABLE IF NOT EXISTS proposal_files (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -148,8 +148,8 @@ CREATE TABLE IF NOT EXISTS proposal_comments (
     comment_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT NOT NULL,
     author_id INT NOT NULL,
-    date_created TIMESTAMP DEFAULT NOW(),
-    date_modified TIMESTAMP,
+    created_date TIMESTAMP DEFAULT NOW(),
+    last_modified TIMESTAMP,
     content TEXT NOT NULL,
     comment_type VARCHAR NOT NULL,
     CONSTRAINT fk_pc_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS promoter (
     promoter_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     promoter_name VARCHAR NOT NULL,
     promoter_type VARCHAR NOT NULL,
-    promoter_email VARCHAR NOT NULL
+    promoter_email VARCHAR NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS proposal_financial_component (
@@ -223,7 +223,7 @@ CREATE TABLE IF NOT EXISTS protocol_comments (
     author_name VARCHAR,
     org_name VARCHAR,
     validated BOOLEAN DEFAULT FALSE,
-    date_created DATE DEFAULT NOW(),
+    created_date DATE DEFAULT NOW(),
     CONSTRAINT fk_ptc_id FOREIGN KEY (protocol_id) REFERENCES protocol(protocol_id) ON DELETE CASCADE
 );
 
@@ -405,7 +405,58 @@ CREATE TABLE IF NOT EXISTS addenda (
     research_id INT NOT NULL,
     addenda_state_id INT NOT NULL,
     addenda_file_id INT NOT NULL,
+    created_date TIMESTAMP NOT NULL DEFAULT NOW(),
     CONSTRAINT fk_a_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
     CONSTRAINT fk_addenda_state FOREIGN KEY(addenda_state_id) REFERENCES states(state_id),
     CONSTRAINT fk_a_file_id FOREIGN KEY(addenda_file_id) REFERENCES files(file_id)
 );
+
+
+---------------------------------------------------------------------------------------
+--------------------------------------TRIGGERS-----------------------------------------
+---------------------------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION f_update_last_modified_column()
+    RETURNS TRIGGER AS $$
+BEGIN
+    NEW.last_modified = now();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+
+CREATE OR REPLACE FUNCTION f_validate_comment()
+    RETURNS TRIGGER AS $$
+DECLARE
+    notValid BOOLEAN;
+BEGIN
+    IF NEW.comment_type = 'PROTOCOL'
+    THEN
+        BEGIN
+            notValid := (SELECT CASE WHEN COUNT(P) > 0 THEN TRUE ELSE FALSE END
+                      FROM proposal P WHERE P.proposal_id=9 AND P.proposal_type='OBSERVATIONAL_STUDY');
+            IF notValid THEN
+                RAISE EXCEPTION 'Proposal with type OBSREVATIONAL_STUDY can''t have comments with type PROTOCOL.'
+                USING HINT = 'Don''t create PROTOCOL type comments on a proposal with type OBSREVATIONAL_STUDY' ;
+        END IF;
+    END;
+    END IF;
+
+    NEW.last_modified = now();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+
+DROP TRIGGER IF EXISTS t_update_last_modified ON proposal;
+CREATE TRIGGER t_update_last_modified BEFORE UPDATE ON proposal
+    FOR EACH ROW EXECUTE FUNCTION f_update_last_modified_column();
+
+
+DROP TRIGGER IF EXISTS t_update_last_modified ON proposal_comments;
+CREATE TRIGGER t_update_last_modified BEFORE UPDATE ON proposal_comments
+    FOR EACH ROW EXECUTE FUNCTION f_update_last_modified_column();
+
+DROP TRIGGER IF EXISTS t_validate_comment ON proposal_comments;
+CREATE TRIGGER t_validate_comment BEFORE INSERT ON proposal_comments
+    FOR EACH ROW EXECUTE FUNCTION f_validate_comment();

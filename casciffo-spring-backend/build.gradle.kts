@@ -24,6 +24,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
+	implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+
 	runtimeOnly("io.r2dbc:r2dbc-postgresql:0.8.12.RELEASE")
 	runtimeOnly("org.postgresql:postgresql:42.3.6")
 

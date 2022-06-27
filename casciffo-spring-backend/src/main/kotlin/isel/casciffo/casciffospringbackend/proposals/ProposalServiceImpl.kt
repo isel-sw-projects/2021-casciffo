@@ -15,6 +15,7 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventRepository
 import isel.casciffo.casciffospringbackend.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.ResearchService
+import isel.casciffo.casciffospringbackend.roles.Roles
 import isel.casciffo.casciffospringbackend.states.StateService
 import isel.casciffo.casciffospringbackend.states.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
@@ -30,8 +31,9 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.time.LocalDate
-import java.time.LocalDateTime
 @Service
 class ProposalServiceImpl(
     @Autowired val proposalRepository: ProposalRepository,
@@ -48,7 +50,7 @@ class ProposalServiceImpl(
 )
     : ProposalService {
 
-    override suspend fun getAllProposals(type: isel.casciffo.casciffospringbackend.proposals.ResearchType): Flow<ProposalModel> {
+    override suspend fun getAllProposals(type: ResearchType): Flow<ProposalModel> {
         return proposalAggregateRepo.findAllByType(type).asFlow().map(proposalAggregateMapper::mapDTOtoModel)
     }
 
@@ -108,8 +110,10 @@ class ProposalServiceImpl(
 
     @Transactional
     override suspend fun updateProposal(proposal: ProposalModel): ProposalModel {
-        proposalRepository.findById(proposal.id!!).awaitSingleOrNull() ?: throw ProposalNotFoundException()
-
+        val existingProposal = proposalRepository.findById(proposal.id!!).awaitSingleOrNull() ?: throw ProposalNotFoundException()
+        if (existingProposal.stateId != proposal.stateId) {
+            throw InvalidStateTransitionException("State transition not allowed here!")
+        }
         proposalRepository.save(proposal).awaitSingleOrNull() ?: throw Exception("Idk what happened bro ngl")
         return proposal
     }
@@ -121,70 +125,68 @@ class ProposalServiceImpl(
         return prop
     }
 
-
-    //TODO ADVANCE STATE TO NEXT GIVEN STATE
     @Transactional
-    override suspend fun advanceState(proposalId: Int, forward: Boolean): ProposalModel {
+    override suspend fun transitionState(proposalId: Int, nextStateId: Int, role: Roles): ProposalModel {
         val prop = getProposalById(proposalId)
-        return handleStateTransition(prop, forward)
+        return handleStateTransition(prop, nextStateId, role)
     }
 
-
     suspend fun handleStateTransition(
-        existingProposal: ProposalModel,
-        forward: Boolean
+        proposal: ProposalModel,
+        nextStateId: Int,
+        role: Roles
     ): ProposalModel {
 
-        val currStateName = stateService.findById(existingProposal.stateId!!).name!!
-        val currState = States.valueOf(currStateName)
-        val nextLocalState: States? = if(forward) currState.getNextState() else currState.getPrevState()
-        if(nextLocalState === null) throw InvalidStateTransitionException()
+        val currState = stateService.findById(proposal.stateId!!)
 
-        val nextState = stateService.findByName(nextLocalState.name)
-
-        if (!currState.isNextStateValid(nextLocalState))
-            throw InvalidStateTransitionException()
-
-        if (nextLocalState.isCompleted()) {
-            val stateAtivo = stateService.findByName(States.ATIVO.name)
-            val researchModel = ResearchModel(proposalId = existingProposal.id, stateId = stateAtivo.id)
-            researchService.createResearch(researchModel)
-        }
-
-        if(existingProposal.timelineEvents !== null) {
-            updateTimelineEvent(existingProposal, nextLocalState.name)
-        }
-
-        val transitionType: StateType = if(existingProposal.type === ResearchType.CLINICAL_TRIAL) StateType.FINANCE_PROPOSAL
+        //TODO change to ResponseEntity and handle exception in ControllerAdvice
+        val nextState = stateService.findById(nextStateId)
+        val stateType = if(proposal.type === ResearchType.CLINICAL_TRIAL) StateType.FINANCE_PROPOSAL
         else StateType.STUDY_PROPOSAL
 
-        stateTransitionService
-            .newTransition(existingProposal.stateId!!, nextState.id!!, transitionType, existingProposal.id!!)
+        stateService.verifyNextStateValid(currState.id!!, nextStateId, stateType, role)
 
-        existingProposal.stateId = nextState.id
-        existingProposal.lastUpdated = LocalDateTime.now()
-        proposalRepository.save(existingProposal).awaitSingle()
-        return getProposalById(existingProposal.id!!)
+        if (stateService.isTerminalState(nextStateId, stateType)) {
+            createResearch(proposal)
+        }
+
+        if(proposal.timelineEvents != null) {
+            updateTimelineEvent(proposal.timelineEvents!!, nextState.name!!)
+        }
+
+        stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
+
+        proposal.stateId = nextState.id
+        proposalRepository.save(proposal).map { proposal.lastModified = it.lastModified }.awaitSingle()
+        return proposal
+    }
+
+    private suspend fun createResearch(proposal: ProposalModel) {
+        //TODO eventually change from ugly hardcoded to prettier database hardcoded..
+        // maybe add a field isInitial to determine the first state in each chain type
+        val stateAtivo = stateService.findByName(States.ATIVO.name)
+        val researchModel = ResearchModel(proposalId = proposal.id, stateId = stateAtivo.id, type = proposal.type)
+        researchService.createResearch(researchModel)
     }
 
     private fun updateTimelineEvent(
-        proposal: ProposalModel,
+        timelineEvents: Flux<TimelineEventModel>,
         state: String
     ) {
-        proposal.timelineEvents!!
+        timelineEvents
             .filter(filterEventsByState(state))
             .map (this::setEventCompleted)
             .map (this::setOverDueDays)
+            .collectList()
+            .switchIfEmpty(Mono.empty())
             .subscribe {
-                timelineEventRepository.save(it).subscribe()
+                timelineEventRepository.saveAll(it).subscribe()
             }
     }
 
     private fun filterEventsByState(state:String) = {
         event: TimelineEventModel -> event.isAssociatedToState && event.stateName === state
     }
-
-
 
     private fun setOverDueDays(event: TimelineEventModel): TimelineEventModel {
         val diff = dateDiffInDays(event.completedDate!!, event.deadlineDate!!)
@@ -209,7 +211,7 @@ class ProposalServiceImpl(
 
         prop.timelineEvents = timelineEventRepository.findTimelineEventsByProposalId(prop.id!!)
 
-        if(prop.financialComponent != null) {
+        if(prop.type == ResearchType.CLINICAL_TRIAL) {
             prop.financialComponent!!.partnerships = partnershipService
                 .findAllByProposalFinancialComponentId(prop.financialComponent!!.id!!)
         }

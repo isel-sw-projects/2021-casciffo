@@ -41,8 +41,4 @@ class ParticipantServiceImpl(
     override suspend fun save(participant: Participant): Participant {
         return participantRepository.save(participant).awaitSingle()
     }
-
-    override suspend fun getParticipantScheduledVisits(participantId: Int, researchId: Int): Flow<Visit> {
-        TODO("Implemented on visit service")
-    }
 }

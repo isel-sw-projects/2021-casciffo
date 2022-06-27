@@ -6,6 +6,7 @@ import isel.casciffo.casciffospringbackend.states.StateType
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactor.asFlux
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -40,7 +41,7 @@ class AddendaServiceImpl(
 
     suspend fun loadRelations(addenda: Addenda) : Addenda {
         addenda.state = stateRepository.findById(addenda.stateId!!).awaitFirstOrNull()
-        addenda.stateTransitions = stateTransitionService.findAllByReferenceId(addenda.id!!).toList()
+        addenda.stateTransitions = stateTransitionService.findAllByReferenceId(addenda.id!!).asFlux()
         return addenda
     }
 }

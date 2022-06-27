@@ -16,8 +16,8 @@ import java.time.LocalDateTime
 data class ProposalDTO (
     var id: Int? = null,
 
-    var dateCreated: LocalDate?=null,
-    var lastUpdated: LocalDateTime? = null,
+    var createdDate: LocalDate?=null,
+    var lastModified: LocalDateTime? = null,
 
     var sigla: String? = null,
 
