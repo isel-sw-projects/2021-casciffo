@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.research.finance.clinical_trial
 
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.ResearchMonetaryFlow
 import isel.casciffo.casciffospringbackend.research.finance.team.ResearchTeamMonetaryFlow
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id

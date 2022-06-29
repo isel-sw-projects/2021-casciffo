@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.research.patients
 
-import isel.casciffo.casciffospringbackend.research.visits.Visit
 import kotlinx.coroutines.flow.Flow
 
 interface ParticipantService {

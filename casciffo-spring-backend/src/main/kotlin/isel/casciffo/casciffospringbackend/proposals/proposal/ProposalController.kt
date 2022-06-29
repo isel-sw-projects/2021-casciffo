@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
-import isel.casciffo.casciffospringbackend.mappers.Mapper
-import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.endpoints.*
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.roles.Roles
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

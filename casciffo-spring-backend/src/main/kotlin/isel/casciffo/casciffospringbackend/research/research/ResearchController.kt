@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.research.research
 
+import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.ResearchMapper
-import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import kotlinx.coroutines.flow.Flow

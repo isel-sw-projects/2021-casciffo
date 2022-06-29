@@ -1,7 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.timeline_events
 
 import kotlinx.coroutines.flow.Flow
-import org.reactivestreams.Publisher
 import reactor.core.publisher.Flux
 
 interface TimelineEventService {

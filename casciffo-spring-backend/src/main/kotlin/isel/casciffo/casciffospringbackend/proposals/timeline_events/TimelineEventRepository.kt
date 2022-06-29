@@ -5,7 +5,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Repository
 interface TimelineEventRepository : ReactiveCrudRepository<TimelineEventModel, Int> {

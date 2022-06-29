@@ -1,14 +1,15 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
-import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregateRepo
+import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
-import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialService
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
@@ -20,7 +21,6 @@ import isel.casciffo.casciffospringbackend.roles.Roles
 import isel.casciffo.casciffospringbackend.states.state.StateService
 import isel.casciffo.casciffospringbackend.states.state.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
-import isel.casciffo.casciffospringbackend.common.StateType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.time.LocalDate
+
 @Service
 class ProposalServiceImpl(
     @Autowired val proposalRepository: ProposalRepository,

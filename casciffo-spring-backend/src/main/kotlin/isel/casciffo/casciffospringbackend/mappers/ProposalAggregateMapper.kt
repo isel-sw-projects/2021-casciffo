@@ -1,13 +1,13 @@
 package isel.casciffo.casciffospringbackend.mappers
 
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
-import isel.casciffo.casciffospringbackend.proposals.finance.promoter.Promoter
-import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
+import isel.casciffo.casciffospringbackend.proposals.finance.promoter.Promoter
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
+import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.stereotype.Component

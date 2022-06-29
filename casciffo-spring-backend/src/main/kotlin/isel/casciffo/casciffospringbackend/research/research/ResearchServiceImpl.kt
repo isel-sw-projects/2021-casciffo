@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.research
 
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaService
 import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.ResearchFinanceService
@@ -9,7 +10,6 @@ import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesRepository
 import isel.casciffo.casciffospringbackend.states.state.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
-import isel.casciffo.casciffospringbackend.common.StateType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow

@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
-import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.common.StateType
+import isel.casciffo.casciffospringbackend.states.state.State
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column

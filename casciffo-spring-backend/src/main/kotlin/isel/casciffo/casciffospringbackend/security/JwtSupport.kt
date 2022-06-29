@@ -3,7 +3,9 @@ package isel.casciffo.casciffospringbackend.security
 import io.jsonwebtoken.Header
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import isel.casciffo.casciffospringbackend.common.*
+import isel.casciffo.casciffospringbackend.common.frontEnd
+import isel.casciffo.casciffospringbackend.common.newExpirationTime
+import isel.casciffo.casciffospringbackend.common.tokenIssuer
 import org.springframework.security.authentication.AbstractAuthenticationToken
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.userdetails.UserDetails

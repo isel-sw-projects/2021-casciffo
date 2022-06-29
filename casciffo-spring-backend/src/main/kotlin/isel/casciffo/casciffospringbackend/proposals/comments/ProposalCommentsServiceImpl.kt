@@ -1,9 +1,9 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
-import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.aggregates.comments.ProposalCommentsAggregate
 import isel.casciffo.casciffospringbackend.aggregates.comments.ProposalCommentsAggregateRepo
 import isel.casciffo.casciffospringbackend.common.CommentType
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow

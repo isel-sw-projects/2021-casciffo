@@ -3,7 +3,6 @@ package isel.casciffo.casciffospringbackend.roles
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentResourceException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
-import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired

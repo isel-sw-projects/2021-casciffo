@@ -1,6 +1,5 @@
 package isel.casciffo.casciffospringbackend.research.patients
 
-import isel.casciffo.casciffospringbackend.research.visits.Visit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.Date
 
 @Service
 class ParticipantServiceImpl(

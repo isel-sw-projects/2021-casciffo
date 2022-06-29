@@ -8,7 +8,6 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import reactor.core.publisher.Flux
 import java.time.LocalDateTime
-import java.util.Date
 
 @Table("clinical_visit")
 data class Visit (

@@ -1,9 +1,9 @@
 package isel.casciffo.casciffospringbackend.states.state
 
 import isel.casciffo.casciffospringbackend.common.StateType
-import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.endpoints.STATES_CHAIN_TYPE_URL
 import isel.casciffo.casciffospringbackend.endpoints.STATES_URL
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired

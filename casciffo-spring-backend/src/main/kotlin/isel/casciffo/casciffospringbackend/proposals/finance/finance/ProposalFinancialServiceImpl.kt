@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.finance
 
-import isel.casciffo.casciffospringbackend.proposals.finance.promoter.PromoterRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
+import isel.casciffo.casciffospringbackend.proposals.finance.promoter.PromoterRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

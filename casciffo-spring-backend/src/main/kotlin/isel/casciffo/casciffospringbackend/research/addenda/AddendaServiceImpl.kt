@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.research.addenda
 
+import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.states.state.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
-import isel.casciffo.casciffospringbackend.common.StateType
 import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.asFlux

@@ -1,13 +1,13 @@
 package isel.casciffo.casciffospringbackend.users
 
 
-import isel.casciffo.casciffospringbackend.users.user_roles.UserRoles
-import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
 import isel.casciffo.casciffospringbackend.roles.RoleService
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtSupport
+import isel.casciffo.casciffospringbackend.users.user_roles.UserRoles
+import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
