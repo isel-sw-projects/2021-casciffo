@@ -1,10 +1,9 @@
 package isel.casciffo.casciffospringbackend.aggregates.state
 
-import isel.casciffo.casciffospringbackend.states.StateType
+import isel.casciffo.casciffospringbackend.common.StateType
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 
 interface StateAggregateRepo: ReactiveCrudRepository<StateAggregate, Int> {
 

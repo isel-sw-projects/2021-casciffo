@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
-import isel.casciffo.casciffospringbackend.states.StateService
-import isel.casciffo.casciffospringbackend.states.StateType
+import isel.casciffo.casciffospringbackend.states.state.StateService
+import isel.casciffo.casciffospringbackend.common.StateType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow

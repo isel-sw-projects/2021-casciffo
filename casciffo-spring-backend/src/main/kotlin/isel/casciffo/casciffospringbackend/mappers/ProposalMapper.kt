@@ -2,12 +2,12 @@ package isel.casciffo.casciffospringbackend.mappers
 
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamDTO
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
-import isel.casciffo.casciffospringbackend.proposals.ProposalDTO
-import isel.casciffo.casciffospringbackend.proposals.ProposalModel
-import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
+import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalDTO
+import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComment
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponentDTO
+import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
+import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponentDTO
 import isel.casciffo.casciffospringbackend.users.UserDTO
 import isel.casciffo.casciffospringbackend.users.UserModel
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -21,7 +21,7 @@ class ProposalMapper(
     @Autowired private val userMapper: Mapper<UserModel, UserDTO>,
     @Autowired private val invTeamMapper: Mapper<InvestigationTeamModel, InvestigationTeamDTO>,
     @Autowired private val pfcMapper: Mapper<ProposalFinancialComponent, ProposalFinancialComponentDTO>,
-    @Autowired private val commentsMapper: Mapper<ProposalComments, ProposalCommentsDTO>,
+    @Autowired private val commentsMapper: Mapper<ProposalComment, ProposalCommentsDTO>,
 ) : Mapper<ProposalModel, ProposalDTO> {
 
     override suspend fun mapDTOtoModel(dto: ProposalDTO?): ProposalModel {

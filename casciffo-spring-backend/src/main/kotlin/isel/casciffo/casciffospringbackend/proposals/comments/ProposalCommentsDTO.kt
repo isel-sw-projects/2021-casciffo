@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
+import isel.casciffo.casciffospringbackend.common.CommentType
 import isel.casciffo.casciffospringbackend.users.UserDTO
 import java.time.LocalDateTime
 

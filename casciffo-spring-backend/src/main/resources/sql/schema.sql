@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS state_roles (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     state_id INT NOT NULL,
     role_id INT NOT NULL,
+    CONSTRAINT unique_state_role UNIQUE (state_id, role_id),
     CONSTRAINT fk_state_id FOREIGN KEY (state_id) REFERENCES states(state_id) ON DELETE CASCADE,
     CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
 );
@@ -209,22 +210,14 @@ CREATE TABLE IF NOT EXISTS proposal_financial_component (
 
 CREATE TABLE IF NOT EXISTS protocol (
     protocol_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    is_validated BOOLEAN DEFAULT FALSE,
-    validated_date DATE,
-    pfc_id INT,
-    CONSTRAINT fk_protocol_pfc_id FOREIGN KEY (pfc_id)
-        REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS protocol_comments (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    protocol_id INT,
-    observation TEXT,
-    author_name VARCHAR,
-    org_name VARCHAR,
     validated BOOLEAN DEFAULT FALSE,
-    created_date DATE DEFAULT NOW(),
-    CONSTRAINT fk_ptc_id FOREIGN KEY (protocol_id) REFERENCES protocol(protocol_id) ON DELETE CASCADE
+    validated_date DATE,
+    pfc_id INT NOT NULL,
+    comment_ref INT,
+    CONSTRAINT fk_protocol_pfc_id FOREIGN KEY (pfc_id)
+        REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE,
+    CONSTRAINT fk_comment_ref FOREIGN KEY (comment_ref) REFERENCES proposal_comments(comment_id) ON DELETE SET NULL ,
+    CONSTRAINT check_is_valid CHECK ( NOT (comment_ref IS NULL AND validated) )
 );
 
 CREATE TABLE IF NOT EXISTS partnerships (
@@ -434,9 +427,9 @@ BEGIN
     THEN
         BEGIN
             notValid := (SELECT CASE WHEN COUNT(P) > 0 THEN TRUE ELSE FALSE END
-                      FROM proposal P WHERE P.proposal_id=9 AND P.proposal_type='OBSERVATIONAL_STUDY');
+                      FROM proposal P WHERE P.proposal_id=NEW.proposal_id AND P.proposal_type='OBSERVATIONAL_STUDY');
             IF notValid THEN
-                RAISE EXCEPTION 'Proposal with type OBSREVATIONAL_STUDY can''t have comments with type PROTOCOL.'
+                RAISE EXCEPTION 'Proposal % with type OBSREVATIONAL_STUDY can''t have comments with type PROTOCOL.', NEW.proposal_id
                 USING HINT = 'Don''t create PROTOCOL type comments on a proposal with type OBSREVATIONAL_STUDY' ;
         END IF;
     END;

@@ -133,7 +133,7 @@ INSERT INTO partnerships(proposal_financial_id, icon_url, representative, email,
             'ze.manel@home.pt','923722883', 'https://www.example.com/', 'An amazing partnership');
 
 --PROTOCOL
-INSERT INTO protocol(is_validated, validated_date, pfc_id) VALUES (FALSE, NULL, 1);
+INSERT INTO protocol(validated, validated_date, pfc_id) VALUES (FALSE, NULL, 1);
 
 
 --CLINICAL TRIALS

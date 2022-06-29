@@ -1,15 +1,15 @@
 package isel.casciffo.casciffospringbackend.mappers
 
 import isel.casciffo.casciffospringbackend.aggregates.comments.ProposalCommentsAggregate
-import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComment
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.stereotype.Component
 
 @Component
-class ProposalCommentsAggregateMapper : Mapper<ProposalComments, ProposalCommentsAggregate> {
-    override suspend fun mapDTOtoModel(dto: ProposalCommentsAggregate?): ProposalComments {
-        if (dto == null) return ProposalComments()
-        return ProposalComments(
+class ProposalCommentsAggregateMapper : Mapper<ProposalComment, ProposalCommentsAggregate> {
+    override suspend fun mapDTOtoModel(dto: ProposalCommentsAggregate?): ProposalComment {
+        if (dto == null) return ProposalComment()
+        return ProposalComment(
             id = dto.id,
             authorId = dto.authorId,
             commentType = dto.commentType,
@@ -25,7 +25,7 @@ class ProposalCommentsAggregateMapper : Mapper<ProposalComments, ProposalComment
         )
     }
 
-    override suspend fun mapModelToDTO(model: ProposalComments?): ProposalCommentsAggregate {
+    override suspend fun mapModelToDTO(model: ProposalComment?): ProposalCommentsAggregate {
         throw NotImplementedError("Purposely left blank.")
     }
 }

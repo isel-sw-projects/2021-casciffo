@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponentDTO
+import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
+import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponentDTO
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolDTO
 import kotlinx.coroutines.reactor.awaitSingleOrNull

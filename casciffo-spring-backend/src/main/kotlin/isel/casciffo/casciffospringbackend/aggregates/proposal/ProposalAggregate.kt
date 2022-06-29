@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.aggregates.proposal
 
-import isel.casciffo.casciffospringbackend.proposals.ResearchType
+import isel.casciffo.casciffospringbackend.common.ResearchType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDate
@@ -48,6 +48,6 @@ data class ProposalAggregate (
 
     //protocol
     var protocolId: Int? = null,
-    var validatedDate: LocalDateTime? = null,
+    var validatedDate: LocalDate? = null,
     var isValidated: Boolean? = null,
 )

@@ -1,7 +1,6 @@
 package isel.casciffo.casciffospringbackend.aggregates.comments
 
-import isel.casciffo.casciffospringbackend.proposals.comments.CommentType
-import org.springframework.data.domain.Pageable
+import isel.casciffo.casciffospringbackend.common.CommentType
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveSortingRepository
 import reactor.core.publisher.Flux

@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.aggregates.proposal
 
-import isel.casciffo.casciffospringbackend.proposals.ResearchType
+import isel.casciffo.casciffospringbackend.common.ResearchType
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Flux
@@ -12,7 +12,7 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
                 "pfc.proposal_financial_id, pfc.financial_contract_id, pfc.promoter_id, pfc.has_partnerships, " +
                 "state.state_name, st.service_name, ta.therapeutic_area_name, pl.pathology_name, " +
                 "pinv.user_name, pinv.user_email, pr.promoter_name, pr.promoter_email, prot.protocol_id, " +
-                "prot.is_validated, prot.validated_date " +
+                "prot.validated, prot.validated_date " +
         "FROM proposal p " +
         "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
         "JOIN service st ON st.service_id = p.service_id " +
@@ -29,7 +29,7 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
     @Query(
         "SELECT p.proposal_id, p.sigla, p.created_date, p.last_modified, p.proposal_type, " +
                 "state_name, service_name, pathology_name, therapeutic_area_name, has_partnerships, " +
-                "promoter_name, user_name, prot.protocol_id, prot.is_validated, prot.validated_date " +
+                "promoter_name, user_name, prot.protocol_id, prot.validated, prot.validated_date " +
         "FROM proposal p " +
         "JOIN states state ON p.state_id = state.state_id " +
         "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +

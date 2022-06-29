@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComments
+import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComment
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
 import isel.casciffo.casciffospringbackend.users.UserDTO
 import isel.casciffo.casciffospringbackend.users.UserModel
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component
 @Component
 class ProposalCommentsMapper(
     @Autowired val userMapper: Mapper<UserModel, UserDTO>
-): Mapper<ProposalComments, ProposalCommentsDTO> {
-    override suspend fun mapDTOtoModel(dto: ProposalCommentsDTO?): ProposalComments {
-        return ProposalComments(
+): Mapper<ProposalComment, ProposalCommentsDTO> {
+    override suspend fun mapDTOtoModel(dto: ProposalCommentsDTO?): ProposalComment {
+        return ProposalComment(
             id = dto?.id,
             proposalId = dto?.proposalId,
             authorId = dto?.authorId,
@@ -24,7 +24,7 @@ class ProposalCommentsMapper(
         )
     }
 
-    override suspend fun mapModelToDTO(model: ProposalComments?): ProposalCommentsDTO {
+    override suspend fun mapModelToDTO(model: ProposalComment?): ProposalCommentsDTO {
         return ProposalCommentsDTO(
             id = model?.id,
             proposalId = model?.proposalId,

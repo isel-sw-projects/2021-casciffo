@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.research.ResearchDTO
-import isel.casciffo.casciffospringbackend.research.ResearchModel
+import isel.casciffo.casciffospringbackend.research.research.ResearchDTO
+import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import kotlinx.coroutines.reactor.awaitSingle
 import reactor.kotlin.core.publisher.toFlux
 

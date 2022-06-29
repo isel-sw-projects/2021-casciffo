@@ -2,20 +2,12 @@ package isel.casciffo.casciffospringbackend.mappers
 
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolDTO
-import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.stereotype.Component
-import reactor.kotlin.core.publisher.toFlux
 
 @Component
 class ProtocolMapper : Mapper<ProposalProtocol, ProtocolDTO> {
     override suspend fun mapDTOtoModel(dto: ProtocolDTO?): ProposalProtocol {
-        return if (dto === null) ProposalProtocol()
-        else ProposalProtocol(
-            id = dto.id,
-            financialComponentId = dto.financialComponentId,
-            isValidated = dto.isValidated,
-            validatedDate = dto.validatedDate
-        )
+        throw NotImplementedError("Left blank on purpose.")
     }
 
     override suspend fun mapModelToDTO(model: ProposalProtocol?): ProtocolDTO {
@@ -23,7 +15,7 @@ class ProtocolMapper : Mapper<ProposalProtocol, ProtocolDTO> {
         else ProtocolDTO(
             id = model.id,
             financialComponentId = model.financialComponentId,
-            isValidated = model.isValidated,
+            validated = model.validated,
             validatedDate = model.validatedDate
         )
     }

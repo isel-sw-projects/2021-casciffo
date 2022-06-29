@@ -2,13 +2,13 @@ package isel.casciffo.casciffospringbackend.mappers
 
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
 import isel.casciffo.casciffospringbackend.proposals.finance.promoter.Promoter
-import isel.casciffo.casciffospringbackend.proposals.ProposalModel
+import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
-import isel.casciffo.casciffospringbackend.proposals.finance.ProposalFinancialComponent
+import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
-import isel.casciffo.casciffospringbackend.states.State
+import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.users.UserModel
 import org.springframework.stereotype.Component
 
@@ -44,7 +44,7 @@ class ProposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate> {
                 promoterId = dto.promoterId,
                 financialContractId = dto.financialContractId,
                 promoter = Promoter(id = dto.promoterId, name = dto.promoterName, email= dto.promoterEmail),
-                protocol = ProposalProtocol(id = dto.protocolId, isValidated = dto.isValidated,
+                protocol = ProposalProtocol(id = dto.protocolId, validated = dto.isValidated,
                 validatedDate = dto.validatedDate, financialComponentId = dto.pfcId)
         )
     }

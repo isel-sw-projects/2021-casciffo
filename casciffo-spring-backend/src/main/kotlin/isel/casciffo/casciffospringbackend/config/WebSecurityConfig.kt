@@ -119,6 +119,7 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_UIC_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_FINANCE_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, FINANCE_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_JURIDICAL_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, JURIDICAL_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, PROPOSAL_PROTOCOL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
     }
 
     private fun researchRoutesAuth(http: ServerHttpSecurity) {

@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
+import isel.casciffo.casciffospringbackend.common.CommentType
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_COMMENTS
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +20,7 @@ class ProposalCommentsController(
         @RequestParam(defaultValue = "20") n: Int,
         @RequestParam(defaultValue = "0") p: Int
     ):
-            Flow<ProposalComments> {
+            Flow<ProposalComment> {
         val page = PageRequest.of(p, n, Sort.by("createdDate").descending())
         return if (t == CommentType.ALL) {
             commentsService.getComments(proposalId = proposalId, page)
@@ -32,7 +33,7 @@ class ProposalCommentsController(
     }
 
     @PostMapping(PROPOSAL_COMMENTS)
-     suspend fun createComment(@PathVariable proposalId: Int, @RequestBody(required = true) comment: ProposalComments): ProposalComments {
+     suspend fun createComment(@PathVariable proposalId: Int, @RequestBody(required = true) comment: ProposalComment): ProposalComment {
          return commentsService.createComment(comment)
      }
 }

@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.states.State
-import isel.casciffo.casciffospringbackend.states.StateDTO
+import isel.casciffo.casciffospringbackend.states.state.State
+import isel.casciffo.casciffospringbackend.states.state.StateDTO
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.stereotype.Component
 
