@@ -44,8 +44,9 @@ class ProposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate> {
                 promoterId = dto.promoterId,
                 financialContractId = dto.financialContractId,
                 promoter = Promoter(id = dto.promoterId, name = dto.promoterName, email= dto.promoterEmail),
-                protocol = ProposalProtocol(id = dto.protocolId, validated = dto.isValidated,
-                validatedDate = dto.validatedDate, financialComponentId = dto.pfcId)
+                protocol = ProposalProtocol(id = dto.protocolId, validated = dto.validated,
+                validatedDate = dto.validatedDate, financialComponentId = dto.pfcId),
+                hasPartnerships = dto.hasPartnerships
         )
     }
 

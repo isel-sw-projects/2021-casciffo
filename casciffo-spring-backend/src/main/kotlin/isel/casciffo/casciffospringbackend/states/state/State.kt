@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.states.state
 
+import isel.casciffo.casciffospringbackend.common.StateFlowType
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -16,6 +17,10 @@ data class State(
 
     @Column(value = "state_name")
     var name: String? = null,
+
+    @Transient
+    @Value("null")
+    var stateFlowType: StateFlowType? = null,
 
     @Transient
     @Value("null")

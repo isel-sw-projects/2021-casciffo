@@ -28,7 +28,8 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
 
     @Query(
         "SELECT p.proposal_id, p.sigla, p.created_date, p.last_modified, p.proposal_type, " +
-                "state_name, service_name, pathology_name, therapeutic_area_name, has_partnerships, " +
+                "pfc.proposal_financial_id, pfc.financial_contract_id, pfc.promoter_id, pfc.has_partnerships, " +
+                "state.state_name, st.service_name, pl.pathology_name, ta.therapeutic_area_name, " +
                 "promoter_name, user_name, prot.protocol_id, prot.validated, prot.validated_date " +
         "FROM proposal p " +
         "JOIN states state ON p.state_id = state.state_id " +

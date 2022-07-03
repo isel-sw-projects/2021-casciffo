@@ -49,5 +49,5 @@ data class ProposalAggregate (
     //protocol
     var protocolId: Int? = null,
     var validatedDate: LocalDate? = null,
-    var isValidated: Boolean? = null,
+    var validated: Boolean? = null,
 )

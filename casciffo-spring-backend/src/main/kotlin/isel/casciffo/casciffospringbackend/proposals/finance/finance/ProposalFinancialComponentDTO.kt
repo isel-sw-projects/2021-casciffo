@@ -12,5 +12,6 @@ data class ProposalFinancialComponentDTO(
     var financialContractId: Int? = null,
     var promoter: Promoter? = null,
     var partnerships: List<Partnership>? = null,
+    var hasPartnerships: Boolean? = null,
     var protocol: ProtocolDTO? = null
 )

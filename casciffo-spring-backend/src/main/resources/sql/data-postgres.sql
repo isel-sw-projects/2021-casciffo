@@ -72,15 +72,15 @@ $$
         INSERT INTO state_roles(state_id, role_id)
         VALUES (state_submetido_id, uic_role_id),
                (state_negociacao_cf_id, uic_role_id),
-               (state_validacao_interna_deps_id, finance_role_id),
-               (state_validacao_interna_deps_id, juridical_role_id),
                (state_validacao_externa_id, uic_role_id),
                (state_submissao_ao_ca_id, uic_role_id),
+               (state_ativo_id, uic_role_id),
+               (state_validacao_interna_deps_id, finance_role_id),
+               (state_validacao_interna_deps_id, juridical_role_id),
                (state_validacao_interna_ca_id, ca_role_id),
                (state_validado_id, superuser_role_id),
                (state_completo_id, superuser_role_id),
                (state_cancelado_id, superuser_role_id),
-               (state_ativo_id, uic_role_id),
                (state_ativo_id, superuser_role_id),
                (state_submetido_id, superuser_role_id),
                (state_negociacao_cf_id, superuser_role_id),
@@ -91,54 +91,55 @@ $$
         ON CONFLICT DO NOTHING;
 
         --STATE TYPES
-        INSERT INTO type_of_states(state_id, state_type)
-        VALUES (state_submetido_id, 'FINANCE_PROPOSAL'),
-               (state_submetido_id, 'STUDY_PROPOSAL'),
-               (state_submetido_id, 'ADDENDA'),
-               (state_negociacao_cf_id, 'FINANCE_PROPOSAL'),
-               (state_validacao_interna_deps_id, 'FINANCE_PROPOSAL'),
-               (state_validacao_externa_id, 'STUDY_PROPOSAL'),
-               (state_validacao_externa_id, 'FINANCE_PROPOSAL'),
-               (state_submissao_ao_ca_id, 'FINANCE_PROPOSAL'),
-               (state_validacao_interna_ca_id, 'STUDY_PROPOSAL'),
-               (state_validacao_interna_ca_id, 'FINANCE_PROPOSAL'),
-               (state_validacao_interna_ca_id, 'ADDENDA'),
-               (state_validado_id, 'STUDY_PROPOSAL'),
-               (state_validado_id, 'FINANCE_PROPOSAL'),
-               (state_validado_id, 'ADDENDA'),
-               (state_cancelado_id, 'ALL'),
-               (state_ativo_id, 'ENSAIO'),
-               (state_completo_id, 'ENSAIO')
-        ON CONFLICT DO NOTHING;
+--         INSERT INTO type_of_states(state_id, state_type)
+--         VALUES (state_submetido_id, 'FINANCE_PROPOSAL'),
+--                (state_submetido_id, 'STUDY_PROPOSAL'),
+--                (state_submetido_id, 'ADDENDA'),
+--                (state_negociacao_cf_id, 'FINANCE_PROPOSAL'),
+--                (state_validacao_interna_deps_id, 'FINANCE_PROPOSAL'),
+--                (state_validacao_externa_id, 'STUDY_PROPOSAL'),
+--                (state_validacao_externa_id, 'FINANCE_PROPOSAL'),
+--                (state_submissao_ao_ca_id, 'FINANCE_PROPOSAL'),
+--                (state_validacao_interna_ca_id, 'STUDY_PROPOSAL'),
+--                (state_validacao_interna_ca_id, 'FINANCE_PROPOSAL'),
+--                (state_validacao_interna_ca_id, 'ADDENDA'),
+--                (state_validado_id, 'STUDY_PROPOSAL'),
+--                (state_validado_id, 'FINANCE_PROPOSAL'),
+--                (state_validado_id, 'ADDENDA'),
+--                (state_cancelado_id, 'ALL'),
+--                (state_ativo_id, 'ENSAIO'),
+--                (state_completo_id, 'ENSAIO')
+--         ON CONFLICT DO NOTHING;
 
-        --TODO DISCUSS TERMINAL STATE, ITS KINDA USELESS
+
         --NEXT STATES
-        INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, is_terminal_state)
+        INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, state_flow_type)
         VALUES
                 --FINANCE PROPOSAL
-                (state_submetido_id, state_negociacao_cf_id, 'FINANCE_PROPOSAL', FALSE),
-                (state_negociacao_cf_id, state_validacao_interna_deps_id, 'FINANCE_PROPOSAL', FALSE),
-                (state_validacao_interna_deps_id, state_validacao_externa_id, 'FINANCE_PROPOSAL', FALSE),
-                (state_validacao_externa_id, state_submissao_ao_ca_id, 'FINANCE_PROPOSAL', FALSE),
-                (state_submissao_ao_ca_id, state_validacao_interna_ca_id, 'FINANCE_PROPOSAL', FALSE),
-                (state_validacao_interna_ca_id, state_validado_id, 'FINANCE_PROPOSAL', FALSE),
+                (state_submetido_id, state_negociacao_cf_id, 'FINANCE_PROPOSAL', 'INITIAL'),
+                (state_negociacao_cf_id, state_validacao_interna_deps_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
+                (state_validacao_interna_deps_id, state_validacao_externa_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
+                (state_validacao_externa_id, state_submissao_ao_ca_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
+                (state_submissao_ao_ca_id, state_validacao_interna_ca_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
+                (state_validacao_interna_ca_id, state_validado_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
+                (state_validado_id, NULL, 'FINANCE_PROPOSAL', 'TERMINAL'),
 
                 --STUDY PROPOSAL
-                (state_submetido_id, state_validacao_interna_ca_id, 'STUDY_PROPOSAL', FALSE),
-                (state_validacao_interna_ca_id, state_validado_id, 'STUDY_PROPOSAL', FALSE),
-                (state_validado_id, NULL, 'STUDY_PROPOSAL', TRUE),
+                (state_submetido_id, state_validacao_interna_ca_id, 'STUDY_PROPOSAL', 'PROGRESS'),
+                (state_validacao_interna_ca_id, state_validado_id, 'STUDY_PROPOSAL', 'PROGRESS'),
+                (state_validado_id, NULL, 'STUDY_PROPOSAL', 'TERMINAL'),
 
                 --ADDENDA
-                (state_submetido_id, state_validacao_interna_ca_id, 'ADDENDA', FALSE),
-                (state_validacao_interna_ca_id, state_validado_id, 'ADDENDA', FALSE),
-                (state_validado_id, NULL, 'ADDENDA', TRUE),
+                (state_submetido_id, state_validacao_interna_ca_id, 'ADDENDA', 'PROGRESS'),
+                (state_validacao_interna_ca_id, state_validado_id, 'ADDENDA', 'PROGRESS'),
+                (state_validado_id, NULL, 'ADDENDA', 'TERMINAL'),
 
                 --ENSAIO
-                (state_ativo_id, state_completo_id, 'ENSAIO', FALSE),
-                (state_completo_id, NULL, 'ENSAIO', TRUE),
+                (state_ativo_id, state_completo_id, 'ENSAIO', 'PROGRESS'),
+                (state_completo_id, NULL, 'ENSAIO', 'TERMINAL'),
 
                 --ALL
-                (state_cancelado_id, NULL, 'ALL', TRUE)
+                (state_cancelado_id, NULL, 'ALL', 'TERMINAL')
         ON CONFLICT(origin_state_id, next_state_id, state_type) DO NOTHING;
     END
 $$;

@@ -20,6 +20,8 @@ data class ProposalFinancialComponent (
     var promoterId: Int? = null,
     var financialContractId: Int? = null,
 
+    var hasPartnerships: Boolean? = null,
+
     @Transient
     @Value("null")
     var promoter: Promoter? = null,

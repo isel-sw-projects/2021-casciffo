@@ -40,6 +40,7 @@ import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
@@ -74,6 +75,8 @@ class CasciffoSpringBackendApplicationTests(
     @Autowired val userRolesRepo: UserRolesRepo
 ) {
 
+    val logger = KotlinLogging.logger { }
+
     @Test
     fun genKeys() {
         for (index in 1..10) {
@@ -100,6 +103,7 @@ class CasciffoSpringBackendApplicationTests(
                 assert(it.proposalType != null)
             }.thenConsumeWhile { true }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
 
         StepVerifier
@@ -116,6 +120,7 @@ class CasciffoSpringBackendApplicationTests(
                 assert(it.piEmail != null)
             }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
     }
 
@@ -136,6 +141,7 @@ class CasciffoSpringBackendApplicationTests(
                 true
             }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
 
         val roles = resRole.collectList().block()
@@ -165,12 +171,13 @@ class CasciffoSpringBackendApplicationTests(
                 true
             }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
 
         val users = usersFlux.collectList().block()
         val userRoles = userRolesRepo.saveAll(
             listOf(
-                UserRoles(userId = users!![0].userId, roleId =  roles!![0].roleId),
+                UserRoles(userId = users!![0].userId, roleId = roles!![0].roleId),
                 UserRoles(userId = users[1].userId, roleId = roles[1].roleId)
             )
         )
@@ -185,6 +192,7 @@ class CasciffoSpringBackendApplicationTests(
                 true
             }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
 
         StepVerifier
@@ -197,6 +205,7 @@ class CasciffoSpringBackendApplicationTests(
                 true
             }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
     }
 
@@ -221,6 +230,7 @@ class CasciffoSpringBackendApplicationTests(
                 proposal.id = it.id
             }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
 
         StepVerifier.create(proposalRepository.findById(proposal.id!!))
@@ -231,6 +241,7 @@ class CasciffoSpringBackendApplicationTests(
                 it.id !== null
             }
             .expectComplete()
+            .log()
             .verifyThenAssertThat()
     }
 
@@ -251,10 +262,11 @@ class CasciffoSpringBackendApplicationTests(
     @Test
     fun testServiceAddParticipantToResearch() {
         var participant = Participant(
-            processId =  102,
+            processId = 102,
             fullName = "manel dos testes",
             gender = "m",
-            age = 50)
+            age = 50
+        )
         runBlocking {
             participant = participantService.save(participant)
             val addedParticipant = participantService.addParticipantToResearch(participant.id!!, 1)
@@ -325,6 +337,7 @@ class CasciffoSpringBackendApplicationTests(
                     assert(res.financialComponent!!.protocol != null)
                 }
                 .expectComplete()
+                .log()
                 .verifyThenAssertThat()
         }
     }
@@ -358,6 +371,7 @@ class CasciffoSpringBackendApplicationTests(
                     assert(it.financialComponent!!.partnerships != null)
                 }
                 .expectComplete()
+                .log()
                 .verifyThenAssertThat()
         }
     }
@@ -385,6 +399,7 @@ class CasciffoSpringBackendApplicationTests(
                     it.id != null && it.financeComponentId == res.id
                 }
                 .expectComplete()
+                .log()
                 .verifyThenAssertThat()
         }
     }
@@ -398,9 +413,10 @@ class CasciffoSpringBackendApplicationTests(
                         proposalId = 1,
                         eventType = ProposalEventType.DEADLINE,
                         eventName = "toUpdateSoon",
-                        deadlineDate = LocalDate.of(2022,1,1))
-                    ).awaitSingleOrNull()
-            assert (savedEvent != null)
+                        deadlineDate = LocalDate.of(2022, 1, 1)
+                    )
+                ).awaitSingleOrNull()
+            assert(savedEvent != null)
             val events = timelineEventRepository
                 .findAllByDeadlineDateBeforeAndCompletedDateIsNull().collectList().awaitSingleOrNull()
             assert(!events.isNullOrEmpty())

@@ -22,7 +22,8 @@ class PFCMapper(
             financialContractId = dto.financialContractId,
             partnerships = dto.partnerships?.toFlux(),
             promoter = dto.promoter,
-            protocol = protocolMapper.mapDTOtoModel(dto.protocol)
+            protocol = protocolMapper.mapDTOtoModel(dto.protocol),
+            hasPartnerships = dto.hasPartnerships
         )
     }
 
@@ -35,7 +36,8 @@ class PFCMapper(
             financialContractId = model.financialContractId,
             partnerships = model.partnerships?.collectList()?.awaitSingleOrNull(),
             promoter = model.promoter,
-            protocol = protocolMapper.mapModelToDTO(model.protocol)
+            protocol = protocolMapper.mapModelToDTO(model.protocol),
+            hasPartnerships = model.hasPartnerships
         )
     }
 }

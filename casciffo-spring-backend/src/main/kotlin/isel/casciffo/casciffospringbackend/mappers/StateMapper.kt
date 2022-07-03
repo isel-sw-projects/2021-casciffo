@@ -18,6 +18,7 @@ class StateMapper: Mapper<State, StateDTO> {
             stateName = model.name,
             nextInChain = model.nextStates?.collectList()?.awaitSingleOrNull(),
             roles = model.roles!!.collectList().awaitSingleOrNull(),
+            stateFlowType = model.stateFlowType!!
         )
     }
 }
