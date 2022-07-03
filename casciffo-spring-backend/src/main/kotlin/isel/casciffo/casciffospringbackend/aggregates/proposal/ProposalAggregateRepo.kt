@@ -30,7 +30,7 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
         "SELECT p.proposal_id, p.sigla, p.created_date, p.last_modified, p.proposal_type, " +
                 "pfc.proposal_financial_id, pfc.financial_contract_id, pfc.promoter_id, pfc.has_partnerships, " +
                 "state.state_name, st.service_name, pl.pathology_name, ta.therapeutic_area_name, " +
-                "promoter_name, user_name, prot.protocol_id, prot.validated, prot.validated_date " +
+                "promoter_name, user_name " +
         "FROM proposal p " +
         "JOIN states state ON p.state_id = state.state_id " +
         "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
@@ -39,7 +39,6 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
         "JOIN user_account pinv ON p.principal_investigator_id = pinv.user_id " +
         "LEFT JOIN proposal_financial_component pfc ON p.proposal_id = pfc.proposal_id " +
         "LEFT JOIN promoter pr ON pr.promoter_id = pfc.promoter_id " +
-        "LEFT JOIN protocol prot on pfc.proposal_financial_id = prot.pfc_id " +
         "WHERE p.proposal_type = :type"
     )
     fun findAllByType(type: ResearchType): Flux<ProposalAggregate>

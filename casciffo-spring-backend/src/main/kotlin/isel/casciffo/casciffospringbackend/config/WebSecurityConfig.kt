@@ -45,6 +45,8 @@ class WebSecurityConfig {
         filter.setServerAuthenticationConverter(converter)
 
         http
+            .cors()
+            .and()
             //Work around to disabling spring web session
             //see https://stackoverflow.com/questions/56056404/disable-websession-creation-when-using-spring-security-with-spring-webflux
             .requestCache()
@@ -81,6 +83,7 @@ class WebSecurityConfig {
         http
             .authorizeExchange()
             .pathMatchers(HttpMethod.GET, STATES_URL, STATES_CHAIN_TYPE_URL).authenticated()
+            .pathMatchers(HttpMethod.OPTIONS, STATES_URL, STATES_CHAIN_TYPE_URL).authenticated()
     }
 
     private fun usersRoutesAuth(http: ServerHttpSecurity) {
