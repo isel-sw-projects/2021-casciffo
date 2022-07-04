@@ -38,13 +38,13 @@ class ProtocolServiceImpl(
         return proposalProtocolRepository.save(protocol).awaitSingle()
     }
 
-    override suspend fun handleNewProtocolComment(proposalId: Int, pfcId: Int,aggregate: ProtocolAggregate): ProposalProtocol {
-        val protocol = aggregate.proposalProtocol!!
-        protocol.id = getProtocolDetails(proposalId, pfcId).protocol!!.id
+    override suspend fun handleNewProtocolComment(proposalId: Int, pfcId: Int,aggregate: ProtocolAggregate): ProtocolAggregate {
+        val protocol = getProtocolDetails(proposalId, pfcId).protocol!!
         protocol.financialComponentId = pfcId
         aggregate.comment!!.proposalId = proposalId
         val c = commentService.createComment(aggregate.comment)
-        return updateProtocol(protocol, c.id, aggregate.newValidation)
+        val updatedProtocol = updateProtocol(protocol, c.id, aggregate.newValidation)
+        return ProtocolAggregate(updatedProtocol, c)
     }
 
     suspend fun updateProtocol(

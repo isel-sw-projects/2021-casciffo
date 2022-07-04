@@ -5,15 +5,18 @@ import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDT
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolAggregate
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolDTO
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
 @Component
-class ProtocolAggregateMapper : Mapper<ProtocolAggregate, ProtocolDTO> {
+class ProtocolAggregateMapper(
+    @Autowired val commentMapper: Mapper<ProposalComment, ProposalCommentsDTO>
+) : Mapper<ProtocolAggregate, ProtocolDTO> {
     override suspend fun mapDTOtoModel(dto: ProtocolDTO?): ProtocolAggregate {
         return if (dto === null) ProtocolAggregate()
         else ProtocolAggregate(
             newValidation = dto.newValidation,
-            proposalProtocol = ProposalProtocol(
+            protocol = ProposalProtocol(
                 id = dto.id,
                 financialComponentId = dto.financialComponentId,
                 validated = dto.validated,
@@ -37,10 +40,12 @@ class ProtocolAggregateMapper : Mapper<ProtocolAggregate, ProtocolDTO> {
     override suspend fun mapModelToDTO(model: ProtocolAggregate?): ProtocolDTO {
         return if (model === null) ProtocolDTO()
         else ProtocolDTO(
-            id = model.proposalProtocol!!.id,
-            financialComponentId = model.proposalProtocol.financialComponentId,
-            validated = model.proposalProtocol.validated,
-            validatedDate = model.proposalProtocol.validatedDate
+            id = model.protocol!!.id,
+            financialComponentId = model.protocol.financialComponentId,
+            validated = model.protocol.validated,
+            validatedDate = model.protocol.validatedDate,
+            commentRef = model.protocol.commentRef,
+            comment = commentMapper.mapModelToDTO(model.comment)
         )
     }
 }

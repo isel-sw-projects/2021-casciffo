@@ -27,10 +27,10 @@ class ProtocolController(
         @PathVariable(required = true) proposalId: Int,
         @PathVariable(required = true) pfcId: Int,
         @RequestBody(required = true) protocolDTO: ProtocolDTO
-    ): ResponseEntity<ProtocolDTO> {
+    ): ResponseEntity<ProtocolAggregate> {
         val protocolAggregate = aggregateMapper.mapDTOtoModel(protocolDTO)
         val body = protocolService.handleNewProtocolComment(proposalId, pfcId, protocolAggregate)
-        return ResponseEntity.ok(dtoMapper.mapModelToDTO(body))
+        return ResponseEntity.ok(body)
 
     }
 }
