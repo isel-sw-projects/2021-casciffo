@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.visits.investigators
 
-import isel.casciffo.casciffospringbackend.users.UserService
+import isel.casciffo.casciffospringbackend.users.user.UserService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow

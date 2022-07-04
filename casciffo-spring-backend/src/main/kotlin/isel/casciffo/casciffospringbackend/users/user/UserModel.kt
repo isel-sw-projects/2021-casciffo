@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.users
+package isel.casciffo.casciffospringbackend.users.user
 
 import isel.casciffo.casciffospringbackend.roles.Role
 import org.springframework.beans.factory.annotation.Value

@@ -2,8 +2,8 @@ package isel.casciffo.casciffospringbackend.mappers
 
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComment
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
-import isel.casciffo.casciffospringbackend.users.UserDTO
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserDTO
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 

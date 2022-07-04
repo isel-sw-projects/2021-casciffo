@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.users
+package isel.casciffo.casciffospringbackend.users.user
 
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveSortingRepository

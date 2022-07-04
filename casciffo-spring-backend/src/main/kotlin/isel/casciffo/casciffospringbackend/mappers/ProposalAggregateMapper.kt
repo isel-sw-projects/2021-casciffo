@@ -9,7 +9,7 @@ import isel.casciffo.casciffospringbackend.proposals.finance.promoter.Promoter
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.states.state.State
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import org.springframework.stereotype.Component
 
 @Component

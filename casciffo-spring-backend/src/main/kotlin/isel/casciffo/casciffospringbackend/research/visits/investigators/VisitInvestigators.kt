@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.visits.investigators
 
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 

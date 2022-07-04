@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.users
+package isel.casciffo.casciffospringbackend.users.user
 
 
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
@@ -39,7 +39,7 @@ class UserServiceImpl(
 
         existingUser?.let {
             if(encoder.matches(userModel.password, it.password))
-                return BearerTokenWrapper(jwtSupport.generate(it.email!!), existingUser.userId!!)
+                return BearerTokenWrapper(jwtSupport.generate(it.email!!), existingUser.userId!!, existingUser.name!!)
         }
 
         throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login credentials incorrect!")
@@ -73,7 +73,7 @@ class UserServiceImpl(
         val user = userRepository.save(userModel).awaitSingleOrNull()
                 ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
 
-        return BearerTokenWrapper(jwtSupport.generate(user.email!!), user.userId!!)
+        return BearerTokenWrapper(jwtSupport.generate(user.email!!), user.userId!!, user.name!!)
     }
 
     override suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel?> {

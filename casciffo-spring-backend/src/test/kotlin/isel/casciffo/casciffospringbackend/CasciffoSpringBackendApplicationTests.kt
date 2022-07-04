@@ -32,9 +32,9 @@ import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.roles.Role
 import isel.casciffo.casciffospringbackend.roles.RoleRepository
 import isel.casciffo.casciffospringbackend.states.state.StateRepository
-import isel.casciffo.casciffospringbackend.users.UserModel
-import isel.casciffo.casciffospringbackend.users.UserRepository
-import isel.casciffo.casciffospringbackend.users.UserService
+import isel.casciffo.casciffospringbackend.users.user.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserRepository
+import isel.casciffo.casciffospringbackend.users.user.UserService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.asFlux

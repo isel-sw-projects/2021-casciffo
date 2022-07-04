@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.mappers
 
-import isel.casciffo.casciffospringbackend.users.UserDTO
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserDTO
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import kotlinx.coroutines.reactive.awaitSingle
 import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toFlux

@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.investigation_team
 
-import isel.casciffo.casciffospringbackend.users.UserDTO
+import isel.casciffo.casciffospringbackend.users.user.UserDTO
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 

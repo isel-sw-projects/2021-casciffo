@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.finance.team
 
 import isel.casciffo.casciffospringbackend.common.TypeOfMonetaryFlow
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column

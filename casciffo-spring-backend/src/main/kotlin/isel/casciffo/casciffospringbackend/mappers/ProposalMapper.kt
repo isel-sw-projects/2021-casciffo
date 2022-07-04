@@ -8,8 +8,8 @@ import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFin
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponentDTO
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalDTO
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
-import isel.casciffo.casciffospringbackend.users.UserDTO
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserDTO
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component

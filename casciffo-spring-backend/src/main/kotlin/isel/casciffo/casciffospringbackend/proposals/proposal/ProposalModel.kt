@@ -10,7 +10,7 @@ import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFin
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient

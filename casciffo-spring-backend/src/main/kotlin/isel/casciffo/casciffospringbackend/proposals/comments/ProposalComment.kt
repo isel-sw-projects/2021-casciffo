@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
 import isel.casciffo.casciffospringbackend.common.CommentType
-import isel.casciffo.casciffospringbackend.users.UserModel
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient

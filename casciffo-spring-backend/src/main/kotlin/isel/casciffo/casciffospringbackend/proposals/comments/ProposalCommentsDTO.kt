@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
 import isel.casciffo.casciffospringbackend.common.CommentType
-import isel.casciffo.casciffospringbackend.users.UserDTO
+import isel.casciffo.casciffospringbackend.users.user.UserDTO
 import java.time.LocalDateTime
 
 data class ProposalCommentsDTO (
