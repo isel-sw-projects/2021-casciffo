@@ -14,6 +14,6 @@ export class UserService {
     }
 
     register(userModel: UserModel): Promise<UserToken> {
-        return httpPost(ApiUrls.userLoginUrl, userModel)
+        return httpPost(ApiUrls.userRegisterUrl, userModel)
     }
 }

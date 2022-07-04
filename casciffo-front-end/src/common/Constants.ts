@@ -15,7 +15,8 @@ export const PromoterTypes = {
 
 export const CommentTypes = {
     CONTACT: {name: "Contacto", id:"CONTACTS"},
-    OBSERVATIONS: {name: "Observação", id:"OBSERVATIONS"}
+    OBSERVATIONS: {name: "Observação", id:"OBSERVATIONS"},
+    PROTOCOL: {name: "Protocolo", id: "PROTOCOL"}
 }
 
 export const EventTypes = {

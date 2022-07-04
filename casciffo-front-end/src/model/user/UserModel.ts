@@ -4,10 +4,10 @@ type Roles = {
 }
 
 interface UserModel {
-    userId?: string
-    userName?: string,
-    userEmail: string,
-    userPassword?: string,
+    userId ?: string,
+    name?: string,
+    email?: string,
+    password?: string,
     roles?: Roles[],
 }
 

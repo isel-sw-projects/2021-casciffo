@@ -1,4 +1,6 @@
 import {STATES} from "../model/state/STATES";
+import {TOKEN_KEY} from "./Constants";
+import {UserToken} from "./Types";
 
 function padTo2Digits(num: number) {
     return num.toString().padStart(2, '0');
@@ -29,9 +31,9 @@ const months = [
  */
 function formatDate(date: string, withHours: boolean = false): string {
 
-    const formattedDate = date.substring(0, isoDatetimeDelimiterIdx)
+    if(!withHours) return date
 
-    if(!withHours) return formattedDate
+    const formattedDate = date.substring(0, isoDatetimeDelimiterIdx)
 
     const hours = date.substring(isoDatetimeDelimiterIdx+1, isoDatetimeDelimiterIdx+1+5)
 
@@ -69,7 +71,7 @@ function cmp(firstDate: string | undefined | null, secondDate: string | undefine
 const APPLICATION_CONTENT_TYPE = 'application/json'
 const HEADER_ACCEPT_JSON = ['Accept', APPLICATION_CONTENT_TYPE]
 const HEADER_CONTENT_TYPE = ['Content-Type', APPLICATION_CONTENT_TYPE]
-const HEADER_AUTHORIZATION = (token: string) => ['Authorization', token]
+const HEADER_AUTHORIZATION = (token: string) => ['Authorization', 'Bearer ' + token]
 
 
 
@@ -84,14 +86,15 @@ function checkAndRaiseError(rsp: Response): Response {
 function _httpFetch<T>(
     url: string,
     method: string,
-    token: string | undefined = undefined,
     headers: string[][] = [],
     body: unknown = null
 
 ): Promise<T> {
     headers.push(HEADER_ACCEPT_JSON)
+    const token = localStorage.getItem(TOKEN_KEY)
     if(token != null) {
-        headers.push(HEADER_AUTHORIZATION(token))
+        const userToken = JSON.parse(token) as UserToken
+        headers.push(HEADER_AUTHORIZATION(userToken?.token))
     }
     const opt : RequestInit = {
         headers: headers,
@@ -105,20 +108,20 @@ function _httpFetch<T>(
         .then(rsp => rsp.json())
 }
 
-export function httpGet<T>(url: string, token: string | undefined = undefined) : Promise<T> {
-    return _httpFetch(url, 'GET', token)
+export function httpGet<T>(url: string) : Promise<T> {
+    return _httpFetch(url, 'GET')
 }
 
-export function httpDelete<T>(url: string, token: string | undefined = undefined) : Promise<T> {
-    return _httpFetch(url, 'DELETE', token)
+export function httpDelete<T>(url: string) : Promise<T> {
+    return _httpFetch(url, 'DELETE')
 }
 
-export function httpPost<T>(url: string, body: unknown, token: string | undefined = undefined): Promise<T> {
-    return _httpFetch(url, 'POST', token, [HEADER_CONTENT_TYPE], body)
+export function httpPost<T>(url: string, body: unknown): Promise<T> {
+    return _httpFetch(url, 'POST', [HEADER_CONTENT_TYPE], body)
 }
 
-export function httpPut<T>(url: string, body: unknown = null, token: string | undefined = undefined): Promise<T> {
-    return _httpFetch(url, 'PUT', token, [HEADER_CONTENT_TYPE], body)
+export function httpPut<T>(url: string, body: unknown = null): Promise<T> {
+    return _httpFetch(url, 'PUT', [HEADER_CONTENT_TYPE], body)
 }
 
 export const Util = {

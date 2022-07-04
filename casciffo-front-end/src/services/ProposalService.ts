@@ -2,13 +2,14 @@ import {ProposalModel} from "../model/proposal/ProposalModel";
 import ApiUrls from "../common/Links";
 import {PromoterTypes, ResearchTypes} from "../common/Constants";
 import {TimelineEventModel} from "../model/TimelineEventModel";
-import {ProtocolModel} from "../model/proposal/finance/ProtocolModel";
+import {ProtocolAggregateDTO, ProtocolModel} from "../model/proposal/finance/ProtocolModel";
 import {ProtocolCommentsModel} from "../model/proposal/finance/ProtocolCommentsModel";
 import {httpGet, httpPost, httpPut} from "../common/Util";
 
+
 class ProposalService {
 
-    fetchByType(type: string, sort: string = "dateCreated"): Promise<Array<ProposalModel>> {
+    fetchByType(type: string, sort: string = "createdDate"): Promise<Array<ProposalModel>> {
         const url = ApiUrls.proposalsByTypeUrl(type)
         return httpGet(url)
     }
@@ -20,7 +21,7 @@ class ProposalService {
             stateId: 0,
             pathologyId: 0,
             principalInvestigatorId: 0,
-            principalInvestigator: {userName:"Dr. Nuno", userEmail:"outro email bue fixe"},
+            principalInvestigator: {name:"Dr. Nuno", email:"outro email bue fixe"},
             serviceTypeId: 0,
             therapeuticAreaId: 0,
             type: ResearchTypes.CLINICAL_TRIAL.id,
@@ -28,7 +29,7 @@ class ProposalService {
             pathology: {name: "Refluxo gastroesofágico"},
             serviceType: {name: "Gastrenterologia"},
             therapeuticArea: {name: "Gastrenterologia"},
-            dateCreated: "",
+            createdDate: "",
             financialComponent: {
                 promoter: {id: "1", name:"Merck KGaA", email:"abc@promotor1.com", promoterType: PromoterTypes.COMMERCIAL.id},
                 partnerships: [{name:"abc", description: "abc", phoneContact: "abc", siteUrl: "abc", representative: "abc", email: "abc"}],
@@ -40,7 +41,7 @@ class ProposalService {
             stateId: 0,
             pathologyId: 0,
             principalInvestigatorId: 0,
-            principalInvestigator: {userName:"Dr. Hermilindo", userEmail:"1email bue fixe"},
+            principalInvestigator: {name:"Dr. Hermilindo", email:"1email bue fixe"},
             serviceTypeId: 0,
             sigla: "Firefly",
             therapeuticAreaId: 0,
@@ -49,7 +50,7 @@ class ProposalService {
             pathology: {name: "patologia2"},
             serviceType: {name: "serviço2"},
             therapeuticArea: {name: "area terapeutica 2"},
-            dateCreated: "",
+            createdDate: "",
         }
         return new Promise(resolve => { setTimeout(() =>
             resolve(
@@ -98,7 +99,7 @@ class ProposalService {
         proposalId: string,
         pfcId: string,
         comment: ProtocolCommentsModel
-    ): Promise<ProtocolCommentsModel> {
+    ): Promise<ProtocolAggregateDTO> {
         const url = ApiUrls.proposalsProtocolComments(proposalId, pfcId)
         return httpPost(url, comment)
     }

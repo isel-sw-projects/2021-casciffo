@@ -4,6 +4,7 @@ import {ServiceTypeModel} from "../model/proposal-constants/ServiceTypeModel";
 import {TherapeuticAreaModel} from "../model/proposal-constants/TherapeuticAreaModel";
 import {PromoterModel} from "../model/proposal/finance/PromoterModel";
 import {PartnershipModel} from "../model/PartnershipModel";
+import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
 
 type Page = {
     pageNum: number,
@@ -55,7 +56,8 @@ type Filter = {
 
 type UserToken = {
     token: string,
-    userId: string
+    userId: string,
+    userName: string
 }
 
 export type {

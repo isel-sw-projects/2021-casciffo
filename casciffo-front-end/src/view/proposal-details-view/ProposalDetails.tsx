@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {
     Button,
@@ -46,10 +46,9 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         navigate("/propostas")
         //show error and move backwards using navigate
     }
-
     const [proposal, setProposal] = useState<ProposalModel>({
-        dateCreated: undefined,
-        dateModified: undefined,
+        createdDate: undefined,
+        lastModified: undefined,
         financialComponent: undefined,
         id: 0,
         investigationTeam: undefined,
@@ -66,6 +65,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         therapeuticAreaId: 0,
         type: ""
     })
+
     const [isDataReady, setDataReady] = useState(false)
     const [isError, setIsError] = useState(false)
     const [selectedTab, setSelectedTab] = useState("proposal")
@@ -144,7 +144,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         >
                             <Stack direction={"vertical"}>
                                 <span>{STATES.SUBMETIDO.name}</span>
-                                <span>{Util.formatDate(proposal.dateCreated!)}</span>
+                                <span>{Util.formatDate(proposal.createdDate!)}</span>
                                 <br/>
                                 <span>{STATES.SUBMETIDO.owner}</span>
                             </Stack>
@@ -191,7 +191,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         const commentModel : ProposalCommentsModel = {
             //FIXME get author from contextApi
             // for now using the principal investigator of proposal
-            authorId: proposal.principalInvestigatorId,
+            authorId: proposal.principalInvestigatorId + "",
             commentType: type,
             content: comment,
             proposalId: proposalId!
@@ -208,6 +208,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
     }
 
     return (
+
         <React.Fragment>
             { !isError && <Container>
                 <Tabs
@@ -256,7 +257,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                                         <Form.Control
                                                             type={"text"}
                                                             name={"investigator"}
-                                                            value={proposal.principalInvestigator?.userName}
+                                                            value={proposal.principalInvestigator?.name}
                                                             disabled
                                                         />
                                                     </Form.Group>
@@ -312,12 +313,12 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                                     as="li"
                                                     className="d-flex justify-content-between align-items-start"
                                                     style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
-                                                    key={`${team.member?.userName}-${idx}`}
+                                                    key={`${team.member?.name}-${idx}`}
                                                 >
                                                     <small>
                                                         <div className="ms-2 me-auto">
-                                                            <div className="fw-bold">{team.member?.userName}</div>
-                                                            {team.member?.userEmail}
+                                                            <div className="fw-bold">{team.member?.name}</div>
+                                                            {team.member?.email}
                                                         </div>
                                                     </small>
                                                 </ListGroup.Item>
@@ -368,7 +369,13 @@ export function ProposalDetails(props: ProposalDetailsProps) {
 
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
                         <Tab eventKey="protocol" title="Protocolo">
-                            <ProtocolTabContent service={props.proposalService} pfcId={proposal.financialComponent?.id}/>
+                            <ProtocolTabContent
+                                saveProtocolComment={props.proposalService.saveProtocolComment}
+                                pfcId={proposal.financialComponent?.id}
+                                comments={proposal.comments?.filter(value => value.commentType === CommentTypes.PROTOCOL.id)}
+                                setNewComment={(c) => setProposal(updateState("comments", [...proposal.comments!, c]))}
+                                protocol={proposal.financialComponent?.protocol}
+                            />
                         </Tab> :
                         <></>
                     }

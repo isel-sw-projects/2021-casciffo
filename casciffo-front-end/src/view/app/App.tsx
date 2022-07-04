@@ -13,7 +13,6 @@ import RequiresAuth from "../login-view/RequiresAuth";
 import {Dashboard} from "./Dashboard";
 import {Login} from "../login-view/Login";
 import {UserService} from "../../services/UserService";
-import {useToken} from "../../custom_hooks/useToken";
 import {Research} from "../researches-view/Research";
 import {ResearchAggregateService} from "../../services/ResearchAggregateService";
 import {ResearchDetails} from "../researches-view/ResearchDetails";
@@ -36,12 +35,11 @@ function NavigationBar() {
 }
 
 function CreateRoutes() {
-    const [_, setToken] = useToken()
 
     return (
         <Routes>
             <Route path={"/"} element={<Dashboard/>}/>
-            <Route path={"/login-view"} element={<Login UserService={new UserService()} setToken={setToken}/>}/>
+            <Route path={"/login"} element={<Login UserService={new UserService()}/>}/>
             <Route path={"/propostas"}
                    element={RequiresAuth(<Proposals service={new ProposalService()}/>)}/>
             <Route path={"/propostas/criar"}

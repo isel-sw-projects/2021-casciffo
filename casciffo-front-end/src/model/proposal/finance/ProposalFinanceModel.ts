@@ -1,5 +1,6 @@
 import {PromoterModel} from "./PromoterModel";
 import {PartnershipModel} from "../../PartnershipModel";
+import {ProtocolModel} from "./ProtocolModel";
 
 export interface ProposalFinanceModel {
     id?: string,
@@ -7,5 +8,6 @@ export interface ProposalFinanceModel {
     promoter?: PromoterModel,
     partnerships?: Array<PartnershipModel>,
     hasPartnerships: boolean,
+    protocol?: ProtocolModel,
     file?: unknown
 }

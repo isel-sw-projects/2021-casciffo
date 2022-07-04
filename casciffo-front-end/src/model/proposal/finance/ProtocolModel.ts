@@ -1,9 +1,14 @@
-import {ProtocolCommentsModel} from "./ProtocolCommentsModel";
+import {ProposalCommentsModel} from "../ProposalCommentsModel";
 
 export interface ProtocolModel {
     id?: string,
-    validatedDate: string,
-    isValidated: boolean,
+    validatedDate?: string,
+    validated?: boolean,
     financialComponentId?: number,
-    comments?: ProtocolCommentsModel[]
+    commentRef?: string
+}
+
+export interface ProtocolAggregateDTO {
+    protocol?: ProtocolModel,
+    comment?: ProposalCommentsModel
 }

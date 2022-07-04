@@ -3,8 +3,8 @@ const BASE_URL = `http://localhost:8080/api/casciffo`
 
 /************************** USER **************************/
 const USERS_URL = `${BASE_URL}/users`
-const USER_LOGIN_URL = `${BASE_URL}/login`
-const USER_REGISTER_URL = `${BASE_URL}/register`
+const USER_LOGIN_URL = `${USERS_URL}/login`
+const USER_REGISTER_URL = `${USERS_URL}/register`
 const USERS_BY_ROLE = (roles: string[]) => `${USERS_URL}/search?roles=${roles}`
 const USERS_BY_ROLE_AND_NAME =
     (name: string, roles: string[]) =>

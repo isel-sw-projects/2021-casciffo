@@ -52,7 +52,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
         return (
             <tr key={comment.id}>
                 <td>{Util.formatDate(comment.dateCreated!,true)}</td>
-                <td>{comment.author?.userName}</td>
+                <td>{comment.author?.name}</td>
                 <td>{comment.content}</td>
             </tr>
         )

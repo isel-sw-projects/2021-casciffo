@@ -16,7 +16,7 @@ type UserInfo = {
 
 export function Users(props: UsersProps) {
     const [users, setUsers] = useState<UserInfo[]>([])
-    const [newUser, setNewUser] = useState<UserModel>({userEmail: "", userName: ""})
+    const [newUser, setNewUser] = useState<UserModel>({email: "", name: ""})
 
     return (
         <Container>

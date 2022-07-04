@@ -6,17 +6,17 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import App from "./view/app/App";
 
-// import { createRoot } from 'react-dom/client';
-// const container = document.getElementById('root');
-// const root = createRoot(container!);
-// root.render(<App/>);
+import { createRoot } from 'react-dom/client';
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(<App/>);
 
-ReactDOM.render(
-    <React.StrictMode>
-            <App />
-    </React.StrictMode>,
-    document.getElementById('root')
-);
+// ReactDOM.render(
+//     <React.StrictMode>
+//             <App />
+//     </React.StrictMode>,
+//     document.getElementById('root')
+// );
 
 
 // If you want your app to work offline and load faster, you can change

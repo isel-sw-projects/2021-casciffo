@@ -1,57 +1,61 @@
 import React, {useCallback, useEffect, useState} from "react"
-import {Button, Form, FormSelect, Stack, Table} from "react-bootstrap"
-import ProposalAggregateService from "../../services/ProposalAggregateService";
+import {Button, Form, Stack, Table} from "react-bootstrap"
 import {Navigate, useParams} from "react-router-dom";
-import {ProtocolModel} from "../../model/proposal/finance/ProtocolModel";
+import {ProtocolAggregateDTO, ProtocolModel} from "../../model/proposal/finance/ProtocolModel";
 import {Util} from "../../common/Util";
 import {ProtocolCommentsModel} from "../../model/proposal/finance/ProtocolCommentsModel";
 import {BiCheckboxChecked, BiCheckboxMinus} from "react-icons/bi";
+import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
+import {CommentTypes, TOKEN_KEY} from "../../common/Constants";
+import {UserToken} from "../../common/Types";
 
 type PPT_Props = {
-    service: ProposalAggregateService,
+    saveProtocolComment: (proposalId: string,pfcId: string,comment: ProtocolCommentsModel) => Promise<ProtocolAggregateDTO>
+    comments?: ProposalCommentsModel[]
+    setNewComment: (comment: ProposalCommentsModel) =>  void
+    protocol?: ProtocolModel
     pfcId?: string
 }
 
 export function ProtocolTabContent(props: PPT_Props) {
 
-    const headers = ["Criado", "Nome\n(Empresa/Papel)","Observação","Validado"]
+    const headers = ["Data", "Autor", "Observação", "Validado"]
     const {proposalId} = useParams()
-    const [protocol, setProtocol] = useState<ProtocolModel>({
-        financialComponentId: 0, id: "", isValidated: false, validatedDate: "",
-        comments: []
-    })
+    const [protocol, setProtocol] = useState<ProtocolModel>()
+    const [comments, setComments] = useState<ProposalCommentsModel[] | undefined>()
+
     const [displayData, setDisplayData] = useState(false)
-    const [comment, setComment] = useState<ProtocolCommentsModel>({
-        authorName: "",
-        orgName: "",
-        observation: "",
-        validated: false
-    })
+    const [comment, setComment] = useState<ProtocolCommentsModel>(newComment())
     const [showCommentForm, setShowCommentForm] = useState(false)
 
     useEffect(() => {
-        props.service
-            .fetchProtocol(proposalId!, props.pfcId!)
-            .then(setProtocol)
-            .then(() => setDisplayData(true))
-    }, [props.service, proposalId, props.pfcId])
+        setProtocol(props.protocol)
+        // props.service
+        //     .fetchProtocol(proposalId!, props.pfcId!)
+        //     .then(setProtocol)
+        //     .then(() => setDisplayData(true))
+    }, [props.protocol])
+
+    useEffect(() => {
+        setComments(props.comments)
+    }, [props.comments])
 
     const getBackgroundColor = (validated: boolean) => ({backgroundColor:validated ? "#0BDA51" : "#98c3fa"})
 
-    const sortByDate = (c1: ProtocolCommentsModel, c2: ProtocolCommentsModel) => Util.cmp(c1.dateCreated, c2.dateCreated)
+    const sortByDate = (c1: ProposalCommentsModel, c2: ProposalCommentsModel) => Util.cmp(c1.createdDate, c2.createdDate)
 
     function mapRowElements() {
         if(!displayData) return (<tr><td colSpan={4}>A carregar comentários...</td></tr>)
-        if(protocol.comments == null || protocol.comments!.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
-        return protocol.comments!
+        if(props.comments == null || props.comments!.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
+        return props.comments!
             .sort(sortByDate)
             .map(c => {
             return (
                 <tr key={c.id}>
-                    <td>{Util.formatDate(c.dateCreated!)}</td>
-                    <td>{c.authorName + "\n" + c.orgName}</td>
-                    <td>{c.observation}</td>
-                    <td className={"text-center"}>{c.validated ?
+                    <td>{Util.formatDate(c.createdDate!)}</td>
+                    <td>{c.author?.name}</td>
+                    <td>{c.content}</td>
+                    <td className={"text-center"}>{(protocol?.commentRef === c.id) ?
                         <BiCheckboxChecked style={{color: "green"}} size={40}/>
                         : <BiCheckboxMinus style={{color: "grey"}} size={40}/>}</td>
                 </tr>
@@ -80,59 +84,55 @@ export function ProtocolTabContent(props: PPT_Props) {
     }
 
 
-    const saveComment = () => {
-        return props.service.saveProtocolComment(proposalId!, props.pfcId!, comment)
-            .then(comment => setProtocol(prevState => ({...prevState, comments: [...prevState.comments!, comment]})))
-    }
+    const saveComment = useCallback(() => {
+        props.saveProtocolComment(proposalId!, props.pfcId!, comment)
+            .then(data => {
+                setProtocol(data.protocol!)
+                return data
+            })
+            .then(data => {
+                props.setNewComment(data.comment!)
+            })
+            .then(() => alert('Comment created!'))
+            .then(() => setShowCommentForm(false))
+            .then(() => setComment(newComment()))
+    },[comment, newComment, proposalId, props])
 
-    const updateProtocol = useCallback(() => {
-        props.service
-            .updateProtocol(proposalId!, protocol)
-            .then(setProtocol)
-    }, [proposalId, props.service, protocol])
+    function newComment(): ProtocolCommentsModel {
+        const userToken = JSON.parse(localStorage.getItem(TOKEN_KEY)!) as UserToken
+        return {
+            validated: false,
+            newValidation: false,
+            comment: {
+                proposalId: proposalId,
+                content: "",
+                authorId: userToken.userId,
+                commentType: CommentTypes.PROTOCOL.id,
+                author: {
+                    userId: userToken.userId,
+                    name: userToken.userName
+                }
+            }
+        }
+    }
 
     const submitForm = () => {
-        protocol.isValidated = comment.validated || false
         saveComment()
-            .then(() => {
-                if(comment.validated)
-                    updateProtocol()
-            }).then(() => alert('Comment created!'))
-            .then(() => setShowCommentForm(false))
-            .then(() => setComment({
-                authorName: "",
-                orgName: "",
-                observation: "",
-                validated: false
-            }))
     }
 
+
+    const updateCommentContent = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setComment(prevState => ({
+            ...prevState,
+            comment: {...prevState.comment, content: event.target.value}
+        }));
+    }
 
     function commentForm() {
         return (
             <Form className={"justify-content-evenly"}>
                 <fieldset className={"border p-3"}>
                     <legend className={"float-none w-auto p-2"}>Observação</legend>
-                    <Form.Group>
-                        <Form.Label>Autor</Form.Label>
-                        <Form.Control
-                            required
-                            type={"text"}
-                            name={"authorName"}
-                            value={comment.authorName}
-                            onChange={updateComment}
-                            />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label>Organização/Papel</Form.Label>
-                        <Form.Control
-                            required
-                            type={"text"}
-                            name={"orgName"}
-                            value={comment.orgName}
-                            onChange={updateComment}
-                            />
-                    </Form.Group>
                     <Form.Group>
                         <Form.Check
                             type={"checkbox"}
@@ -142,6 +142,16 @@ export function ProtocolTabContent(props: PPT_Props) {
                             label={"Validado"}
                         />
                     </Form.Group>
+                    <Form.Group>
+                        <Form.Check
+                            type={"checkbox"}
+                            name={"newValidation"}
+                            checked={comment.newValidation}
+                            onChange={updateComment}
+                            label={"Revalidar?"}
+                            style={{display: protocol?.validated && comment.validated ? "inherit" : "none"}}
+                        />
+                    </Form.Group>
 
                     <Form.Group>
                         <Form.Label>Observação</Form.Label>
@@ -149,12 +159,12 @@ export function ProtocolTabContent(props: PPT_Props) {
                             required
                             as={"textarea"}
                             rows={3}
-                            name={"observation"}
-                            value={comment.observation}
-                            onChange={updateComment}
+                            name={"content"}
+                            value={comment.comment?.content}
+                            onChange={updateCommentContent}
                         />
                     </Form.Group>
-                    <Button onClick={submitForm}>Criar</Button>
+                    <Button onClick={submitForm}>Submeter</Button>
                 </fieldset>
             </Form>
         );
@@ -168,13 +178,13 @@ export function ProtocolTabContent(props: PPT_Props) {
                     <Button
                         className={"float-start m-3"}
                         variant={"primary"}
-                        style={getBackgroundColor(protocol.isValidated!)}
+                        style={getBackgroundColor(protocol?.validated!)}
                         disabled
                     >
                         CEIC
                         <br/>
-                        {protocol.validatedDate == null ? "---"
-                            : Util.formatDate(protocol.validatedDate!)}
+                        {protocol?.validatedDate == null ? "---"
+                            : Util.formatDate(protocol.validatedDate)}
                     </Button>
                 </Stack>
                 : <p>A carregar estado do protocolo...</p>

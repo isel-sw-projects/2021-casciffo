@@ -9,7 +9,7 @@ export default function RequiresAuth(childs: any) {
     const [token, setToken] = useToken()
 
     if(token == null) {
-        return <Navigate to={"/login-view"} replace={true}/>
+        return <Navigate to={"/login"} replace={true}/>
     }
 
 

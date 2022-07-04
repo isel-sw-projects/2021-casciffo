@@ -15,7 +15,7 @@ type Proposals_Props = {
 
 type ProposalRowInfo = {
     id: number,
-    dateCreated: string,
+    createdDate: string,
     sigla: string,
     state: string,
     pathology: string,
@@ -41,7 +41,7 @@ export function Proposals(props: Proposals_Props) {
     const service = props.service
 
     const tableHeadersClinicalTrials: CSVHeader[] = [
-        {label:"Id", key:"id"}, {label:"Data criada", key: "dateCreated"}, {label:"Sigla", key:"sigla"},
+        {label:"Id", key:"id"}, {label:"Data criada", key: "createdDate"}, {label:"Sigla", key:"sigla"},
         {label:"Estado", key:"state"}, {label:"Patologia", key:"pathology"}, {label:"Serviço", key: "serviceType"},
         {label:"Área terapeutica", key:"therapeuticArea"}, {label: "Investigador Principal", key:"principalInvestigator"},
         {label:"Promotor", key:"promoter"}, {label:"Parcerias", key:"partnerships"}
@@ -80,13 +80,13 @@ export function Proposals(props: Proposals_Props) {
                 selected: false,
                 proposal: {
                     id: p.id!,
-                    dateCreated: Util.formatDate(p.dateCreated!),
+                    createdDate: Util.formatDate(p.createdDate!),
                     sigla: p.sigla,
                     state: p.state!.name,
                     pathology: p.pathology!.name,
                     serviceType: p.serviceType!.name,
                     therapeuticArea: p.therapeuticArea!.name,
-                    principalInvestigator: p.principalInvestigator!.userName!,
+                    principalInvestigator: p.principalInvestigator!.name!,
                     type: p.type,
                     promoter: hasFinancialComponent ? p.financialComponent!.promoter!.name : undefined,
                     partnerships: hasFinancialComponent && p.financialComponent!.hasPartnerships ? "Sim" : "Não"
@@ -150,7 +150,7 @@ export function Proposals(props: Proposals_Props) {
                     <br/>
                     <span><Link to={`${row.proposal.id}`}>Ver detalhes</Link></span>
                 </td>
-                <td>{row.proposal.dateCreated}</td>
+                <td>{row.proposal.createdDate}</td>
                 <td>{row.proposal.sigla}</td>
                 <td>{row.proposal.state}</td>
                 <td>{row.proposal.pathology}</td>

@@ -5,7 +5,7 @@ export interface ProposalCommentsModel {
     proposalId?: string,
     commentType?: string,
     content: string,
-    dateCreated?: string,
-    authorId?: number,
+    createdDate?: string,
+    authorId?: string,
     author?: UserModel
 }
