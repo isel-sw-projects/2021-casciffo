@@ -21,7 +21,7 @@ data class StateTransition(
 
     var transitionDate: LocalDateTime,
 
-    var stateType: StateType,
+    var transitionType: StateType,
 
     var referenceId: Int,
 

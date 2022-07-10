@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.users.user
 
 
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
+import isel.casciffo.casciffospringbackend.exceptions.GenericException
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
 import isel.casciffo.casciffospringbackend.roles.RoleService
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
@@ -12,7 +13,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitLast
+import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -34,12 +38,16 @@ class UserServiceImpl(
     @Autowired val userRolesRepo: UserRolesRepo
 ) : UserService {
 
+    val logger = KotlinLogging.logger {  }
+
     override suspend fun loginUser(userModel: UserModel): BearerTokenWrapper {
         val existingUser = userRepository.findByEmail(userModel.email!!).awaitSingleOrNull()
 
         existingUser?.let {
-            if(encoder.matches(userModel.password, it.password))
-                return BearerTokenWrapper(jwtSupport.generate(it.email!!), existingUser.userId!!, existingUser.name!!)
+            if(!encoder.matches(userModel.password, it.password)) return@let
+
+            val token = jwtSupport.generate(it.email!!)
+            return BearerTokenWrapper(token.value, existingUser.userId!!, existingUser.name!!)
         }
 
         throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login credentials incorrect!")
@@ -51,8 +59,32 @@ class UserServiceImpl(
         return deletedUser
     }
 
-    override suspend fun updateUserRoles(roles: List<Int>, userId: Int) {
-        userRolesRepo.saveAll(roles.map { UserRoles(userId = userId, roleId = it) }).subscribe()
+    override suspend fun updateUserRoles(roles: List<Int>, userId: Int): BearerTokenWrapper {
+        if (roles.isEmpty()) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Roles cannot come empty!")
+
+        val user = getUser(userId, true)!!
+        val currentRoles = user.roles?.collectList()?.awaitFirstOrNull()
+        val rolesToAdd =
+            if (!currentRoles.isNullOrEmpty())
+                roles.filter { r -> currentRoles.none { cr -> r != cr.roleId!! } }
+            else
+                roles
+
+        if (rolesToAdd.isNotEmpty()) {
+            userRolesRepo
+                .saveAll(rolesToAdd.map { UserRoles(userId = userId, roleId = it) })
+                .doOnError {
+                    logger.info { it }
+                }.subscribe()
+        }
+        val token = jwtSupport.generate(user.name!!)
+        val updatedRoles = roleService.findByUserId(userId).map { it.roleName!! }.collectList().awaitSingle()
+        return BearerTokenWrapper(
+            token = token.value,
+            userId = userId,
+            userName = user.name,
+            roles = updatedRoles
+        )
     }
 
     override suspend fun getAllUsers(): Flow<UserModel?> {
@@ -73,7 +105,11 @@ class UserServiceImpl(
         val user = userRepository.save(userModel).awaitSingleOrNull()
                 ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
 
-        return BearerTokenWrapper(jwtSupport.generate(user.email!!), user.userId!!, user.name!!)
+        return BearerTokenWrapper(
+            token = jwtSupport.generate(user.email!!).value,
+            userId = user.userId!!,
+            userName = user.name!!
+        )
     }
 
     override suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel?> {

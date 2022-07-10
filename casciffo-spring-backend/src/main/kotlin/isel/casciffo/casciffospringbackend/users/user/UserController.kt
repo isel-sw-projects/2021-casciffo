@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.users.user
 
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
+import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtDTO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,20 +22,23 @@ class UserController(
     suspend fun createUser(@RequestBody(required = true) userDTO: UserDTO): JwtDTO {
         val model = mapper.mapDTOtoModel(userDTO)
         val tokenWrapper = service.registerUser(model)
-        return JwtDTO(tokenWrapper.token.value, tokenWrapper.userId)
+        return JwtDTO(tokenWrapper.token, tokenWrapper.userId, tokenWrapper.userName, tokenWrapper.roles ?: listOf())
     }
 
     @PostMapping(LOGIN_URL)
     suspend fun loginUser(@RequestBody(required = true) userDTO: UserDTO): JwtDTO {
         val model = mapper.mapDTOtoModel(userDTO)
         val tokenWrapper = service.loginUser(model)
-        return JwtDTO(tokenWrapper.token.value, tokenWrapper.userId)
+        return JwtDTO(tokenWrapper.token, tokenWrapper.userId, tokenWrapper.userName, tokenWrapper.roles ?: listOf())
     }
 
     @PutMapping(USER_ROLES_URL)
-    suspend fun updateUserRoles(@RequestBody(required = true) roles: List<Int>, @PathVariable userId: Int): ResponseEntity<Unit> {
-        service.updateUserRoles(roles, userId)
-        return ResponseEntity.ok().build()
+    suspend fun updateUserRoles(
+        @RequestBody(required = true) roles: List<Int>,
+        @PathVariable userId: Int
+    ): ResponseEntity<BearerTokenWrapper> {
+        val newToken = service.updateUserRoles(roles, userId)
+        return ResponseEntity.ok().body(newToken)
     }
 
 

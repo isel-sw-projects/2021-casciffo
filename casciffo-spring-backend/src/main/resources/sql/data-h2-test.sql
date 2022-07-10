@@ -3,10 +3,10 @@ INSERT INTO roles(role_name) VALUES ('SUPERUSER'), ('CA'), ('UIC'), ('FINANCE'),
 
 -- USERS
 INSERT INTO user_account(user_name, user_email, user_password)
-    VALUES ('admin', 'admin@admin.pt', '123456'),
-           ('Fernando', 'Fernando@casciffo.pt', '123456'),
-           ('admin', 'admin.diferente@casciffo.pt', '123456'),
-           ('José', 'jose.guerreiro@casciffo.pt', '123456');
+    VALUES ('admin', 'admin@admin.pt', '$2a$10$2X2vmd5NthkKodbVnEGw8./LW0pdx46vr8MqlCg2tc742rPRbDwgG'),
+           ('Fernando', 'Fernando@casciffo.pt', '$2a$10$2X2vmd5NthkKodbVnEGw8./LW0pdx46vr8MqlCg2tc742rPRbDwgG'),
+           ('admin', 'admin.diferente@casciffo.pt', '$2a$10$2X2vmd5NthkKodbVnEGw8./LW0pdx46vr8MqlCg2tc742rPRbDwgG'),
+           ('José', 'jose.guerreiro@casciffo.pt', '$2a$10$2X2vmd5NthkKodbVnEGw8./LW0pdx46vr8MqlCg2tc742rPRbDwgG');
 
 --USER ROLES
 INSERT INTO user_roles(user_id, role_id)
@@ -19,79 +19,60 @@ INSERT INTO user_roles(user_id, role_id)
 -- STATES
 INSERT INTO states(state_name)
     VALUES ('SUBMETIDO'),
-           ('NEGOCIACAO_DE_CF'),
-           ('VALIDACAO_INTERNA_DEPARTMENTS'),
+           ('VALIDACAO_CF'),
            ('VALIDACAO_EXTERNA'),
            ('SUBMISSAO_AO_CA'),
            ('VALIDACAO_INTERNA_CA'),
            ('VALIDADO'),
-           ('CANCELADO'),
+           ('ATIVO'),
            ('COMPLETO'),
-           ('ATIVO');
-
---TYPES OF STATES
-INSERT INTO type_of_states(state_id, state_type)
-    VALUES (1, 'FINANCE_PROPOSAL'),     --SUBMETIDO
-           (1, 'PROPOSAL'),             --SUBMETIDO
-           (1, 'ADDENDA'),              --SUBMETIDO
-           (2, 'FINANCE_PROPOSAL'),     --NEGOCIACAO_DE_CF
-           (3, 'FINANCE_PROPOSAL'),     --VALIDACAO_INTERNA_DEPARTMENTS
-           (4, 'PROPOSAL'),             --VALIDACAO_EXTERNA
-           (5, 'FINANCE_PROPOSAL'),     --SUBMISSAO_AO_CA
-           (6, 'PROPOSAL'),             --VALIDAO_INTERNA_CA
-           (6, 'ADDENDA'),              --VALIDAO_INTERNA_CA
-           (7, 'PROPOSAL'),             --VALIDADO
-           (7, 'ADDENDA'),              --VALIDADO
-           (8, 'ALL'),                  --CANCELADO
-           (9, 'ENSAIO'),               --COMPLETO
-           (10, 'ENSAIO');              --ATIVO
+           ('CANCELADO');
 
 --LINK STATES WITH ROLES
 INSERT INTO state_roles(state_id, role_id)
     VALUES (1, 3),                      --SUBMETIDO                         UIC
-           (2, 3),                      --NEGOCIACAO_DE_CF                  UIC
-           (3, 4),                      --VALIDACAO_INTERNA_DEPARTMENTS     FINANCE
-           (3, 5),                      --VALIDACAO_INTERNA_DEPARTMENTS     JURIDICAL
-           (4, 3),                      --VALIDACAO_EXTERNA                 UIC
-           (4, 1),                      --VALIDACAO_EXTERNA                 SUPERUSER
-           (5, 3),                      --SUBMISSAO_AO_CA                   UIC
-           (5, 1),                      --SUBMISSAO_AO_CA                   SUPERUSER
-           (6, 2),                      --VALIDAO_INTERNA_CA                CA
-           (7, 1),                      --VALIDADO                          SUPERUSER
-           (8, 1),                      --CANCELADO                         SUPERUSER
-           (9, 1),                      --COMPLETO                          SUPERUSER
-           (10, 3),                     --ATIVO                             UIC
-           (10, 1),                     --ATIVO                             SUPERUSER
+           (2, 4),                      --VALIDACAO_CF                      FINANCE
+           (2, 5),                      --VALIDACAO_CF                      JURIDICAL
+           (3, 3),                      --VALIDACAO_EXTERNA                 UIC
+           (3, 1),                      --VALIDACAO_EXTERNA                 SUPERUSER
+           (4, 3),                      --SUBMISSAO_AO_CA                   UIC
+           (4, 1),                      --SUBMISSAO_AO_CA                   SUPERUSER
+           (5, 2),                      --VALIDAO_INTERNA_CA                CA
+           (6, 1),                      --VALIDADO                          SUPERUSER
+           (8, 1),                      --COMPLETO                          SUPERUSER
+           (9, 1),                     --CANCELADO                         SUPERUSER
+           (7, 3),                      --ATIVO                             UIC
+           (7, 1),                      --ATIVO                             SUPERUSER
            (1, 1),                      --SUBMETIDO                         SUPERUSER
-           (2, 1),                      --NEGOCIACAO_DE_CF                  SUPERUSER
-           (3, 1),                      --VALIDACAO_INTERNA_DEPARTMENTS     SUPERUSER
-           (4, 1),                      --VALIDACAO_EXTERNA                 SUPERUSER
-           (5, 1),                      --SUBMISSAO_AO_CA                   SUPERUSER
-           (6, 1);                      --VALIDAO_INTERNA_CA                SUPERUSER
+           (2, 1),                      --VALIDACAO_CF                      SUPERUSER
+           (3, 1),                      --VALIDACAO_EXTERNA                 SUPERUSER
+           (4, 1),                      --SUBMISSAO_AO_CA                   SUPERUSER
+           (5, 1);                      --VALIDAO_INTERNA_CA                SUPERUSER
 
 --NEXT STATES
-INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, is_terminal_state)
+INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, state_flow_type)
 VALUES
     --FINANCE PROPOSAL
-    (1, 2, 'FINANCE_PROPOSAL', FALSE),
-    (2, 3, 'FINANCE_PROPOSAL', FALSE),
-    (3, 4, 'FINANCE_PROPOSAL', FALSE),
-    (4, 5, 'FINANCE_PROPOSAL', FALSE),
-    (5, 6, 'FINANCE_PROPOSAL', FALSE),
-    (6, 7, 'FINANCE_PROPOSAL', FALSE),
+    (1, 2, 'FINANCE_PROPOSAL', 'INITIAL'),
+    (2, 3, 'FINANCE_PROPOSAL', 'PROGRESS'),
+    (3, 4, 'FINANCE_PROPOSAL', 'PROGRESS'),
+    (4, 5, 'FINANCE_PROPOSAL', 'PROGRESS'),
+    (5, 6, 'FINANCE_PROPOSAL', 'PROGRESS'),
+    (6, NULL, 'FINANCE_PROPOSAL', 'TERMINAL'),
     --STUDY PROPOSAL
-    (1, 6, 'STUDY_PROPOSAL', FALSE),
-    (6, 7, 'STUDY_PROPOSAL', FALSE),
-    (7, NULL, 'STUDY_PROPOSAL', TRUE),
+    (1, 5, 'STUDY_PROPOSAL', 'INITIAL'),
+    (5, 6, 'STUDY_PROPOSAL', 'PROGRESS'),
+    (6, NULL, 'STUDY_PROPOSAL', 'TERMINAL'),
     --ADDENDA
-    (1, 6, 'ADDENDA', FALSE),
-    (6, 7, 'ADDENDA', FALSE),
-    (7, NULL, 'ADDENDA', TRUE),
+    (1, 5, 'ADDENDA', 'INITIAL'),
+    (5, 6, 'ADDENDA', 'PROGRESS'),
+    (6, NULL, 'ADDENDA', 'TERMINAL'),
     --ENSAIO
-    (10, 9, 'ENSAIO', FALSE),
-    (9, NULL, 'ENSAIO', TRUE),
+    (1, 7, 'RESEARCH', 'INITIAL'),
+    (7, 8, 'RESEARCH', 'PROGRESS'),
+    (8, NULL, 'RESEARCH', 'TERMINAL'),
     --ALL
-    (8, NULL, 'ALL', TRUE);
+    (9, NULL, 'ALL', TRUE);
 
 --SOME CONSTANTS
 INSERT INTO service(service_name) VALUES ('Cardiologia');
@@ -126,6 +107,9 @@ INSERT INTO promoter(promoter_name, promoter_type, promoter_email)
     VALUES ('PFIZER', 'COMMERCIAL', 'pfizer.no.more.@covid.com');
 
 INSERT INTO proposal_financial_component(proposal_id, financial_contract_id, promoter_id) VALUES (1, 1, 1);
+
+INSERT INTO validations(pfc_id, comment_ref, validation_type, validation_date)
+VALUES (1, NULL, 'FINANCE_DEP', NULL),(1, NULL, 'JURIDICAL_DEP', NULL);
 
 --PARTNERSHIPS
 INSERT INTO partnerships(proposal_financial_id, icon_url, representative, email, phone_contact, site_url, name)

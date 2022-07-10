@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS user_roles (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id INT NOT NULL,
     role_id INT NOT NULL,
-    UNIQUE (user_id, role_id),
+    UNIQUE (user_id, role_id) ,
     CONSTRAINT fk_ur_user_id FOREIGN KEY(user_id) REFERENCES user_account(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_ur_role_id FOREIGN KEY(role_id) REFERENCES roles(role_id) ON DELETE CASCADE
 );
@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS states (
     state_name VARCHAR NOT NULL UNIQUE
 );
 
+
 CREATE TABLE IF NOT EXISTS state_roles (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     state_id INT NOT NULL,
@@ -50,27 +51,19 @@ CREATE TABLE IF NOT EXISTS state_roles (
     CONSTRAINT fk_role_id FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
 );
 
---FIXME KINDA USELESS MAY DELETE IN FUTURE
-CREATE TABLE IF NOT EXISTS type_of_states (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    state_id INT NOT NULL,
-    state_type VARCHAR NOT NULL,
-    UNIQUE (state_id, state_type),
-    CONSTRAINT fk_tos_state_id FOREIGN KEY (state_id) REFERENCES states(state_id) ON DELETE CASCADE
-);
-
 
 CREATE TABLE IF NOT EXISTS next_possible_states (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     origin_state_id INT NOT NULL,
     next_state_id INT,
-    is_terminal_state BOOLEAN DEFAULT FALSE,
     state_type VARCHAR NOT NULL,
+    state_flow_type VARCHAR NOT NULL,
     CONSTRAINT unique_transition_type UNIQUE (origin_state_id, next_state_id, state_type),
-    CONSTRAINT check_validity CHECK ( NOT (next_state_id IS NULL AND is_terminal_state = FALSE) ),
+    CONSTRAINT check_validity CHECK ( NOT (next_state_id IS NULL AND state_flow_type <> 'TERMINAL') ),
     CONSTRAINT fk_origin_state FOREIGN KEY (origin_state_id) REFERENCES states(state_id) ON DELETE CASCADE,
     CONSTRAINT fk_possible_state_id FOREIGN KEY (next_state_id) REFERENCES states(state_id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS state_transition (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -83,6 +76,7 @@ CREATE TABLE IF NOT EXISTS state_transition (
     CONSTRAINT fk_state_after FOREIGN KEY (state_id_after) REFERENCES states(state_id)
 );
 
+
 ---------------------------------------------------------------------------------------
 -----------------------------------------FILES-----------------------------------------
 ---------------------------------------------------------------------------------------
@@ -93,6 +87,7 @@ CREATE TABLE IF NOT EXISTS files (
     file_path TEXT NOT NULL,
     file_size INT NOT NULL
 );
+
 
 ---------------------------------------------------------------------------------------
 ---------------------------------PROPOSAL INFORMATION----------------------------------
@@ -108,6 +103,7 @@ CREATE TABLE IF NOT EXISTS service (
     service_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     service_name VARCHAR
 );
+
 
 CREATE TABLE IF NOT EXISTS therapeutic_area (
     therapeutic_area_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -135,6 +131,7 @@ CREATE TABLE IF NOT EXISTS proposal (
     CONSTRAINT fk_p_principal_investigator FOREIGN KEY(principal_investigator_id) REFERENCES user_account(user_id)
 );
 
+
 CREATE TABLE IF NOT EXISTS proposal_files (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT,
@@ -156,6 +153,7 @@ CREATE TABLE IF NOT EXISTS proposal_comments (
     CONSTRAINT fk_pc_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
     CONSTRAINT fk_author_id FOREIGN KEY(author_id) REFERENCES user_account(user_id)
 );
+
 
 CREATE TABLE IF NOT EXISTS timeline_event (
     event_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -197,6 +195,7 @@ CREATE TABLE IF NOT EXISTS promoter (
     promoter_email VARCHAR NOT NULL UNIQUE
 );
 
+
 CREATE TABLE IF NOT EXISTS proposal_financial_component (
     proposal_financial_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT,
@@ -207,6 +206,7 @@ CREATE TABLE IF NOT EXISTS proposal_financial_component (
     CONSTRAINT fk_pfc_financial_contract_id FOREIGN KEY (financial_contract_id) REFERENCES files(file_id),
     CONSTRAINT fk_pfc_promoter_id FOREIGN KEY(promoter_id) REFERENCES promoter(promoter_id)
 );
+
 
 CREATE TABLE IF NOT EXISTS protocol (
     protocol_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -220,6 +220,7 @@ CREATE TABLE IF NOT EXISTS protocol (
     CONSTRAINT check_is_valid CHECK ( NOT (comment_ref IS NULL AND validated) )
 );
 
+
 CREATE TABLE IF NOT EXISTS partnerships (
     partnership_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_financial_id INT,
@@ -230,6 +231,21 @@ CREATE TABLE IF NOT EXISTS partnerships (
     phone_contact VARCHAR,
     site_url TEXT,
     description TEXT
+);
+
+---------------------------------------------------------------------------------------
+---------------------------------------VALIDATION--------------------------------------
+---------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS validations (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pfc_id INT,
+    comment_ref INT,
+    validation_type VARCHAR NOT NULL, --finance_dep, juridical_dep
+    validation_date TIMESTAMP,
+    validated BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_v_pfc_id FOREIGN KEY (pfc_id) REFERENCES proposal_financial_component(proposal_financial_id),
+    CONSTRAINT fk_v_comment_id FOREIGN KEY (comment_ref) REFERENCES proposal_comments(comment_id)
 );
 
 
@@ -359,6 +375,7 @@ CREATE TABLE IF NOT EXISTS trial_financial_component (
         ON DELETE CASCADE
 );
 
+
 CREATE TABLE IF NOT EXISTS research_team_financial_scope (
     team_finance_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     trial_financial_component_id INT,
@@ -375,6 +392,7 @@ CREATE TABLE IF NOT EXISTS research_team_financial_scope (
             ON DELETE CASCADE,
     CONSTRAINT fk_rtfc_investigator_id FOREIGN KEY (investigator_id) REFERENCES user_account(user_id)
 );
+
 
 CREATE TABLE IF NOT EXISTS research_finance (
     research_finance_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

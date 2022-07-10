@@ -11,6 +11,7 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import isel.casciffo.casciffospringbackend.users.user.UserModel
+import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -75,11 +76,11 @@ data class ProposalModel(
 
     @Transient
     @Value("null")
-    var comments: Flux<ProposalComment>? = null,
+    var comments: Flow<ProposalComment>? = null,
 
     @Transient
     @Value("null")
-    var stateTransitions: Flux<StateTransition>? = null,
+    var stateTransitions: Flow<StateTransition>? = null,
 
     @Transient
     @Value("null")

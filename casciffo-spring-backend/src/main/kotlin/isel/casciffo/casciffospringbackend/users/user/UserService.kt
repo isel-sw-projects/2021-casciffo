@@ -18,5 +18,5 @@ interface UserService: ReactiveUserDetailsService {
     suspend fun loginUser(userModel: UserModel): BearerTokenWrapper
 
     suspend fun deleteUser(userId: Int): UserModel
-    suspend fun updateUserRoles(roles: List<Int>, userId: Int)
+    suspend fun updateUserRoles(roles: List<Int>, userId: Int): BearerTokenWrapper
 }

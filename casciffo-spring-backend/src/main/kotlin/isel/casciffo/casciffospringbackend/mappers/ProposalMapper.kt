@@ -10,6 +10,9 @@ import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalDTO
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.users.user.UserDTO
 import isel.casciffo.casciffospringbackend.users.user.UserModel
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -43,9 +46,9 @@ class ProposalMapper(
             principalInvestigatorId = dto.principalInvestigatorId,
             principalInvestigator = userMapper.mapDTOtoModel(dto.principalInvestigator),
             financialComponent = pfcModelOrNull(dto.financialComponent),
-            comments = dto.comments?.map{commentsMapper.mapDTOtoModel(it)}?.toFlux(),
+            comments = dto.comments?.map{commentsMapper.mapDTOtoModel(it)}?.asFlow(),
             investigationTeam = dto.investigationTeam?.map{invTeamMapper.mapDTOtoModel(it)}?.toFlux(),
-            stateTransitions = dto.stateTransitions?.toFlux(),
+            stateTransitions = dto.stateTransitions?.asFlow(),
             timelineEvents = dto.timelineEvents?.toFlux()
         )
     }
@@ -79,9 +82,9 @@ class ProposalMapper(
             principalInvestigatorId = model.principalInvestigatorId,
             principalInvestigator = userMapper.mapModelToDTO(model.principalInvestigator),
             financialComponent = pfcDTOorNull(model.financialComponent),
-            comments = model.comments?.collectList()?.awaitSingleOrNull()?.map { commentsMapper.mapModelToDTO(it) },
+            comments = model.comments?.map { commentsMapper.mapModelToDTO(it) }?.toList(),
             investigationTeam = model.investigationTeam?.collectList()?.awaitSingleOrNull()?.map { invTeamMapper.mapModelToDTO(it) },
-            stateTransitions = model.stateTransitions?.collectList()?.awaitSingleOrNull(),
+            stateTransitions = model.stateTransitions?.toList(),
             timelineEvents = model.timelineEvents?.collectList()?.awaitSingleOrNull()
         )
     }

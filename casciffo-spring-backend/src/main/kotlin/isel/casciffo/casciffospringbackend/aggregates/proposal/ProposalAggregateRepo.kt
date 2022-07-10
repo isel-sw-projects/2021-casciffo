@@ -12,7 +12,7 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
                 "pfc.proposal_financial_id, pfc.financial_contract_id, pfc.promoter_id, pfc.has_partnerships, " +
                 "state.state_name, st.service_name, ta.therapeutic_area_name, pl.pathology_name, " +
                 "pinv.user_name, pinv.user_email, pr.promoter_name, pr.promoter_email, prot.protocol_id, " +
-                "prot.validated, prot.validated_date " +
+                "prot.validated, prot.validated_date, prot.comment_ref " +
         "FROM proposal p " +
         "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
         "JOIN service st ON st.service_id = p.service_id " +
@@ -42,4 +42,31 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
         "WHERE p.proposal_type = :type"
     )
     fun findAllByType(type: ResearchType): Flux<ProposalAggregate>
+
+    @Query(
+        "SELECT CASE WHEN COUNT(id)=4 THEN TRUE ELSE FALSE END " +
+        "FROM (" +
+                "SELECT p.pathology_id as id " +
+                "FROM pathology p " +
+                "WHERE p.pathology_id=:pathologyId " +
+                "UNION ALL " +
+                "SELECT st.service_id as id " +
+                "FROM service st " +
+                "WHERE st.service_id=:serviceTypeId " +
+                "UNION ALL " +
+                "SELECT ta.therapeutic_area_id as id " +
+                "FROM therapeutic_area ta " +
+                "WHERE ta.therapeutic_area_id=:therapeuticAreaId " +
+                "UNION ALL " +
+                "SELECT ua.user_id as id " +
+                "FROM user_account ua " +
+                "WHERE ua.user_id=:investigatorId " +
+            ") as pisi"
+    )
+    fun areForeignKeysValid(
+        pathologyId: Int,
+        serviceTypeId: Int,
+        therapeuticAreaId: Int,
+        investigatorId: Int
+    ): Mono<Boolean>
 }

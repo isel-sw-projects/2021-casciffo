@@ -11,6 +11,6 @@ data class InvestigationTeamAggregate (
     var memberRole: InvestigatorRole? = null,
     var memberId: Int? = null,
 
-    var memberName: String? = null,
-    var memberEmail: String? = null
+    var userName: String? = null,
+    var userEmail: String? = null
 )

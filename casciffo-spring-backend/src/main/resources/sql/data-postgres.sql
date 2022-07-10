@@ -8,8 +8,7 @@ $$
         superuser_role_id INT;
         first_admin_id INT;
         state_submetido_id INT;
-        state_negociacao_cf_id INT;
-        state_validacao_interna_deps_id INT;
+        state_validacao_cf_id INT;
         state_validacao_externa_id INT;
         state_submissao_ao_ca_id INT;
         state_validacao_interna_ca_id INT;
@@ -46,20 +45,18 @@ $$
         --STATES
         INSERT INTO states(state_name)
         VALUES ('SUBMETIDO'),
-               ('NEGOCIACAO_DE_CF'),
-               ('VALIDACAO_INTERNA_DEPARTMENTS'),
+               ('VALIDACAO_CF'),
                ('VALIDACAO_EXTERNA'),
                ('SUBMISSAO_AO_CA'),
                ('VALIDACAO_INTERNA_CA'),
                ('VALIDADO'),
-               ('CANCELADO'),
+               ('ATIVO'),
                ('COMPLETO'),
-               ('ATIVO')
+               ('CANCELADO')
         ON CONFLICT DO NOTHING;
 
         state_submetido_id := (SELECT state_id FROM states WHERE state_name = 'SUBMETIDO');
-        state_negociacao_cf_id := (SELECT state_id FROM states WHERE state_name = 'NEGOCIACAO_DE_CF');
-        state_validacao_interna_deps_id := (SELECT state_id FROM states WHERE state_name = 'VALIDACAO_INTERNA_DEPARTMENTS');
+        state_validacao_cf_id := (SELECT state_id FROM states WHERE state_name = 'VALIDACAO_CF');
         state_validacao_externa_id := (SELECT state_id FROM states WHERE state_name = 'VALIDACAO_EXTERNA');
         state_submissao_ao_ca_id := (SELECT state_id FROM states WHERE state_name = 'SUBMISSAO_AO_CA');
         state_validacao_interna_ca_id := (SELECT state_id FROM states WHERE state_name = 'VALIDACAO_INTERNA_CA');
@@ -71,54 +68,29 @@ $$
         --STATE ROLES
         INSERT INTO state_roles(state_id, role_id)
         VALUES (state_submetido_id, uic_role_id),
-               (state_negociacao_cf_id, uic_role_id),
                (state_validacao_externa_id, uic_role_id),
                (state_submissao_ao_ca_id, uic_role_id),
                (state_ativo_id, uic_role_id),
-               (state_validacao_interna_deps_id, finance_role_id),
-               (state_validacao_interna_deps_id, juridical_role_id),
+               (state_validacao_cf_id, finance_role_id),
+               (state_validacao_cf_id, juridical_role_id),
                (state_validacao_interna_ca_id, ca_role_id),
                (state_validado_id, superuser_role_id),
                (state_completo_id, superuser_role_id),
                (state_cancelado_id, superuser_role_id),
                (state_ativo_id, superuser_role_id),
                (state_submetido_id, superuser_role_id),
-               (state_negociacao_cf_id, superuser_role_id),
-               (state_validacao_interna_deps_id, superuser_role_id),
+               (state_validacao_cf_id, superuser_role_id),
                (state_validacao_externa_id, superuser_role_id),
                (state_submissao_ao_ca_id, superuser_role_id),
                (state_validacao_interna_ca_id, superuser_role_id)
         ON CONFLICT DO NOTHING;
 
-        --STATE TYPES
---         INSERT INTO type_of_states(state_id, state_type)
---         VALUES (state_submetido_id, 'FINANCE_PROPOSAL'),
---                (state_submetido_id, 'STUDY_PROPOSAL'),
---                (state_submetido_id, 'ADDENDA'),
---                (state_negociacao_cf_id, 'FINANCE_PROPOSAL'),
---                (state_validacao_interna_deps_id, 'FINANCE_PROPOSAL'),
---                (state_validacao_externa_id, 'STUDY_PROPOSAL'),
---                (state_validacao_externa_id, 'FINANCE_PROPOSAL'),
---                (state_submissao_ao_ca_id, 'FINANCE_PROPOSAL'),
---                (state_validacao_interna_ca_id, 'STUDY_PROPOSAL'),
---                (state_validacao_interna_ca_id, 'FINANCE_PROPOSAL'),
---                (state_validacao_interna_ca_id, 'ADDENDA'),
---                (state_validado_id, 'STUDY_PROPOSAL'),
---                (state_validado_id, 'FINANCE_PROPOSAL'),
---                (state_validado_id, 'ADDENDA'),
---                (state_cancelado_id, 'ALL'),
---                (state_ativo_id, 'ENSAIO'),
---                (state_completo_id, 'ENSAIO')
---         ON CONFLICT DO NOTHING;
-
-
         --NEXT STATES
         INSERT INTO next_possible_states(origin_state_id, next_state_id, state_type, state_flow_type)
         VALUES
                 --FINANCE PROPOSAL
-                (state_submetido_id, state_negociacao_cf_id, 'FINANCE_PROPOSAL', 'INITIAL'),
-                (state_negociacao_cf_id, state_validacao_interna_deps_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
-                (state_validacao_interna_deps_id, state_validacao_externa_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
+                (state_submetido_id, state_validacao_cf_id, 'FINANCE_PROPOSAL', 'INITIAL'),
+                (state_validacao_cf_id, state_validacao_externa_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
                 (state_validacao_externa_id, state_submissao_ao_ca_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
                 (state_submissao_ao_ca_id, state_validacao_interna_ca_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
                 (state_validacao_interna_ca_id, state_validado_id, 'FINANCE_PROPOSAL', 'PROGRESS'),
@@ -135,8 +107,8 @@ $$
                 (state_validado_id, NULL, 'ADDENDA', 'TERMINAL'),
 
                 --ENSAIO
-                (state_ativo_id, state_completo_id, 'ENSAIO', 'PROGRESS'),
-                (state_completo_id, NULL, 'ENSAIO', 'TERMINAL'),
+                (state_ativo_id, state_completo_id, 'RESEARCH', 'INITIAL'),
+                (state_completo_id, NULL, 'RESEARCH', 'TERMINAL'),
 
                 --ALL
                 (state_cancelado_id, NULL, 'ALL', 'TERMINAL')

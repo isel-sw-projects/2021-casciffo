@@ -4,9 +4,11 @@ import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.roles.Roles
+import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -61,17 +63,21 @@ class ProposalController(
     @PutMapping(PROPOSAL_FINANCE_VALIDATION_URL)
     suspend fun financeTransitionProposalState(
         @PathVariable(required = true) proposalId: Int,
-        @RequestParam(required = true) nextStateId: Int
-    ): ProposalDTO {
-        return transitionState(proposalId, nextStateId, Roles.FINANCE)
+        @PathVariable(required = true) pfcId: Int,
+        @RequestBody(required = true) validationComment: ValidationComment
+    ): ResponseEntity<ProposalValidationModel> {
+        val res = service.validatePfc(proposalId, pfcId, validationComment)
+        return ResponseEntity.ok(res)
     }
 
     @PutMapping(PROPOSAL_JURIDICAL_VALIDATION_URL)
     suspend fun juridicalTransitionProposalState(
         @PathVariable(required = true) proposalId: Int,
-        @RequestParam(required = true) nextStateId: Int
-    ): ProposalDTO {
-        return transitionState(proposalId, nextStateId, Roles.JURIDICAL)
+        @PathVariable(required = true) pfcId: Int,
+        @RequestBody(required = true) validationComment: ValidationComment
+    ): ResponseEntity<ProposalValidationModel> {
+        val res = service.validatePfc(proposalId, pfcId, validationComment)
+        return ResponseEntity.ok(res)
     }
 
     @PutMapping(PROPOSAL_TRANSITION_CA_URL)

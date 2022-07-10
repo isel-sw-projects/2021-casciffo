@@ -9,4 +9,5 @@ interface ProposalCommentsService {
     suspend fun updateComment(comment: ProposalComment): ProposalComment
     suspend fun getComments(proposalId: Int, page: Pageable): Flow<ProposalComment>
     suspend fun getCommentsByType(proposalId: Int, type: CommentType, page: Pageable): Flow<ProposalComment>
+    suspend fun deleteComment(proposalId: Int, cId: Int): ProposalComment
 }

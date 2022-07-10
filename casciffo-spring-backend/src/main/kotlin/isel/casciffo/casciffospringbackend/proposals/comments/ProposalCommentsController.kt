@@ -1,18 +1,20 @@
 package isel.casciffo.casciffospringbackend.proposals.comments
 
 import isel.casciffo.casciffospringbackend.common.CommentType
-import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_COMMENTS
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_COMMENTS_DETAIL_URL
+import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_COMMENTS_URL
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class ProposalCommentsController(
     @Autowired val commentsService: ProposalCommentsService
 ) {
-    @GetMapping(PROPOSAL_COMMENTS)
+    @GetMapping(PROPOSAL_COMMENTS_URL)
     suspend fun getAllCommentsByProposal
                 (
         @PathVariable proposalId: Int,
@@ -32,8 +34,20 @@ class ProposalCommentsController(
             )
     }
 
-    @PostMapping(PROPOSAL_COMMENTS)
-     suspend fun createComment(@PathVariable proposalId: Int, @RequestBody(required = true) comment: ProposalComment): ProposalComment {
+    @PostMapping(PROPOSAL_COMMENTS_URL)
+     suspend fun createComment(
+        @PathVariable(required = true) proposalId: Int,
+        @RequestBody(required = true) comment: ProposalComment
+    ): ProposalComment {
          return commentsService.createComment(comment)
      }
+
+    @DeleteMapping(PROPOSAL_COMMENTS_DETAIL_URL)
+    suspend fun deleteComment(
+        @PathVariable(required = true) proposalId: Int,
+        @PathVariable(required = true) cId: Int
+    ): ResponseEntity<ProposalComment> {
+        val deletedComment = commentsService.deleteComment(proposalId, cId)
+        return ResponseEntity.ok(deletedComment)
+    }
 }

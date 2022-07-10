@@ -17,8 +17,11 @@ import java.nio.charset.StandardCharsets
 private fun buildExceptionResponse(rsp: ServerHttpResponse, message: String?, status: Int?): Mono<Void> {
     if(message == null || status == null) return Mono.empty()
     rsp.headers.set("Content-Type", "application/json")
-    val exception = GenericException(message, status)
-    val bytes: ByteArray = exception.toString().toByteArray(StandardCharsets.UTF_8)
+    val exception = "{" +
+            "\"reason\": \"$message\"," +
+            "\"status\":$status" +
+            "}"
+    val bytes: ByteArray = exception.toByteArray(StandardCharsets.UTF_8)
     val buffer: DataBuffer = rsp.bufferFactory().wrap(bytes)
     return rsp.writeWith(Flux.just(buffer))
 }

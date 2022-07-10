@@ -10,11 +10,12 @@ drop function if exists f_validate_comment;
 --TABLES
 drop table if exists user_notification;
 drop table if exists proposal_files;
-drop table if exists proposal_comments;
 drop table if exists timeline_event;
 drop table if exists protocol_comments;
 drop table if exists protocol;
+drop table if exists validations;
 drop table if exists proposal_financial_component;
+drop table if exists proposal_comments;
 drop table if exists promoter;
 drop table if exists partnerships;
 drop table if exists dossier;

@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.states.state
 
+import isel.casciffo.casciffospringbackend.common.StateFlowType
 import isel.casciffo.casciffospringbackend.common.StateType
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
@@ -12,12 +13,13 @@ interface StateRepository : ReactiveCrudRepository<State, Int> {
     fun findByName(name: String) : Mono<State>
 
     @Query(
-        "SELECT NS.* " +
-        "FROM states S " +
-        "JOIN next_possible_states NS " +
-        "ON S.state_id = NS.origin_state_id"
+        "SELECT s.* " +
+        "FROM states s " +
+        "JOIN next_possible_states ns " +
+        "ON s.state_id = ns.next_state_id " +
+        "WHERE ns.state_type = :stateType AND ns.origin_state_id=:stateId"
     )
-    fun findNextStatesById(stateId: Int): Flux<State>
+    fun findNextStatesByIdAndStateType(stateId: Int, stateType: StateType): Flux<State>
 
     @Query(
         "SELECT CASE WHEN COUNT(S) > 0 THEN TRUE ELSE FALSE END " +
@@ -34,4 +36,14 @@ interface StateRepository : ReactiveCrudRepository<State, Int> {
         "WHERE nps.origin_state_id=:stateId AND nps.state_type=:stateType AND nps.state_flow_type='TERMINAL'"
     )
     fun isTerminalState(stateId: Int, stateType: StateType): Mono<Boolean>
+
+
+    @Query(
+        "SELECT s.* " +
+        "FROM states s " +
+        "JOIN next_possible_states nps ON s.state_id = nps.next_state_id " +
+        "JOIN proposal p ON p.state_id = nps.origin_state_id " +
+        "WHERE p.proposal_id=:pId AND nps.state_type=:stateType"
+    )
+    fun getNextProposalStateByIdAndStateType(pId: Int, stateType: StateType): Mono<State>
 }

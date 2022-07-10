@@ -13,7 +13,12 @@ import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.*
 
-data class BearerTokenWrapper(val token: BearerToken, val userId: Int, val userName: String)
+data class BearerTokenWrapper(
+    val token: String,
+    val userId: Int,
+    val userName: String,
+    val roles: List<String>? = null
+)
 
 class BearerToken(val value: String) : AbstractAuthenticationToken(AuthorityUtils.NO_AUTHORITIES) {
     override fun getCredentials(): Any = value

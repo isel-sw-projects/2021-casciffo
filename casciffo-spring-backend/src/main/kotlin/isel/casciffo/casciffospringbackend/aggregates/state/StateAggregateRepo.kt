@@ -35,7 +35,7 @@ interface StateAggregateRepo: ReactiveCrudRepository<StateAggregate, Int> {
         "LEFT JOIN states ns on ns.state_id = nps.next_state_id " +
         "LEFT JOIN state_roles sr on s.state_id = sr.state_id " +
         "LEFT JOIN roles r on sr.role_id = r.role_id " +
-        "WHERE nps.origin_state_id=:originStateId AND nps.next_state_id:nextStateId AND nps.state_type=:type"
+        "WHERE nps.origin_state_id=:originStateId AND nps.next_state_id=:nextStateId AND nps.state_type=:type"
     )
     fun findAggregateBy(originStateId: Int, nextStateId: Int, type: StateType): Flux<StateAggregate>
 }

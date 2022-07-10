@@ -23,6 +23,7 @@ class PFCMapper(
             partnerships = dto.partnerships?.toFlux(),
             promoter = dto.promoter,
             protocol = protocolMapper.mapDTOtoModel(dto.protocol),
+            validations = dto.validations?.toFlux(),
             hasPartnerships = dto.hasPartnerships
         )
     }
@@ -37,6 +38,7 @@ class PFCMapper(
             partnerships = model.partnerships?.collectList()?.awaitSingleOrNull(),
             promoter = model.promoter,
             protocol = protocolMapper.mapModelToDTO(model.protocol),
+            validations = model.validations?.collectList()?.awaitSingleOrNull(),
             hasPartnerships = model.hasPartnerships
         )
     }
