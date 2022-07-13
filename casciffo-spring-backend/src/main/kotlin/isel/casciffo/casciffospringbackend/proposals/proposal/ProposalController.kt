@@ -65,9 +65,11 @@ class ProposalController(
         @PathVariable(required = true) proposalId: Int,
         @PathVariable(required = true) pfcId: Int,
         @RequestBody(required = true) validationComment: ValidationComment
-    ): ResponseEntity<ProposalValidationModel> {
+    ): ResponseEntity<ProposalValidationDTO> {
         val res = service.validatePfc(proposalId, pfcId, validationComment)
-        return ResponseEntity.ok(res)
+        val prop = if(res.proposal == null) null else mapper.mapModelToDTO(res.proposal)
+        val dto = ProposalValidationDTO(prop,res.validation)
+        return ResponseEntity.ok(dto)
     }
 
     @PutMapping(PROPOSAL_JURIDICAL_VALIDATION_URL)
@@ -75,9 +77,11 @@ class ProposalController(
         @PathVariable(required = true) proposalId: Int,
         @PathVariable(required = true) pfcId: Int,
         @RequestBody(required = true) validationComment: ValidationComment
-    ): ResponseEntity<ProposalValidationModel> {
+    ): ResponseEntity<ProposalValidationDTO> {
         val res = service.validatePfc(proposalId, pfcId, validationComment)
-        return ResponseEntity.ok(res)
+        val prop = if(res.proposal == null) null else mapper.mapModelToDTO(res.proposal)
+        val dto = ProposalValidationDTO(prop,res.validation)
+        return ResponseEntity.ok(dto)
     }
 
     @PutMapping(PROPOSAL_TRANSITION_CA_URL)

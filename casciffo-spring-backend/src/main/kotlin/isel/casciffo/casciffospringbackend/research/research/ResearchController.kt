@@ -17,7 +17,7 @@ class ResearchController(
     val mapper: ResearchMapper = ResearchMapper()
 
     @GetMapping(RESEARCHES_URL)
-    suspend fun getAllResearch(type: ResearchType) : Flow<ResearchModel> {
+    suspend fun getAllResearch(@RequestParam(required = true) type: ResearchType) : Flow<ResearchModel> {
         return researchService.getAllResearchesByType(type)
     }
 

@@ -25,4 +25,24 @@ export const EventTypes = {
     ALL: {name: "Tudo", id: "ALL"},
 }
 
+export const DepartmentTypes = {
+    FINANCE: {name: "Financeiro", id: "FINANCE_DEP"},
+    JURIDICAL: {name: "Jurídico", id: "JURIDICAL_DEP"},
+    ALL: {name: "Todos", id: "ALL"},
+}
+
+export const StateChainTypes = {
+    FINANCE_PROPOSAL: "FINANCE_PROPOSAL",
+    STUDY_PROPOSAL: "STUDY_PROPOSAL",
+    ENSAIO: "ENSAIO",
+    ADDENDA: "ADDENDA",
+    ALL: "ALL",
+}
+
+export const StateFlowTypes = {
+    INITIAL: "INITIAL",
+    PROGRESS: "PROGRESS",
+    TERMINAL: "TERMINAL"
+}
+
 export const TOKEN_KEY = "token"

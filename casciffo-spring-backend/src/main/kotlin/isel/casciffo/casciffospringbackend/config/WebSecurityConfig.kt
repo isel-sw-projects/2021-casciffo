@@ -126,6 +126,9 @@ class WebSecurityConfig {
     }
 
     private fun researchRoutesAuth(http: ServerHttpSecurity) {
+        http
+            .authorizeExchange()
+            .pathMatchers("$RESEARCHES_URL/**").authenticated()
     }
 
 }

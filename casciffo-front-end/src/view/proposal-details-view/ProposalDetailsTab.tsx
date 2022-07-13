@@ -17,16 +17,6 @@ export function ProposalDetailsTab(props: PDT_Props) {
 
 
     return (
-        <Tab eventKey="proposal" title="Proposta">
-            <ButtonGroup>
-                <ButtonGroup>{STATES.SUBMETIDO.name}</ButtonGroup>
-                <ButtonGroup>{STATES.NEGOCIACAO_DE_CF.name}</ButtonGroup>
-                <ButtonGroup>{STATES.VALIDACAO_INTERNA_DEPARTMENTS.name}</ButtonGroup>
-                <ButtonGroup>{STATES.VALIDACAO_EXTERNA.name}</ButtonGroup>
-                <ButtonGroup>{STATES.SUBMISSAO_AO_CA.name}</ButtonGroup>
-                <ButtonGroup>{STATES.VALIDACAO_INTERNA_CA.name}</ButtonGroup>
-                <ButtonGroup>{STATES.VALIDADO.name}</ButtonGroup>
-            </ButtonGroup>
-        </Tab>
+        <p>hello</p>
     )
 }

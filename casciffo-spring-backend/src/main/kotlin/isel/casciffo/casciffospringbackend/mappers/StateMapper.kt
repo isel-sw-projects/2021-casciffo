@@ -15,7 +15,7 @@ class StateMapper: Mapper<State, StateDTO> {
         if(model == null) return StateDTO()
         return StateDTO(
             id = model.id,
-            stateName = model.name,
+            name = model.name,
             nextInChain = model.nextStates?.collectList()?.awaitSingleOrNull(),
             roles = model.roles!!.collectList().awaitSingleOrNull(),
             stateFlowType = model.stateFlowType!!

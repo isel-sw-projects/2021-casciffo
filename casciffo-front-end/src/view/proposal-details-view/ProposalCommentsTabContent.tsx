@@ -51,7 +51,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
     function mapToRowElement(comment: ProposalCommentsModel) {
         return (
             <tr key={comment.id}>
-                <td>{Util.formatDate(comment.dateCreated!,true)}</td>
+                <td>{Util.formatDate(comment.createdDate!,true)}</td>
                 <td>{comment.author?.name}</td>
                 <td>{comment.content}</td>
             </tr>

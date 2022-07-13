@@ -14,7 +14,7 @@ type Proposals_Props = {
 }
 
 type ProposalRowInfo = {
-    id: number,
+    id: string,
     createdDate: string,
     sigla: string,
     state: string,
@@ -51,7 +51,7 @@ export function Proposals(props: Proposals_Props) {
     const [proposals, setProposals] = useState<ProposalRow[]>([])
     const [isDataReady, setIsDataReady] = useState(false)
     const [researchType, setResearchType] = useState<string>(ResearchTypes.CLINICAL_TRIAL.id)
-    const [filter, setFilter] = useState("")
+    const [query, setQuery] = useState("")
     //TODO implement sort
     const [sortBy, setSortBy] = useState<keyof ProposalModel>("id")
     const [searchProperty, setSearchProperty] = useState<keyof ProposalRowInfo>("sigla")
@@ -72,6 +72,7 @@ export function Proposals(props: Proposals_Props) {
         setIsDataReady(true)
     }
 
+
     //by including researchType in the second parameter, every time it changes, this effect runs automatically
     useEffect(() => {
         function mapToProposalRow(value: ProposalModel[]) {
@@ -79,7 +80,7 @@ export function Proposals(props: Proposals_Props) {
             let rows = value.map(p => ({
                 selected: false,
                 proposal: {
-                    id: p.id!,
+                    id: p.id!.toString(),
                     createdDate: Util.formatDate(p.createdDate!),
                     sigla: p.sigla,
                     state: p.state!.name,
@@ -94,15 +95,20 @@ export function Proposals(props: Proposals_Props) {
             }))
             setProposals(rows)
         }
+        const resetSearchProperty = () => {
+            setSearchProperty("sigla")
+        }
 
-        service.fetchByType(researchType)
+        service
+            .fetchByType(researchType)
             .then(updateCheckBoxGroup)
             .then(mapToProposalRow)
+            .then(resetSearchProperty)
             .then(displayData)
     }, [service, researchType])
 
     function handleSearchSubmit(query: string) {
-        setFilter(query)
+        setQuery(query)
     }
 
     function onMasterCheck(event: React.ChangeEvent<HTMLInputElement>) {
@@ -190,12 +196,6 @@ export function Proposals(props: Proposals_Props) {
                 </Col>
                 <Col/>
                 <Col>
-                    {/*<Form.Group>*/}
-                    {/*    <Form.Label>Filtros</Form.Label>*/}
-                    {/*    <Form.Check></Form.Check>*/}
-                    {/*</Form.Group>*/}
-                </Col>
-                <Col>
                     <Form.Group>
                         <Form.Label>A visualizar</Form.Label>
                         <Form.Select
@@ -225,9 +225,12 @@ export function Proposals(props: Proposals_Props) {
                                 aria-label="Default select example"
                                 name={"search-property"}
                                 defaultValue={-1}
-                                onChange={(event => setSearchProperty(event.target.value as keyof ProposalRowInfo))}
+                                onChange={(event => {
+                                    console.log(event.target.value)
+                                    setSearchProperty(event.target.value as keyof ProposalRowInfo)
+                                })}
                             >
-                                <option value={"id"}>Identificador de Propostas</option>
+                                <option value={"id"}>Identificador</option>
                                 <option value={"sigla"}>Sigla</option>
                                 <option value={"pathology"}>Patologias</option>
                                 <option value={"serviceType"}>Tipo de serviço</option>
@@ -280,7 +283,10 @@ export function Proposals(props: Proposals_Props) {
 
                     {isDataReady ?
                         <>
-                            {proposals.map(mapToRowElement)}
+                            {proposals
+                                .filter(p => (new RegExp(`${query}.*`,"gi")).test(p.proposal[searchProperty]!))
+                                .map(mapToRowElement)
+                            }
                         </>
                         :
                         <>

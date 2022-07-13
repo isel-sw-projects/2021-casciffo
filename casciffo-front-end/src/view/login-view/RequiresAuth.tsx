@@ -1,14 +1,12 @@
 import React, {useEffect} from "react";
-import {useState} from "react";
-import {useToken} from "../../custom_hooks/useToken";
-import {Login} from "./Login";
-import {UserService} from "../../services/UserService";
 import {Navigate} from "react-router-dom";
+import {useUserAuthContext} from "../context/UserAuthContext";
 
 export default function RequiresAuth(childs: any) {
-    const [token, setToken] = useToken()
 
-    if(token == null) {
+    const {userToken} = useUserAuthContext()
+
+    if(userToken == null) {
         return <Navigate to={"/login"} replace={true}/>
     }
 

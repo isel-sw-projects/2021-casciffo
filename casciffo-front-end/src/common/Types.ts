@@ -38,15 +38,15 @@ type ProposalForm = {
     pInvestigator: Investigator,
     researchType: string,
     promoter: PromoterModel,
-    team: Array<Investigator>,
-    partnerships: Array<PartnershipModel>,
+    team: Investigator[],
+    partnerships: PartnershipModel[],
     file?: File
 }
 
 type Constants = {
-    pathologies: Array<PathologyModel>
-    serviceTypes: Array<ServiceTypeModel>
-    therapeuticAreas: Array<TherapeuticAreaModel>
+    pathologies: PathologyModel[]
+    serviceTypes: ServiceTypeModel[]
+    therapeuticAreas: TherapeuticAreaModel[]
 }
 
 type Filter = {
@@ -57,7 +57,8 @@ type Filter = {
 type UserToken = {
     token: string,
     userId: string,
-    userName: string
+    userName: string,
+    roles: string[]
 }
 
 export type {

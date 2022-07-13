@@ -7,8 +7,9 @@ import UserModel from "../model/user/UserModel";
 import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
 import CommentsService from "./CommentsService";
 import {TimelineEventModel} from "../model/TimelineEventModel";
-import {ProtocolCommentsModel} from "../model/proposal/finance/ProtocolCommentsModel";
+import {ValidationCommentDTO, ValidityComment} from "../model/proposal/finance/ValidationModels";
 import {ProtocolModel} from "../model/proposal/finance/ProtocolModel";
+import {StateModel} from "../model/state/StateModel";
 
 export default class ProposalAggregateService {
     private proposalService = new ProposalService()
@@ -25,6 +26,10 @@ export default class ProposalAggregateService {
 
     saveProposal(proposal: ProposalModel): Promise<ProposalModel> {
         return this.proposalService.save(proposal)
+    }
+
+    fetchProposalStates(proposalType: string): Promise<StateModel[]> {
+        return this.proposalService.fetchStates(proposalType)
     }
 
     fetchProposalComments(proposalId: number, commentType: string) : Promise<ProposalCommentsModel[]> {
@@ -66,15 +71,15 @@ export default class ProposalAggregateService {
         return this.proposalService.fetchProtocol(proposalId, pfcId)
     }
 
-    saveProtocolComment(proposalId: string, pfcId: string, comment: ProtocolCommentsModel) {
+    saveProtocolComment(proposalId: string, pfcId: string, comment: ValidityComment) {
         return this.proposalService.saveProtocolComment(proposalId, pfcId, comment)
-    }
-
-    updateProtocol(proposalId: string, protocol: ProtocolModel) {
-        return this.proposalService.updateProtocol(proposalId, protocol)
     }
 
     updateTimelineEvent(proposalId: string, eventId: string, completed: boolean) {
         return this.proposalService.updateTimelineEvent(proposalId, eventId, completed)
+    }
+
+    validate(proposalId: string, pfcId: string, validationComment: ValidationCommentDTO) {
+        return this.proposalService.validate(proposalId, pfcId, validationComment)
     }
 }

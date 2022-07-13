@@ -1,6 +1,9 @@
 package isel.casciffo.casciffospringbackend.states.transitions
 
+import isel.casciffo.casciffospringbackend.aggregates.state_transition.StateTransitionAggregate
+import isel.casciffo.casciffospringbackend.aggregates.state_transition.StateTransitionAggregateRepo
 import isel.casciffo.casciffospringbackend.common.StateType
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.states.state.StateService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,6 +16,8 @@ import java.time.LocalDateTime
 @Service
 class StateTransitionServiceImpl(
     @Autowired val stateTransitionRepository: StateTransitionRepository,
+    @Autowired val stateTransitionAggregateRepo: StateTransitionAggregateRepo,
+    @Autowired val mapper : Mapper<StateTransition, StateTransitionAggregate>,
     @Autowired val stateService: StateService
 ): StateTransitionService {
     override suspend fun newTransition(
@@ -34,13 +39,10 @@ class StateTransitionServiceImpl(
         return true
     }
 
-    override suspend fun findAllByReferenceId(id: Int): Flow<StateTransition> {
-        return stateTransitionRepository.findAllByReferenceId(id).asFlow().map(this::loadStates)
-    }
-
-    suspend fun loadStates(transition: StateTransition) : StateTransition {
-        transition.previousState = stateService.findById(transition.previousStateId!!)
-        transition.newState = stateService.findById(transition.newStateId!!)
-        return transition
+    override suspend fun findAllByReferenceId(id: Int, type: StateType): Flow<StateTransition> {
+        return stateTransitionAggregateRepo
+            .findAllByReferenceIdAndTransitionType(id, type)
+            .asFlow()
+            .map(mapper::mapDTOtoModel)
     }
 }

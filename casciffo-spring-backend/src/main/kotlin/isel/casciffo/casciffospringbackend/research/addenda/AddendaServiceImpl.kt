@@ -40,7 +40,7 @@ class AddendaServiceImpl(
 
     suspend fun loadRelations(addenda: Addenda) : Addenda {
         addenda.state = stateRepository.findById(addenda.stateId!!).awaitFirstOrNull()
-        addenda.stateTransitions = stateTransitionService.findAllByReferenceId(addenda.id!!).asFlux()
+        addenda.stateTransitions = stateTransitionService.findAllByReferenceId(addenda.id!!, StateType.ADDENDA).asFlux()
         return addenda
     }
 }

@@ -198,18 +198,20 @@ class ProposalServiceImpl(
 
         stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
 
-        updateProposalState(proposal, nextState)
+        updateProposalState(proposal, nextState, stateType)
         return proposal
     }
 
     private suspend fun updateProposalState(
         proposal: ProposalModel,
-        nextState: State
+        nextState: State,
+        type: StateType
     ) {
         proposal.stateId = nextState.id
         proposal.state = nextState
         proposalRepository.save(proposal).map { proposal.lastModified = it.lastModified }.awaitSingle()
-        proposal.stateTransitions = stateTransitionService.findAllByReferenceId(proposal.id!!)
+
+        proposal.stateTransitions = stateTransitionService.findAllByReferenceId(proposal.id!!, type)
         if (proposal.type === ResearchType.CLINICAL_TRIAL) {
             proposal.financialComponent!!.validations =
                 validationsRepository.findAllByPfcId(proposal.financialComponent!!.id!!)
@@ -257,7 +259,10 @@ class ProposalServiceImpl(
     private suspend fun loadDetails(prop: ProposalModel): ProposalModel {
         prop.investigationTeam = investigationTeamService.findTeamByProposalId(prop.id!!)
 
-        prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!)
+        val type = if(prop.type === ResearchType.CLINICAL_TRIAL) StateType.FINANCE_PROPOSAL
+        else StateType.STUDY_PROPOSAL
+
+        prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!, type)
 
         val page = PageRequest.of(0, 20, Sort.by("dateCreated"))
         prop.comments = commentsService.getComments(prop.id!!, page)

@@ -47,7 +47,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                 setHasEvents(items.length !== 0)
                 return items
             }).then(e => {
-                if(e.length !== 0) {
+                if(e.length > 2) {
                     setDateInterval(
                         {
                             start: Util.formatDate(e[0].deadlineDate!),
@@ -226,6 +226,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                     <div style={{ width: "70%", height: "300px" }}>
                         <Chrono
                             disableAutoScrollOnClick cardHeight={100} allowDynamicUpdate cardPositionHorizontal={"TOP"}
+                            useReadMore
                             items={mapToChronoItem()}
                             mode={"HORIZONTAL"}
                         />

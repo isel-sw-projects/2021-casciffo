@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../assets/css/main/app.css";
 import "../../assets/css/shared/iconly.css";
@@ -16,8 +16,14 @@ import {UserService} from "../../services/UserService";
 import {Research} from "../researches-view/Research";
 import {ResearchAggregateService} from "../../services/ResearchAggregateService";
 import {ResearchDetails} from "../researches-view/ResearchDetails";
+import {Logout} from "../login-view/Logout";
+import {useUserAuthContext} from '../context/UserAuthContext';
 
 function NavigationBar() {
+
+    const {userToken, setUserToken} = useUserAuthContext()
+
+    const logout = () => setUserToken(null)
     return (
         <Navbar bg="primary" variant="dark">
             <Container>
@@ -25,6 +31,11 @@ function NavigationBar() {
                     <Navbar.Brand as={Link} to={"/"}>Casciffo</Navbar.Brand>
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to={"/"}>Dashboard</Nav.Link>
+                            {userToken != null ?
+                                <Nav.Link as={Link} to={"/logout"} onClick={logout}>Logout</Nav.Link>
+                                :
+                                <Nav.Link as={Link} to={"/login"}>Login</Nav.Link>
+                            }
                         <Nav.Link as={Link} to={"/propostas"}>Propostas</Nav.Link>
                         <Nav.Link as={Link} to={"/ensaios"}>Ensaios Clínicos</Nav.Link>
                     </Nav>
@@ -40,6 +51,7 @@ function CreateRoutes() {
         <Routes>
             <Route path={"/"} element={<Dashboard/>}/>
             <Route path={"/login"} element={<Login UserService={new UserService()}/>}/>
+            <Route path={"/logout"} element={<Logout/>}/>
             <Route path={"/propostas"}
                    element={RequiresAuth(<Proposals service={new ProposalService()}/>)}/>
             <Route path={"/propostas/criar"}
@@ -56,6 +68,7 @@ function CreateRoutes() {
             <Route path={"/ensaios/:researchId"}
                 element={RequiresAuth(<ResearchDetails researchService={new ResearchAggregateService()}/>)}
             />
+
         </Routes>
     );
 }
@@ -85,17 +98,13 @@ function DisplayPath() {
 }
 
 function App() {
-
     return (
-        <>
-            <Router basename={"/"} key={"router"}>
-                <NavigationBar/>
-                <DisplayPath/>
-                <CreateRoutes/>
-            </Router>
-
-        </>
-    );
+        <Router basename={"/"} key={"router"}>
+            <NavigationBar/>
+            <DisplayPath/>
+            <CreateRoutes/>
+        </Router>
+    )
 }
 
 export default App;

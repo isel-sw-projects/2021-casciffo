@@ -16,7 +16,7 @@ const ROLES_URL = `${BASE_URL}/roles`
 
 /************************** STATE **************************/
 const STATES_URL = `${BASE_URL}/states`
-
+const STATES_CHAIN_URL = (type: string) => `${STATES_URL}/${type}`
 
 /************************** PROPOSAL **************************/
 const PROPOSALS_URL =  `${BASE_URL}/proposals`
@@ -31,11 +31,12 @@ const PROPOSALS_TIMELINE_EVENT_COMPLETE_URL =
 const COMMENTS_URL = (pId: string) => `${DETAIL_PROPOSAL_URL(pId)}/comments`
 const COMMENTS_BY_TYPE_URL = (pId: string, type: string) => `${COMMENTS_URL(pId)}?t=${type}`
 
+const PROPOSAL_VALIDATION_URL =
+    (pId: string, pfcId: string, type: string) => `${DETAIL_PROPOSAL_URL(pId)}/${pfcId}/validate/${type}`
 
 /************************** PROTOCOL ***************************/
 const PROPOSAL_PROTOCOL_BASE = (pId: string, pfcId: string) => `${DETAIL_PROPOSAL_URL(pId)}/pfc/${pfcId}`
 const PROPOSAL_PROTOCOL = (pId: string, pfcId: string) => `${PROPOSAL_PROTOCOL_BASE(pId, pfcId)}/protocol`
-const PROPOSAL_PROTOCOL_COMMENTS = (pId: string, pfcId: string) => `${PROPOSAL_PROTOCOL_BASE(pId, pfcId)}/protocol-comments`
 
 
 /************************** CONSTANTS **************************/
@@ -75,7 +76,8 @@ const ApiUrls = {
     proposalsTimelineEventUrl: PROPOSALS_TIMELINE_EVENT_URL,
     proposalsTimelineEventUpdateUrl: PROPOSALS_TIMELINE_EVENT_COMPLETE_URL,
     proposalsProtocol: PROPOSAL_PROTOCOL,
-    proposalsProtocolComments: PROPOSAL_PROTOCOL_COMMENTS
+    statesChainUrl: STATES_CHAIN_URL,
+    proposalValidationUrl: PROPOSAL_VALIDATION_URL
 }
 
 export default ApiUrls

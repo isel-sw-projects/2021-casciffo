@@ -10,6 +10,7 @@
       "dependencies": {
         "@babel/core": "^7.18.2",
         "@hookform/resolvers": "^2.8.10",
+        "@tanstack/react-table": "^8.1.4",
         "@testing-library/jest-dom": "^5.16.4",
         "@testing-library/react": "^13.3.0",
         "@testing-library/user-event": "^14.2.0",
@@ -3318,6 +3319,37 @@
       "funding": {
         "type": "github",
         "url": "https://github.com/sponsors/gregberge"
+      }
+    },
+    "node_modules/@tanstack/react-table": {
+      "version": "8.1.4",
+      "resolved": "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.1.4.tgz",
+      "integrity": "sha512-WpPrZVbwrom2+8wZaM94OkVPfhMyzYvxyxPk2xfyFexjGorKl5erI/EnMme1EXTltsND5Jhsq/wnU6medaOQ9w==",
+      "dependencies": {
+        "@tanstack/table-core": "8.1.4"
+      },
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/tannerlinsley"
+      },
+      "peerDependencies": {
+        "react": ">=16",
+        "react-dom": ">=16"
+      }
+    },
+    "node_modules/@tanstack/table-core": {
+      "version": "8.1.4",
+      "resolved": "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.1.4.tgz",
+      "integrity": "sha512-iSlAT2BpkBFayJBgVxqQNXOgnF2S1r8b3aS1QlRGIusc4iZP0lRr0ie0CJ7Jhp0BZ62UH10RBIoBYHVYkg8Ejw==",
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "type": "github",
+        "url": "https://github.com/sponsors/tannerlinsley"
       }
     },
     "node_modules/@testing-library/dom": {
@@ -18789,6 +18821,19 @@
         "@svgr/plugin-svgo": "^5.5.0",
         "loader-utils": "^2.0.0"
       }
+    },
+    "@tanstack/react-table": {
+      "version": "8.1.4",
+      "resolved": "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.1.4.tgz",
+      "integrity": "sha512-WpPrZVbwrom2+8wZaM94OkVPfhMyzYvxyxPk2xfyFexjGorKl5erI/EnMme1EXTltsND5Jhsq/wnU6medaOQ9w==",
+      "requires": {
+        "@tanstack/table-core": "8.1.4"
+      }
+    },
+    "@tanstack/table-core": {
+      "version": "8.1.4",
+      "resolved": "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.1.4.tgz",
+      "integrity": "sha512-iSlAT2BpkBFayJBgVxqQNXOgnF2S1r8b3aS1QlRGIusc4iZP0lRr0ie0CJ7Jhp0BZ62UH10RBIoBYHVYkg8Ejw=="
     },
     "@testing-library/dom": {
       "version": "8.13.0",

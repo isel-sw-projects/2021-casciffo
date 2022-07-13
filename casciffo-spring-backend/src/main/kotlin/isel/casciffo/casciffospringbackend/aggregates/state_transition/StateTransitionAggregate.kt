@@ -1,15 +1,13 @@
-package isel.casciffo.casciffospringbackend.states.transitions
+package isel.casciffo.casciffospringbackend.aggregates.state_transition
 
 import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.states.state.State
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 
-@Table("state_transition")
-data class StateTransition(
+data class StateTransitionAggregate(
     @Id
     var id: Int? = null,
 
@@ -25,11 +23,7 @@ data class StateTransition(
 
     var referenceId: Int? = null,
 
-    @Transient
-    @Value("null")
-    var previousState: State? = null,
+    var previousStateName: String? = null,
 
-    @Transient
-    @Value("null")
-    var newState: State? = null
+    var newStateName: String? = null
 )

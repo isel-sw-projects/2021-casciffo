@@ -1,5 +1,5 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {createContext, useContext, useEffect, useState} from "react";
+import {Navigate, useNavigate, useParams} from "react-router-dom";
+import {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {
     Button,
@@ -20,21 +20,129 @@ import {Util} from "../../common/Util";
 import {ProposalCommentsTabContent} from "./ProposalCommentsTabContent";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import { ProtocolTabContent } from "./ProtocolTabContent";
-import {CommentTypes, ResearchTypes} from "../../common/Constants";
+import {CommentTypes, ResearchTypes, TOKEN_KEY} from "../../common/Constants";
 import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
 import {ProposalTimelineTabContent} from "./ProposalTimelineTabContent";
 import {PartnershipsTabContent} from "./PartnershipsTabContent";
 import {TimelineEventModel} from "../../model/TimelineEventModel";
 import React from "react";
+import {ProposalStateView} from "./ProposalStates";
+import {StateModel} from "../../model/state/StateModel";
+import {UserToken} from "../../common/Types";
+import {ProposalFinancialContractTab} from "./ProposalFinancialContractTab";
+import {ValidationCommentDTO, ValidityComment} from "../../model/proposal/finance/ValidationModels";
+import {Roles} from "../../model/role/Roles";
 
 type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
 }
 
-function ProposalStateView(props: { element: JSX.Element, onAdvanceClick: () => void }) {
-    return <Container className={"align-content-center border-bottom"}>
-        {
-                props.element
+
+function ProposalDetailsTab(props: { dataReady: boolean, proposal: ProposalModel }) {
+    return <Container className={"border border-top-0"}>
+        {props.dataReady ?
+            <Stack direction={"horizontal"}>
+                <Container>
+                    <Form>
+                        <Row className={"mb-1"}>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label>Sigla</Form.Label>
+                                    <Form.Control
+                                        type={"text"}
+                                        name={"sigla"}
+                                        value={props.proposal.sigla}
+                                        disabled
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label>Serviço</Form.Label>
+                                    <Form.Control
+                                        type={"text"}
+                                        name={"serviceTypeName"}
+                                        value={props.proposal.serviceType?.name}
+                                        disabled
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label>Investigator</Form.Label>
+                                    <Form.Control
+                                        type={"text"}
+                                        name={"investigator"}
+                                        value={props.proposal.principalInvestigator?.name}
+                                        disabled
+                                    />
+                                </Form.Group>
+                            </Col>
+                        </Row>
+                        <Row className={"mt-2"}>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label>Área terapeutica</Form.Label>
+                                    <Form.Control
+                                        type={"text"}
+                                        name={"therapeuticArea"}
+                                        value={props.proposal.therapeuticArea?.name}
+                                        disabled
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                <Form.Group>
+                                    <Form.Label>Patologia</Form.Label>
+                                    <Form.Control
+                                        type={"text"}
+                                        name={"pathology"}
+                                        value={props.proposal.pathology?.name}
+                                        disabled
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col>
+                                {props.proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
+                                    <Form.Group>
+                                        <Form.Label>Promotor</Form.Label>
+                                        <Form.Control
+                                            type={"text"}
+                                            name={"promoterName"}
+                                            value={props.proposal.financialComponent?.promoter!.name}
+                                            disabled
+                                        />
+                                    </Form.Group>
+                                    : <></>
+                                }
+                            </Col>
+                        </Row>
+
+                    </Form>
+                </Container>
+                <Container className={"border-start"}>
+                    <label>Equipa</label>
+                    <ListGroup className={"mb-2"} style={{overflow: "auto", maxHeight: 400}}>
+                        {/*TODO eventually add a way to seperate the columns or add overflow*/}
+                        {props.proposal.investigationTeam!.map((team, idx) => (
+                            <ListGroup.Item
+                                as="li"
+                                className="d-flex justify-content-between align-items-start"
+                                style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
+                                key={`${team.member?.name}-${idx}`}
+                            >
+                                <small>
+                                    <div className="ms-2 me-auto">
+                                        <div className="fw-bold">{team.member?.name}</div>
+                                        {team.member?.email}
+                                    </div>
+                                </small>
+                            </ListGroup.Item>
+                        ))}
+                    </ListGroup>
+                </Container>
+            </Stack>
+            : <span>A carregar dados...</span>
         }
     </Container>;
 }
@@ -42,10 +150,13 @@ function ProposalStateView(props: { element: JSX.Element, onAdvanceClick: () => 
 export function ProposalDetails(props: ProposalDetailsProps) {
     const {proposalId} = useParams()
     const navigate = useNavigate()
-    if(proposalId === undefined) {
+    if(proposalId === undefined || localStorage.getItem(TOKEN_KEY) == null) {
         navigate("/propostas")
         //show error and move backwards using navigate
     }
+
+    const userToken = useMemo(() => JSON.parse(localStorage.getItem(TOKEN_KEY)!) as UserToken, [])
+
     const [proposal, setProposal] = useState<ProposalModel>({
         createdDate: undefined,
         lastModified: undefined,
@@ -66,10 +177,24 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         type: ""
     })
 
+    const [states, setStates] = useState<StateModel[]>()
+    const [isStatesReady, setIsStatesReady] = useState(false)
+
+
+    // const ProposalStateView = React.memo(ProposalStateView, (prevProps, nextProps) => {
+    //     console.log('prevProps:' + prevProps + '\nnextProps:' + nextProps + '\n\n')
+    //     return JSON.stringify(prevProps) === JSON.stringify(nextProps)
+    // })
+
+    const advanceState = useCallback(() => {
+        props.proposalService.advanceState(proposalId!, true)
+            .then(setProposal)
+            .then(() => alert("Operação sucedida!"))
+    }, [proposalId, props.proposalService])
+
     const [isDataReady, setDataReady] = useState(false)
     const [isError, setIsError] = useState(false)
     const [selectedTab, setSelectedTab] = useState("proposal")
-    const [selectedState, setSelectedState] = useState("")
 
     function checkComments(model: ProposalModel) {
         if(model.comments === undefined) {
@@ -78,11 +203,10 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         return model
     }
 
-    function handleFetchError(reason: any) {
+    const handleFetchError = useCallback((reason: any) => {
         console.log(reason)
         setIsError(true)
-        navigate("/propostas")
-    }
+    },[])
 
     const log = (value: any) => {
         console.log(value);
@@ -90,91 +214,37 @@ export function ProposalDetails(props: ProposalDetailsProps) {
     }
 
     useEffect(() => {
+        function removeSuperUserFromRoles(list: StateModel[]) {
+            return list.map(s => {
+                const idxToRemove = s.roles?.indexOf(Roles.SUPERUSER.id)
+                s.name = Object.values(STATES).find(st => st.id === s.name)!.name
+                s.roles?.splice(idxToRemove!, 1)
+                return s
+            })
+        }
+
+        function fetchStates(type: string) {
+            props.proposalService
+                .fetchProposalStates(type)
+                .then(removeSuperUserFromRoles)
+                .then(setStates)
+                .then(_ => setIsStatesReady(true))
+        }
+
+        function setProposalAndReturnType(proposal: ProposalModel) {
+            setProposal(proposal)
+            return proposal.type
+        }
+
         props.proposalService.fetchProposalById(proposalId!)
             .then(log)
             .then(checkComments)
-            .then(setProposal)
+            .then(setProposalAndReturnType)
+            .then(fetchStates)
             .then(() => setDataReady(true))
-            .catch(handleFetchError)
-    }, [proposalId, props.proposalService, navigate])
-
-    function advanceState() {
-        props.proposalService.advanceState(proposalId!, true)
-            .then(setProposal)
-            .then(() => alert("Operação sucedida!"))
-    }
-    function showStates() {
-
-        if (!isDataReady) return <span>A carregar estado...</span>
-
-        function getDeadlineDateForState(stateName: string) {
-            const event = proposal.timelineEvents?.find(e => e.stateName === stateName)
-            if (event === undefined) {
-                return "Limite: ---"
-            }
-            return "Limite: "+ Util.formatDate(event!.deadlineDate!)
-        }
-
-        function getTransitionDate(stateName: string) {
-            const transition = proposal.stateTransitions?.find(st => st.newState?.name === stateName)
-
-            if(transition == null) return <span>{"---"}</span>
-
-            return <span>{Util.formatDate(transition!.transitionDate)}</span>
-        }
-
-        return (<Container>
-                <Container>
-                    <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
-                    <Button className={"float-end mb-2"} variant={"outline-secondary"} onClick={advanceState}>Progredir
-                        estado</Button>
-                    <br/>
-                </Container>
-                <Container>
-                    <ButtonGroup className={"mb-3"} style={{width: "100%"}}>
-                        <ToggleButton
-                            key={`initial-state`}
-                            id={`radio-0`}
-                            type="radio"
-                            variant={selectedState === STATES.SUBMETIDO.id ? 'primary' : 'outline-primary'}
-                            name="radio"
-                            value={STATES.SUBMETIDO.id}
-                            checked={selectedState === STATES.SUBMETIDO.id}
-                            onChange={(e) => setSelectedState(e.currentTarget.value)}
-                        >
-                            <Stack direction={"vertical"}>
-                                <span>{STATES.SUBMETIDO.name}</span>
-                                <span>{Util.formatDate(proposal.createdDate!)}</span>
-                                <br/>
-                                <span>{STATES.SUBMETIDO.owner}</span>
-                            </Stack>
-                        </ToggleButton>
-                        {Util.proposalStates
-                            .map((state, i) => (
-                                <ToggleButton
-                                    key={`${state}-${i}`}
-                                    id={`radio-${i}`}
-                                    type="radio"
-                                    variant={proposal.stateTransitions?.every(st => st.newState?.name !== state.id) ? 'outline-dark' : 'outline-primary'}
-                                    name="radio"
-                                    value={state.id}
-                                    checked={selectedState === state.id}
-                                    disabled={proposal.stateTransitions?.every(st => st.newState?.name !== state.id)}
-                                    onChange={(e) => setSelectedState(e.currentTarget.value)}
-                                >
-                                    <Stack direction={"vertical"}>
-                                        <span>{state.name}</span>
-                                        {getTransitionDate(state.id)}
-                                        <span>{getDeadlineDateForState(state.id)}</span>
-                                        <span>{state.owner}</span>
-                                    </Stack>
-                                </ToggleButton>
-                            ))}
-                    </ButtonGroup>
-                </Container>
-            </Container>
-        )
-    }
+            // .catch(handleFetchError)
+    }, [proposalId, props.proposalService])
+    
 
     const updateState = (key: keyof ProposalModel, value: unknown ) =>
         (
@@ -189,9 +259,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
 
     const addNewComment = (comment:string, type:string) => {
         const commentModel : ProposalCommentsModel = {
-            //FIXME get author from contextApi
-            // for now using the principal investigator of proposal
-            authorId: proposal.principalInvestigatorId + "",
+            authorId: userToken.userId,
             commentType: type,
             content: comment,
             proposalId: proposalId!
@@ -207,10 +275,16 @@ export function ProposalDetails(props: ProposalDetailsProps) {
             .then(value=> setProposal(updateState("timelineEvents", [...proposal.timelineEvents!, value])))
     }
 
-    return (
+    const onSubmitValidation = (c: ValidationCommentDTO) => {
+        //todo add pfcId hardcoded for and then setProposal with partial updates from both receiving and local proposal
+        props.proposalService.validate(proposalId!, proposal.financialComponent!.id!, c)
+            .then()
+    }
 
+    return (
         <React.Fragment>
-            { !isError && <Container>
+            {isError && <Navigate to={"/propostas"}/>}
+            <Container>
                 <Tabs
                     id="controlled-tab-example"
                     activeKey={selectedTab}
@@ -218,124 +292,41 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                     className="mb-3"
                 >
                     <Tab eventKey="proposal" title="Proposta">
-                        <ProposalStateView
+                        {isStatesReady && isDataReady && <ProposalStateView
                             onAdvanceClick={advanceState}
-                            element={showStates()}
-                        />
+                            timelineEvents={proposal.timelineEvents!}
+                            stateTransitions={proposal.stateTransitions!}
+                            submittedDate={proposal.createdDate!}
+                            states={states}
+                        />}
 
-                        <Container className={"border border-top-0"}>
-                            {isDataReady ?
-                                <Stack direction={"horizontal"}>
-                                    <Container>
-                                        <Form>
-                                            <Row className={"mb-1"}>
-                                                <Col>
-                                                    <Form.Group>
-                                                        <Form.Label>Sigla</Form.Label>
-                                                        <Form.Control
-                                                            type={"text"}
-                                                            name={"sigla"}
-                                                            value={proposal.sigla}
-                                                            disabled
-                                                        />
-                                                    </Form.Group>
-                                                </Col>
-                                                <Col>
-                                                    <Form.Group>
-                                                        <Form.Label>Serviço</Form.Label>
-                                                        <Form.Control
-                                                            type={"text"}
-                                                            name={"serviceTypeName"}
-                                                            value={proposal.serviceType?.name}
-                                                            disabled
-                                                        />
-                                                    </Form.Group>
-                                                </Col>
-                                                <Col>
-                                                    <Form.Group>
-                                                        <Form.Label>Investigator</Form.Label>
-                                                        <Form.Control
-                                                            type={"text"}
-                                                            name={"investigator"}
-                                                            value={proposal.principalInvestigator?.name}
-                                                            disabled
-                                                        />
-                                                    </Form.Group>
-                                                </Col>
-                                            </Row>
-                                            <Row className={"mt-2"}>
-                                                <Col>
-                                                    <Form.Group>
-                                                        <Form.Label>Área terapeutica</Form.Label>
-                                                        <Form.Control
-                                                            type={"text"}
-                                                            name={"therapeuticArea"}
-                                                            value={proposal.therapeuticArea?.name}
-                                                            disabled
-                                                        />
-                                                    </Form.Group>
-                                                </Col>
-                                                <Col>
-                                                    <Form.Group>
-                                                        <Form.Label>Patologia</Form.Label>
-                                                        <Form.Control
-                                                            type={"text"}
-                                                            name={"pathology"}
-                                                            value={proposal.pathology?.name}
-                                                            disabled
-                                                        />
-                                                    </Form.Group>
-                                                </Col>
-                                                <Col>
-                                                    {proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
-                                                        <Form.Group>
-                                                            <Form.Label>Promotor</Form.Label>
-                                                            <Form.Control
-                                                                type={"text"}
-                                                                name={"promoterName"}
-                                                                value={proposal.financialComponent?.promoter!.name}
-                                                                disabled
-                                                            />
-                                                        </Form.Group>
-                                                        : <></>
-                                                    }
-                                                </Col>
-                                            </Row>
-
-                                        </Form>
-                                    </Container>
-                                    <Container className={"border-start"}>
-                                        <label>Equipa</label>
-                                        <ListGroup className={"mb-2"} style={{overflow: 'auto', maxHeight: 400}}>
-                                            {/*TODO eventually add a way to seperate the columns or add overflow*/}
-                                            {proposal.investigationTeam!.map((team, idx) => (
-                                                <ListGroup.Item
-                                                    as="li"
-                                                    className="d-flex justify-content-between align-items-start"
-                                                    style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
-                                                    key={`${team.member?.name}-${idx}`}
-                                                >
-                                                    <small>
-                                                        <div className="ms-2 me-auto">
-                                                            <div className="fw-bold">{team.member?.name}</div>
-                                                            {team.member?.email}
-                                                        </div>
-                                                    </small>
-                                                </ListGroup.Item>
-                                            ))}
-                                        </ListGroup>
-                                    </Container>
-                                </Stack>
-                                : <span>A carregar dados...</span>
-                            }
-                        </Container>
+                        <ProposalDetailsTab dataReady={isDataReady} proposal={proposal}/>
                     </Tab>
 
-                    <Tab eventKey="contacts" title="Contactos">
-                        <ProposalStateView
+                    {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
+                    <Tab eventKey={"proposal_cf"} title={"Contracto financeiro"}>
+                        {isStatesReady && isDataReady && <ProposalStateView
                             onAdvanceClick={advanceState}
-                            element={showStates()}
-                        />
+                            timelineEvents={proposal.timelineEvents!}
+                            stateTransitions={proposal.stateTransitions!}
+                            submittedDate={proposal.createdDate!}
+                            states={states}
+                        />}
+                        <ProposalFinancialContractTab
+                            pfc={proposal.financialComponent!}
+                            comments={proposal.comments || []}
+                             onSubmitValidationComment={onSubmitValidation}/>
+                    </Tab>
+                    }
+
+                    <Tab eventKey="contacts" title="Contactos">
+                        {isStatesReady && isDataReady && <ProposalStateView
+                            onAdvanceClick={advanceState}
+                            timelineEvents={proposal.timelineEvents!}
+                            stateTransitions={proposal.stateTransitions!}
+                            submittedDate={proposal.createdDate!}
+                            states={states}
+                        />}
                         <ProposalCommentsTabContent
                             comments={proposal.comments!}
                             addComment={addNewComment}
@@ -343,10 +334,13 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         />
                     </Tab>
                     <Tab eventKey="observations" title="Observações">
-                        <ProposalStateView
+                        {isStatesReady && isDataReady && <ProposalStateView
                             onAdvanceClick={advanceState}
-                            element={showStates()}
-                        />
+                            timelineEvents={proposal.timelineEvents!}
+                            stateTransitions={proposal.stateTransitions!}
+                            submittedDate={proposal.createdDate!}
+                            states={states}
+                        />}
                         <ProposalCommentsTabContent
                             comments={proposal.comments!}
                             addComment={addNewComment}
@@ -356,10 +350,13 @@ export function ProposalDetails(props: ProposalDetailsProps) {
 
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
                         <Tab eventKey={"partnerships"} title={"Parcerias"}>
-                            <ProposalStateView
+                            {isStatesReady && isDataReady && <ProposalStateView
                                 onAdvanceClick={advanceState}
-                                element={showStates()}
-                            />
+                                timelineEvents={proposal.timelineEvents!}
+                                stateTransitions={proposal.stateTransitions!}
+                                submittedDate={proposal.createdDate!}
+                                states={states}
+                            />}
                             <PartnershipsTabContent
                                 partnerships={proposal.financialComponent!.partnerships!}
                             />
@@ -367,7 +364,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         <></>
                     }
 
-                    {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
+                    {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
                         <Tab eventKey="protocol" title="Protocolo">
                             <ProtocolTabContent
                                 saveProtocolComment={props.proposalService.saveProtocolComment}
@@ -376,30 +373,31 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                                 setNewComment={(c) => setProposal(updateState("comments", [...proposal.comments!, c]))}
                                 protocol={proposal.financialComponent?.protocol}
                             />
-                        </Tab> :
-                        <></>
+                        </Tab>
                     }
 
 
                     <Tab eventKey="chronology" title="Cronologia">
-                        {isDataReady ?
+                        {isDataReady &&
                             <div>
-                                <ProposalStateView
+                                {isStatesReady && <ProposalStateView
                                     onAdvanceClick={advanceState}
-                                    element={showStates()}
-                                />
+                                    timelineEvents={proposal.timelineEvents!}
+                                    stateTransitions={proposal.stateTransitions!}
+                                    submittedDate={proposal.createdDate!}
+                                    states={states}
+                                />}
                                 <ProposalTimelineTabContent
                                     service={props.proposalService}
                                     timelineEvents={proposal.timelineEvents!}
                                     setNewTimeLineEvent={handleNewEvent}
                                 />
-                            </div> :
-                            <span>A carregar aba...</span>
+                            </div>
                         }
 
                     </Tab>
                 </Tabs>
-            </Container> }
+            </Container>
         </React.Fragment>
     )
 }

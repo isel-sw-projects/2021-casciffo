@@ -45,7 +45,7 @@
 								"exec": [
 									"let jsonData = pm.response.json()\r",
 									"pm.environment.set(\"superuser_jwt\", jsonData.token)\r",
-									"pm.environment.set(\"created_superuser_id\", jsonData.userId)"
+									"pm.environment.set(\"superuser_id\", jsonData.userId)"
 								],
 								"type": "text/javascript"
 							}
@@ -451,206 +451,305 @@
 			"name": "Proposals",
 			"item": [
 				{
-					"name": "all proposals",
-					"event": [
+					"name": "protocol",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"let proposal = pm.response.json()[0]\r",
-									"pm.environment.set(\"proposal_id\", proposal.id)"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{uic_jwt}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/proposals?type={{proposal_trial_type}}",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"proposals"
-							],
-							"query": [
-								{
-									"key": "type",
-									"value": "{{proposal_trial_type}}"
-								}
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "all proposals trial",
-							"originalRequest": {
-								"method": "GET",
+							"name": "validate protocol with comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"validated\": true,\r\n\t\"newValidation\": true,\r\n\t\"comment\": {\r\n\t\t\"authorId\": 1,\r\n\t\t\"content\": \"CEIC 123455678\",\r\n\t\t\"commentType\": \"PROTOCOL\"\r\n\t}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "{{localhost}}/proposals?type=CLINICAL_TRIAL",
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/pfc/{{pfc_id}}/protocol",
 									"host": [
 										"{{localhost}}"
 									],
 									"path": [
-										"proposals"
-									],
-									"query": [
-										{
-											"key": "type",
-											"value": "CLINICAL_TRIAL"
-										}
+										"proposals",
+										"{{proposal_trial_id}}",
+										"pfc",
+										"{{pfc_id}}",
+										"protocol"
 									]
 								}
 							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "transfer-encoding",
-									"value": "chunked"
-								},
-								{
-									"key": "Vary",
-									"value": "Origin"
-								},
-								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Method"
-								},
-								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Headers"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, max-age=0, must-revalidate"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "1 ; mode=block"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 4,\n        \"dateCreated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"lastUpdated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"sigla\": \"APOLLO\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 12,\n        \"serviceTypeId\": 2,\n        \"therapeuticAreaId\": 2,\n        \"pathologyId\": 2,\n        \"principalInvestigatorId\": 9,\n        \"state\": {\n            \"id\": 12,\n            \"name\": \"SUBMETIDO\",\n            \"ownerId\": 11,\n            \"owner\": null\n        },\n        \"serviceType\": {\n            \"id\": 2,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 2,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 2,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 9,\n            \"name\": \"admin\",\n            \"email\": \"admin@admin.pt\",\n            \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n            \"roleId\": 9,\n            \"role\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"promoterId\": 1,\n            \"financialContractId\": 1,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"PFIZER\",\n                \"email\": \"pfizer.no.more.@covid.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"An amazing partnership\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                    \"siteUrl\": \"https://www.example.com/\",\n                    \"representative\": \"ze manel\",\n                    \"email\": \"ze.manel@home.pt\",\n                    \"phoneContact\": \"923722883\",\n                    \"description\": null\n                }\n            ],\n            \"protocol\": null\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
+							"response": []
 						},
 						{
-							"name": "all proposals study",
-							"originalRequest": {
-								"method": "GET",
+							"name": "protocol comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
 								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"newValidation\": false,\r\n\t\"comment\": {\r\n\t\t\"authorId\": 1,\r\n\t\t\"content\": \"Verificação de comentario ok!\",\r\n\t\t\"commentType\": \"PROTOCOL\"\r\n\t}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
-									"raw": "{{localhost}}/proposals?type=OBSERVATIONAL_STUDY",
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/pfc/{{pfc_id}}/protocol",
 									"host": [
 										"{{localhost}}"
 									],
 									"path": [
-										"proposals"
-									],
-									"query": [
-										{
-											"key": "type",
-											"value": "OBSERVATIONAL_STUDY"
-										}
+										"proposals",
+										"{{proposal_trial_id}}",
+										"pfc",
+										"{{pfc_id}}",
+										"protocol"
 									]
 								}
 							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "transfer-encoding",
-									"value": "chunked"
-								},
-								{
-									"key": "Vary",
-									"value": "Origin"
-								},
-								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Method"
-								},
-								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Headers"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, max-age=0, must-revalidate"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "1 ; mode=block"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 4,\n        \"dateCreated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"lastUpdated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"sigla\": \"APOLLO\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 12,\n        \"serviceTypeId\": 2,\n        \"therapeuticAreaId\": 2,\n        \"pathologyId\": 2,\n        \"principalInvestigatorId\": 9,\n        \"state\": {\n            \"id\": 12,\n            \"name\": \"SUBMETIDO\",\n            \"ownerId\": 11,\n            \"owner\": null\n        },\n        \"serviceType\": {\n            \"id\": 2,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 2,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 2,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 9,\n            \"name\": \"admin\",\n            \"email\": \"admin@admin.pt\",\n            \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n            \"roleId\": 9,\n            \"role\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"promoterId\": 1,\n            \"financialContractId\": 1,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"PFIZER\",\n                \"email\": \"pfizer.no.more.@covid.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"An amazing partnership\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                    \"siteUrl\": \"https://www.example.com/\",\n                    \"representative\": \"ze manel\",\n                    \"email\": \"ze.manel@home.pt\",\n                    \"phoneContact\": \"923722883\",\n                    \"description\": null\n                }\n            ],\n            \"protocol\": null\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
+							"response": []
 						},
 						{
-							"name": "all proposals",
-							"originalRequest": {
+							"name": "override validate protocol",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n\t\"validated\": true,\r\n\t\"newValidation\": true,\r\n\t\"comment\": {\r\n\t\t\"authorId\": 1,\r\n\t\t\"content\": \"Aconteceu qualquer coisa e temos novo CEIC 987654321\",\r\n\t\t\"commentType\": \"PROTOCOL\"\r\n\t}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/pfc/{{pfc_id}}/protocol",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals",
+										"{{proposal_trial_id}}",
+										"pfc",
+										"{{pfc_id}}",
+										"protocol"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "protocol comments",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/pfc/{{pfc_id}}/protocol",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals",
+										"{{proposal_trial_id}}",
+										"pfc",
+										"{{pfc_id}}",
+										"protocol"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "delete comment",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/pfc/{{pfc_id}}/protocol-comments/31",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals",
+										"{{proposal_trial_id}}",
+										"pfc",
+										"{{pfc_id}}",
+										"protocol-comments",
+										"31"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "transition state",
+					"item": [
+						{
+							"name": "transition state superuser",
+							"request": {
+								"method": "PUT",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "transition state uic",
+							"request": {
+								"method": "PUT",
+								"header": []
+							},
+							"response": []
+						},
+						{
+							"name": "transition state ca",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/validate/finance",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals",
+										"{{proposal_trial_id}}",
+										"validate",
+										"finance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "transition state finance",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/validate/finance",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals",
+										"{{proposal_trial_id}}",
+										"validate",
+										"finance"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "validate juridical",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}/validate/juridical",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals",
+										"{{proposal_trial_id}}",
+										"validate",
+										"juridical"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "fetching proposals",
+					"item": [
+						{
+							"name": "all proposals clinical trial",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -669,217 +768,765 @@
 									]
 								}
 							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
+							"response": [
 								{
-									"key": "transfer-encoding",
-									"value": "chunked"
+									"name": "all proposals trial",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals?type=CLINICAL_TRIAL",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											],
+											"query": [
+												{
+													"key": "type",
+													"value": "CLINICAL_TRIAL"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 4,\n        \"dateCreated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"lastUpdated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"sigla\": \"APOLLO\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 12,\n        \"serviceTypeId\": 2,\n        \"therapeuticAreaId\": 2,\n        \"pathologyId\": 2,\n        \"principalInvestigatorId\": 9,\n        \"state\": {\n            \"id\": 12,\n            \"name\": \"SUBMETIDO\",\n            \"ownerId\": 11,\n            \"owner\": null\n        },\n        \"serviceType\": {\n            \"id\": 2,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 2,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 2,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 9,\n            \"name\": \"admin\",\n            \"email\": \"admin@admin.pt\",\n            \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n            \"roleId\": 9,\n            \"role\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"promoterId\": 1,\n            \"financialContractId\": 1,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"PFIZER\",\n                \"email\": \"pfizer.no.more.@covid.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"An amazing partnership\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                    \"siteUrl\": \"https://www.example.com/\",\n                    \"representative\": \"ze manel\",\n                    \"email\": \"ze.manel@home.pt\",\n                    \"phoneContact\": \"923722883\",\n                    \"description\": null\n                }\n            ],\n            \"protocol\": null\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
 								},
 								{
-									"key": "Vary",
-									"value": "Origin"
+									"name": "all proposals study",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals?type=OBSERVATIONAL_STUDY",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											],
+											"query": [
+												{
+													"key": "type",
+													"value": "OBSERVATIONAL_STUDY"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 4,\n        \"dateCreated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"lastUpdated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"sigla\": \"APOLLO\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 12,\n        \"serviceTypeId\": 2,\n        \"therapeuticAreaId\": 2,\n        \"pathologyId\": 2,\n        \"principalInvestigatorId\": 9,\n        \"state\": {\n            \"id\": 12,\n            \"name\": \"SUBMETIDO\",\n            \"ownerId\": 11,\n            \"owner\": null\n        },\n        \"serviceType\": {\n            \"id\": 2,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 2,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 2,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 9,\n            \"name\": \"admin\",\n            \"email\": \"admin@admin.pt\",\n            \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n            \"roleId\": 9,\n            \"role\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"promoterId\": 1,\n            \"financialContractId\": 1,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"PFIZER\",\n                \"email\": \"pfizer.no.more.@covid.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"An amazing partnership\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                    \"siteUrl\": \"https://www.example.com/\",\n                    \"representative\": \"ze manel\",\n                    \"email\": \"ze.manel@home.pt\",\n                    \"phoneContact\": \"923722883\",\n                    \"description\": null\n                }\n            ],\n            \"protocol\": null\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
 								},
 								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Method"
-								},
-								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Headers"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, max-age=0, must-revalidate"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "1 ; mode=block"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
-								}
-							],
-							"cookie": [],
-							"body": "[\n    {\n        \"id\": 1,\n        \"dateCreated\": \"2022-06-21\",\n        \"lastUpdated\": \"2022-06-21T18:15:27.684208\",\n        \"sigla\": \"Pfizer\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 1,\n        \"serviceTypeId\": 1,\n        \"therapeuticAreaId\": 1,\n        \"pathologyId\": 1,\n        \"principalInvestigatorId\": 2,\n        \"state\": {\n            \"id\": 1,\n            \"name\": \"SUBMETIDO\",\n            \"roles\": null,\n            \"nextStates\": null\n        },\n        \"serviceType\": {\n            \"id\": 1,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 1,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 1,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 2,\n            \"name\": \"admin\",\n            \"email\": \"casciffo.admin@admin.pt\",\n            \"password\": null,\n            \"roles\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 1,\n            \"promoterId\": 1,\n            \"financialContractId\": null,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"Universo\",\n                \"email\": \"promoter.universo@hotmail.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"Goggle\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://media.flaticon.com/dist/min/img/favicon.ico\",\n                    \"siteUrl\": \"Goggle.com\",\n                    \"representative\": \"Homem do leme\",\n                    \"email\": \"goggle.man@goggle.com\",\n                    \"phoneContact\": \"123456789\",\n                    \"description\": \"Goggle is independent from Google, it is its own site and enterprise.\"\n                }\n            ],\n            \"protocol\": {\n                \"id\": null,\n                \"validatedDate\": null,\n                \"financialComponentId\": null,\n                \"comments\": null,\n                \"validated\": false\n            }\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
-						}
-					]
-				},
-				{
-					"name": "proposal details",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{uic_jwt}}",
-									"type": "string"
+									"name": "all proposals",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals?type={{proposal_trial_type}}",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											],
+											"query": [
+												{
+													"key": "type",
+													"value": "{{proposal_trial_type}}"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"dateCreated\": \"2022-06-21\",\n        \"lastUpdated\": \"2022-06-21T18:15:27.684208\",\n        \"sigla\": \"Pfizer\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 1,\n        \"serviceTypeId\": 1,\n        \"therapeuticAreaId\": 1,\n        \"pathologyId\": 1,\n        \"principalInvestigatorId\": 2,\n        \"state\": {\n            \"id\": 1,\n            \"name\": \"SUBMETIDO\",\n            \"roles\": null,\n            \"nextStates\": null\n        },\n        \"serviceType\": {\n            \"id\": 1,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 1,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 1,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 2,\n            \"name\": \"admin\",\n            \"email\": \"casciffo.admin@admin.pt\",\n            \"password\": null,\n            \"roles\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 1,\n            \"promoterId\": 1,\n            \"financialContractId\": null,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"Universo\",\n                \"email\": \"promoter.universo@hotmail.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"Goggle\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://media.flaticon.com/dist/min/img/favicon.ico\",\n                    \"siteUrl\": \"Goggle.com\",\n                    \"representative\": \"Homem do leme\",\n                    \"email\": \"goggle.man@goggle.com\",\n                    \"phoneContact\": \"123456789\",\n                    \"description\": \"Goggle is independent from Google, it is its own site and enterprise.\"\n                }\n            ],\n            \"protocol\": {\n                \"id\": null,\n                \"validatedDate\": null,\n                \"financialComponentId\": null,\n                \"comments\": null,\n                \"validated\": false\n            }\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
 								}
 							]
 						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{localhost}}/proposals/{{proposal_id}}",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"proposals",
-								"{{proposal_id}}"
-							]
-						}
-					},
-					"response": [
 						{
-							"name": "proposal details",
-							"originalRequest": {
+							"name": "all proposals clinical study",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{localhost}}/proposals/{{proposal_id}}",
+									"raw": "{{localhost}}/proposals?type={{proposal_study_type}}",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "{{proposal_study_type}}"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "all proposals trial",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals?type=CLINICAL_TRIAL",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											],
+											"query": [
+												{
+													"key": "type",
+													"value": "CLINICAL_TRIAL"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 4,\n        \"dateCreated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"lastUpdated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"sigla\": \"APOLLO\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 12,\n        \"serviceTypeId\": 2,\n        \"therapeuticAreaId\": 2,\n        \"pathologyId\": 2,\n        \"principalInvestigatorId\": 9,\n        \"state\": {\n            \"id\": 12,\n            \"name\": \"SUBMETIDO\",\n            \"ownerId\": 11,\n            \"owner\": null\n        },\n        \"serviceType\": {\n            \"id\": 2,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 2,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 2,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 9,\n            \"name\": \"admin\",\n            \"email\": \"admin@admin.pt\",\n            \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n            \"roleId\": 9,\n            \"role\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"promoterId\": 1,\n            \"financialContractId\": 1,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"PFIZER\",\n                \"email\": \"pfizer.no.more.@covid.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"An amazing partnership\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                    \"siteUrl\": \"https://www.example.com/\",\n                    \"representative\": \"ze manel\",\n                    \"email\": \"ze.manel@home.pt\",\n                    \"phoneContact\": \"923722883\",\n                    \"description\": null\n                }\n            ],\n            \"protocol\": null\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
+								},
+								{
+									"name": "all proposals study",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals?type=OBSERVATIONAL_STUDY",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											],
+											"query": [
+												{
+													"key": "type",
+													"value": "OBSERVATIONAL_STUDY"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 4,\n        \"dateCreated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"lastUpdated\": [\n            2022,\n            6,\n            11,\n            0,\n            51,\n            24,\n            659317000\n        ],\n        \"sigla\": \"APOLLO\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 12,\n        \"serviceTypeId\": 2,\n        \"therapeuticAreaId\": 2,\n        \"pathologyId\": 2,\n        \"principalInvestigatorId\": 9,\n        \"state\": {\n            \"id\": 12,\n            \"name\": \"SUBMETIDO\",\n            \"ownerId\": 11,\n            \"owner\": null\n        },\n        \"serviceType\": {\n            \"id\": 2,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 2,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 2,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 9,\n            \"name\": \"admin\",\n            \"email\": \"admin@admin.pt\",\n            \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n            \"roleId\": 9,\n            \"role\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"promoterId\": 1,\n            \"financialContractId\": 1,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"PFIZER\",\n                \"email\": \"pfizer.no.more.@covid.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"An amazing partnership\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                    \"siteUrl\": \"https://www.example.com/\",\n                    \"representative\": \"ze manel\",\n                    \"email\": \"ze.manel@home.pt\",\n                    \"phoneContact\": \"923722883\",\n                    \"description\": null\n                }\n            ],\n            \"protocol\": null\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
+								},
+								{
+									"name": "all proposals",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals?type={{proposal_trial_type}}",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											],
+											"query": [
+												{
+													"key": "type",
+													"value": "{{proposal_trial_type}}"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "transfer-encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "[\n    {\n        \"id\": 1,\n        \"dateCreated\": \"2022-06-21\",\n        \"lastUpdated\": \"2022-06-21T18:15:27.684208\",\n        \"sigla\": \"Pfizer\",\n        \"type\": \"CLINICAL_TRIAL\",\n        \"stateId\": 1,\n        \"serviceTypeId\": 1,\n        \"therapeuticAreaId\": 1,\n        \"pathologyId\": 1,\n        \"principalInvestigatorId\": 2,\n        \"state\": {\n            \"id\": 1,\n            \"name\": \"SUBMETIDO\",\n            \"roles\": null,\n            \"nextStates\": null\n        },\n        \"serviceType\": {\n            \"id\": 1,\n            \"name\": \"Cardiologia\"\n        },\n        \"therapeuticArea\": {\n            \"id\": 1,\n            \"name\": \"Terapia Cardio\"\n        },\n        \"pathology\": {\n            \"id\": 1,\n            \"name\": \"Pneumonia\"\n        },\n        \"principalInvestigator\": {\n            \"userId\": 2,\n            \"name\": \"admin\",\n            \"email\": \"casciffo.admin@admin.pt\",\n            \"password\": null,\n            \"roles\": null\n        },\n        \"financialComponent\": {\n            \"id\": 1,\n            \"proposalId\": 1,\n            \"promoterId\": 1,\n            \"financialContractId\": null,\n            \"promoter\": {\n                \"id\": 1,\n                \"name\": \"Universo\",\n                \"email\": \"promoter.universo@hotmail.com\",\n                \"promoterType\": \"COMMERCIAL\"\n            },\n            \"partnerships\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"Goggle\",\n                    \"financeComponentId\": 1,\n                    \"iconUrl\": \"https://media.flaticon.com/dist/min/img/favicon.ico\",\n                    \"siteUrl\": \"Goggle.com\",\n                    \"representative\": \"Homem do leme\",\n                    \"email\": \"goggle.man@goggle.com\",\n                    \"phoneContact\": \"123456789\",\n                    \"description\": \"Goggle is independent from Google, it is its own site and enterprise.\"\n                }\n            ],\n            \"protocol\": {\n                \"id\": null,\n                \"validatedDate\": null,\n                \"financialComponentId\": null,\n                \"comments\": null,\n                \"validated\": false\n            }\n        },\n        \"investigationTeam\": null,\n        \"stateTransitions\": null,\n        \"timelineEvents\": null,\n        \"comments\": null\n    }\n]"
+								}
+							]
+						},
+						{
+							"name": "details proposal trial",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_trial_id}}",
 									"host": [
 										"{{localhost}}"
 									],
 									"path": [
 										"proposals",
-										"{{proposal_id}}"
+										"{{proposal_trial_id}}"
 									]
 								}
 							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
+							"response": [
 								{
-									"key": "Vary",
-									"value": "Origin"
-								},
-								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Method"
-								},
-								{
-									"key": "Vary",
-									"value": "Access-Control-Request-Headers"
-								},
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								},
-								{
-									"key": "Content-Length",
-									"value": "2750"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, max-age=0, must-revalidate"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "1 ; mode=block"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
+									"name": "proposal details",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals/{{proposal_id}}",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals",
+												"{{proposal_id}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2750"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 4,\n    \"dateCreated\": [\n        2022,\n        6,\n        11,\n        0,\n        51,\n        24,\n        659317000\n    ],\n    \"lastUpdated\": [\n        2022,\n        6,\n        11,\n        0,\n        51,\n        24,\n        659317000\n    ],\n    \"sigla\": \"APOLLO\",\n    \"type\": \"CLINICAL_TRIAL\",\n    \"stateId\": 12,\n    \"serviceTypeId\": 2,\n    \"therapeuticAreaId\": 2,\n    \"pathologyId\": 2,\n    \"principalInvestigatorId\": 9,\n    \"state\": {\n        \"id\": 12,\n        \"name\": \"SUBMETIDO\",\n        \"ownerId\": 11,\n        \"owner\": null\n    },\n    \"serviceType\": {\n        \"id\": 2,\n        \"name\": \"Cardiologia\"\n    },\n    \"therapeuticArea\": {\n        \"id\": 2,\n        \"name\": \"Terapia Cardio\"\n    },\n    \"pathology\": {\n        \"id\": 2,\n        \"name\": \"Pneumonia\"\n    },\n    \"principalInvestigator\": {\n        \"userId\": 9,\n        \"name\": \"admin\",\n        \"email\": \"admin@admin.pt\",\n        \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n        \"roleId\": 9,\n        \"role\": null\n    },\n    \"financialComponent\": {\n        \"id\": 1,\n        \"proposalId\": 4,\n        \"promoterId\": 1,\n        \"financialContractId\": 1,\n        \"promoter\": {\n            \"id\": 1,\n            \"name\": \"PFIZER\",\n            \"email\": \"pfizer.no.more.@covid.com\",\n            \"promoterType\": \"COMMERCIAL\"\n        },\n        \"partnerships\": [\n            {\n                \"id\": 1,\n                \"name\": \"An amazing partnership\",\n                \"financeComponentId\": 1,\n                \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                \"siteUrl\": \"https://www.example.com/\",\n                \"representative\": \"ze manel\",\n                \"email\": \"ze.manel@home.pt\",\n                \"phoneContact\": \"923722883\",\n                \"description\": null\n            }\n        ],\n        \"protocol\": {\n            \"id\": 1,\n            \"validatedDate\": null,\n            \"financialComponentId\": 1,\n            \"comments\": [],\n            \"validated\": false\n        }\n    },\n    \"investigationTeam\": [\n        {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"memberRole\": \"PRINCIPAL\",\n            \"memberId\": 9,\n            \"member\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        },\n        {\n            \"id\": 2,\n            \"proposalId\": 4,\n            \"memberRole\": \"MEMBER\",\n            \"memberId\": 10,\n            \"member\": {\n                \"userId\": 10,\n                \"name\": \"Fernando\",\n                \"email\": \"Fernando@casciffo.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 11,\n                \"role\": {\n                    \"roleId\": 11,\n                    \"roleName\": \"UIC\"\n                }\n            }\n        },\n        {\n            \"id\": 3,\n            \"proposalId\": 4,\n            \"memberRole\": \"MEMBER\",\n            \"memberId\": 11,\n            \"member\": {\n                \"userId\": 11,\n                \"name\": \"admin\",\n                \"email\": \"admin.diferente@casciffo.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        }\n    ],\n    \"stateTransitions\": [],\n    \"timelineEvents\": [],\n    \"comments\": [\n        {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"authorId\": 9,\n            \"dateCreated\": [\n                2022,\n                6,\n                11,\n                0,\n                51,\n                24,\n                659317000\n            ],\n            \"dateModified\": null,\n            \"content\": \"Early bird gets the worm\",\n            \"commentType\": \"CONTACTS\",\n            \"author\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        },\n        {\n            \"id\": 2,\n            \"proposalId\": 4,\n            \"authorId\": 9,\n            \"dateCreated\": [\n                2022,\n                6,\n                11,\n                0,\n                51,\n                24,\n                659317000\n            ],\n            \"dateModified\": null,\n            \"content\": \"An observation made for testing purposes\",\n            \"commentType\": \"OBSERVATIONS\",\n            \"author\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        }\n    ]\n}"
 								}
-							],
-							"cookie": [],
-							"body": "{\n    \"id\": 4,\n    \"dateCreated\": [\n        2022,\n        6,\n        11,\n        0,\n        51,\n        24,\n        659317000\n    ],\n    \"lastUpdated\": [\n        2022,\n        6,\n        11,\n        0,\n        51,\n        24,\n        659317000\n    ],\n    \"sigla\": \"APOLLO\",\n    \"type\": \"CLINICAL_TRIAL\",\n    \"stateId\": 12,\n    \"serviceTypeId\": 2,\n    \"therapeuticAreaId\": 2,\n    \"pathologyId\": 2,\n    \"principalInvestigatorId\": 9,\n    \"state\": {\n        \"id\": 12,\n        \"name\": \"SUBMETIDO\",\n        \"ownerId\": 11,\n        \"owner\": null\n    },\n    \"serviceType\": {\n        \"id\": 2,\n        \"name\": \"Cardiologia\"\n    },\n    \"therapeuticArea\": {\n        \"id\": 2,\n        \"name\": \"Terapia Cardio\"\n    },\n    \"pathology\": {\n        \"id\": 2,\n        \"name\": \"Pneumonia\"\n    },\n    \"principalInvestigator\": {\n        \"userId\": 9,\n        \"name\": \"admin\",\n        \"email\": \"admin@admin.pt\",\n        \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n        \"roleId\": 9,\n        \"role\": null\n    },\n    \"financialComponent\": {\n        \"id\": 1,\n        \"proposalId\": 4,\n        \"promoterId\": 1,\n        \"financialContractId\": 1,\n        \"promoter\": {\n            \"id\": 1,\n            \"name\": \"PFIZER\",\n            \"email\": \"pfizer.no.more.@covid.com\",\n            \"promoterType\": \"COMMERCIAL\"\n        },\n        \"partnerships\": [\n            {\n                \"id\": 1,\n                \"name\": \"An amazing partnership\",\n                \"financeComponentId\": 1,\n                \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                \"siteUrl\": \"https://www.example.com/\",\n                \"representative\": \"ze manel\",\n                \"email\": \"ze.manel@home.pt\",\n                \"phoneContact\": \"923722883\",\n                \"description\": null\n            }\n        ],\n        \"protocol\": {\n            \"id\": 1,\n            \"validatedDate\": null,\n            \"financialComponentId\": 1,\n            \"comments\": [],\n            \"validated\": false\n        }\n    },\n    \"investigationTeam\": [\n        {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"memberRole\": \"PRINCIPAL\",\n            \"memberId\": 9,\n            \"member\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        },\n        {\n            \"id\": 2,\n            \"proposalId\": 4,\n            \"memberRole\": \"MEMBER\",\n            \"memberId\": 10,\n            \"member\": {\n                \"userId\": 10,\n                \"name\": \"Fernando\",\n                \"email\": \"Fernando@casciffo.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 11,\n                \"role\": {\n                    \"roleId\": 11,\n                    \"roleName\": \"UIC\"\n                }\n            }\n        },\n        {\n            \"id\": 3,\n            \"proposalId\": 4,\n            \"memberRole\": \"MEMBER\",\n            \"memberId\": 11,\n            \"member\": {\n                \"userId\": 11,\n                \"name\": \"admin\",\n                \"email\": \"admin.diferente@casciffo.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        }\n    ],\n    \"stateTransitions\": [],\n    \"timelineEvents\": [],\n    \"comments\": [\n        {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"authorId\": 9,\n            \"dateCreated\": [\n                2022,\n                6,\n                11,\n                0,\n                51,\n                24,\n                659317000\n            ],\n            \"dateModified\": null,\n            \"content\": \"Early bird gets the worm\",\n            \"commentType\": \"CONTACTS\",\n            \"author\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        },\n        {\n            \"id\": 2,\n            \"proposalId\": 4,\n            \"authorId\": 9,\n            \"dateCreated\": [\n                2022,\n                6,\n                11,\n                0,\n                51,\n                24,\n                659317000\n            ],\n            \"dateModified\": null,\n            \"content\": \"An observation made for testing purposes\",\n            \"commentType\": \"OBSERVATIONS\",\n            \"author\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        }\n    ]\n}"
+							]
+						},
+						{
+							"name": "details proposal study",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{localhost}}/proposals/{{proposal_study_id}}",
+									"host": [
+										"{{localhost}}"
+									],
+									"path": [
+										"proposals",
+										"{{proposal_study_id}}"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "proposal details",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals/{{proposal_id}}",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals",
+												"{{proposal_id}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2750"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": 4,\n    \"dateCreated\": [\n        2022,\n        6,\n        11,\n        0,\n        51,\n        24,\n        659317000\n    ],\n    \"lastUpdated\": [\n        2022,\n        6,\n        11,\n        0,\n        51,\n        24,\n        659317000\n    ],\n    \"sigla\": \"APOLLO\",\n    \"type\": \"CLINICAL_TRIAL\",\n    \"stateId\": 12,\n    \"serviceTypeId\": 2,\n    \"therapeuticAreaId\": 2,\n    \"pathologyId\": 2,\n    \"principalInvestigatorId\": 9,\n    \"state\": {\n        \"id\": 12,\n        \"name\": \"SUBMETIDO\",\n        \"ownerId\": 11,\n        \"owner\": null\n    },\n    \"serviceType\": {\n        \"id\": 2,\n        \"name\": \"Cardiologia\"\n    },\n    \"therapeuticArea\": {\n        \"id\": 2,\n        \"name\": \"Terapia Cardio\"\n    },\n    \"pathology\": {\n        \"id\": 2,\n        \"name\": \"Pneumonia\"\n    },\n    \"principalInvestigator\": {\n        \"userId\": 9,\n        \"name\": \"admin\",\n        \"email\": \"admin@admin.pt\",\n        \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n        \"roleId\": 9,\n        \"role\": null\n    },\n    \"financialComponent\": {\n        \"id\": 1,\n        \"proposalId\": 4,\n        \"promoterId\": 1,\n        \"financialContractId\": 1,\n        \"promoter\": {\n            \"id\": 1,\n            \"name\": \"PFIZER\",\n            \"email\": \"pfizer.no.more.@covid.com\",\n            \"promoterType\": \"COMMERCIAL\"\n        },\n        \"partnerships\": [\n            {\n                \"id\": 1,\n                \"name\": \"An amazing partnership\",\n                \"financeComponentId\": 1,\n                \"iconUrl\": \"https://cdn-icons-png.flaticon.com/512/3698/3698156.png\",\n                \"siteUrl\": \"https://www.example.com/\",\n                \"representative\": \"ze manel\",\n                \"email\": \"ze.manel@home.pt\",\n                \"phoneContact\": \"923722883\",\n                \"description\": null\n            }\n        ],\n        \"protocol\": {\n            \"id\": 1,\n            \"validatedDate\": null,\n            \"financialComponentId\": 1,\n            \"comments\": [],\n            \"validated\": false\n        }\n    },\n    \"investigationTeam\": [\n        {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"memberRole\": \"PRINCIPAL\",\n            \"memberId\": 9,\n            \"member\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        },\n        {\n            \"id\": 2,\n            \"proposalId\": 4,\n            \"memberRole\": \"MEMBER\",\n            \"memberId\": 10,\n            \"member\": {\n                \"userId\": 10,\n                \"name\": \"Fernando\",\n                \"email\": \"Fernando@casciffo.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 11,\n                \"role\": {\n                    \"roleId\": 11,\n                    \"roleName\": \"UIC\"\n                }\n            }\n        },\n        {\n            \"id\": 3,\n            \"proposalId\": 4,\n            \"memberRole\": \"MEMBER\",\n            \"memberId\": 11,\n            \"member\": {\n                \"userId\": 11,\n                \"name\": \"admin\",\n                \"email\": \"admin.diferente@casciffo.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        }\n    ],\n    \"stateTransitions\": [],\n    \"timelineEvents\": [],\n    \"comments\": [\n        {\n            \"id\": 1,\n            \"proposalId\": 4,\n            \"authorId\": 9,\n            \"dateCreated\": [\n                2022,\n                6,\n                11,\n                0,\n                51,\n                24,\n                659317000\n            ],\n            \"dateModified\": null,\n            \"content\": \"Early bird gets the worm\",\n            \"commentType\": \"CONTACTS\",\n            \"author\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        },\n        {\n            \"id\": 2,\n            \"proposalId\": 4,\n            \"authorId\": 9,\n            \"dateCreated\": [\n                2022,\n                6,\n                11,\n                0,\n                51,\n                24,\n                659317000\n            ],\n            \"dateModified\": null,\n            \"content\": \"An observation made for testing purposes\",\n            \"commentType\": \"OBSERVATIONS\",\n            \"author\": {\n                \"userId\": 9,\n                \"name\": \"admin\",\n                \"email\": \"admin@admin.pt\",\n                \"password\": \"$2a$10$x9vNzMSNnMQiVPrnt1JUtO3P6cD212fsgGkUNbdOmnWX7aLuOrmjS\",\n                \"roleId\": 9,\n                \"role\": {\n                    \"roleId\": 9,\n                    \"roleName\": \"SUPERUSER\"\n                }\n            }\n        }\n    ]\n}"
+								}
+							]
 						}
 					]
 				},
 				{
-					"name": "create proposal",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{uic_jwt}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"sigla\": \"Pfizer\",\r\n    \"type\": \"CLINICAL_TRIAL\" ,\r\n    \"stateId\": 1 ,\r\n    \"serviceTypeId\": 1 ,\r\n    \"therapeuticAreaId\": 1 ,\r\n    \"pathologyId\": 1 ,\r\n    \"principalInvestigatorId\": 2 ,\r\n    \"financialComponent\": {\r\n\t\t\"promoter\": {\r\n\t\t\t\"name\": \"Universo\",\r\n\t\t\t\"email\": \"promoter.universo@hotmail.com\",\r\n\t\t\t\"promoterType\": \"COMMERCIAL\"\r\n\t\t},\r\n\t\t\"partnerships\": [{\r\n\t\t\t\t\"name\": \"Goggle\",\r\n\t\t\t\t\"iconUrl\": \"https://media.flaticon.com/dist/min/img/favicon.ico\",\r\n\t\t\t\t\"siteUrl\":\"Goggle.com\",\r\n\t\t\t\t\"representative\": \"Homem do leme\",\r\n\t\t\t\t\"email\": \"goggle.man@goggle.com\",\r\n\t\t\t\t\"phoneContact\": \"123456789\",\r\n\t\t\t\t\"description\": \"Goggle is independent from Google, it is its own site and enterprise.\"\r\n\t\t}]\r\n\t},\r\n    \"investigationTeam\": [{\r\n\t\t\t\"memberRole\": \"PRINCIPAL\",\r\n\t\t\t\"memberId\": 2\r\n\t}]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{localhost}}/proposals",
-							"host": [
-								"{{localhost}}"
-							],
-							"path": [
-								"proposals"
-							]
-						}
-					},
-					"response": [
+					"name": "proposal creation",
+					"item": [
 						{
-							"name": "create ok",
-							"originalRequest": {
+							"name": "create proposal clinical trial",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let proposal = pm.response.json()\r",
+											"pm.environment.set(\"proposal_trial_id\", proposal.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "POST",
 								"header": [
 									{
-										"key": "Bearer",
-										"value": "{{jwt}}",
+										"key": "Content-Type",
+										"value": "application/json",
 										"type": "text"
 									}
 								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sigla\": \"Pfizer\",\r\n    \"type\": \"CLINICAL_TRIAL\" ,\r\n    \"stateId\": 1 ,\r\n    \"serviceTypeId\": 1 ,\r\n    \"therapeuticAreaId\": 1 ,\r\n    \"pathologyId\": 1 ,\r\n    \"principalInvestigatorId\": 1 ,\r\n    \"financialComponent\": {\r\n\t\t\"promoter\": {\r\n\t\t\t\"name\": \"Universo\",\r\n\t\t\t\"email\": \"promoter.universo@hotmail.com\",\r\n\t\t\t\"promoterType\": \"COMMERCIAL\"\r\n\t\t},\r\n\t\t\"partnerships\": [{\r\n\t\t\t\t\"name\": \"Goggle\",\r\n\t\t\t\t\"iconUrl\": \"https://media.flaticon.com/dist/min/img/favicon.ico\",\r\n\t\t\t\t\"siteUrl\":\"Goggle.com\",\r\n\t\t\t\t\"representative\": \"Homem do leme\",\r\n\t\t\t\t\"email\": \"goggle.man@goggle.com\",\r\n\t\t\t\t\"phoneContact\": \"123456789\",\r\n\t\t\t\t\"description\": \"Goggle is independent from Google, it is its own site and enterprise.\"\r\n\t\t}]\r\n\t},\r\n    \"investigationTeam\": [{\r\n\t\t\t\"memberRole\": \"PRINCIPAL\",\r\n\t\t\t\"memberId\": 1\r\n\t}]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{localhost}}/proposals",
 									"host": [
@@ -890,55 +1537,234 @@
 									]
 								}
 							},
-							"status": "Unauthorized",
-							"code": 401,
-							"_postman_previewlanguage": "plain",
-							"header": [
+							"response": [
 								{
-									"key": "WWW-Authenticate",
-									"value": "Bearer"
+									"name": "create ok",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Bearer",
+												"value": "{{jwt}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{localhost}}/proposals",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "WWW-Authenticate",
+											"value": "Bearer"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "content-length",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"body": null
 								},
 								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, max-age=0, must-revalidate"
+									"name": "create unauthorized",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "WWW-Authenticate",
+											"value": "Bearer"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "content-length",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"body": ""
 								},
 								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "1 ; mode=block"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
-								},
-								{
-									"key": "content-length",
-									"value": "0"
+									"name": "create bad request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "WWW-Authenticate",
+											"value": "Bearer"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "content-length",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"body": ""
 								}
-							],
-							"cookie": [],
-							"body": null
+							]
 						},
 						{
-							"name": "create unauthorized",
-							"originalRequest": {
+							"name": "create proposal clinical study",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"let proposal = pm.response.json()\r",
+											"pm.environment.set(\"proposal_study_id\", proposal.id)"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{uic_jwt}}",
+											"type": "string"
+										}
+									]
+								},
 								"method": "POST",
-								"header": [],
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sigla\": \"DNA-Spy-1.2\",\r\n    \"type\": \"OBSERVATIONAL_STUDY\" ,\r\n    \"stateId\": 1 ,\r\n    \"serviceTypeId\": 1 ,\r\n    \"therapeuticAreaId\": 1 ,\r\n    \"pathologyId\": 1 ,\r\n    \"principalInvestigatorId\": 1 ,\r\n    \"investigationTeam\": [{\r\n\t\t\t\"memberRole\": \"PRINCIPAL\",\r\n\t\t\t\"memberId\": 1\r\n\t}]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
 								"url": {
 									"raw": "{{localhost}}/proposals",
 									"host": [
@@ -949,108 +1775,191 @@
 									]
 								}
 							},
-							"status": "Unauthorized",
-							"code": 401,
-							"_postman_previewlanguage": "plain",
-							"header": [
+							"response": [
 								{
-									"key": "WWW-Authenticate",
-									"value": "Bearer"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, max-age=0, must-revalidate"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "1 ; mode=block"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
-								},
-								{
-									"key": "content-length",
-									"value": "0"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						},
-						{
-							"name": "create bad request",
-							"originalRequest": {
-								"method": "POST",
-								"header": [],
-								"url": {
-									"raw": "{{localhost}}/proposals",
-									"host": [
-										"{{localhost}}"
+									"name": "create ok",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Bearer",
+												"value": "{{jwt}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "{{localhost}}/proposals",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "WWW-Authenticate",
+											"value": "Bearer"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "content-length",
+											"value": "0"
+										}
 									],
-									"path": [
-										"proposals"
-									]
+									"cookie": [],
+									"body": null
+								},
+								{
+									"name": "create unauthorized",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "WWW-Authenticate",
+											"value": "Bearer"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "content-length",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "create bad request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{localhost}}/proposals",
+											"host": [
+												"{{localhost}}"
+											],
+											"path": [
+												"proposals"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "plain",
+									"header": [
+										{
+											"key": "WWW-Authenticate",
+											"value": "Bearer"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1 ; mode=block"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "content-length",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"body": ""
 								}
-							},
-							"status": "Unauthorized",
-							"code": 401,
-							"_postman_previewlanguage": "plain",
-							"header": [
-								{
-									"key": "WWW-Authenticate",
-									"value": "Bearer"
-								},
-								{
-									"key": "Cache-Control",
-									"value": "no-cache, no-store, max-age=0, must-revalidate"
-								},
-								{
-									"key": "Pragma",
-									"value": "no-cache"
-								},
-								{
-									"key": "Expires",
-									"value": "0"
-								},
-								{
-									"key": "X-Content-Type-Options",
-									"value": "nosniff"
-								},
-								{
-									"key": "X-Frame-Options",
-									"value": "DENY"
-								},
-								{
-									"key": "X-XSS-Protection",
-									"value": "1 ; mode=block"
-								},
-								{
-									"key": "Referrer-Policy",
-									"value": "no-referrer"
-								},
-								{
-									"key": "content-length",
-									"value": "0"
-								}
-							],
-							"cookie": [],
-							"body": ""
+							]
 						}
 					]
 				}

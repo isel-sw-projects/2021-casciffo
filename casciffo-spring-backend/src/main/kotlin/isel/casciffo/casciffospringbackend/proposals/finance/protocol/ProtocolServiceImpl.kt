@@ -39,11 +39,12 @@ class ProtocolServiceImpl(
     }
 
     override suspend fun handleNewProtocolComment(proposalId: Int, pfcId: Int,aggregate: ProtocolAggregate): ProtocolAggregate {
-        val protocol = getProtocolDetails(proposalId, pfcId).protocol!!
-        protocol.financialComponentId = pfcId
+        val protocolId = getProtocolDetails(proposalId, pfcId).protocol!!.id!!
+        aggregate.protocol!!.financialComponentId = pfcId
+        aggregate.protocol.id = protocolId
         aggregate.comment!!.proposalId = proposalId
         val c = commentService.createComment(aggregate.comment)
-        val updatedProtocol = updateProtocol(protocol, c.id, aggregate.newValidation)
+        val updatedProtocol = updateProtocol(aggregate.protocol, c.id, aggregate.newValidation)
         return ProtocolAggregate(updatedProtocol, c)
     }
 
@@ -57,6 +58,7 @@ class ProtocolServiceImpl(
 
         protocol.commentRef = cRef
         protocol.validatedDate = LocalDate.now()
+        protocol.validated = true
         return proposalProtocolRepository.save(protocol).awaitSingle()
     }
 }

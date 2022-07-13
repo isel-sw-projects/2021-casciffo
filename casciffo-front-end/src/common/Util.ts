@@ -30,10 +30,11 @@ const months = [
  * @return The date formatted as yyyy-MM-dd HH:mm
  */
 function formatDate(date: string, withHours: boolean = false): string {
+    const formattedDate = date.length > 10 ? date.substring(0, isoDatetimeDelimiterIdx) : date
 
-    if(!withHours) return date
+    if(!withHours)
+        return formattedDate
 
-    const formattedDate = date.substring(0, isoDatetimeDelimiterIdx)
 
     const hours = date.substring(isoDatetimeDelimiterIdx+1, isoDatetimeDelimiterIdx+1+5)
 
@@ -57,14 +58,16 @@ function formatDateWithMonthName(date: string) {
  * Compares two dates in ISO format
  * @param firstDate First date in ISO format.
  * @param secondDate Second date in ISO format.
+ * @param withHours If comparison should take into account the hours.
  * @returns 0 when dates are equal, positive when first is more recent than second and negative otherwise.
  */
-function cmp(firstDate: string | undefined | null, secondDate: string | undefined | null) {
+function cmp(firstDate: string | undefined | null, secondDate: string | undefined | null, withHours: boolean = false) {
     if(firstDate == null && secondDate == null) return 0;
     if(firstDate == null && secondDate != null) return -1;
     if(firstDate != null && secondDate == null) return 1;
-    const firstDateString = formatDate(firstDate!, false).replaceAll('-', '')
-    const secondDateString = formatDate(secondDate!, false).replaceAll('-', '')
+    // ' /T|-|\.|:/g ' -> regex to find 'T' '-' ':' and '.'
+    const firstDateString = formatDate(firstDate!, withHours).replaceAll(/T|-|\.|:/g, '')
+    const secondDateString = formatDate(secondDate!, withHours).replaceAll(/T|-|\.|:/g, '')
     return parseInt(firstDateString) - parseInt(secondDateString);
 }
 
@@ -124,10 +127,23 @@ export function httpPut<T>(url: string, body: unknown = null): Promise<T> {
     return _httpFetch(url, 'PUT', [HEADER_CONTENT_TYPE], body)
 }
 
+const getUserToken = () => {
+    const tokenString = localStorage.getItem(TOKEN_KEY)
+    if(tokenString == null) return null
+    return JSON.parse(tokenString) as UserToken
+}
+
+const clearUserToken = () => {
+    localStorage.removeItem(TOKEN_KEY)
+    return null
+}
+
 export const Util = {
     formatDate,
     proposalStates: Object.values(STATES).filter(s => s.code > STATES.SUBMETIDO.code && s.code <= STATES.VALIDADO.code),
     cmp,
     formatDateWithMonthName,
     getTodayDate,
+    getUserToken,
+    clearUserToken
 }

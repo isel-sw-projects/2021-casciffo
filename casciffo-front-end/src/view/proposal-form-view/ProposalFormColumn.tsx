@@ -138,18 +138,6 @@ export function ProposalFormColumn(props: PFC_Props) {
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicInput">
                         <Form.Label>Investigador</Form.Label>
-                        {/*<Form.Control*/}
-                        {/*    key={"investigator-name-id"}*/}
-                        {/*    required*/}
-                        {/*    type={"text"}*/}
-                        {/*    name={"pInvestigator.name"}*/}
-                        {/*    value={props.formData.pInvestigator.name}*/}
-                        {/*    onChange={(event =>*/}
-                        {/*        props.setFormData(*/}
-                        {/*            updateState("pInvestigator",*/}
-                        {/*                {...props.formData.pInvestigator, name: event.target.value}*/}
-                        {/*            )))}*/}
-                        {/*/>*/}
                         <AsyncAutoCompleteSearch
                             requestUsers={(q: string) => {
                                 return props.service.fetchInvestigators(q)

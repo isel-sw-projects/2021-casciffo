@@ -1,19 +1,20 @@
 package isel.casciffo.casciffospringbackend.users.user
 
 
+import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregate
+import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregateRepo
+import isel.casciffo.casciffospringbackend.common.QuadTuple
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
-import isel.casciffo.casciffospringbackend.exceptions.GenericException
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
+import isel.casciffo.casciffospringbackend.roles.Role
 import isel.casciffo.casciffospringbackend.roles.RoleService
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtSupport
 import isel.casciffo.casciffospringbackend.users.user_roles.UserRoles
 import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactive.awaitLast
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KotlinLogging
@@ -26,31 +27,66 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 
 @Service
 class UserServiceImpl(
     @Autowired val userRepository: UserRepository,
+    @Autowired val userRolesRepo: UserRolesRepo,
+    @Autowired val userRolesAggregateRepo: UserRolesAggregateRepo,
     @Autowired val roleService: RoleService,
     @Autowired private val encoder: PasswordEncoder,
-    @Autowired val jwtSupport: JwtSupport,
-    @Autowired val userRolesRepo: UserRolesRepo
+    @Autowired val jwtSupport: JwtSupport
 ) : UserService {
 
     val logger = KotlinLogging.logger {  }
 
     override suspend fun loginUser(userModel: UserModel): BearerTokenWrapper {
-        val existingUser = userRepository.findByEmail(userModel.email!!).awaitSingleOrNull()
+        val existingUser = getUserByEmail(userModel.email!!)
+
 
         existingUser?.let {
             if(!encoder.matches(userModel.password, it.password)) return@let
 
+
+            val roles = if (existingUser.roles == null) null
+            else existingUser.roles!!.map {r -> r.roleName!! }.collectList().awaitSingleOrNull()
+
             val token = jwtSupport.generate(it.email!!)
-            return BearerTokenWrapper(token.value, existingUser.userId!!, existingUser.name!!)
+            return BearerTokenWrapper(token.value, existingUser.userId!!, existingUser.name!!, roles)
         }
 
         throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login credentials incorrect!")
+    }
+
+    suspend fun getUserByEmail(email: String): UserModel? {
+        return mapAggregateToModel(userRolesAggregateRepo.findByUserEmail(email), true)
+            .awaitFirstOrNull()
+            ?: throw UserNotFoundException()
+    }
+
+    private fun mapAggregateToModel(stream: Flux<UserRolesAggregate>, requirePassword: Boolean = false): Flux<UserModel> {
+        return if(requirePassword)
+            stream.groupBy { QuadTuple(it.userId!!, it.userName!!, it.userEmail!!, it.userPassword!!) }
+                .map {
+                    UserModel(
+                        userId = it.key().first,
+                        name = it.key().second,
+                        email = it.key().third,
+                        password = it.key().fourth,
+                        roles = it.map { role -> Role(roleId = role.roleId, roleName = role.roleName) })
+                }
+        else
+            stream.groupBy { Triple(it.userId!!, it.userName!!, it.userEmail!!) }
+                .map {
+                    UserModel(
+                        userId = it.key().first,
+                        name = it.key().second,
+                        email = it.key().third,
+                        roles = it.map { role -> Role(roleId = role.roleId, roleName = role.roleName) })
+                }
     }
 
     override suspend fun deleteUser(userId: Int): UserModel {
@@ -88,14 +124,14 @@ class UserServiceImpl(
     }
 
     override suspend fun getAllUsers(): Flow<UserModel?> {
-        return userRepository.findAll().asFlow().onEach(this::loadRelations)
+        return mapAggregateToModel(userRolesAggregateRepo.findAllUsersAndRoles())
+            .asFlow()
     }
 
     override suspend fun getUser(id: Int, loadDetails: Boolean): UserModel? {
-        val user = userRepository.findById(id).awaitFirstOrNull()
+        return mapAggregateToModel(userRolesAggregateRepo.findByUserId(id))
+            .awaitFirstOrNull()
             ?: throw UserNotFoundException()
-
-        return if(loadDetails) loadRelations(user) else user
     }
 
     @Transactional
@@ -120,12 +156,6 @@ class UserServiceImpl(
         //% is added to make query (SELECT ... WHERE name LIKE abc% AND ...)
         //adding % to the query itself will break the statement and throw runtime db exception
         return userRepository.findAllByRoleNameIsInAndNameLike(name.plus('%'), roles).asFlow()
-    }
-
-    private suspend fun loadRelations(userModel: UserModel): UserModel {
-        //value is used during mapping to DTO
-        userModel.roles = roleService.findByUserId(userModel.userId!!)
-        return userModel
     }
 
     /**

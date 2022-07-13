@@ -79,7 +79,7 @@ class ResearchServiceImpl(
     suspend fun loadRelations(researchModel: ResearchModel, isDetailedView: Boolean = false) : ResearchModel {
 
         if(isDetailedView) {
-            researchModel.stateTransitions = stateTransitionService.findAllByReferenceId(researchModel.id!!).asFlux()
+            researchModel.stateTransitions = stateTransitionService.findAllByReferenceId(researchModel.id!!, StateType.RESEARCH).asFlux()
             researchModel.participants = participantService.getParticipantsByResearchId(researchModel.id!!).asFlux()
         }
 

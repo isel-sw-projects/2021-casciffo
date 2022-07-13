@@ -1,10 +1,15 @@
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import ApiUrls from "../common/Links";
-import {PromoterTypes, ResearchTypes} from "../common/Constants";
+import {PromoterTypes, ResearchTypes, StateChainTypes} from "../common/Constants";
 import {TimelineEventModel} from "../model/TimelineEventModel";
 import {ProtocolAggregateDTO, ProtocolModel} from "../model/proposal/finance/ProtocolModel";
-import {ProtocolCommentsModel} from "../model/proposal/finance/ProtocolCommentsModel";
+import {
+    ValidationCommentDTO,
+    ValidityComment,
+    ProposalValidation
+} from "../model/proposal/finance/ValidationModels";
 import {httpGet, httpPost, httpPut} from "../common/Util";
+import {StateModel} from "../model/state/StateModel";
 
 
 class ProposalService {
@@ -89,24 +94,31 @@ class ProposalService {
         return httpGet(url)
     }
 
-    updateProtocol(proposalId: string, protocol: ProtocolModel): Promise<ProtocolModel> {
-        const url = ApiUrls.proposalsProtocol(proposalId, protocol.financialComponentId!+"")
-        return httpPut(url, protocol)
-    }
-
     saveProtocolComment
     (
         proposalId: string,
         pfcId: string,
-        comment: ProtocolCommentsModel
+        comment: ValidityComment
     ): Promise<ProtocolAggregateDTO> {
-        const url = ApiUrls.proposalsProtocolComments(proposalId, pfcId)
-        return httpPost(url, comment)
+        const url = ApiUrls.proposalsProtocol(proposalId, pfcId)
+        return httpPut(url, comment)
     }
 
     updateTimelineEvent(proposalId: string, eventId: string, completed: boolean): Promise<TimelineEventModel> {
         const url = ApiUrls.proposalsTimelineEventUpdateUrl(proposalId, eventId, completed)
         return httpPut(url)
+    }
+
+    fetchStates(proposalType: string): Promise<StateModel[]> {
+        const stateChainType = proposalType === ResearchTypes.CLINICAL_TRIAL.id
+            ? StateChainTypes.FINANCE_PROPOSAL : StateChainTypes.STUDY_PROPOSAL
+        const url = ApiUrls.statesChainUrl(stateChainType)
+        return httpGet(url);
+    }
+
+    validate(proposalId: string, pfcId: string, validationComment: ValidationCommentDTO): Promise<ProposalValidation> {
+        const url = ApiUrls.proposalValidationUrl(proposalId, pfcId, validationComment.validation!.validationType!)
+        return httpPut(url, validationComment)
     }
 }
 

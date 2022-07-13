@@ -1,8 +1,8 @@
-import React, {useCallback, useState} from "react";
+import React, {useCallback, useContext, useState} from "react";
 import { UserService } from "../../services/UserService";
 import {Button, Container, Form} from "react-bootstrap";
 import {Navigate} from "react-router-dom";
-import {useToken} from "../../custom_hooks/useToken";
+import {useUserAuthContext} from "../context/UserAuthContext";
 
 type LoginProps = {
     UserService: UserService
@@ -17,7 +17,7 @@ export function Login(props: LoginProps) {
     
     const [toRedirect, setToRedirect] = useState(false)
     
-    const [_, setToken] = useToken()
+    const userAuthContext = useUserAuthContext()
     
     const login = useCallback(
         () => {
@@ -27,10 +27,10 @@ export function Login(props: LoginProps) {
                     //FIXME THIS NEEDS TO BE LOOKED AT, SEND PASSWORD IN CLEAR?
                     password: state.password
                 })
-                .then(r => setToken(r))
+                .then(r => userAuthContext.setUserToken(r))
                 .then(_ => setToRedirect(true))
                 .catch(reason => console.log(reason))
-        }, [props.UserService, setToken, state.email, state.password]
+        }, [props.UserService, state.email, state.password, userAuthContext]
     )
 
     const updateState =

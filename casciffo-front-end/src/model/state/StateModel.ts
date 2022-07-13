@@ -1,7 +1,8 @@
-import {UserRoleModel} from "../role/UserRoleModel";
 
 export interface StateModel {
-    id?: number,
-    name: string,
-    owner?: UserRoleModel
+    id?: number
+    name: string
+    nextInChain?: StateModel[]
+    roles?: string[]
+    stateFlowType?: string
 }
