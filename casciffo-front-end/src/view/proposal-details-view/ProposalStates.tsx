@@ -5,13 +5,14 @@ import {StateModel} from "../../model/state/StateModel";
 import {TimelineEventModel} from "../../model/TimelineEventModel";
 import {StateTransitionModel} from "../../model/state/StateTransitionModel";
 import {StateFlowTypes} from "../../common/Constants";
+import {STATES} from "../../model/state/STATES";
 
 type StateProps = {
     onAdvanceClick: () => void
     submittedDate: string
     timelineEvents: TimelineEventModel[]
     stateTransitions: StateTransitionModel[]
-    states: StateModel[] | undefined
+    states: StateModel[]
 }
 
 type StateToggleButtonProps = {
@@ -23,31 +24,35 @@ type StateToggleButtonProps = {
 
 export function ProposalStateView(props: StateProps) {
     const [selectedState, setSelectedState] = useState("")
-    // const [states, setStates] = useState<StateModel[]>()
-    // const [timelineEvents, setTimelineEvents] = useState<TimelineEventModel[]>()
-    // const [stateTransitions, setStateTransitions] = useState<StateTransitionModel[]>()
+    const [stateChain, setStateChain] = useState<StateModel[]>([])
+    const [timelineEvents, setTimelineEvents] = useState<TimelineEventModel[]>([])
+    const [stateTransitions, setStateTransitions] = useState<StateTransitionModel[]>([])
 
-    // useEffect(() => {
-    //     console.log("setting states")
-    //     setStates(props.states)
-    // }, [props.states])
-    //
-    // useEffect(() => {
-    //     console.log("setting timeline events")
-    //     setTimelineEvents(props.timelineEvents)
-    // }, [props.timelineEvents])
-    //
-    // useEffect(() => {
-    //     console.log("setting transitions")
-    //     setStateTransitions(props.stateTransitions)
-    // }, [props.stateTransitions])
+    useEffect(() => {
+        setStateChain(props.states)
+    }, [props.states])
+
+    useEffect(() => {
+        setTimelineEvents(props.timelineEvents)
+    }, [props.timelineEvents])
+
+    useEffect(() => {
+        const sort = (st1: StateTransitionModel, st2: StateTransitionModel) => Util.cmp(st1.transitionDate, st2.transitionDate, true)
+        setStateTransitions(props.stateTransitions)
+        const lastTransition = props.stateTransitions.length === 0 ?
+            'SUBMETIDO'
+            :
+            props.stateTransitions.sort(sort)[props.stateTransitions.length-1].newState!.name;
+        const name = Object.values(STATES).find(s => s.id === lastTransition)!.name
+        setSelectedState(name)
+    }, [props.stateTransitions])
 
 
     function mapStates() {
-        if(props.states == null) return <span>a carregar estados...</span>
-        let state = props.states!.find(s => s.stateFlowType === StateFlowTypes.INITIAL)
-        if(props.states!.find(s => s.stateFlowType === StateFlowTypes.TERMINAL) == null) {
-            console.log("states doesnt have a terminal state!!!!\n currentChain: " + props.states)
+        if(stateChain.length === 0) return <span>a carregar estados...</span>
+        let state = stateChain.find(s => s.stateFlowType === StateFlowTypes.INITIAL)
+        if(stateChain.find(s => s.stateFlowType === StateFlowTypes.TERMINAL) == null) {
+            console.log("The state chain doesnt have a terminal state!!!!\n currentChain: " + props.states)
             return <span>Error loading states... Contact developer</span>
         }
         const stateComponents: JSX.Element[] = []
@@ -78,7 +83,7 @@ export function ProposalStateView(props: StateProps) {
     }
 
     function getIsDisabled(state: StateModel): boolean {
-        return props.stateTransitions == null || props.stateTransitions.every(st => st.newStateId !== state.id)
+        return stateTransitions.length === 0 || stateTransitions.every(st => st.newStateId !== state.id)
     }
 
     function getVariantColor(state: StateModel, disabled: boolean = false): string {
@@ -87,7 +92,7 @@ export function ProposalStateView(props: StateProps) {
     }
 
     function getTransitionDate(state: StateModel) {
-        const transition = props.stateTransitions?.find(st => st.newStateId === state.id)
+        const transition = stateTransitions.find(st => st.newStateId === state.id)
 
         if (transition == null) return "---"
 
@@ -95,7 +100,9 @@ export function ProposalStateView(props: StateProps) {
     }
 
     function getDeadlineDateForState(state: StateModel) {
-        const event = props.timelineEvents?.find(e => e.stateName === state.name)
+        //TODO CHANGE IT SO THIS ISNT AS BAD, JUST ADD STATE ID TO TIMELINE EVENT EZ
+        const stateOriginalName = Object.values(STATES).find(s => s.name === state.name)
+        const event = timelineEvents.find(e => (e.stateName === stateOriginalName!.id))
         if (event === undefined) {
             return "Limite: ---"
         }
@@ -128,7 +135,9 @@ export function ProposalStateView(props: StateProps) {
         <Container className={"border-bottom"}>
             <Container>
                 <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
-                <Button className={"float-end mb-2"} variant={"outline-secondary"} /*onClick={props.onAdvanceClick}*/>
+                {/*TODO change back-end to include transition type flow [INITIAL, PROGRESS, TERMINAL] in transitions*/}
+                <Button className={"float-end mb-2"} variant={"outline-secondary"} onClick={props.onAdvanceClick}
+                disabled={props.stateTransitions?.some(s => s.newState!.name === 'VALIDADO'/*s.newState!.stateFlowType === "TERMINAL"*/)}>
                     Progredir estado
                 </Button>
                 <br/>

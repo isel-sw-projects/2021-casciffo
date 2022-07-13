@@ -13,7 +13,6 @@ import {
     Stack
 } from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
 
 
 type PTC_Props = {
@@ -45,41 +44,45 @@ export function PartnershipsTabContent(props: PTC_Props) {
     return  (
         <Container className={"justify-content-evenly"}>
             {displayData ? partnerships.map(partnership =>
-                <Card key={partnership.p.id} className={"small mt-1"} style={{width: "18rem", height: "auto"}}>
+                <Card key={partnership.p.id} className={"small m-3"}
+                      style={{width: "21rem", height: "auto", backgroundColor: "#f2f7ff", border: "10px solid", borderColor: "#264f8e"}}>
                     {/*fixme make it prettier*/}
                     <Card.Body>
                         <Card.Title>{partnership.p.name}</Card.Title>
                         <Stack direction={"vertical"} gap={1}>
                             <table>
+                                <colgroup>
+                                    <col key={"first"} span={1} style={{width: "40%"}}/>,
+                                    <col key={"second"} span={1} style={{width: "60%"}}/>,
+                                </colgroup>
                                 <tbody>
                                     <tr>
                                         <td><b>Nome</b></td>
-                                        <td>{partnership.p.name}</td>
+                                        <td style={{overflowWrap: "break-word"}}>{partnership.p.name}</td>
                                     </tr>
                                     <tr>
                                         <td><b>Representante</b></td>
-                                        <td>{partnership.p.representative}</td>
+                                        <td style={{overflowWrap: "break-word"}}>{partnership.p.representative}</td>
                                     </tr>
                                     <tr>
                                         <td><b>Email</b></td>
-                                        <td><a href={`mailto:${partnership.p.email}`}>{partnership.p.email}</a></td>
+                                        <td style={{overflowWrap: "break-word"}}><a href={`mailto:${partnership.p.email}`}>{partnership.p.email}</a></td>
                                     </tr>
                                     <tr>
                                         <td><b>Contacto</b></td>
-                                        <td>{partnership.p.phoneContact}</td>
+                                        <td style={{overflowWrap: "break-word"}}>{partnership.p.phoneContact}</td>
                                     </tr>
                                     {partnership.p.siteUrl?.length !== 0 ?
                                         <tr>
                                             <td><b>Site</b></td>
-                                            <td>{partnership.p.siteUrl}</td>
+                                            <td style={{overflowWrap: "break-word"}}>{partnership.p.siteUrl}</td>
                                         </tr> : <></>
                                     }
                                 </tbody>
                             </table>
-                            {/*FIXME THIS DAMN CARD KEEPS BREAKING MAKE IT EXPANDABLE*/}
 
                             {partnership.p.description?.length !== 0 ?
-                                <Container className={"mt-2 border-top text-center"} style={{width: "100%"}}>
+                                <Container className={"mt-2 border-top text-center border-2"} style={{width: "100%"}}>
                                     <Button
                                         className={"text-center"}
                                         variant={"link"}
@@ -87,7 +90,7 @@ export function PartnershipsTabContent(props: PTC_Props) {
                                     >
                                         Ver descrição
                                     </Button>
-                                    <Collapse in={partnership.open} className={"border-bottom"}>
+                                    <Collapse in={partnership.open} className={"border-bottom border-2"}>
                                         <p>{partnership.p.description}</p>
                                     </Collapse>
                                 </Container>

@@ -33,9 +33,11 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
     function addInvestigatorToTeam(event: React.MouseEvent<HTMLButtonElement>) {
         if (state.investigator.id.length === 0) {
             showErrorMessage("Por favor escolha um investigador da lista de resultados.")
-            event.stopPropagation()
-            event.preventDefault()
             return
+        }
+        if (state.team.some(t => t.id === state.investigator.id)) {
+            showErrorMessage("O investigador que tentou adicionar já existe.")
+            return;
         }
         let newTeam = [...state.team, state.investigator]
         props.setTeam(newTeam)
@@ -93,7 +95,6 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                         requestUsers={(q: string) => {
                             return props.searchInvestigators(q)
                         }}
-                        // selectedUser={state.investigator}
                         setInvestigator={(user =>
                             handleInvestigatorInputChange(
                                 {
@@ -114,13 +115,15 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
             <br/>
             <Container>
                 <Card>
-                    <Card.Header style={{backgroundColor: 'lightgray'}}>Equipa</Card.Header>
+                    <Card.Header className={"text-center border-bottom border-2 m"} style={{backgroundColor: ''}}>
+                        <b>Equipa</b>
+                    </Card.Header>
                     <Card.Body>
-                        <ListGroup variant="flush">
+                        <ListGroup className={"mt-2"} variant="flush">
                             {state.team.map((currInvestigator, idx) =>
                                 <ListGroup.Item
                                     as="li"
-                                    className="d-flex justify-content-between align-items-start"
+                                    className="d-flex justify-content-between align-items-start mt-2"
                                     style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
                                     key={`${currInvestigator}-${idx}`}
                                 >

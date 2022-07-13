@@ -77,9 +77,8 @@ export function TimelineEventForm(props: TimelineProps) {
                 onChange={handleSelectedState}
             >
                 {Util.proposalStates
-                    .map((rt) => (
-                    <option key={rt.id} value={rt.id}>{rt.name}</option>
-                ))}
+                    .map((rt) => <option key={rt.id} value={rt.id}>{rt.name}</option>)
+                }
             </Form.Select>
         )
     }
@@ -105,8 +104,7 @@ export function TimelineEventForm(props: TimelineProps) {
                                     className={"mb-1"}
                                     name={"isStateEvent"}
                                     checked={eventToAdd.isAssociatedToState}
-                                    onChange={((e) =>
-                                        setEventToAdd(updateState("isAssociatedToState",e.target.checked)))}
+                                    onChange={(e) => setEventToAdd(prevState => ({...prevState,isAssociatedToState: e.target.checked}))}
                                 />
                             </Stack>
                         </FormGroup>

@@ -98,7 +98,7 @@ export function CreateProposal(props : CP_Props) {
 
     return (
         //TODO ADD FLOATING LABEL TO LOOK COOL
-        <div className={"d-flex justify-content-evenly"}>
+        <div className={"d-flex justify-content-evenly m-3"}>
             <Row>
                 <ProposalFormColumn
                     onSubmit={handleFormSubmit}

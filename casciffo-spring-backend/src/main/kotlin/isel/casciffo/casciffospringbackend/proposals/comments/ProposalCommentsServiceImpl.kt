@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDateTime
 
 @Service
 class ProposalCommentsServiceImpl(
@@ -26,7 +27,7 @@ class ProposalCommentsServiceImpl(
         if(comment.proposalId == null) {
             throw IllegalArgumentException("ProposalId cannot be null!!!")
         }
-
+        comment.createdDate = LocalDateTime.now()
         return repository.save(comment)
             .map {
                 it.author = comment.author

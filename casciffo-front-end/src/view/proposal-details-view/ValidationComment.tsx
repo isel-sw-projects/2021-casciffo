@@ -16,18 +16,23 @@ type ValidationCommentProps = {
 export function ValidationComment(props: ValidationCommentProps) {
     const userToken = useMemo( () => JSON.parse(localStorage.getItem(TOKEN_KEY) || "") as UserToken, [])
     const {proposalId} = useParams()
+    const [type, setType] = useState("")
+
+    useEffect(() => {
+        setType(props.type)
+    }, [props.type])
 
     const newComment = (): ValidationCommentDTO => ({
         validation: {
             validated: false,
-            validationType: props.type
+            validationType: type
         },
         newValidation: false,
         comment: {
             proposalId: proposalId,
             content: "",
             authorId: userToken.userId,
-            commentType: props.type,
+            commentType: type,
             author: {
                 userId: userToken.userId,
                 name: userToken.userName

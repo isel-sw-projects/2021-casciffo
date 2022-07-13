@@ -74,10 +74,12 @@ class WebSecurityConfig {
         rolesRoutesAuth(http)
         constantsRoutesAuth(http)
         proposalRoutesAuth(http)
+        commentsRoutesAuth(http)
         researchRoutesAuth(http)
 
         return http.build()
     }
+
 
     private fun statesRoutesAuth(http: ServerHttpSecurity) {
         http
@@ -123,6 +125,12 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.PUT, PROPOSAL_FINANCE_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, FINANCE_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_JURIDICAL_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, JURIDICAL_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_PROTOCOL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+    }
+
+    private fun commentsRoutesAuth(http: ServerHttpSecurity) {
+        http
+            .authorizeExchange()
+            .pathMatchers("$PROPOSAL_COMMENTS_URL/**").authenticated()
     }
 
     private fun researchRoutesAuth(http: ServerHttpSecurity) {

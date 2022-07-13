@@ -14,6 +14,7 @@ type TimelineProps = {
     timelineEvents: Array<TimelineEventModel>,
     setNewTimeLineEvent: (t: TimelineEventModel) => void,
     service: ProposalAggregateService
+    updateTimelineEvent: (e: TimelineEventModel) => void;
 }
 
 type ChronoItemType = {
@@ -35,27 +36,16 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     const sortEvents = (a: TimelineEventModel, b: TimelineEventModel) => Util.cmp(a.deadlineDate!, b.deadlineDate!)
 
     useEffect(() => {
-        //TODO clean up this ugly code
-        props.service
-            .fetchProposalTimelineEvents(proposalId!)
-            .then(e => e.sort(sortEvents))
-            .then(e => {
-                setTimelineEvents(e);
-                return e
+        const sortedEvents = props.timelineEvents.sort(sortEvents)
+        setTimelineEvents(sortedEvents)
+        setHasEvents(sortedEvents.length !== 0)
+        if(sortedEvents.length > 2) {
+            setDateInterval({
+                start: Util.formatDate(sortedEvents[0].deadlineDate!),
+                end: Util.formatDate(sortedEvents[sortedEvents.length - 1].deadlineDate!)
             })
-            .then(items => {
-                setHasEvents(items.length !== 0)
-                return items
-            }).then(e => {
-                if(e.length > 2) {
-                    setDateInterval(
-                        {
-                            start: Util.formatDate(e[0].deadlineDate!),
-                            end: Util.formatDate(e[e.length - 1].deadlineDate!)
-                        })
-                }
-        })
-    }, [proposalId, props.service])
+        }
+    }, [proposalId, props.timelineEvents])
 
     function filterByEventType(e: TimelineEventModel): boolean {
         return (e.eventType === selectedEventType || selectedEventType === EventTypes.ALL.id)
@@ -74,7 +64,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
         }
 
         function filterEventNameIsLike(e: TimelineEventModel) {
-            return e.eventName.toLocaleLowerCase().includes(query.toLocaleLowerCase()) && filterByEventType(e)
+            return (new RegExp(`${query}.*`,"gi")).test(e.eventName) && filterByEventType(e)
         }
 
         function getColor(e: TimelineEventModel) {
@@ -85,9 +75,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
         }
 
         const updateTimelineEvent = (e: TimelineEventModel) => () => {
-            props.service.updateTimelineEvent(proposalId!, e.id!, true)
-                .then(event => timelineEvents.map(ev => ev.id !== e.id ? ev : event))
-                .then(setTimelineEvents)
+            props.updateTimelineEvent(e)
         }
 
         return events
@@ -148,11 +136,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     }
 
     function handleEventSubmit(event: TimelineEventModel) {
-        // props.setNewTimeLineEvent(event)
-        props.service
-            .saveTimelineEvent(proposalId!, event)
-            .then(event => {setTimelineEvents(prevState => ([...prevState, event].sort(sortEvents))); return event})
-            .then(props.setNewTimeLineEvent)
+        props.setNewTimeLineEvent(event)
     }
 
     type DateInterval = {
@@ -240,9 +224,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                 {/*<Container className={"content"}>*/}
                 {/*    <Button onClick={handleShowFormChange}>{showForm ? "Cancelar" : "Adicionar evento à cronologia"}</Button>*/}
                 {/*</Container>*/}
-                {showForm && <TimelineEventForm onEventAdded={handleEventSubmit}/>
-
-                }
+                {showForm && <TimelineEventForm onEventAdded={handleEventSubmit}/>}
             </Container>
             <br/>
             <Container className={"justify-content-evenly mb-4 float-start p-0"} style={{width:"50%"}}>

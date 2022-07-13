@@ -11,7 +11,7 @@ import {ValidationComment} from "./ValidationComment";
 
 type PPT_Props = {
     saveProtocolComment: (proposalId: string,pfcId: string,comment: ValidityComment) => Promise<ProtocolAggregateDTO>
-    comments?: ProposalCommentsModel[]
+    comments: ProposalCommentsModel[]
     setNewComment: (comment: ProposalCommentsModel) =>  void
     protocol?: ProtocolModel
     pfcId?: string
@@ -25,7 +25,7 @@ export function ProtocolTabContent(props: PPT_Props) {
 
     const [protocol, setProtocol] = useState<ProtocolModel>()
 
-    const [comments, setComments] = useState<ProposalCommentsModel[] | undefined>()
+    const [comments, setComments] = useState<ProposalCommentsModel[]>([])
 
     const [displayForm, setDisplayForm] = useState(false)
 
@@ -37,14 +37,14 @@ export function ProtocolTabContent(props: PPT_Props) {
         setComments(props.comments)
     }, [props.comments])
 
-    const getBackgroundColor = (validated: boolean) => ({backgroundColor:validated ? "#0BDA51" : "#98c3fa"})
+    const getBackgroundColor = (validated: boolean) => ({backgroundColor:validated ? "#0BDA51" : '#03C9D7'})
 
     const sortByDate = (c1: ProposalCommentsModel, c2: ProposalCommentsModel) => Util.cmp(c2.createdDate, c1.createdDate)
 
     function mapRowElements() {
         // if(!displayData) return (<tr><td colSpan={4}>A carregar comentários...</td></tr>)
-        if(comments == null || comments!.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
-        return comments!
+        if(comments.length === 0) return (<tr><td colSpan={4}>Sem comentários</td></tr>)
+        return comments
             .sort(sortByDate)
             .map(c => {
             return (
@@ -60,6 +60,8 @@ export function ProtocolTabContent(props: PPT_Props) {
         })
     }
     
+    //TODO clean up ugly code, shouldn't need any promise, just send the entire thing
+    // and in back-end return the proposal with modified protocol && comments or just set them in in the proposalDetails
     const saveComment = useCallback((c: ValidityComment) => {
         props.saveProtocolComment(proposalId!, props.pfcId!, c)
             .then(data => {
@@ -71,7 +73,7 @@ export function ProtocolTabContent(props: PPT_Props) {
             })
             .then(() => alert('Comment created!'))
             .then(() => setDisplayForm(false))
-    },[proposalId, props])
+    },[props, proposalId])
 
     const submitForm = (c: ValidityComment) => {
         saveComment(c)

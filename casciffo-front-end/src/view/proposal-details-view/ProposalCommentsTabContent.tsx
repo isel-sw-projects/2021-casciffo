@@ -3,10 +3,11 @@ import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel"
 import React, {useEffect, useState} from "react";
 import {CommentTypes} from "../../common/Constants";
 import {Util} from "../../common/Util";
+import {useUserAuthContext} from "../context/UserAuthContext";
 
 type PCT_Props = {
     comments: Array<ProposalCommentsModel>,
-    addComment: (comment: string, type: string) => void,
+    addComment: (comment: string, type: string, userName: string, userId: string) => void,
     commentType: { name: string, id: string }
 }
 
@@ -19,6 +20,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
 
     const headers = ["Data", "Autor", "Comentário"]
     const [comments, setComments] = useState<ProposalCommentsModel[]>([])
+    const {userToken} = useUserAuthContext()
     const [state, setState] = useState<MyState>({
         addComment: false,
         comment: ""
@@ -37,7 +39,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
     }
 
     function createComment() {
-        props.addComment(state.comment, props.commentType.id)
+        props.addComment(state.comment, props.commentType.id, userToken!.userName, userToken!.userId)
         setState({comment: "", addComment:false})
     }
 

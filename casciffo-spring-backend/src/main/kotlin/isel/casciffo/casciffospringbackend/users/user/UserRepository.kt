@@ -20,12 +20,11 @@ interface UserRepository : ReactiveSortingRepository<UserModel, Int> {
 
 
     @Query(
-        "SELECT u.* " +
-        "FROM user_account u " +
-        "JOIN user_roles ur ON ur.user_id = u.user_id " +
-        "JOIN roles r ON ur.user_id = r.role_id " +
-        "WHERE u.user_name LIKE :userName " +
-        "AND r.role_name IN (:roleNameList)"
+        "SELECT ua.* " +
+        "FROM user_account ua " +
+        "JOIN user_roles ur ON ua.user_id = ur.user_id " +
+        "JOIN roles r ON ur.role_id = r.role_id " +
+        "WHERE LOWER(ua.user_name) LIKE LOWER(:userName) AND UPPER(r.role_name) IN (:roleNameList)"
     )
     fun findAllByRoleNameIsInAndNameLike(userName: String, roleNameList: List<String>): Flux<UserModel>
 

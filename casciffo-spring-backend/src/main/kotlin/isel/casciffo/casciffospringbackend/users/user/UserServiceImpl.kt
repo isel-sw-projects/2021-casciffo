@@ -76,7 +76,7 @@ class UserServiceImpl(
                         name = it.key().second,
                         email = it.key().third,
                         password = it.key().fourth,
-                        roles = it.map { role -> Role(roleId = role.roleId, roleName = role.roleName) })
+                        roles = it.mapNotNull { role -> if (role.roleId == null ) null else Role(roleId = role.roleId, roleName = role.roleName) })
                 }
         else
             stream.groupBy { Triple(it.userId!!, it.userName!!, it.userEmail!!) }
@@ -85,7 +85,7 @@ class UserServiceImpl(
                         userId = it.key().first,
                         name = it.key().second,
                         email = it.key().third,
-                        roles = it.map { role -> Role(roleId = role.roleId, roleName = role.roleName) })
+                        roles = it.mapNotNull { role -> if (role.roleId == null ) null else Role(roleId = role.roleId, roleName = role.roleName) })
                 }
     }
 
@@ -106,13 +106,13 @@ class UserServiceImpl(
             else
                 roles
 
-        if (rolesToAdd.isNotEmpty()) {
-            userRolesRepo
-                .saveAll(rolesToAdd.map { UserRoles(userId = userId, roleId = it) })
-                .doOnError {
-                    logger.info { it }
-                }.subscribe()
-        }
+
+        userRolesRepo
+            .saveAll(rolesToAdd.map { UserRoles(userId = userId, roleId = it) })
+            .doOnError {
+                logger.info { it }
+            }.subscribe()
+
         val token = jwtSupport.generate(user.name!!)
         val updatedRoles = roleService.findByUserId(userId).map { it.roleName!! }.collectList().awaitSingle()
         return BearerTokenWrapper(
@@ -155,7 +155,7 @@ class UserServiceImpl(
     override suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?> {
         //% is added to make query (SELECT ... WHERE name LIKE abc% AND ...)
         //adding % to the query itself will break the statement and throw runtime db exception
-        return userRepository.findAllByRoleNameIsInAndNameLike(name.plus('%'), roles).asFlow()
+        return userRepository.findAllByRoleNameIsInAndNameLike(name.plus('%'), roles.map { it.uppercase() }).asFlow()
     }
 
     /**

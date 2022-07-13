@@ -274,7 +274,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                             </Form.Group>
                         </> : <></>
                     }
-                    <Button type={"submit"}>
+                    <Button type={"submit"} className={"mb-2"}>
                         Criar proposta
                     </Button>
                 </Container>

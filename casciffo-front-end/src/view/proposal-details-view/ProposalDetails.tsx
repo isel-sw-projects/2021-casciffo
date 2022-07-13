@@ -32,6 +32,7 @@ import {UserToken} from "../../common/Types";
 import {ProposalFinancialContractTab} from "./ProposalFinancialContractTab";
 import {ValidationCommentDTO, ValidityComment} from "../../model/proposal/finance/ValidationModels";
 import {Roles} from "../../model/role/Roles";
+import {useUserAuthContext} from "../context/UserAuthContext";
 
 type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
@@ -44,7 +45,7 @@ function ProposalDetailsTab(props: { dataReady: boolean, proposal: ProposalModel
             <Stack direction={"horizontal"}>
                 <Container>
                     <Form>
-                        <Row className={"mb-1"}>
+                        <Row className={"mb-2 mt-2"}>
                             <Col>
                                 <Form.Group>
                                     <Form.Label>Sigla</Form.Label>
@@ -79,7 +80,7 @@ function ProposalDetailsTab(props: { dataReady: boolean, proposal: ProposalModel
                                 </Form.Group>
                             </Col>
                         </Row>
-                        <Row className={"mt-2"}>
+                        <Row className={"mb-2"}>
                             <Col>
                                 <Form.Group>
                                     <Form.Label>Área terapeutica</Form.Label>
@@ -150,12 +151,11 @@ function ProposalDetailsTab(props: { dataReady: boolean, proposal: ProposalModel
 export function ProposalDetails(props: ProposalDetailsProps) {
     const {proposalId} = useParams()
     const navigate = useNavigate()
-    if(proposalId === undefined || localStorage.getItem(TOKEN_KEY) == null) {
+    const {userToken} = useUserAuthContext()
+    if(proposalId === undefined || userToken == null) {
         navigate("/propostas")
         //show error and move backwards using navigate
     }
-
-    const userToken = useMemo(() => JSON.parse(localStorage.getItem(TOKEN_KEY)!) as UserToken, [])
 
     const [proposal, setProposal] = useState<ProposalModel>({
         createdDate: undefined,
@@ -257,16 +257,19 @@ export function ProposalDetails(props: ProposalDetailsProps) {
             })
         }
 
-    const addNewComment = (comment:string, type:string) => {
+    const addNewComment = (comment:string, type:string, userName: string, userId: string) => {
         const commentModel : ProposalCommentsModel = {
-            authorId: userToken.userId,
+            authorId: userToken!.userId,
             commentType: type,
             content: comment,
-            proposalId: proposalId!
+            proposalId: proposalId!,
+            author: {
+                userId: userId,
+                name: userName
+            }
         }
-        //FIXME when creating comment this crashes
+
         props.proposalService.saveProposalComment(commentModel)
-            .then(value => {console.log(value); return value})
             .then(value => setProposal(updateState("comments", [...proposal.comments!, value])))
     };
 
@@ -274,11 +277,20 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         props.proposalService.saveTimelineEvent(proposalId!, event)
             .then(value=> setProposal(updateState("timelineEvents", [...proposal.timelineEvents!, value])))
     }
+    const handleUpdateEvent = (e: TimelineEventModel) => {
+        props.proposalService.updateTimelineEvent(proposalId!, e.id!, true)
+            .then(event => {
+                const newEvents = proposal.timelineEvents!.map(ev => ev.id !== e.id ? ev : event)
+                setProposal(updateState("timelineEvents", newEvents))
+                return newEvents
+            })
+            .then(log)
+    }
 
     const onSubmitValidation = (c: ValidationCommentDTO) => {
         //todo add pfcId hardcoded for and then setProposal with partial updates from both receiving and local proposal
         props.proposalService.validate(proposalId!, proposal.financialComponent!.id!, c)
-            .then()
+            // .then(value => setProposal(value.proposal!))
     }
 
     return (
@@ -294,10 +306,10 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                     <Tab eventKey="proposal" title="Proposta">
                         {isStatesReady && isDataReady && <ProposalStateView
                             onAdvanceClick={advanceState}
-                            timelineEvents={proposal.timelineEvents!}
-                            stateTransitions={proposal.stateTransitions!}
+                            timelineEvents={proposal.timelineEvents|| []}
+                            stateTransitions={proposal.stateTransitions|| []}
                             submittedDate={proposal.createdDate!}
-                            states={states}
+                            states={states || []}
                         />}
 
                         <ProposalDetailsTab dataReady={isDataReady} proposal={proposal}/>
@@ -307,25 +319,25 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                     <Tab eventKey={"proposal_cf"} title={"Contracto financeiro"}>
                         {isStatesReady && isDataReady && <ProposalStateView
                             onAdvanceClick={advanceState}
-                            timelineEvents={proposal.timelineEvents!}
-                            stateTransitions={proposal.stateTransitions!}
+                            timelineEvents={proposal.timelineEvents|| []}
+                            stateTransitions={proposal.stateTransitions|| []}
                             submittedDate={proposal.createdDate!}
-                            states={states}
+                            states={states|| []}
                         />}
                         <ProposalFinancialContractTab
                             pfc={proposal.financialComponent!}
                             comments={proposal.comments || []}
-                             onSubmitValidationComment={onSubmitValidation}/>
+                            onSubmitValidationComment={onSubmitValidation}/>
                     </Tab>
                     }
 
                     <Tab eventKey="contacts" title="Contactos">
                         {isStatesReady && isDataReady && <ProposalStateView
                             onAdvanceClick={advanceState}
-                            timelineEvents={proposal.timelineEvents!}
-                            stateTransitions={proposal.stateTransitions!}
+                            timelineEvents={proposal.timelineEvents|| []}
+                            stateTransitions={proposal.stateTransitions|| []}
                             submittedDate={proposal.createdDate!}
-                            states={states}
+                            states={states|| []}
                         />}
                         <ProposalCommentsTabContent
                             comments={proposal.comments!}
@@ -336,10 +348,10 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                     <Tab eventKey="observations" title="Observações">
                         {isStatesReady && isDataReady && <ProposalStateView
                             onAdvanceClick={advanceState}
-                            timelineEvents={proposal.timelineEvents!}
-                            stateTransitions={proposal.stateTransitions!}
+                            timelineEvents={proposal.timelineEvents|| []}
+                            stateTransitions={proposal.stateTransitions|| []}
                             submittedDate={proposal.createdDate!}
-                            states={states}
+                            states={states|| []}
                         />}
                         <ProposalCommentsTabContent
                             comments={proposal.comments!}
@@ -352,10 +364,10 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         <Tab eventKey={"partnerships"} title={"Parcerias"}>
                             {isStatesReady && isDataReady && <ProposalStateView
                                 onAdvanceClick={advanceState}
-                                timelineEvents={proposal.timelineEvents!}
-                                stateTransitions={proposal.stateTransitions!}
+                                timelineEvents={proposal.timelineEvents|| []}
+                                stateTransitions={proposal.stateTransitions|| []}
                                 submittedDate={proposal.createdDate!}
-                                states={states}
+                                states={states|| []}
                             />}
                             <PartnershipsTabContent
                                 partnerships={proposal.financialComponent!.partnerships!}
@@ -369,7 +381,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                             <ProtocolTabContent
                                 saveProtocolComment={props.proposalService.saveProtocolComment}
                                 pfcId={proposal.financialComponent?.id}
-                                comments={proposal.comments?.filter(value => value.commentType === CommentTypes.PROTOCOL.id)}
+                                comments={proposal.comments?.filter(value => value.commentType === CommentTypes.PROTOCOL.id) || []}
                                 setNewComment={(c) => setProposal(updateState("comments", [...proposal.comments!, c]))}
                                 protocol={proposal.financialComponent?.protocol}
                             />
@@ -382,15 +394,16 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                             <div>
                                 {isStatesReady && <ProposalStateView
                                     onAdvanceClick={advanceState}
-                                    timelineEvents={proposal.timelineEvents!}
-                                    stateTransitions={proposal.stateTransitions!}
+                                    timelineEvents={proposal.timelineEvents || []}
+                                    stateTransitions={proposal.stateTransitions|| []}
                                     submittedDate={proposal.createdDate!}
-                                    states={states}
+                                    states={states|| []}
                                 />}
                                 <ProposalTimelineTabContent
                                     service={props.proposalService}
-                                    timelineEvents={proposal.timelineEvents!}
+                                    timelineEvents={proposal.timelineEvents || []}
                                     setNewTimeLineEvent={handleNewEvent}
+                                    updateTimelineEvent={handleUpdateEvent}
                                 />
                             </div>
                         }

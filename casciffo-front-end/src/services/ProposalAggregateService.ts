@@ -2,26 +2,26 @@ import ProposalService from "./ProposalService";
 import {Constants} from "../common/Types";
 import ApiUrls from "../common/Links";
 import {ProposalModel} from "../model/proposal/ProposalModel";
-import {UserService} from "./UserService";
 import UserModel from "../model/user/UserModel";
 import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
 import CommentsService from "./CommentsService";
 import {TimelineEventModel} from "../model/TimelineEventModel";
 import {ValidationCommentDTO, ValidityComment} from "../model/proposal/finance/ValidationModels";
-import {ProtocolModel} from "../model/proposal/finance/ProtocolModel";
 import {StateModel} from "../model/state/StateModel";
+import {httpGet} from "../common/Util";
 
 export default class ProposalAggregateService {
     private proposalService = new ProposalService()
-    private userService = new UserService()
     private commentsService = new CommentsService()
 
     fetchInvestigators(name: string) : Promise<UserModel[]> {
-        return fetch(ApiUrls.usersByRoleAndNameUrl(name,["UIC", "SUPERUSER"])).then(rsp => rsp.json())
+        const url = ApiUrls.usersByRoleAndNameUrl(name,["UIC", "SUPERUSER"])
+        return httpGet(url)
     }
 
     fetchConstants(): Promise<Constants> {
-        return fetch(ApiUrls.constantsUrl).then(rsp => rsp.json())
+        const url = ApiUrls.constantsUrl
+        return httpGet(url)
     }
 
     saveProposal(proposal: ProposalModel): Promise<ProposalModel> {
