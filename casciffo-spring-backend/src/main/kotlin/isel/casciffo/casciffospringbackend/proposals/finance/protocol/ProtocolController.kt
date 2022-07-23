@@ -15,8 +15,8 @@ class ProtocolController(
 
     @GetMapping(PROPOSAL_PROTOCOL_URL)
     suspend fun getProtocolDetails(
-        @PathVariable(required = true) proposalId: Int,
-        @PathVariable(required = true) pfcId: Int
+        @PathVariable proposalId: Int,
+        @PathVariable pfcId: Int
     ): ResponseEntity<ProtocolAndCommentsDTO> {
         val protocolDetails = protocolService.getProtocolDetails(proposalId, pfcId, true)
         return ResponseEntity.ok(protocolDetails)
@@ -24,9 +24,9 @@ class ProtocolController(
 
     @PutMapping(PROPOSAL_PROTOCOL_URL)
     suspend fun updateProtocol(
-        @PathVariable(required = true) proposalId: Int,
-        @PathVariable(required = true) pfcId: Int,
-        @RequestBody(required = true) protocolDTO: ProtocolDTO
+        @PathVariable proposalId: Int,
+        @PathVariable pfcId: Int,
+        @RequestBody protocolDTO: ProtocolDTO
     ): ResponseEntity<ProtocolAggregate> {
         val protocolAggregate = aggregateMapper.mapDTOtoModel(protocolDTO)
         val body = protocolService.handleNewProtocolComment(proposalId, pfcId, protocolAggregate)

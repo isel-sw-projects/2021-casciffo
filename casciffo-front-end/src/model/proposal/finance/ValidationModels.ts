@@ -1,4 +1,5 @@
 import {ProposalCommentsModel} from "../ProposalCommentsModel";
+import {ProposalModel} from "../ProposalModel";
 
 export interface ValidityComment {
     validated?: boolean,
@@ -22,5 +23,5 @@ export interface ValidationCommentDTO {
 
 export interface ProposalValidation {
     validation?: ValidityComment,
-    proposal?: ProposalCommentsModel
+    proposal?: ProposalModel
 }

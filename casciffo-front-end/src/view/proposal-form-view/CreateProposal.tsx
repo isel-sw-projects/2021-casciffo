@@ -86,6 +86,14 @@ export function CreateProposal(props : CP_Props) {
 
     function handleFormSubmit() {
         props.service.saveProposal(proposalFormToModel(proposalForm))
+            .then(p => {
+                if(p.type === ResearchTypes.CLINICAL_TRIAL.id) {
+                    return props.service
+                        .saveFinancialContract(p.id + "", p.financialComponent!.id!, proposalForm.file!)
+                        .then(() => p)
+                }
+                return p
+            })
             .then((p) => {
                 navigate(`/propostas/${p.id}`)
             })

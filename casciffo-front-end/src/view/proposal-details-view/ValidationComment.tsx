@@ -1,41 +1,44 @@
-import {TOKEN_KEY} from "../../common/Constants";
-import {UserToken} from "../../common/Types";
 import {useParams} from "react-router-dom";
-import {ValidationCommentDTO, ValidityComment} from "../../model/proposal/finance/ValidationModels";
-import React, {useEffect, useMemo, useState} from "react";
+import {ValidationCommentDTO} from "../../model/proposal/finance/ValidationModels";
+import React, {FormEvent, useEffect, useState} from "react";
 import {Button, CloseButton, Form} from "react-bootstrap";
+import {useUserAuthContext} from "../context/UserAuthContext";
 
 type ValidationCommentProps = {
     displayForm: boolean,
     onClose: () => void,
     isValidated: boolean,
     onSubmitComment: (comment: ValidationCommentDTO) => void,
-    type: string
+    types: Array<{ id: string, name: string }>
 }
 
 export function ValidationComment(props: ValidationCommentProps) {
-    const userToken = useMemo( () => JSON.parse(localStorage.getItem(TOKEN_KEY) || "") as UserToken, [])
+    const {userToken} = useUserAuthContext()
     const {proposalId} = useParams()
-    const [type, setType] = useState("")
+    const [types, setTypes] = useState<Array<{ id: string, name: string }>>()
 
     useEffect(() => {
-        setType(props.type)
-    }, [props.type])
+        setTypes(props.types)
+        //if there is only one type of validation available then auto choose it
+        if(props.types?.length === 1) {
+            setValidationType(props.types[0].id)
+        }
+    }, [props.types])
 
     const newComment = (): ValidationCommentDTO => ({
         validation: {
             validated: false,
-            validationType: type
+            validationType: ""
         },
         newValidation: false,
         comment: {
             proposalId: proposalId,
             content: "",
-            authorId: userToken.userId,
-            commentType: type,
+            authorId: userToken!.userId,
+            commentType: "",
             author: {
-                userId: userToken.userId,
-                name: userToken.userName
+                userId: userToken!.userId,
+                name: userToken!.userName
             }
         }
     })
@@ -43,6 +46,9 @@ export function ValidationComment(props: ValidationCommentProps) {
     const [comment, setComment] = useState<ValidationCommentDTO>(newComment())
     const [isValidated, setIsValidated] = useState<boolean>()
     const [displayForm, setDisplayForm] = useState(false)
+
+    const [validationType, setValidationType] = useState("")
+    const updateValidationType = (e: React.ChangeEvent<HTMLSelectElement>) => setValidationType(e.target.value)
 
     useEffect(() => {
         setDisplayForm(props.displayForm)
@@ -81,24 +87,44 @@ export function ValidationComment(props: ValidationCommentProps) {
         }));
     }
 
-    const submitComment = () => {
+    const submitComment = (e: React.ChangeEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
         if(comment.validation?.validated && !isValidated) {
             comment.newValidation = true
         }
+        comment.comment!.commentType = validationType
+        comment.validation!.validationType = validationType
         props.onSubmitComment(comment)
         setComment(newComment())
     }
 
     return (
         (displayForm &&
-        <Form className={"justify-content-evenly"}>
+        <Form className={"justify-content-evenly m-2"} onSubmit={submitComment}>
         <fieldset className={"border p-3"}>
             <legend className={"float-none w-auto p-2 flex-column"}>
                 Comentário
                 {<CloseButton className={"float-end"} onClick={props.onClose}/>}
             </legend>
 
-            <Form.Group className={"mb-2"}>
+            <Form.Group className={"m-2"} style={{width:"20%"}}>
+                <Form.Label>Tipo de validação</Form.Label>
+                <Form.Select
+                    required
+                    key={"department-type"}
+                    name={"validationType"}
+                    defaultValue={""}
+                    onChange={updateValidationType}
+                >
+                    {types?.length! > 1 && <option key={"default"} value={""} disabled>Tipo de validação</option>}
+                    {types && types.map((rt, i) =>
+                        <option key={rt.id} value={rt.id}>{rt.name}</option>
+                    )}
+                </Form.Select>
+            </Form.Group>
+
+            <Form.Group className={"m-2"}>
                 <Form.Check
                     type={"checkbox"}
                     name={"validated"}
@@ -107,7 +133,7 @@ export function ValidationComment(props: ValidationCommentProps) {
                     label={"Validado"}
                 />
             </Form.Group>
-            <Form.Group className={"mb-2"}>
+            <Form.Group className={"m-2"}>
                 <Form.Check
                     type={"checkbox"}
                     name={"newValidation"}
@@ -118,7 +144,7 @@ export function ValidationComment(props: ValidationCommentProps) {
                 />
             </Form.Group>
 
-            <Form.Group className={"mb-2"}>
+            <Form.Group className={"m-2"}>
                 <Form.Label>Observação</Form.Label>
                 <Form.Control
                     required
@@ -129,7 +155,7 @@ export function ValidationComment(props: ValidationCommentProps) {
                     onChange={updateCommentContent}
                 />
             </Form.Group>
-            <Button onClick={submitComment}>Submeter</Button>
+            <Button className={"m-2"} type={"submit"}>Submeter</Button>
         </fieldset>
     </Form>) || <span/>
     );

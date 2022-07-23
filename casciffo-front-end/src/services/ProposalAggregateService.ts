@@ -55,8 +55,8 @@ export default class ProposalAggregateService {
         return this.proposalService.fetchById(proposalId)
     }
 
-    advanceState(proposalId: string, forward: boolean): Promise<ProposalModel> {
-        return this.proposalService.advanceState(proposalId, forward)
+    advanceState(proposalId: string, nextStateId: string): Promise<ProposalModel> {
+        return this.proposalService.advanceState(proposalId, nextStateId)
     }
 
     saveTimelineEvent(proposalId: string, event: TimelineEventModel) {
@@ -79,7 +79,15 @@ export default class ProposalAggregateService {
         return this.proposalService.updateTimelineEvent(proposalId, eventId, completed)
     }
 
-    validate(proposalId: string, pfcId: string, validationComment: ValidationCommentDTO) {
-        return this.proposalService.validate(proposalId, pfcId, validationComment)
+    validate(proposalId: string, pfcId: string, validationType: string, validationComment: ValidationCommentDTO) {
+        return this.proposalService.validate(proposalId, pfcId, validationType, validationComment)
+    }
+
+    saveFinancialContract(pId: string,pfcId: string, file: File) {
+        return this.proposalService.uploadFinancialContract(pId, pfcId, file)
+    }
+
+    downloadFinancialContract(pId: string,pfcId: string) {
+        return this.proposalService.downloadFinancialContract(pId, pfcId)
     }
 }

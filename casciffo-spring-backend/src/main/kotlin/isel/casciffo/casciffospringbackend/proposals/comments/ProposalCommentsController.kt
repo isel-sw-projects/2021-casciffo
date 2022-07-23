@@ -36,16 +36,16 @@ class ProposalCommentsController(
 
     @PostMapping(PROPOSAL_COMMENTS_URL)
      suspend fun createComment(
-        @PathVariable(required = true) proposalId: Int,
-        @RequestBody(required = true) comment: ProposalComment
+        @PathVariable proposalId: Int,
+        @RequestBody comment: ProposalComment
     ): ProposalComment {
          return commentsService.createComment(comment)
      }
 
     @DeleteMapping(PROPOSAL_COMMENTS_DETAIL_URL)
     suspend fun deleteComment(
-        @PathVariable(required = true) proposalId: Int,
-        @PathVariable(required = true) cId: Int
+        @PathVariable proposalId: Int,
+        @PathVariable cId: Int
     ): ResponseEntity<ProposalComment> {
         val deletedComment = commentsService.deleteComment(proposalId, cId)
         return ResponseEntity.ok(deletedComment)

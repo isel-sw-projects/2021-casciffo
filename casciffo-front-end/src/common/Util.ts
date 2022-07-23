@@ -1,6 +1,9 @@
 import {STATES} from "../model/state/STATES";
 import {TOKEN_KEY} from "./Constants";
 import {UserToken} from "./Types";
+import axios, {AxiosRequestConfig, AxiosRequestHeaders} from "axios";
+import FileSaver from "file-saver";
+import {MyError} from "../view/error-view/MyError";
 
 function padTo2Digits(num: number) {
     return num.toString().padStart(2, '0');
@@ -125,6 +128,37 @@ export function httpPost<T>(url: string, body: unknown): Promise<T> {
 
 export function httpPut<T>(url: string, body: unknown = null): Promise<T> {
     return _httpFetch(url, 'PUT', [HEADER_CONTENT_TYPE], body)
+}
+
+export function httpPostFormFile(url: string, file: File): Promise<void> {
+    const token = localStorage.getItem(TOKEN_KEY)
+    const headers: AxiosRequestHeaders = {'Content-type': 'multipart/form-data'}
+    if(token != null) {
+        const userToken = JSON.parse(token) as UserToken
+        headers['Authorization'] = `Bearer ${userToken?.token}`
+    }
+    const formData = new FormData()
+    formData.append('file', file)
+    return axios.postForm(url, formData, {headers: headers})
+}
+
+export function httpGetFile(url: string): Promise<void> {
+
+    const userToken = localStorage.getItem(TOKEN_KEY)
+    if(userToken == null) throw new MyError("Not authenticated to download!", 401)
+
+    const token = (JSON.parse(userToken) as UserToken).token
+    const opts: AxiosRequestConfig = {
+        headers: {'Authorization': `Bearer ${token}`},
+        responseType: "blob"
+    }
+
+    return axios.get(url, opts)
+        .then(res => {
+            console.log(res)
+            if(res.status === 200)
+                FileSaver.saveAs(res.data, res.headers['file-name'])
+        })
 }
 
 const getUserToken = () => {

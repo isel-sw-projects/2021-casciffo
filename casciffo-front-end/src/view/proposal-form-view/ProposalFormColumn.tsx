@@ -51,7 +51,6 @@ export function ProposalFormColumn(props: PFC_Props) {
         let propKey = event.target.name as keyof ProposalForm
         let value = event.target.value
         props.setFormData(updateState(propKey, value))
-
     }
     function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault(); //stop redirect
@@ -76,7 +75,6 @@ export function ProposalFormColumn(props: PFC_Props) {
             [key]: value
         }
         props.setFormData(updateState("promoter", p))
-
     }
 
     function showErrorMessage(msg: string) {
@@ -93,6 +91,7 @@ export function ProposalFormColumn(props: PFC_Props) {
             return
         }
         let file = event.target.files.item(0)
+
         if(file === null) {
             showErrorMessage("Falha ao carregar ficheiro, por favor tente de novo.");
             return;
@@ -265,10 +264,9 @@ export function ProposalFormColumn(props: PFC_Props) {
                                 <Form.Label>Contrato financeiro</Form.Label>
                                 <Form.Control
                                     key={"financial-contract-file"}
-                                    required={props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id}
+                                    required={props.formData.researchType === ResearchTypes.CLINICAL_TRIAL.id}
                                     type={"file"}
                                     name={"file"}
-                                    // TODO file save
                                     onInput={handleFileInput}
                                 />
                             </Form.Group>

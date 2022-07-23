@@ -57,53 +57,56 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     }
 
     function mapEventsToRow() {
-        let events = props.timelineEvents
 
-        if(events === undefined || events.length === 0) {
+        if(timelineEvents.length === 0) {
             return <tr key={"row-no-events"}><td colSpan={5}>Sem histórico de eventos</td></tr>
         }
 
-        function filterEventNameIsLike(e: TimelineEventModel) {
-            return (new RegExp(`${query}.*`,"gi")).test(e.eventName) && filterByEventType(e)
-        }
+        const filterEventNameIsLike = (e: TimelineEventModel) =>
+            (new RegExp(`${query}.*`,"gi")).test(e.eventName) && filterByEventType(e)
 
-        function getColor(e: TimelineEventModel) {
-            const cmp = Util.cmp(e.deadlineDate, e.completedDate)
-            if (cmp === 0) return "#0BDA51" //light green
-            if (cmp < 0) return "#FF9694" //light red
-            return "inherit"
+
+        const getColor = (e: TimelineEventModel) => {
+            if(e.completedDate == null) return "inherit"
+            return Util.cmp(e.deadlineDate, e.completedDate) < 0
+                ? "#FF9694" //light red
+                : "#0BDA51" //light green
         }
 
         const updateTimelineEvent = (e: TimelineEventModel) => () => {
             props.updateTimelineEvent(e)
         }
 
-        return events
+        const createCompleteButtonForEvent = (e: TimelineEventModel) =>
+            <Button
+                variant={getCompletedButtonVariant(e)}
+                disabled={e.completedDate != null}
+                onClick={updateTimelineEvent(e)}
+            >
+                {e.completedDate == null
+                    ? <BiCheck className={"d-flex"} size={25}/>
+                    : Util.cmp(e.completedDate, e.deadlineDate) > 0
+                        ? <BiCheckboxMinus className={"d-flex"} size={25}/>
+                        : <BiCheck className={"d-flex"} size={25}/>
+                }
+            </Button>;
+
+        const mapToRowElement = (e: TimelineEventModel) =>
+            <tr key={e.id}>
+                <td>{e.eventName}</td>
+                <td style={{backgroundColor: getColor(e)}}>
+                    {e.completedDate == null ? "" : Util.formatDate(e.completedDate)}
+                </td>
+                <td>{Util.formatDate(e.deadlineDate!)}</td>
+                <td>{e.eventDescription}</td>
+                <td className={"text-center"}>
+                    {createCompleteButtonForEvent(e)}
+                </td>
+            </tr>;
+
+        return timelineEvents
             .filter(filterEventNameIsLike)
-            .map(e =>
-                <tr key={e.id}>
-                    <td>{e.eventName}</td>
-                    <td style={{backgroundColor: getColor(e)}}>
-                        {e.completedDate == null ? "":Util.formatDate(e.completedDate!)}
-                    </td>
-                    <td>{Util.formatDate(e.deadlineDate!)}</td>
-                    <td>{e.eventDescription}</td>
-                    <td className={"text-center"}>
-                        <Button
-                            variant={getCompletedButtonVariant(e)}
-                            disabled={e.completedDate != null}
-                            onClick={updateTimelineEvent(e)}
-                        >
-                            {e.completedDate == null
-                                ? <BiCheck className={"d-flex"} size={25}/>
-                                : Util.cmp(e.completedDate, e.deadlineDate) > 0
-                                    ? <BiCheckboxMinus className={"d-flex"} size={25}/>
-                                    : <BiCheck className={"d-flex"} size={25}/>
-                            }
-                        </Button>
-                    </td>
-                </tr>
-            )
+            .map(mapToRowElement)
     }
 
     function handleEventTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
@@ -153,6 +156,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
             [key]: e.target.value
         }))
     }
+
+    const handleShowFormChange = () => setShowForm(!showForm)
 
     return (
         <React.Fragment>
@@ -221,9 +226,9 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
 
 
             <Container className={"float-start mb-5"} style={{width: "60%"}}>
-                {/*<Container className={"content"}>*/}
-                {/*    <Button onClick={handleShowFormChange}>{showForm ? "Cancelar" : "Adicionar evento à cronologia"}</Button>*/}
-                {/*</Container>*/}
+                <Container className={"content"}>
+                    <Button onClick={handleShowFormChange}>{showForm ? "Cancelar" : "Adicionar evento à cronologia"}</Button>
+                </Container>
                 {showForm && <TimelineEventForm onEventAdded={handleEventSubmit}/>}
             </Container>
             <br/>

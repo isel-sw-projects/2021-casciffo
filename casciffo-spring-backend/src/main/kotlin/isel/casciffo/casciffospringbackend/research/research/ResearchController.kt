@@ -17,7 +17,7 @@ class ResearchController(
     val mapper: ResearchMapper = ResearchMapper()
 
     @GetMapping(RESEARCHES_URL)
-    suspend fun getAllResearch(@RequestParam(required = true) type: ResearchType) : Flow<ResearchModel> {
+    suspend fun getAllResearch(@RequestParam type: ResearchType) : Flow<ResearchModel> {
         return researchService.getAllResearchesByType(type)
     }
 
@@ -42,8 +42,8 @@ class ResearchController(
 
     @PostMapping(RESEARCH_PARTICIPANTS)
     suspend fun addParticipant(
-        @PathVariable(required = true) researchId: Int,
-        @RequestParam(required = true) participantId: Int
+        @PathVariable researchId: Int,
+        @RequestParam participantId: Int
     ) {
         researchService.addParticipant(researchId, participantId)
     }

@@ -12,7 +12,7 @@ class RoleController(@Autowired val service: RoleService) {
 
     @PostMapping(ROLES_URL)
     @ResponseStatus(HttpStatus.CREATED)
-    suspend fun createUserRole(@RequestBody(required = true) role: Role) : Role? {
+    suspend fun createUserRole(@RequestBody role: Role) : Role? {
         return service.createRole(role)
     }
 
@@ -22,7 +22,7 @@ class RoleController(@Autowired val service: RoleService) {
     }
 
     @DeleteMapping(ROLE_DELETE_URL)
-    suspend fun deleteRole(@PathVariable(required = true) roleId: Int): Role {
+    suspend fun deleteRole(@PathVariable roleId: Int): Role {
         return service.deleteRole(roleId)
     }
 }

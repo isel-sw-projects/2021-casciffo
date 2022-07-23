@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { Table } from "react-bootstrap";
 
-export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup: JSX.Element[]}) {
+export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup?: JSX.Element[]}) {
 
     const [sorting, setSorting] = useState<SortingState>([])
 
@@ -27,10 +27,12 @@ export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup
 
     return (
         <React.Fragment>
-            <Table striped bordered hover size={"sm mt-5"}>
-                <colgroup>
-                    {props.colgroup}
-                </colgroup>
+            <Table striped bordered hover size={"m-2 m-md-10 p-2 p-md-2 sm mt-3"}>
+                {props.colgroup &&
+                    <colgroup>
+                        {props.colgroup}
+                    </colgroup>
+                }
                 <thead>
                 {table.getHeaderGroups().map(headerGroup => (
                     <tr key={headerGroup.id}>

@@ -13,6 +13,8 @@ interface StateService {
     suspend fun findAll(): Flow<State>
     suspend fun findStateChainByType(type: StateType): Flow<State>
 
+    suspend fun findInitialStateByType(type: StateType): State
+
     /**
      * @throws IllegalStateException In case of invalid next state or insufficient role permissions
      */

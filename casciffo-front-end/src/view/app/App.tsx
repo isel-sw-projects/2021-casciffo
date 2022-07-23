@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../assets/css/main/app.css";
 import "../../assets/css/shared/iconly.css";
@@ -18,6 +18,8 @@ import {ResearchAggregateService} from "../../services/ResearchAggregateService"
 import {ResearchDetails} from "../researches-view/ResearchDetails";
 import {Logout} from "../login-view/Logout";
 import {useUserAuthContext} from '../context/UserAuthContext';
+import {ErrorBoundary} from "react-error-boundary";
+import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 
 function NavigationBar() {
 
@@ -77,32 +79,41 @@ function CreateRoutes() {
 function DisplayPath() {
     const path = useLocation()
     let pathVariables = [path.pathname]
-    if(path.pathname.length > 1) pathVariables = path.pathname.split("/")
+    if(path.pathname.length <= 1) return <div className={"mb-1 mt-3"}/>
 
-    let displayPath : Array<string> = []
-    displayPath.push("Início")
+    pathVariables = path.pathname.split("/")
+
+    let displayPath : Array<{ link:string, displayName:string }> = []
+    displayPath.push({
+        link: "/",
+        displayName: "Início"
+    })
     for (let i = 1; i < pathVariables.length; i++) {
-        let currPathVariable = pathVariables[i]
+        let currPathVariable = {
+            link: pathVariables[i - 1].concat("/",pathVariables[i]),
+            displayName: pathVariables[i]
+        }
         displayPath.push(currPathVariable)
-        pathVariables[i] = pathVariables[i - 1].concat("/",pathVariables[i])
     }
-    pathVariables[0] = "/"
     return (
-        <Container key={"curret-path"} className={"mb-1 mt-2"}>
+        <Container key={"curret-path"} className={"mb-1 mt-3"}>
             <Stack direction={"horizontal"} gap={2}>
                 {displayPath.map((p, i) =>
-                    <p key={p+i}>{`\u27A4 `}<Link to={pathVariables[i]} className={"text-capitalize"}>{p}</Link></p>)}
+                    <p key={p.link+i}>{`\u27A4 `}<Link to={p.link} className={"text-capitalize"}>{p.displayName}</Link></p>)}
             </Stack>
         </Container>
     )
 }
 
 function App() {
+    document.title = "CASCIFFO Dashboard"
     return (
         <Router basename={"/"} key={"router"}>
-            <NavigationBar/>
-            <DisplayPath/>
-            <CreateRoutes/>
+            <ErrorBoundary FallbackComponent={GlobalErrorBoundary}>
+                <NavigationBar/>
+                <DisplayPath/>
+                <CreateRoutes/>
+            </ErrorBoundary>
         </Router>
     )
 }

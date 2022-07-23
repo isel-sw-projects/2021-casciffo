@@ -125,6 +125,8 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.PUT, PROPOSAL_FINANCE_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, FINANCE_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_JURIDICAL_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, JURIDICAL_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_PROTOCOL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.POST, PROPOSAL_FINANCIAL_FILE_UPLOAD_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.GET, PROPOSAL_FINANCIAL_FILE_DOWNLOAD_URL).authenticated()
     }
 
     private fun commentsRoutesAuth(http: ServerHttpSecurity) {

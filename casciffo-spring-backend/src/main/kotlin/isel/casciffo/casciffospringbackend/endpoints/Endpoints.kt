@@ -57,13 +57,16 @@ const val PROPOSAL_TRANSITION_CA_URL = "$PROPOSAL_TRANSITION_URL/ca"
 const val PROPOSAL_TRANSITION_UIC_URL = "$PROPOSAL_TRANSITION_URL/uic"
 
 const val PROPOSAL_VALIDATION_URL = "$PROPOSAL_URL/validate"
-const val PROPOSAL_FINANCE_VALIDATION_URL = "$PROPOSAL_VALIDATION_URL/{pfcId}/finance"
-const val PROPOSAL_JURIDICAL_VALIDATION_URL = "$PROPOSAL_VALIDATION_URL/{pfcId}/juridical"
+const val PROPOSAL_FINANCE_VALIDATION_URL = "$PROPOSAL_VALIDATION_URL/{pfcId}/finance_dep"
+const val PROPOSAL_JURIDICAL_VALIDATION_URL = "$PROPOSAL_VALIDATION_URL/{pfcId}/juridical_dep"
 
 const val PROPOSAL_EVENTS_URL = "$PROPOSAL_URL/events"
 
 const val PROPOSAL_COMPLETE_EVENTS_URL = "$PROPOSAL_EVENTS_URL/{eventId}" //?complete=true
 const val PROPOSAL_PROTOCOL_URL = "$PROPOSAL_URL/pfc/{pfcId}/protocol"
+
+const val PROPOSAL_FINANCIAL_FILE_UPLOAD_URL = "$PROPOSAL_URL/pfc/{pfcId}/upload"
+const val PROPOSAL_FINANCIAL_FILE_DOWNLOAD_URL = "$PROPOSAL_URL/pfc/{pfcId}/download"
 
 /*********************************** RESEARCH ******************************************/
 /***************************************************************************************/

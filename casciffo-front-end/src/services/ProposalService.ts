@@ -1,6 +1,6 @@
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import ApiUrls from "../common/Links";
-import {PromoterTypes, ResearchTypes, StateChainTypes} from "../common/Constants";
+import {PromoterTypes, ResearchTypes, StateChainTypes, TOKEN_KEY} from "../common/Constants";
 import {TimelineEventModel} from "../model/TimelineEventModel";
 import {ProtocolAggregateDTO, ProtocolModel} from "../model/proposal/finance/ProtocolModel";
 import {
@@ -8,7 +8,7 @@ import {
     ValidityComment,
     ProposalValidation
 } from "../model/proposal/finance/ValidationModels";
-import {httpGet, httpPost, httpPut} from "../common/Util";
+import {httpGet, httpGetFile, httpPost, httpPostFormFile, httpPut} from "../common/Util";
 import {StateModel} from "../model/state/StateModel";
 
 
@@ -74,8 +74,8 @@ class ProposalService {
         return httpPost(url, proposal)
     }
 
-    advanceState(proposalId: string, forward :boolean): Promise<ProposalModel> {
-        const url = ApiUrls.proposalsTransitionUrl(proposalId, forward)
+    advanceState(proposalId: string, nextStateId: string): Promise<ProposalModel> {
+        const url = ApiUrls.proposalsTransitionUrl(proposalId, nextStateId)
         return httpPut(url)
     }
 
@@ -116,9 +116,19 @@ class ProposalService {
         return httpGet(url);
     }
 
-    validate(proposalId: string, pfcId: string, validationComment: ValidationCommentDTO): Promise<ProposalValidation> {
-        const url = ApiUrls.proposalValidationUrl(proposalId, pfcId, validationComment.validation!.validationType!)
+    validate(proposalId: string, pfcId: string, validationType: string, validationComment: ValidationCommentDTO): Promise<ProposalValidation> {
+        const url = ApiUrls.proposalValidationUrl(proposalId, pfcId, validationType.toLowerCase())
         return httpPut(url, validationComment)
+    }
+
+    uploadFinancialContract(pId: string, pfcId: string, file: File): Promise<void> {
+        const url = ApiUrls.proposalUploadCF(pId, pfcId)
+        return httpPostFormFile(url, file)
+    }
+
+    downloadFinancialContract(pId: string, pfcId: string): Promise<void> {
+        const url = ApiUrls.proposalDownloadCF(pId, pfcId)
+        return httpGetFile(url)
     }
 }
 

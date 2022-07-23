@@ -19,14 +19,14 @@ class UserController(
 
     @PostMapping(REGISTER_URL)
     @ResponseStatus(HttpStatus.CREATED)
-    suspend fun createUser(@RequestBody(required = true) userDTO: UserDTO): JwtDTO {
+    suspend fun createUser(@RequestBody userDTO: UserDTO): JwtDTO {
         val model = mapper.mapDTOtoModel(userDTO)
         val tokenWrapper = service.registerUser(model)
         return JwtDTO(tokenWrapper.token, tokenWrapper.userId, tokenWrapper.userName, tokenWrapper.roles ?: listOf())
     }
 
     @PostMapping(LOGIN_URL)
-    suspend fun loginUser(@RequestBody(required = true) userDTO: UserDTO): JwtDTO {
+    suspend fun loginUser(@RequestBody userDTO: UserDTO): JwtDTO {
         val model = mapper.mapDTOtoModel(userDTO)
         val tokenWrapper = service.loginUser(model)
         return JwtDTO(tokenWrapper.token, tokenWrapper.userId, tokenWrapper.userName, tokenWrapper.roles ?: listOf())
@@ -34,7 +34,7 @@ class UserController(
 
     @PutMapping(USER_ROLES_URL)
     suspend fun updateUserRoles(
-        @RequestBody(required = true) roles: List<Int>,
+        @RequestBody roles: List<Int>,
         @PathVariable userId: Int
     ): ResponseEntity<BearerTokenWrapper> {
         val newToken = service.updateUserRoles(roles, userId)
@@ -58,7 +58,7 @@ class UserController(
     }
 
     @DeleteMapping(USER_DETAIL_URL)
-    suspend fun deleteUser(@PathVariable(required = true) userId: Int): UserDTO {
+    suspend fun deleteUser(@PathVariable userId: Int): UserDTO {
         return mapper.mapModelToDTO(service.deleteUser(userId))
     }
 }

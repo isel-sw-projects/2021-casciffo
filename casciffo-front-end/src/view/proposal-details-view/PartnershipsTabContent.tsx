@@ -52,8 +52,8 @@ export function PartnershipsTabContent(props: PTC_Props) {
                         <Stack direction={"vertical"} gap={1}>
                             <table>
                                 <colgroup>
-                                    <col key={"first"} span={1} style={{width: "40%"}}/>,
-                                    <col key={"second"} span={1} style={{width: "60%"}}/>,
+                                    <col key={"first"} span={1} style={{width: "40%"}}/>
+                                    <col key={"second"} span={1} style={{width: "60%"}}/>
                                 </colgroup>
                                 <tbody>
                                     <tr>

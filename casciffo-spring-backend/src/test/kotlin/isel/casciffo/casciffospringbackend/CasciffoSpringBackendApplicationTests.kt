@@ -4,6 +4,7 @@ import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Encoders
 import io.jsonwebtoken.security.Keys
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregateRepo
+import isel.casciffo.casciffospringbackend.common.FILES_DIR
 import isel.casciffo.casciffospringbackend.users.user_roles.UserRoles
 import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
@@ -13,6 +14,8 @@ import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalRepository
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalService
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.files.FileInfo
+import isel.casciffo.casciffospringbackend.files.FileInfoRepository
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
@@ -45,10 +48,15 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 import java.time.LocalDate
+import kotlin.io.path.Path
+import kotlin.io.path.fileSize
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 @ActiveProfiles(value = ["test"])
 @SpringBootTest
@@ -72,10 +80,29 @@ class CasciffoSpringBackendApplicationTests(
     @Autowired val timelineEventService: TimelineEventService,
     @Autowired val timelineEventRepository: TimelineEventRepository,
     @Autowired val aggregateRepo: ProposalAggregateRepo,
-    @Autowired val userRolesRepo: UserRolesRepo
+    @Autowired val userRolesRepo: UserRolesRepo,
+    @Autowired val fileInfoRepository: FileInfoRepository
 ) {
 
     val logger = KotlinLogging.logger { }
+
+    @Test
+    fun saveFile() {
+        val file = Path("C:\\Workspaces\\Tese\\2021-casciffo\\casciffo-spring-backend\\src\\main\\resources\\test.txt").toFile()
+        val path = FILES_DIR("test.txt")
+        val getFileInfo = { FileInfo(fileName = path.name, filePath = path.pathString, fileSize = path.fileSize()) }
+        file.copyTo(path.toFile())
+
+        runBlocking {
+            fileInfoRepository.deleteByPFCId(3).awaitSingleOrNull()
+            val fileInfo = fileInfoRepository.save(getFileInfo()).awaitSingleOrNull()
+
+            logger.info {fileInfo}
+        }
+
+
+
+    }
 
     @Test
     fun genKeys() {

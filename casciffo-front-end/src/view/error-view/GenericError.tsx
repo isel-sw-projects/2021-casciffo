@@ -17,7 +17,7 @@ export function GenericError(props: ErrorProps) {
             <div className="error-page container">
                 <div className="col-md-8 col-12 offset-md-2">
                     <div className="text-center">
-                        {props.imgSrc && <img className="img-error" src={props.imgSrc} alt={props.alt}/>}
+                        {props.imgSrc && <img className="img-error" src={require(props.imgSrc)} alt={props.alt}/>}
                         <h1 className="error-title">{props.title}</h1>
                         <p className="fs-5 text-gray-600">{props.reason}</p>
                         <Link to={"/"} replace={true} className="btn btn-lg btn-outline-primary mt-3">Go Home</Link>

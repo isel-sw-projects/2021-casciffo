@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.ResponseStatus
+import reactor.netty.http.client.HttpClientState
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "Requested user does not exist.")
 class UserNotFoundException : Exception()
@@ -37,3 +38,6 @@ class InvalidProtocolId: Exception()
 
 @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR, reason = "There was an error in Database.")
 class DataBaseException: Exception()
+
+@ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE, reason = "")
+class NotFullyValidatedException: Exception()

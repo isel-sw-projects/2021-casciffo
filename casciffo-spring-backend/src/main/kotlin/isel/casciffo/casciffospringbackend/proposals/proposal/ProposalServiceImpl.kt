@@ -8,6 +8,7 @@ import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
+import isel.casciffo.casciffospringbackend.files.FileInfoRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
@@ -18,7 +19,6 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.research.ResearchService
 import isel.casciffo.casciffospringbackend.roles.Roles
-import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.state.StateService
 import isel.casciffo.casciffospringbackend.states.state.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
@@ -33,10 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
+import java.io.File
+import java.nio.file.Path
 import java.time.LocalDate
 
 @Service
@@ -52,9 +55,9 @@ class ProposalServiceImpl(
     @Autowired val timelineEventRepository: TimelineEventRepository,
     @Autowired val researchService: ResearchService,
     @Autowired val partnershipService: PartnershipService,
-    @Autowired val validationsRepository: ValidationsRepository
-)
-    : ProposalService {
+    @Autowired val validationsRepository: ValidationsRepository,
+    @Autowired val fileInfoRepository: FileInfoRepository
+) : ProposalService {
 
     override suspend fun getAllProposals(type: ResearchType): Flow<ProposalModel> {
         return proposalAggregateRepo.findAllByType(type).asFlow().map(proposalAggregateMapper::mapDTOtoModel)
@@ -112,6 +115,7 @@ class ProposalServiceImpl(
         proposal: ProposalModel,
         createdProposal: ProposalModel
     ) {
+
         proposal.financialComponent!!.proposalId = createdProposal.id
         createdProposal.financialComponent =
             proposalFinancialService
@@ -130,6 +134,17 @@ class ProposalServiceImpl(
                 }
 
         createdProposal.investigationTeam = investigationTeamService.saveTeam(investigators)
+    }
+
+    override suspend fun downloadCF(proposalId: Int, pfcId: Int): Path  {
+        return proposalFinancialService.getCF(pfcId)
+    }
+
+    @Transactional
+    override suspend fun uploadCF(proposalId: Int, pfcId: Int, file: FilePart?) {
+        if(file == null)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "File cannot be null!!")
+        proposalFinancialService.createCF(file, pfcId)
     }
 
     @Transactional
@@ -155,21 +170,24 @@ class ProposalServiceImpl(
         return handleStateTransition(prop, nextStateId, role)
     }
 
+    @Transactional
     override suspend fun validatePfc(
         proposalId: Int,
         pfcId: Int,
         validationComment: ValidationComment
     ): ProposalValidationModel {
+        val wasValid = validationsRepository.isPfcValidated(pfcId).awaitSingle()
+        if(wasValid) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component already valid!")
+
         val c = commentsService.createComment(validationComment.comment!!)
         validationComment.comment = c
-        var proposal: ProposalModel? = null
-        val wasValid = validationsRepository.isPfcValidated(pfcId).awaitSingle()
         val res = proposalFinancialService.validate(pfcId, validationComment)
         val isNowValidated = validationsRepository.isPfcValidated(pfcId).awaitSingle()
         if(isNowValidated && !wasValid) {
             val nextState = stateService.getNextProposalState(proposalId, StateType.FINANCE_PROPOSAL)
-            proposal = transitionState(proposalId, nextState.id!!, Roles.SUPERUSER)
+            transitionState(proposalId, nextState.id!!, Roles.SUPERUSER)
         }
+        val proposal: ProposalModel = getProposalById(proposalId, true)
         return ProposalValidationModel(proposal, res)
     }
 
@@ -183,12 +201,22 @@ class ProposalServiceImpl(
 
         //TODO change to ResponseEntity and handle exception in ControllerAdvice
         val nextState = stateService.findById(nextStateId)
-        val stateType = if(proposal.type === ResearchType.CLINICAL_TRIAL) StateType.FINANCE_PROPOSAL
+
+        val isClinicalTrial = proposal.type === ResearchType.CLINICAL_TRIAL
+        val stateType = if(isClinicalTrial) StateType.FINANCE_PROPOSAL
         else StateType.STUDY_PROPOSAL
 
         stateService.verifyNextStateValid(currState.id!!, nextStateId, stateType, role)
 
         if (stateService.isTerminalState(nextStateId, stateType)) {
+            if (isClinicalTrial) {
+                val fullyValidated = validationsRepository.isPfcFullyValidated(proposal.id!!).awaitSingle()
+                if (!fullyValidated)
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Financial component must be fully validated before advancing."
+                    )
+            }
             createResearch(proposal)
         }
 
@@ -198,45 +226,15 @@ class ProposalServiceImpl(
 
         stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
 
-        updateProposalState(proposal, nextState, stateType)
-        return proposal
-    }
-
-    private suspend fun updateProposalState(
-        proposal: ProposalModel,
-        nextState: State,
-        type: StateType
-    ) {
         proposal.stateId = nextState.id
         proposal.state = nextState
-        proposalRepository.save(proposal).map { proposal.lastModified = it.lastModified }.awaitSingle()
-
-        proposal.stateTransitions = stateTransitionService.findAllByReferenceId(proposal.id!!, type)
-        if (proposal.type === ResearchType.CLINICAL_TRIAL) {
-            proposal.financialComponent!!.validations =
-                validationsRepository.findAllByPfcId(proposal.financialComponent!!.id!!)
-        }
+        return proposalRepository.save(proposal).awaitSingle()
     }
 
     private suspend fun createResearch(proposal: ProposalModel) {
-        //TODO create method findInitialStateByType(Types.Research)
-        val stateAtivo = stateService.findByName(States.ATIVO.name)
+        val stateAtivo = stateService.findInitialStateByType(StateType.RESEARCH)
         val researchModel = ResearchModel(proposalId = proposal.id, stateId = stateAtivo.id, type = proposal.type)
         researchService.createResearch(researchModel)
-    }
-
-    private fun updateTimelineEvent(
-        timelineEvents: Flux<TimelineEventModel>,
-        state: String
-    ) {
-        timelineEvents
-            .filter(filterEventsByState(state))
-            .map (this::setEventCompleted)
-            .map (this::setOverDueDays)
-            .collectList()
-            .subscribe {
-                timelineEventRepository.saveAll(it).subscribe()
-            }
     }
 
     private fun filterEventsByState(state:String) = {
@@ -254,6 +252,20 @@ class ProposalServiceImpl(
     private fun setEventCompleted(event: TimelineEventModel): TimelineEventModel {
         event.completedDate = LocalDate.now()
         return event
+    }
+
+    private fun updateTimelineEvent(
+        timelineEvents: Flux<TimelineEventModel>,
+        state: String
+    ) {
+        timelineEvents
+            .filter(filterEventsByState(state))
+            .map (this::setEventCompleted)
+            .map (this::setOverDueDays)
+            .collectList()
+            .subscribe {
+                timelineEventRepository.saveAll(it).subscribe()
+            }
     }
 
     private suspend fun loadDetails(prop: ProposalModel): ProposalModel {

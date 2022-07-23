@@ -8,6 +8,8 @@ import App from "./view/app/App";
 
 import { createRoot } from 'react-dom/client';
 import {UserAuthContextProvider} from "./view/context/UserAuthContext";
+import {ErrorBoundary} from "react-error-boundary";
+import {GlobalErrorBoundary} from "./view/error-view/GlobalErrorBoundary";
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(

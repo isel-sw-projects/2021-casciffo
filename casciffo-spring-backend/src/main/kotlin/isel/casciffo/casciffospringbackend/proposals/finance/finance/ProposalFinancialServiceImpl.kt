@@ -1,6 +1,9 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.finance
 
+import isel.casciffo.casciffospringbackend.common.FILES_DIR
 import isel.casciffo.casciffospringbackend.common.ValidationType
+import isel.casciffo.casciffospringbackend.files.FileInfo
+import isel.casciffo.casciffospringbackend.files.FileInfoRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
 import isel.casciffo.casciffospringbackend.proposals.finance.promoter.PromoterRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolService
@@ -13,10 +16,21 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import mu.KLogger
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
+import java.io.File
+import java.nio.file.Path
 import java.time.LocalDateTime
+import kotlin.io.path.Path
+import kotlin.io.path.fileSize
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 @Service
 class ProposalFinancialServiceImpl(
@@ -24,23 +38,26 @@ class ProposalFinancialServiceImpl(
     @Autowired val promoterRepository: PromoterRepository,
     @Autowired val partnershipService: PartnershipService,
     @Autowired val protocolService: ProtocolService,
-    @Autowired val validationsRepository: ValidationsRepository
+    @Autowired val validationsRepository: ValidationsRepository,
+    @Autowired val fileInfoRepository: FileInfoRepository
 ) : ProposalFinancialService {
+
+    val logger: KLogger = KotlinLogging.logger { }
 
     @Transactional
     override suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): ProposalFinancialComponent {
         verifyAndCreatePromoter(pfc)
 
-        val createdPfc = proposalFinancialRepository.save(pfc).awaitSingle()
+        pfc.id = proposalFinancialRepository.save(pfc).awaitSingle().id
+
         if(pfc.partnerships != null) {
-            createPartnerships(pfc, createdPfc)
+            createPartnerships(pfc)
         }
 
         createValidations(pfc)
 
         pfc.protocol = protocolService.createProtocol(pfc.id!!)
 
-        pfc.id = createdPfc.id
         return pfc
     }
 
@@ -54,12 +71,11 @@ class ProposalFinancialServiceImpl(
     }
 
     private fun createPartnerships(
-        pfc: ProposalFinancialComponent,
-        createdPfc: ProposalFinancialComponent
+        pfc: ProposalFinancialComponent
     ) {
         pfc.partnerships = partnershipService.saveAll(
             pfc.partnerships!!.map {
-                it.financeComponentId = createdPfc.id!!
+                it.financeComponentId = pfc.id!!
                 it
             }
         )
@@ -81,6 +97,28 @@ class ProposalFinancialServiceImpl(
         val component = proposalFinancialRepository.findByProposalId(pid).awaitFirstOrNull()
             ?: throw IllegalArgumentException("No financial component for proposal Id:$pid!!!")
         return loadRelations(component, loadProtocol)
+    }
+
+    override suspend fun createCF(file: FilePart, pfcId: Int) {
+        val pfc = proposalFinancialRepository.findById(pfcId).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component $pfcId doesn't exist!!!")
+        val path = FILES_DIR(file.filename())
+        val getFileInfo = { FileInfo(fileName = path.name, filePath = path.pathString, fileSize = path.fileSize())}
+
+        file.transferTo(path).awaitSingleOrNull()
+        fileInfoRepository.deleteByPFCId(pfcId).awaitSingleOrNull()
+        val fileInfo = fileInfoRepository.save(getFileInfo()).awaitSingle()
+
+        pfc.financialContractId = fileInfo.id
+        proposalFinancialRepository.save(pfc).awaitSingle()
+
+        logger.info { "File created at ${fileInfo.filePath}" }
+    }
+
+    override suspend fun getCF(pfcId: Int): Path {
+        val fileInfo = fileInfoRepository.findByPfcId(pfcId).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "File doesn't exist!!!!!")
+        return Path(fileInfo.filePath!!)
     }
 
     override suspend fun findAll(): Flow<ProposalFinancialComponent> {

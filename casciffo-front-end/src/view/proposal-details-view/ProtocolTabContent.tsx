@@ -108,7 +108,7 @@ export function ProtocolTabContent(props: PPT_Props) {
                 <ValidationComment
                     displayForm={displayForm}
                     onClose={() => setDisplayForm(false)}
-                    type={CommentTypes.PROTOCOL.id}
+                    types={[CommentTypes.PROTOCOL]}
                     isValidated={protocol?.validated || false}
                     onSubmitComment={submitForm}
                 />

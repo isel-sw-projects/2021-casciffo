@@ -6,6 +6,7 @@ import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateException
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
+import isel.casciffo.casciffospringbackend.exceptions.NotFullyValidatedException
 import isel.casciffo.casciffospringbackend.roles.Roles
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
@@ -34,9 +35,13 @@ class StateServiceImpl(
             .awaitSingleOrNull() ?: throw IllegalStateException("No possible next state for proposal $pId")
     }
 
+    override suspend fun findInitialStateByType(type: StateType): State =
+        stateRepository.findInitialStateByType(type).awaitSingleOrNull() ?: throw InvalidStateException("Requested state doesn't exist.")
+
+
     override suspend fun findById(stateId: Int): State =
         //todo throw 400 if state is bad
-        stateRepository.findById(stateId).awaitSingleOrNull() ?: throw InvalidStateException("State requested doesn't exist.")
+        stateRepository.findById(stateId).awaitSingleOrNull() ?: throw InvalidStateException("Requested state doesn't exist.")
 
     override suspend fun verifyNextStateValid(originStateId: Int, nextStateId: Int, type: StateType, role: Roles)  {
         val nextState = stateAggregateRepo

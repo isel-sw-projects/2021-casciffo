@@ -8,9 +8,9 @@ import org.springframework.data.relational.core.mapping.Table
 data class FileInfo (
     @Id
     @Column("file_id")
-    var id: Int?,
+    var id: Int? = null,
 
-    val fileName: String,
-    val filePath: String,
-    val fileSize: Int
+    val fileName: String? = null,
+    val filePath: String? = null,
+    val fileSize: Long? = null
 )

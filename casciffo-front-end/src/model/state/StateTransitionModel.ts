@@ -1,12 +1,12 @@
 import {StateModel} from "./StateModel";
 
 export interface StateTransitionModel {
-    id: number,
-    previousStateId: number,
-    newStateId: number,
+    id: string,
+    previousStateId: string,
+    newStateId: string,
     transitionDate: string,
     transitionType: string,
-    referenceId: number,
+    referenceId: string,
     previousState?: StateModel,
     newState?: StateModel,
 }

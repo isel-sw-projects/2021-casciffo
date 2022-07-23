@@ -1,11 +1,14 @@
 package isel.casciffo.casciffospringbackend.common
 
 
+import java.nio.file.Paths
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
+
+val FILES_DIR = { fileName: String -> Paths.get("./src/main/resources/files/$fileName-${Date().time}") }
 
 const val amountOfTime: Long = 15
 

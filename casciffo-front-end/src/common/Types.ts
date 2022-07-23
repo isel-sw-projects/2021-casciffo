@@ -61,8 +61,13 @@ type UserToken = {
     roles: string[]
 }
 
+type GeneralError = {
+    status: string,
+    message: string
+}
+
 export type {
     Page, ResearchType, Investigator,
     Constants, Filter, ProposalForm, Promoter,
-    UserToken
+    UserToken, GeneralError
 }

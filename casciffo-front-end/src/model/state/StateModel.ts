@@ -1,6 +1,6 @@
 
 export interface StateModel {
-    id?: number
+    id?: string
     name: string
     nextInChain?: StateModel[]
     roles?: string[]

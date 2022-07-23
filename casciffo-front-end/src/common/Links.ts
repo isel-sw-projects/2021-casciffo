@@ -22,17 +22,20 @@ const STATES_CHAIN_URL = (type: string) => `${STATES_URL}/${type}`
 const PROPOSALS_URL =  `${BASE_URL}/proposals`
 const PROPOSALS_URL_BY_TYPE = (type: string) => `${PROPOSALS_URL}?type=${type}`
 const DETAIL_PROPOSAL_URL = (id: string) => `${PROPOSALS_URL}/${id}`
-const PROPOSAL_TRANSITION_URL = (id: string, forward: boolean) => `${DETAIL_PROPOSAL_URL(id)}/state?forward=${forward}`
+const PROPOSAL_TRANSITION_URL = (id: string, nextId: string) => `${DETAIL_PROPOSAL_URL(id)}/state?nextStateId=${nextId}`
 const PROPOSALS_TIMELINE_EVENT_URL = (id: string) => `${DETAIL_PROPOSAL_URL(id)}/events`
 const PROPOSALS_TIMELINE_EVENT_COMPLETE_URL =
     (id: string, eventId: string, complete: boolean) => `${DETAIL_PROPOSAL_URL(id)}/events/${eventId}?complete=${complete}`
+
+const PROPOSAL_CF_UPLOAD = (pId: string, pfcId: string) => `${DETAIL_PROPOSAL_URL(pId)}/pfc/${pfcId}/upload`
+const PROPOSAL_CF_DOWNLOAD = (pId: string, pfcId: string) => `${DETAIL_PROPOSAL_URL(pId)}/pfc/${pfcId}/download`
 
 /******************** PROPOSAL COMMENTS ***********************/
 const COMMENTS_URL = (pId: string) => `${DETAIL_PROPOSAL_URL(pId)}/comments`
 const COMMENTS_BY_TYPE_URL = (pId: string, type: string) => `${COMMENTS_URL(pId)}?t=${type}`
 
 const PROPOSAL_VALIDATION_URL =
-    (pId: string, pfcId: string, type: string) => `${DETAIL_PROPOSAL_URL(pId)}/${pfcId}/validate/${type}`
+    (pId: string, pfcId: string, type: string) => `${DETAIL_PROPOSAL_URL(pId)}/validate/${pfcId}/${type}`
 
 /************************** PROTOCOL ***************************/
 const PROPOSAL_PROTOCOL_BASE = (pId: string, pfcId: string) => `${DETAIL_PROPOSAL_URL(pId)}/pfc/${pfcId}`
@@ -76,6 +79,8 @@ const ApiUrls = {
     proposalsTimelineEventUrl: PROPOSALS_TIMELINE_EVENT_URL,
     proposalsTimelineEventUpdateUrl: PROPOSALS_TIMELINE_EVENT_COMPLETE_URL,
     proposalsProtocol: PROPOSAL_PROTOCOL,
+    proposalDownloadCF: PROPOSAL_CF_DOWNLOAD,
+    proposalUploadCF: PROPOSAL_CF_UPLOAD,
     statesChainUrl: STATES_CHAIN_URL,
     proposalValidationUrl: PROPOSAL_VALIDATION_URL
 }

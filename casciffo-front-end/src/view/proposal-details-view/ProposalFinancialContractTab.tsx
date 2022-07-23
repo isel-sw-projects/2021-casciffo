@@ -1,24 +1,63 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ProposalFinanceModel} from "../../model/proposal/finance/ProposalFinanceModel";
 import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
-import {Button, Container, Dropdown, Form, Stack} from "react-bootstrap";
-import {CommentTypes, DepartmentTypes, ResearchTypes, TOKEN_KEY} from "../../common/Constants";
-import {ColumnDef, SortingState} from "@tanstack/react-table";
+import {Button, Container, Form} from "react-bootstrap";
+import {DepartmentTypes} from "../../common/Constants";
+import {ColumnDef} from "@tanstack/react-table";
 import {ValidationCommentDTO, ValidityComment} from "../../model/proposal/finance/ValidationModels";
 import {MyTable} from "../components/MyTable";
 import {ValidationComment} from "./ValidationComment";
 import {Util} from "../../common/Util";
 import {BiCheck, BiCheckboxChecked, BiCheckboxMinus} from "react-icons/bi";
+import {useUserAuthContext} from "../context/UserAuthContext";
+import {Roles} from "../../model/role/Roles";
+
 
 type PfcProps = {
     pfc: ProposalFinanceModel,
     comments: ProposalCommentsModel[],
-    onSubmitValidationComment: (c: ValidationCommentDTO) => void
+    onSubmitValidationComment: (c: ValidationCommentDTO, validationType:string) => void,
+    downloadCf: () => void
+    uploadCf: (file: File) => void
 }
 
-
+type ValidationType = {
+    id: string,
+    name: string
+}
 
 export function ProposalFinancialContractTab(props: PfcProps) {
+
+    const [possibleValidationTypes, setPossibleValidationTypes] = useState<ValidationType[]>([])
+    const [display, setDisplay] = useState("none")
+    const {userToken} = useUserAuthContext()
+    const [isEditing, setIsEditing] = useState(false)
+
+    useEffect(() => {
+        const allowedRoles = [Roles.FINANCE.id, Roles.JURIDICAL.id, Roles.SUPERUSER.id].join(",")
+
+        const currentRoles = userToken?.roles
+        if(currentRoles == null) return
+
+        const possibleRoles = currentRoles.filter(r => new RegExp(r, 'i').test(allowedRoles)).join(",")
+
+        if(possibleRoles.length !== 0) {
+            const types: ValidationType[] = []
+            if(new RegExp("SUPERUSER", 'i').test(possibleRoles)) {
+                types.push(DepartmentTypes.JURIDICAL)
+                types.push(DepartmentTypes.FINANCE)
+            }
+            else {
+                for (let dt in DepartmentTypes) {
+                    if (new RegExp(dt, 'i').test(possibleRoles)) {
+                        types.push(DepartmentTypes[dt as keyof typeof DepartmentTypes])
+                    }
+                }
+            }
+            setPossibleValidationTypes(types)
+            setDisplay("inherit")
+        }
+    }, [userToken?.roles])
 
     const [depSelected, setDepSelected] = useState(DepartmentTypes.ALL.id)
 
@@ -30,9 +69,6 @@ export function ProposalFinancialContractTab(props: PfcProps) {
         <col key={"third"} span={1} style={{width: "55%"}}/>,
         <col key={"fourth"} span={1} style={{width: "10%"}}/>
     ]
-    const allowedRoles = ["FINANCE", "JURIDICAL", "SUPERUSER"]
-    const display = Util.getUserToken()?.roles.some(r => allowedRoles.some(s => s === r)) ?
-        "inherit" : "none"
 
     const [displayForm, setDisplayForm] = useState(false)
     const columns = React.useMemo<ColumnDef<ValidityComment>[]>(
@@ -67,7 +103,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
             }], [])
 
     const [comments, setComments] = useState<ValidityComment[]>([])
-    // const [validation, setValidation] = useState<Va>()
+
 
 
     useEffect(() => {
@@ -75,19 +111,19 @@ export function ProposalFinancialContractTab(props: PfcProps) {
             c.commentType === DepartmentTypes.FINANCE.id || c.commentType === DepartmentTypes.JURIDICAL.id;
 
         setComments(
-            props
-                .comments
+            props.comments
                 ?.filter(filterDepComments)
                 .map(c => ({
-                comment: {
-                    ...c,
-                    createdDate: Util.formatDate(c.createdDate!,true)
-                },
-                validated: props
-                    .pfc?.validations!
-                    .some(v => v.commentRef === c.id && v.validationType === c.commentType && v.validated)
-            })) || [])
-    }, [props.comments, props.pfc?.validations])
+                    comment: {
+                        ...c,
+                        createdDate: Util.formatDate(c.createdDate!,true)
+                    },
+                    validated: props.pfc 
+                        && props
+                            .pfc.validations!
+                            .some(v => v.commentRef === c.id && v.validationType === c.commentType && v.validated)
+                })) || [])
+    }, [props.comments, props.pfc, props.pfc.validations])
 
 
     const toggleDisplayForm = () => setDisplayForm(!displayForm)
@@ -95,24 +131,78 @@ export function ProposalFinancialContractTab(props: PfcProps) {
     const filterCommentsByDepartment = (c: ValidityComment) =>
         depSelected === DepartmentTypes.ALL.id || c.comment!.commentType === depSelected;
 
+    const onSubmitValidation = (c: ValidationCommentDTO) => {
+        console.log(c)
+        props.onSubmitValidationComment(c, c.validation!.validationType!)
+    }
+
+    const handleFileInput = (e: any) => {
+
+    }
+
+    const handleCFSubmission = (e: any) => {
+        e.preventDefault()
+        console.log(e)
+        setIsEditing(false)
+    }
+
+    const downloadCf = () => {
+        props.downloadCf()
+    }
+
     return (
         <Container className={"flex-column"}>
+            <Button
+                className={"m-2 m-md-10 p-2 p-md-2"}
+                onClick={() => setIsEditing(true)}
+                variant={"outline-primary"}
+                style={{display: isEditing ? "none" : "inherit"}}
+            >
+                Submeter novo contrato
+            </Button>
 
-            <div className={"justify-content-evenly"} style={{display: display}}>
-                <Button className={"m-3"} onClick={toggleDisplayForm} style={{display: displayForm ? "none" : "inherit"}}>
+            <Button
+                className={"m-2 m-md-10 p-2 p-md-2"}
+                onClick={() => setIsEditing(false)}
+                variant={"outline-danger"}
+                style={{display: isEditing ? "inherit" : "none"}}
+            >
+                Cancelar
+            </Button>
+
+
+            { isEditing ?
+                <Form onSubmit={handleCFSubmission} className={"m-2 m-md-10 p-2 p-md-2"}>
+                    <Form.Group style={{width: "35%"}}>
+                        <Form.Label>Contrato financeiro</Form.Label>
+                        <Form.Control
+                            key={"financial-contract-file"}
+                            type={"file"}
+                            name={"file"}
+                            onInput={handleFileInput}
+                        />
+                    </Form.Group>
+                    <Button className={"mt-3"} type={"submit"}>Submeter</Button>
+                </Form>
+                :
+                <Button className={"m-2 m-md-10 p-2 p-md-2"} variant={"outline-primary"} onClick={downloadCf}>Descarregar contrato financeiro</Button>
+            }
+
+            <div className={"border-top border-2 "} style={{display: display}}>
+                <Button className={"m-2 m-md-10 p-2 p-md-2"} onClick={toggleDisplayForm} style={{display: displayForm ? "none" : "inherit"}}>
                     Criar comentário
                 </Button>
                 <ValidationComment
                     displayForm={displayForm}
                     onClose={() => setDisplayForm(false)}
-                    type={depSelected}
+                    types={possibleValidationTypes}
                     isValidated={props.pfc.validations?.find(v => v.validationType === depSelected)?.validated || false}
-                    onSubmitComment={props.onSubmitValidationComment}
+                    onSubmitComment={onSubmitValidation}
                 />
             </div>
 
 
-            <Form className={"m-3"} style={{width:"20%"}}>
+            <Form className={"m-2 m-md-10 p-2 p-md-2"} style={{width:"20%"}}>
                 <Form.Group>
                     <Form.Label>A visualizar</Form.Label>
                     <Form.Select

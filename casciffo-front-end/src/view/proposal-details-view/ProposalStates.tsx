@@ -1,4 +1,4 @@
-import {Button, ButtonGroup, Container, Stack, ToggleButton} from "react-bootstrap";
+import {Button, ButtonGroup, Container, OverlayTrigger, Stack, ToggleButton, Tooltip} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {Util} from "../../common/Util";
 import {StateModel} from "../../model/state/StateModel";
@@ -6,13 +6,15 @@ import {TimelineEventModel} from "../../model/TimelineEventModel";
 import {StateTransitionModel} from "../../model/state/StateTransitionModel";
 import {StateFlowTypes} from "../../common/Constants";
 import {STATES} from "../../model/state/STATES";
+import {MyError} from "../error-view/MyError";
 
 type StateProps = {
-    onAdvanceClick: () => void
+    onAdvanceClick: (nextStateId: string) => void
     submittedDate: string
     timelineEvents: TimelineEventModel[]
     stateTransitions: StateTransitionModel[]
-    states: StateModel[]
+    states: StateModel[],
+    isProtocolValidated?: boolean
 }
 
 type StateToggleButtonProps = {
@@ -38,22 +40,32 @@ export function ProposalStateView(props: StateProps) {
 
     useEffect(() => {
         const sort = (st1: StateTransitionModel, st2: StateTransitionModel) => Util.cmp(st1.transitionDate, st2.transitionDate, true)
-        setStateTransitions(props.stateTransitions)
+        const sorted = props.stateTransitions.sort(sort)
+        setStateTransitions(sorted)
         const lastTransition = props.stateTransitions.length === 0 ?
-            'SUBMETIDO'
+            STATES.SUBMETIDO.id
             :
-            props.stateTransitions.sort(sort)[props.stateTransitions.length-1].newState!.name;
+            sorted[props.stateTransitions.length-1].newState!.name;
         const name = Object.values(STATES).find(s => s.id === lastTransition)!.name
         setSelectedState(name)
     }, [props.stateTransitions])
 
 
+    const advanceState = () => {
+        const nextStateId = stateTransitions.length > 0 ?
+            stateTransitions[stateTransitions.length-1].newState!.nextInChain![0].id!
+            :
+            stateChain[0].nextInChain![0].id!
+
+        props.onAdvanceClick(nextStateId)
+    }
+
     function mapStates() {
         if(stateChain.length === 0) return <span>a carregar estados...</span>
         let state = stateChain.find(s => s.stateFlowType === StateFlowTypes.INITIAL)
         if(stateChain.find(s => s.stateFlowType === StateFlowTypes.TERMINAL) == null) {
-            console.log("The state chain doesnt have a terminal state!!!!\n currentChain: " + props.states)
-            return <span>Error loading states... Contact developer</span>
+            throw new MyError("The state chain doesnt have a terminal state!!!!\n currentChain: " + props.states,
+                500)
         }
         const stateComponents: JSX.Element[] = []
 
@@ -63,7 +75,7 @@ export function ProposalStateView(props: StateProps) {
 
         do {
             let nextStateId = state!.nextInChain![0].id
-            state = props.states!.find(s => s.id === nextStateId)
+            state = stateChain.find(s => s.id === nextStateId)
             let tprops = getToggleButtonProps(state!)
             elem =  createToggleButton(state!, tprops)
             stateComponents.push(elem)
@@ -132,11 +144,26 @@ export function ProposalStateView(props: StateProps) {
     }
 
     return (
-        <Container className={"border-bottom"}>
+        <Container className={"flex border-bottom"}>
             <Container>
+                {props.isProtocolValidated != null
+                    && !props.isProtocolValidated
+                    &&
+                    <OverlayTrigger
+                        key={"protocol-warning"}
+                        placement={"right"}
+                        overlay={
+                            <Tooltip id={`tooltip-right`}>
+                                A proposta não consegue atingir o estado Validado enquanto este não estiver validado.
+                            </Tooltip>
+                        }
+                    >
+                        <Button as={"span"} variant={"outline-warning"} disabled>O protocolo ainda não está validado. ⚠️</Button>
+                    </OverlayTrigger>
+                }<br/>
                 <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
                 {/*TODO change back-end to include transition type flow [INITIAL, PROGRESS, TERMINAL] in transitions*/}
-                <Button className={"float-end mb-2"} variant={"outline-secondary"} onClick={props.onAdvanceClick}
+                <Button className={"float-end mb-2"} variant={"outline-secondary"} onClick={advanceState}
                 disabled={props.stateTransitions?.some(s => s.newState!.name === 'VALIDADO'/*s.newState!.stateFlowType === "TERMINAL"*/)}>
                     Progredir estado
                 </Button>
