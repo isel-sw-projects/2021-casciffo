@@ -31,7 +31,7 @@ class ResourceNotFoundException(msg: String): Exception(msg)
 class ProposalNotFoundException: Exception()
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "State id doesn't exist.")
-class InvalidStateException(s: String) : Exception()
+class InvalidStateException(s: String) : Exception(s)
 
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "ProtocolId specified doesnt exist.")
 class InvalidProtocolId: Exception()

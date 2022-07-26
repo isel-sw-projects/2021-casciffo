@@ -1,6 +1,7 @@
-package isel.casciffo.casciffospringbackend.mappers
+package isel.casciffo.casciffospringbackend.mappers.proposal
 
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
 import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea

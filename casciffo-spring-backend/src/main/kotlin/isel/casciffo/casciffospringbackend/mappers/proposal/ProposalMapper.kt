@@ -1,7 +1,8 @@
-package isel.casciffo.casciffospringbackend.mappers
+package isel.casciffo.casciffospringbackend.mappers.proposal
 
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamDTO
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComment
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent

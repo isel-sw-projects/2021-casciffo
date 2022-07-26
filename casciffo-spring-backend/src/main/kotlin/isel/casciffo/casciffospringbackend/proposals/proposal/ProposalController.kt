@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
+import isel.casciffo.casciffospringbackend.common.FILE_NAME_HEADER
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
@@ -12,10 +13,11 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.InputStreamResource
-import org.springframework.http.HttpHeaders
+import org.springframework.http.ContentDisposition
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
@@ -67,6 +69,22 @@ class ProposalController(
         return transitionState(proposalId, nextStateId, Roles.SUPERUSER)
     }
 
+    @PutMapping(PROPOSAL_TRANSITION_URL)
+    suspend fun transitionProposalStateV2(
+        @PathVariable proposalId: Int,
+        @RequestParam nextStateId: Int,
+        request: ServerHttpRequest
+    ): ProposalDTO {
+
+        return transitionStateV2(proposalId, nextStateId, request)
+    }
+
+    private suspend fun transitionStateV2(proposalId: Int, nextStateId: Int, request: ServerHttpRequest): ProposalDTO {
+        val res = service.transitionStateV2(proposalId, nextStateId, request)
+        val dto = mapper.mapModelToDTO(res)
+        return getProposal(dto.id!!)
+    }
+
     @PostMapping(PROPOSAL_FINANCIAL_FILE_UPLOAD_URL)
     suspend fun uploadFinancialContract(
         @PathVariable proposalId: Int,
@@ -87,12 +105,14 @@ class ProposalController(
         val path = service.downloadCF(proposalId, pfcId)
         val fileName = path.fileName.toString().replaceAfterLast("-","").dropLast(1)
         return ResponseEntity.ok()
+            .headers {
                 //attachment header very important because it tells the browser to commence the download natively
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment")
-            .header("File-Name", fileName)
-            .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "File-Name")
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-            .header(HttpHeaders.CONTENT_LENGTH, "${path.fileSize()}")
+                it.contentDisposition = ContentDisposition.parse("attachment")
+                it.contentType = MediaType.APPLICATION_PDF
+                it.contentLength = path.fileSize()
+                it.set(FILE_NAME_HEADER, fileName)
+                it.accessControlExposeHeaders = listOf(FILE_NAME_HEADER)
+            }
             .body(InputStreamResource(withContext(Dispatchers.IO) {
                 Files.newInputStream(path)
             }))

@@ -52,3 +52,10 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+tasks {
+	register("stage") {
+		dependsOn(clean, bootJar)
+		mustRunAfter(clean)
+	}
+}

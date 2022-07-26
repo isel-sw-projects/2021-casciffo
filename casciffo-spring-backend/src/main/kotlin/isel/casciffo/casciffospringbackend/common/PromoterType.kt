@@ -1,5 +1,5 @@
-package isel.casciffo.casciffospringbackend.proposals.finance.promoter
+package isel.casciffo.casciffospringbackend.common
 
 enum class PromoterType {
-    COMMERCIAL, NOT_COMMERCIAL
+    COMMERCIAL, NOT_COMMERCIAL, NOT_APPLICABLE, INDUSTRY, ACADEMIA
 }

@@ -1,4 +1,6 @@
 package isel.casciffo.casciffospringbackend.aggregates.research
 
-interface ResearchDetailAggregateRepo {
+import org.springframework.data.repository.reactive.ReactiveCrudRepository
+
+interface ResearchDetailAggregateRepo: ReactiveCrudRepository<ResearchDetailAggregate, Int> {
 }

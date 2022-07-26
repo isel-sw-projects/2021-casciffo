@@ -44,7 +44,7 @@ class UserServiceImpl(
     val logger = KotlinLogging.logger {  }
 
     override suspend fun loginUser(userModel: UserModel): BearerTokenWrapper {
-        val existingUser = getUserByEmail(userModel.email!!)
+        val existingUser = findUserByEmail(userModel.email!!)
 
 
         existingUser?.let {
@@ -61,7 +61,7 @@ class UserServiceImpl(
         throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login credentials incorrect!")
     }
 
-    suspend fun getUserByEmail(email: String): UserModel? {
+    override suspend fun findUserByEmail(email: String): UserModel? {
         return mapAggregateToModel(userRolesAggregateRepo.findByUserEmail(email), true)
             .awaitFirstOrNull()
             ?: throw UserNotFoundException()
@@ -155,7 +155,12 @@ class UserServiceImpl(
     override suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?> {
         //% is added to make query (SELECT ... WHERE name LIKE abc% AND ...)
         //adding % to the query itself will break the statement and throw runtime db exception
-        return userRepository.findAllByRoleNameIsInAndNameLike(name.plus('%'), roles.map { it.uppercase() }).asFlow()
+        return if (roles.isNullOrEmpty())
+            userRepository.findAllByNameIsLike(name).asFlow()
+        else
+            userRepository
+                .findAllByRoleNameIsInAndNameLike(name.plus('%'), roles.map { it.uppercase() })
+                .asFlow()
     }
 
     /**

@@ -1,5 +1,6 @@
-package isel.casciffo.casciffospringbackend.mappers
+package isel.casciffo.casciffospringbackend.mappers.user
 
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.users.user.UserDTO
 import isel.casciffo.casciffospringbackend.users.user.UserModel
 import kotlinx.coroutines.reactive.awaitSingle

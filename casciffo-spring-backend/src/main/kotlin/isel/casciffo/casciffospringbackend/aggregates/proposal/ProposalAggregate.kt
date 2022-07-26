@@ -35,6 +35,9 @@ data class ProposalAggregate (
     var pathologyName: String? = null,
     var pathologyId: Int? = null,
 
+    //research
+    var researchId: Int? = null,
+
     //financial component
     @Column("proposal_financial_id")
     var pfcId: Int? = null,

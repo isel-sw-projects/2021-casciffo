@@ -1,5 +1,6 @@
-package isel.casciffo.casciffospringbackend.mappers
+package isel.casciffo.casciffospringbackend.mappers.states
 
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.state.StateDTO
 import kotlinx.coroutines.reactor.awaitSingleOrNull

@@ -1,29 +1,31 @@
 package isel.casciffo.casciffospringbackend.research.research
 
+import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregate
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
-import isel.casciffo.casciffospringbackend.mappers.ResearchMapper
+import isel.casciffo.casciffospringbackend.mappers.Mapper
+import isel.casciffo.casciffospringbackend.mappers.research.ResearchMapper
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivities
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class ResearchController(
-    @Autowired val researchService: ResearchService
+    @Autowired val researchService: ResearchService,
+    @Autowired val mapper: Mapper<ResearchModel, ResearchDTO>
 ) {
 
-    val mapper: ResearchMapper = ResearchMapper()
-
     @GetMapping(RESEARCHES_URL)
-    suspend fun getAllResearch(@RequestParam type: ResearchType) : Flow<ResearchModel> {
+    suspend fun getAllResearch(@RequestParam type: ResearchType) : Flow<ResearchAggregate> {
         return researchService.getAllResearchesByType(type)
     }
 
     @GetMapping(RESEARCH_URL)
-    suspend fun getResearch(@PathVariable researchId: Int) : ResearchModel {
-        return researchService.getResearch(researchId)
+    suspend fun getResearch(@PathVariable researchId: Int) : ResearchDTO {
+        return mapper.mapModelToDTO(researchService.getResearch(researchId))
     }
 
     @PatchMapping(RESEARCH_URL)

@@ -8,6 +8,7 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+const val FILE_NAME_HEADER = "File-Name"
 val FILES_DIR = { fileName: String -> Paths.get("./src/main/resources/files/$fileName-${Date().time}") }
 
 const val amountOfTime: Long = 15

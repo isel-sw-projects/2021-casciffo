@@ -21,5 +21,6 @@ data class TimelineEventModel (
     var isOverDue: Boolean? = null,
     var daysOverDue: Int? = null,
     var isAssociatedToState: Boolean = false,
-    var stateName: String? = null
+    var stateName: String? = null,
+    var stateId: Int? = null
 )

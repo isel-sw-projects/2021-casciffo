@@ -1,5 +1,6 @@
-package isel.casciffo.casciffospringbackend.mappers
+package isel.casciffo.casciffospringbackend.mappers.comments
 
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComment
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
 import isel.casciffo.casciffospringbackend.users.user.UserDTO

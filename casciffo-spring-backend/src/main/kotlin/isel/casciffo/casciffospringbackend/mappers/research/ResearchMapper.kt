@@ -1,13 +1,16 @@
-package isel.casciffo.casciffospringbackend.mappers
+package isel.casciffo.casciffospringbackend.mappers.research
 
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.research.ResearchDTO
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import kotlinx.coroutines.reactor.awaitSingle
+import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toFlux
 
-class ResearchMapper {
+@Component
+class ResearchMapper: Mapper<ResearchModel, ResearchDTO> {
 
-    fun mapDTOtoModel(dto: ResearchDTO?): ResearchModel {
+    override suspend fun mapDTOtoModel(dto: ResearchDTO?): ResearchModel {
         if(dto == null) return ResearchModel()
         return ResearchModel(
             id = dto.id,
@@ -30,7 +33,7 @@ class ResearchMapper {
         )
     }
 
-    suspend fun mapModelToDTO(model: ResearchModel?): ResearchDTO {
+    override suspend fun mapModelToDTO(model: ResearchModel?): ResearchDTO {
         if(model == null) return ResearchDTO()
         return ResearchDTO(
             id = model.id,

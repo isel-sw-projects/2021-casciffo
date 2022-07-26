@@ -23,7 +23,7 @@ data class ProposalDTO (
     var sigla: String? = null,
 
     var type: ResearchType? = null,
-
+    var researchId: Int? = null,
     var stateId: Int? = null,
     var serviceTypeId: Int? = null,
     var therapeuticAreaId: Int? = null,

@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtDTO
+import isel.casciffo.casciffospringbackend.security.JwtSupport
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
@@ -53,7 +54,10 @@ class UserController(
     }
 
     @GetMapping(USER_SEARCH_URL)
-    suspend fun searchUsers(@RequestParam roles: List<String>, name: String): Flow<UserDTO?> {
+    suspend fun searchUsers(
+        @RequestParam(required = false) roles: List<String>,
+        @RequestParam name: String
+    ): Flow<UserDTO?> {
         return service.searchUsers(name, roles).map(mapper::mapModelToDTO)
     }
 

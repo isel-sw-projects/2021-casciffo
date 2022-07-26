@@ -1,5 +1,6 @@
-package isel.casciffo.casciffospringbackend.mappers
+package isel.casciffo.casciffospringbackend.mappers.protocol
 
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolDTO
 import org.springframework.stereotype.Component

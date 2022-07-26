@@ -24,7 +24,6 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import java.io.File
 import java.nio.file.Path
 import java.time.LocalDateTime
 import kotlin.io.path.Path
@@ -126,7 +125,7 @@ class ProposalFinancialServiceImpl(
     }
 
     override suspend fun isValidated(pfcId: Int): Boolean {
-        return validationsRepository.isPfcValidated(pfcId).awaitSingle()
+        return validationsRepository.isPfcValidatedByPfcId(pfcId).awaitSingle()
     }
 
     override suspend fun validate(pfcId: Int, validationComment: ValidationComment): ValidationComment {

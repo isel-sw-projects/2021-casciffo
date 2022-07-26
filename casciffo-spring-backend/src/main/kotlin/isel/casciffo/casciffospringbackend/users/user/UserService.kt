@@ -17,6 +17,8 @@ interface UserService: ReactiveUserDetailsService {
     suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?>
     suspend fun loginUser(userModel: UserModel): BearerTokenWrapper
 
+    suspend fun findUserByEmail(email: String): UserModel?
+
     suspend fun deleteUser(userId: Int): UserModel
     suspend fun updateUserRoles(roles: List<Int>, userId: Int): BearerTokenWrapper
 }

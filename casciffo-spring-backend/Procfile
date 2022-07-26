@@ -1,1 +1,1 @@
-web: java -jar build/libs/casciffo-spring-backend-1.0.0-SNAPSHOT.jar
+web: java -jar casciffo-spring-backend.jar

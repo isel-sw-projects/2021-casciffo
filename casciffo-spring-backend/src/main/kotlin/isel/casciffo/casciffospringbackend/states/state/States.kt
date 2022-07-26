@@ -3,7 +3,7 @@ package isel.casciffo.casciffospringbackend.states.state
 import kotlin.math.abs
 
 enum class States(val code: Int) {
-    SUBMETIDO(1),NEGOCIACAO_DE_CF(2),VALIDACAO_INTERNA_DEPARTMENTS(3),
+    SUBMETIDO(1),VALIDACAO_CF(2),VALIDACAO_INTERNA_DEPARTMENTS(3),
     VALIDACAO_EXTERNA(4), SUBMISSAO_AO_CA(5), VALIDACAO_INTERNA_CA(6), VALIDADO(7),
     CANCELADO(Int.MIN_VALUE), COMPLETO(10), ATIVO(11);
 

@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.states.state
 import isel.casciffo.casciffospringbackend.aggregates.state.StateAggregate
 import isel.casciffo.casciffospringbackend.aggregates.state.StateAggregateRepo
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.common.StateFlowType
 import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateException
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
@@ -13,7 +14,9 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
 
 @Service
@@ -55,6 +58,22 @@ class StateServiceImpl(
 
         if(nextState.none { it.roleName != role.name}) {
             throw InvalidStateTransitionException("You don't have the permissions to do this transition.")
+        }
+    }
+    override suspend fun verifyNextStateValidV2(originStateId: Int, nextStateId: Int, type: StateType, roles: List<String>)  {
+        val nextState = stateAggregateRepo
+            .findAggregateBy(originStateId, nextStateId, type)
+            .collectList()
+            .awaitSingleOrNull()
+
+        if(nextState.isNullOrEmpty() || nextState.any { it.nextStateId == null }) {
+            throw InvalidStateTransitionException("State transition isn't valid.")
+        }
+
+        if(roles.contains(Roles.SUPERUSER.name)) return
+
+        if(nextState.none { ns -> roles.any{r -> ns.roleName === r} }) {
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "You don't have the permissions to do this transition.")
         }
     }
 

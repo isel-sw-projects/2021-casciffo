@@ -19,5 +19,6 @@ interface StateService {
      * @throws IllegalStateException In case of invalid next state or insufficient role permissions
      */
     suspend fun verifyNextStateValid(originStateId: Int, nextStateId: Int, type: StateType, role: Roles)
+    suspend fun verifyNextStateValidV2(originStateId: Int, nextStateId: Int, type: StateType, roles: List<String>)
     suspend fun isTerminalState(stateId: Int, stateType: StateType): Boolean
 }

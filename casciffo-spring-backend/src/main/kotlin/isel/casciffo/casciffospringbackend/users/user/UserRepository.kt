@@ -29,6 +29,7 @@ interface UserRepository : ReactiveSortingRepository<UserModel, Int> {
     fun findAllByRoleNameIsInAndNameLike(userName: String, roleNameList: List<String>): Flux<UserModel>
 
     fun findByEmail(email: String): Mono<UserModel>
+    fun findAllByNameIsLike(name: String): Flux<UserModel>
 
 
 }

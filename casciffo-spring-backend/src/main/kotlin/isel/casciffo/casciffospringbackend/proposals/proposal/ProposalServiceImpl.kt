@@ -19,9 +19,12 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.research.ResearchService
 import isel.casciffo.casciffospringbackend.roles.Roles
+import isel.casciffo.casciffospringbackend.security.BearerToken
+import isel.casciffo.casciffospringbackend.security.JwtSupport
 import isel.casciffo.casciffospringbackend.states.state.StateService
 import isel.casciffo.casciffospringbackend.states.state.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
+import isel.casciffo.casciffospringbackend.users.user.UserService
 import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import isel.casciffo.casciffospringbackend.validations.ValidationsRepository
 import kotlinx.coroutines.flow.Flow
@@ -32,13 +35,14 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.codec.multipart.FilePart
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
-import java.io.File
 import java.nio.file.Path
 import java.time.LocalDate
 
@@ -56,7 +60,9 @@ class ProposalServiceImpl(
     @Autowired val researchService: ResearchService,
     @Autowired val partnershipService: PartnershipService,
     @Autowired val validationsRepository: ValidationsRepository,
-    @Autowired val fileInfoRepository: FileInfoRepository
+    @Autowired val fileInfoRepository: FileInfoRepository,
+    @Autowired val jwtSupport: JwtSupport,
+    @Autowired val userService: UserService
 ) : ProposalService {
 
     override suspend fun getAllProposals(type: ResearchType): Flow<ProposalModel> {
@@ -165,30 +171,70 @@ class ProposalServiceImpl(
     }
 
     @Transactional
-    override suspend fun transitionState(proposalId: Int, nextStateId: Int, role: Roles): ProposalModel {
+    override suspend fun transitionStateV2(
+        proposalId: Int,
+        nextStateId: Int,
+        request: ServerHttpRequest
+    ): ProposalModel {
+        val token = request.headers.getFirst(HttpHeaders.AUTHORIZATION)!!
+        val bearer = BearerToken(token.substringAfter("Bearer "))
+        val userEmail = jwtSupport.getUserEmail(bearer)
+        val user = userService.findUserByEmail(userEmail)!!
+        val userRoles = user.roles!!.map { it.roleName!! }.collectList().awaitSingle()
         val prop = getProposalById(proposalId, false)
-        return handleStateTransition(prop, nextStateId, role)
+        return handleStateTransitionV2(prop, nextStateId, userRoles)
+    }
+
+    suspend fun handleStateTransitionV2(
+        proposal: ProposalModel,
+        nextStateId: Int,
+        role: List<String>
+    ): ProposalModel {
+
+        val currState = stateService.findById(proposal.stateId!!)
+
+        //TODO change to ResponseEntity and handle exception in ControllerAdvice
+        val nextState = stateService.findById(nextStateId)
+
+        val isClinicalTrial = proposal.type === ResearchType.CLINICAL_TRIAL
+        val stateType = if(isClinicalTrial) StateType.FINANCE_PROPOSAL
+        else StateType.STUDY_PROPOSAL
+
+        stateService.verifyNextStateValidV2(currState.id!!, nextStateId, stateType, role)
+        if(isClinicalTrial && currState.name == States.VALIDACAO_CF.name) {
+            //TODO MERGE VALIDATIONS INTO STATES
+            val check = validationsRepository.isPfcValidatedByProposalId(proposal.id!!).awaitSingle()
+            if(!check) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot advance state without the required validations!")
+            }
+        }
+        if (stateService.isTerminalState(nextStateId, stateType)) {
+            if (isClinicalTrial) {
+                val fullyValidated = validationsRepository.isPfcFullyValidated(proposal.id!!).awaitSingle()
+                if (!fullyValidated)
+                    throw ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Financial component must be fully validated before advancing."
+                    )
+            }
+            createResearch(proposal)
+        }
+
+        if(proposal.timelineEvents != null) {
+            updateTimelineEvent(proposal.timelineEvents!!, nextState.name!!)
+        }
+
+        stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
+
+        proposal.stateId = nextState.id
+        proposal.state = nextState
+        return proposalRepository.save(proposal).awaitSingle()
     }
 
     @Transactional
-    override suspend fun validatePfc(
-        proposalId: Int,
-        pfcId: Int,
-        validationComment: ValidationComment
-    ): ProposalValidationModel {
-        val wasValid = validationsRepository.isPfcValidated(pfcId).awaitSingle()
-        if(wasValid) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component already valid!")
-
-        val c = commentsService.createComment(validationComment.comment!!)
-        validationComment.comment = c
-        val res = proposalFinancialService.validate(pfcId, validationComment)
-        val isNowValidated = validationsRepository.isPfcValidated(pfcId).awaitSingle()
-        if(isNowValidated && !wasValid) {
-            val nextState = stateService.getNextProposalState(proposalId, StateType.FINANCE_PROPOSAL)
-            transitionState(proposalId, nextState.id!!, Roles.SUPERUSER)
-        }
-        val proposal: ProposalModel = getProposalById(proposalId, true)
-        return ProposalValidationModel(proposal, res)
+    override suspend fun transitionState(proposalId: Int, nextStateId: Int, role: Roles): ProposalModel {
+        val prop = getProposalById(proposalId, false)
+        return handleStateTransition(prop, nextStateId, role)
     }
 
     suspend fun handleStateTransition(
@@ -207,6 +253,13 @@ class ProposalServiceImpl(
         else StateType.STUDY_PROPOSAL
 
         stateService.verifyNextStateValid(currState.id!!, nextStateId, stateType, role)
+        if(isClinicalTrial && currState.name === States.VALIDACAO_CF.name) {
+            //TODO MERGE VALIDATIONS INTO STATES
+            val check = validationsRepository.isPfcValidatedByProposalId(proposal.id!!).awaitSingle()
+            if(!check) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot advance state without the required validations!")
+            }
+        }
 
         if (stateService.isTerminalState(nextStateId, stateType)) {
             if (isClinicalTrial) {
@@ -229,6 +282,26 @@ class ProposalServiceImpl(
         proposal.stateId = nextState.id
         proposal.state = nextState
         return proposalRepository.save(proposal).awaitSingle()
+    }
+
+    @Transactional
+    override suspend fun validatePfc(
+        proposalId: Int,
+        pfcId: Int,
+        validationComment: ValidationComment
+    ): ProposalValidationModel {
+        val wasValid = validationsRepository.isPfcValidatedByPfcId(pfcId).awaitSingle()
+        if(wasValid) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component already valid!")
+        val c = commentsService.createComment(validationComment.comment!!)
+        validationComment.comment = c
+        val res = proposalFinancialService.validate(pfcId, validationComment)
+        val isNowValidated = validationsRepository.isPfcValidatedByPfcId(pfcId).awaitSingle()
+        if(isNowValidated) {
+            val nextState = stateService.getNextProposalState(proposalId, StateType.FINANCE_PROPOSAL)
+            transitionState(proposalId, nextState.id!!, Roles.SUPERUSER)
+        }
+        val proposal: ProposalModel = getProposalById(proposalId, true)
+        return ProposalValidationModel(proposal, res)
     }
 
     private suspend fun createResearch(proposal: ProposalModel) {
