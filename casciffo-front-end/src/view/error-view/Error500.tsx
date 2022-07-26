@@ -3,10 +3,10 @@ import {GenericError} from "./GenericError";
 export function Error500(props: {reason: string | undefined}) {
     return (
         <GenericError
-            title={"System Error"}
-            reason={props.reason || "The website is currently unavailable. Try again later or contact the developer."}
+            title={"Erro no sistema"}
+            reason={props.reason ?? "Ocorreu um erro no sistema!"}
             imgSrc={"../../assets/images/samples/error-500.svg"}
-            alt={"System Error"}
+            alt={"Erro no sistema"}
         />
     )
 }

@@ -9,29 +9,56 @@ import {STATES} from "../../model/state/STATES";
 import {MyError} from "../error-view/MyError";
 
 type StateProps = {
-    onAdvanceClick: (nextStateId: string) => void
+    onAdvanceClick: (currentId: string, currStateName: string, nextStateId:string) => void
     submittedDate: string
     timelineEvents: TimelineEventModel[]
     stateTransitions: StateTransitionModel[]
     states: StateModel[],
+    currentStateId: number,
     isProtocolValidated?: boolean
 }
 
 type StateToggleButtonProps = {
+    active: boolean;
     transitionDate: string,
     variant: string,
     disabled: boolean,
     deadlineDate?: string
 }
 
+type SelectedState = {
+    stateName: string,
+    stateDisplayName: string
+}
+
+type StateWithDisplayName = {
+    id?: string
+    name?: string
+    displayName?: string
+    nextInChain?: StateModel[]
+    roles?: string[]
+    stateFlowType?: string
+}
+
 export function ProposalStateView(props: StateProps) {
-    const [selectedState, setSelectedState] = useState("")
-    const [stateChain, setStateChain] = useState<StateModel[]>([])
+    const [currentState, setCurrentState] = useState<StateWithDisplayName>({})
+    const [stateChain, setStateChain] = useState<StateWithDisplayName[]>([])
     const [timelineEvents, setTimelineEvents] = useState<TimelineEventModel[]>([])
     const [stateTransitions, setStateTransitions] = useState<StateTransitionModel[]>([])
 
     useEffect(() => {
-        setStateChain(props.states)
+        if(stateChain == null || stateChain.length === 0) return
+        const state = stateChain.find(sc => parseInt(sc.id!) === props.currentStateId)!
+        setCurrentState(state)
+    }, [stateChain, props.currentStateId])
+    
+    useEffect(() => {
+        const states = props.states
+            .map(s => ({
+                ...s,
+                displayName: Object.values(STATES).find(st => st.id === s.name)!.name
+            }))
+        setStateChain(states)
     }, [props.states])
 
     useEffect(() => {
@@ -42,27 +69,35 @@ export function ProposalStateView(props: StateProps) {
         const sort = (st1: StateTransitionModel, st2: StateTransitionModel) => Util.cmp(st1.transitionDate, st2.transitionDate, true)
         const sorted = props.stateTransitions.sort(sort)
         setStateTransitions(sorted)
-        const lastTransition = props.stateTransitions.length === 0 ?
-            STATES.SUBMETIDO.id
-            :
-            sorted[props.stateTransitions.length-1].newState!.name;
-        const name = Object.values(STATES).find(s => s.id === lastTransition)!.name
-        setSelectedState(name)
+        // const lastTransitionName = props.stateTransitions.length === 0 ?
+        //     STATES.SUBMETIDO.id
+        //     :
+        //     sorted[props.stateTransitions.length-1].newState!.name;
+        // const name = Object.values(STATES).find(s => s.id === lastTransitionName)!.name
+        // setCurrentState({
+        //     stateName: lastTransitionName,
+        //     stateDisplayName: name
+        // })
     }, [props.stateTransitions])
 
 
     const advanceState = () => {
-        const nextStateId = stateTransitions.length > 0 ?
-            stateTransitions[stateTransitions.length-1].newState!.nextInChain![0].id!
-            :
-            stateChain[0].nextInChain![0].id!
+        // const currentState = stateChain.find(sc => sc.name === currentState.stateName)!
 
-        props.onAdvanceClick(nextStateId)
+        // const nextStateId = stateTransitions.length > 0 ?
+        //     stateChain.find(s => s.id === stateTransitions[stateTransitions.length-1].newState!.id!)!.nextInChain![0].id!
+        //     :
+        //     stateChain[0].nextInChain![0].id!
+        console.log(currentState)
+        if(!currentState.nextInChain || currentState.nextInChain.length < 1) {
+            throw new MyError("Não existe estado próximo possível!", 400)
+        }
+        props.onAdvanceClick(currentState.id!, currentState.name!, currentState.nextInChain[0].id!)
     }
 
     function mapStates() {
         if(stateChain.length === 0) return <span>a carregar estados...</span>
-        let state = stateChain.find(s => s.stateFlowType === StateFlowTypes.INITIAL)
+        let state = stateChain.find(s => s.stateFlowType === StateFlowTypes.INITIAL)!
         if(stateChain.find(s => s.stateFlowType === StateFlowTypes.TERMINAL) == null) {
             throw new MyError("The state chain doesnt have a terminal state!!!!\n currentChain: " + props.states,
                 500)
@@ -70,12 +105,12 @@ export function ProposalStateView(props: StateProps) {
         const stateComponents: JSX.Element[] = []
 
         let variant = getVariantColor(state!, false)
-        let elem =  createToggleButton(state!, {transitionDate: props.submittedDate, variant, disabled: false})
+        let elem =  createToggleButton(state!, {transitionDate: props.submittedDate, variant, disabled: false, active: currentState.id === state.id})
         stateComponents.push(elem)
 
         do {
             let nextStateId = state!.nextInChain![0].id
-            state = stateChain.find(s => s.id === nextStateId)
+            state = stateChain.find(s => s.id === nextStateId)!
             let tprops = getToggleButtonProps(state!)
             elem =  createToggleButton(state!, tprops)
             stateComponents.push(elem)
@@ -84,9 +119,10 @@ export function ProposalStateView(props: StateProps) {
         return stateComponents
     }
 
-    function getToggleButtonProps(state: StateModel): StateToggleButtonProps {
+    function getToggleButtonProps(state: StateWithDisplayName): StateToggleButtonProps {
         const isDisabled = getIsDisabled(state!)
         return {
+            active: currentState.id === state.id,
             transitionDate: getTransitionDate(state!),
             deadlineDate: getDeadlineDateForState(state!),
             disabled: isDisabled,
@@ -94,16 +130,16 @@ export function ProposalStateView(props: StateProps) {
         }
     }
 
-    function getIsDisabled(state: StateModel): boolean {
+    function getIsDisabled(state: StateWithDisplayName): boolean {
         return stateTransitions.length === 0 || stateTransitions.every(st => st.newStateId !== state.id)
     }
 
-    function getVariantColor(state: StateModel, disabled: boolean = false): string {
-        return selectedState === state.name ? 'primary'
+    function getVariantColor(state: StateWithDisplayName, disabled: boolean = false): string {
+        return currentState.displayName === state.name ? 'primary'
             : disabled ? 'outline-dark' : 'outline-primary'
     }
 
-    function getTransitionDate(state: StateModel) {
+    function getTransitionDate(state: StateWithDisplayName) {
         const transition = stateTransitions.find(st => st.newStateId === state.id)
 
         if (transition == null) return "---"
@@ -111,10 +147,8 @@ export function ProposalStateView(props: StateProps) {
         return Util.formatDate(transition!.transitionDate)
     }
 
-    function getDeadlineDateForState(state: StateModel) {
-        //TODO CHANGE IT SO THIS ISNT AS BAD, JUST ADD STATE ID TO TIMELINE EVENT EZ
-        const stateOriginalName = Object.values(STATES).find(s => s.name === state.name)
-        const event = timelineEvents.find(e => (e.stateName === stateOriginalName!.id))
+    function getDeadlineDateForState(state: StateWithDisplayName) {
+        const event = timelineEvents.find(e => (e.stateName === state.name))
         if (event === undefined) {
             return "Limite: ---"
         }
@@ -122,20 +156,20 @@ export function ProposalStateView(props: StateProps) {
     }
 
     function createToggleButton(
-        state: StateModel,
+        state: StateWithDisplayName,
         tprops: StateToggleButtonProps
     ) {
         return <ToggleButton
             key={`${state.id}`}
             type="radio"
             variant={tprops.variant}
-            name="radio"
-            value={state.name}
-            checked={selectedState === state.name}
+            name={`radio-${state.id}`}
+            value={state.name!}
             disabled={tprops.disabled}
+            active={tprops.active}
         >
             <Stack direction={"vertical"}>
-                <span>{state.name}</span>
+                <span>{state.displayName}</span>
                 <span>{tprops.transitionDate}</span>
                 {(tprops.deadlineDate && <span>{tprops.deadlineDate}</span>) || <br/>}
                 <span>{state.roles!.join(',')}</span>

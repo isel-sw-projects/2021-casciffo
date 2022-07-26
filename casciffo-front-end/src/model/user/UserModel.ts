@@ -1,6 +1,6 @@
 type Roles = {
     id: string,
-    name: string
+    roleName: string
 }
 
 interface UserModel {

@@ -1,23 +1,35 @@
-import React, {useState} from "react";
+import React, {HTMLProps, useState} from "react";
 import {
+    Column,
     ColumnDef,
     flexRender,
     getCoreRowModel,
     getSortedRowModel,
+    Table,
     SortingState,
     useReactTable
 } from "@tanstack/react-table";
-import { Table } from "react-bootstrap";
+import { Table as RBTable } from "react-bootstrap";
 
-export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup?: JSX.Element[]}) {
+type TableProps = {
+    data: any[],
+    columns: ColumnDef<any>[],
+    colgroup?: JSX.Element[],
+    withCheckbox?: boolean
+    getCheckedRows?: (data: any[]) => void
+}
+
+export function MyTable(props: TableProps) {
 
     const [sorting, setSorting] = useState<SortingState>([])
+    const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
         data: props.data,
         columns: props.columns,
         state: {
             sorting,
+            rowSelection
         },
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
@@ -27,7 +39,7 @@ export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup
 
     return (
         <React.Fragment>
-            <Table striped bordered hover size={"m-2 m-md-10 p-2 p-md-2 sm mt-3"}>
+            <RBTable striped bordered hover size={"m-2 m-md-10 p-2 p-md-2 sm mt-3"}>
                 {props.colgroup &&
                     <colgroup>
                         {props.colgroup}
@@ -40,6 +52,7 @@ export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup
                             return (
                                 <th key={header.id} colSpan={header.colSpan}>
                                     {header.isPlaceholder ? null : (
+                                        <>
                                         <div
                                             {...{
                                                 className: header.column.getCanSort()
@@ -57,6 +70,7 @@ export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup
                                                 desc: ' 🔽',
                                             }[header.column.getIsSorted() as string] ?? null}
                                         </div>
+                                        </>
                                     )}
                                 </th>
                             )
@@ -85,7 +99,28 @@ export function MyTable(props: {data: any[], columns: ColumnDef<any>[], colgroup
                         )
                     })}
                 </tbody>
-            </Table>
+            </RBTable>
         </React.Fragment>
+    )
+}
+
+function IndeterminateCheckbox(
+    {indeterminate, className = '', ...rest}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>
+) {
+    const ref = React.useRef<HTMLInputElement>(null!)
+
+    React.useEffect(() => {
+        if (typeof indeterminate === 'boolean') {
+            ref.current.indeterminate = !rest.checked && indeterminate
+        }
+    }, [ref, indeterminate, rest.checked])
+
+    return (
+        <input
+            type="checkbox"
+            ref={ref}
+            className={className + ' cursor-pointer'}
+            {...rest}
+        />
     )
 }

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import './ProposalForm.css'
 import {
     Button,
@@ -13,6 +13,7 @@ import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {PartnershipModel} from "../../model/PartnershipModel";
 import {useNavigate} from "react-router-dom";
 import {ResearchTypes, TeamRoleTypes} from "../../common/Constants";
+import {Util} from "../../common/Util";
 
 
 type CP_Props = {
@@ -25,7 +26,9 @@ type ProposalFormKey = keyof ProposalForm
 
 
 export function CreateProposal(props : CP_Props) {
-
+    useEffect(() => {
+        document.title = Util.CREATE_PROPOSAL_TITLE
+    })
     const [hasPartnerships, setHasPartnerships] = useState(false)
 
     const [proposalForm, setProposalForm] = useState<ProposalForm>({

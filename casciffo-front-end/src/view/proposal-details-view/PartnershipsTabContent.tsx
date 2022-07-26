@@ -66,7 +66,7 @@ export function PartnershipsTabContent(props: PTC_Props) {
                                     </tr>
                                     <tr>
                                         <td><b>Email</b></td>
-                                        <td style={{overflowWrap: "break-word"}}><a href={`mailto:${partnership.p.email}`}>{partnership.p.email}</a></td>
+                                        <td style={{wordBreak: "break-all"}}><a href={`mailto:${partnership.p.email}`}>{partnership.p.email}</a></td>
                                     </tr>
                                     <tr>
                                         <td><b>Contacto</b></td>

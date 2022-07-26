@@ -34,6 +34,7 @@ import {ValidationCommentDTO, ValidityComment} from "../../model/proposal/financ
 import {Roles} from "../../model/role/Roles";
 import {useUserAuthContext} from "../context/UserAuthContext";
 import {ProposalDetailsTab} from "./ProposalDetailsTab";
+import {useErrorHandler} from "react-error-boundary";
 
 type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
@@ -47,6 +48,12 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         navigate("/propostas")
         //show error and move backwards using navigate
     }
+
+    useEffect(() => {
+        document.title = Util.PROPOSAL_DETAIL_TITLE
+    })
+
+    const handler = useErrorHandler()
 
     const [proposal, setProposal] = useState<ProposalModel>({
         createdDate: undefined,
@@ -77,18 +84,21 @@ export function ProposalDetails(props: ProposalDetailsProps) {
     //     return JSON.stringify(prevProps) === JSON.stringify(nextProps)
     // })
 
-    const advanceState = useCallback((nextStateId: string) => {
-        props.proposalService.advanceState(proposalId!, nextStateId)
+    const advanceState = useCallback((currentId: string, currStateName: string, nextStateId:string) => {
+        props.proposalService
+            .advanceState(proposalId!, nextStateId)
+            .then(log)
+            //TODO SET PROPOSAL IS FAILING HERE BECAUSE LISTS ARE NULL, PARTIAL UPDATE SHOULD SOLVE EASY
             .then(setProposal)
-            .then(() => alert("Operação sucedida!"))
-    }, [proposalId, props.proposalService])
+            .catch(handler)
+    }, [handler, proposalId, props.proposalService])
 
     const [isDataReady, setDataReady] = useState(false)
     const [isError, setIsError] = useState(false)
     const [selectedTab, setSelectedTab] = useState("proposal")
 
     const handleFetchError = useCallback((reason: any) => {
-        console.log(reason)
+        log(reason)
         setIsError(true)
     }, [])
 
@@ -101,7 +111,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         const removeSuperUserFromRoles = (list: StateModel[]) =>
             list.map(s => {
                 const idxToRemove = s.roles?.indexOf(Roles.SUPERUSER.id)
-                s.name = Object.values(STATES).find(st => st.id === s.name)!.name
+                // s.name = Object.values(STATES).find(st => st.id === s.name)!.name
                 s.roles?.splice(idxToRemove!, 1)
                 return s
             })
@@ -201,6 +211,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         {isStatesReady && isDataReady && <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
+                            currentStateId={proposal.stateId!}
                             timelineEvents={proposal.timelineEvents || []}
                             stateTransitions={proposal.stateTransitions || []}
                             submittedDate={proposal.createdDate!}
@@ -215,6 +226,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                             {isStatesReady && <ProposalStateView
                                 isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                                 onAdvanceClick={advanceState}
+                                currentStateId={proposal.stateId!}
                                 timelineEvents={proposal.timelineEvents || []}
                                 stateTransitions={proposal.stateTransitions || []}
                                 submittedDate={proposal.createdDate!}
@@ -234,6 +246,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
+                            currentStateId={proposal.stateId!}
                             timelineEvents={proposal.timelineEvents || []}
                             stateTransitions={proposal.stateTransitions || []}
                             submittedDate={proposal.createdDate!}
@@ -249,6 +262,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
+                            currentStateId={proposal.stateId!}
                             timelineEvents={proposal.timelineEvents || []}
                             stateTransitions={proposal.stateTransitions || []}
                             submittedDate={proposal.createdDate!}
@@ -266,6 +280,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                             <ProposalStateView
                                 isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                                 onAdvanceClick={advanceState}
+                                currentStateId={proposal.stateId!}
                                 timelineEvents={proposal.timelineEvents || []}
                                 stateTransitions={proposal.stateTransitions || []}
                                 submittedDate={proposal.createdDate!}
@@ -296,6 +311,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                             <ProposalStateView
                                 isProtocolValidated={proposal.financialComponent?.protocol!.validated!}
                                 onAdvanceClick={advanceState}
+                                currentStateId={proposal.stateId!}
                                 timelineEvents={proposal.timelineEvents || []}
                                 stateTransitions={proposal.stateTransitions || []}
                                 submittedDate={proposal.createdDate!}

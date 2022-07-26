@@ -172,6 +172,8 @@ const clearUserToken = () => {
     return null
 }
 
+const apiTitle = (title: string) => `CASCIFFO | ${title}`
+
 export const Util = {
     formatDate,
     proposalStates: Object.values(STATES).filter(s => s.code > STATES.SUBMETIDO.code && s.code <= STATES.VALIDADO.code),
@@ -179,5 +181,12 @@ export const Util = {
     formatDateWithMonthName,
     getTodayDate,
     getUserToken,
-    clearUserToken
+    clearUserToken,
+    PAGE_TITLE: apiTitle,
+    DASHBOARD_TITLE: apiTitle('Dashboard'),
+    CREATE_PROPOSAL_TITLE: apiTitle('Criar proposta'),
+    PROPOSALS_TITLE:apiTitle( 'Propostas'),
+    PROPOSAL_DETAIL_TITLE: apiTitle('Detalhes de proposta'),
+    RESEARCH_TITLE: apiTitle('Ensáios clínicos'),
+    RESEARCH_DETAIL_TITLE: apiTitle('Detalhes de ensaio')
 }

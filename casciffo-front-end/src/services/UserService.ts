@@ -16,4 +16,14 @@ export class UserService {
     register(userModel: UserModel): Promise<UserToken> {
         return httpPost(ApiUrls.userRegisterUrl, userModel)
     }
+
+    fetchUsersByName(name: string): Promise<UserModel[]> {
+        const url = ApiUrls.usersByNameUrl(name)
+        return httpGet(url)
+    }
+
+    fetchUsersLike(name: string, roles: string[]): Promise<UserModel[]> {
+        const url = ApiUrls.usersByRoleAndNameUrl(name, roles)
+        return httpGet(url)
+    }
 }

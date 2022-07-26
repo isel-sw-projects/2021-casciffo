@@ -53,7 +53,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
 
     function getCompletedButtonVariant(e: TimelineEventModel) {
         return e.completedDate == null ? "outline-primary" :
-            Util.cmp(e.completedDate, e.deadlineDate) > 0 ? "outline-warning" : "outline-success";
+            Util.cmp(e.completedDate, e.deadlineDate) > 0 ? "outline-danger" : "outline-success";
     }
 
     function mapEventsToRow() {
@@ -83,12 +83,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                 disabled={e.completedDate != null}
                 onClick={updateTimelineEvent(e)}
             >
-                {e.completedDate == null
-                    ? <BiCheck className={"d-flex"} size={25}/>
-                    : Util.cmp(e.completedDate, e.deadlineDate) > 0
-                        ? <BiCheckboxMinus className={"d-flex"} size={25}/>
-                        : <BiCheck className={"d-flex"} size={25}/>
-                }
+                <BiCheck className={"d-flex"} size={25}/>
             </Button>;
 
         const mapToRowElement = (e: TimelineEventModel) =>

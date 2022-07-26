@@ -86,34 +86,37 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
             >
                 {errorState.message}
             </Alert>
-            Equipa de investigação
+            <h5>Equipa de investigação</h5>
             <br/>
-            <br/>
-            <Form.Group>
-                <InputGroup>
-                    <AsyncAutoCompleteSearch
-                        requestUsers={(q: string) => {
-                            return props.searchInvestigators(q)
-                        }}
-                        setInvestigator={(user =>
-                            handleInvestigatorInputChange(
-                                {
-                                    ...user,
-                                    teamRole: TeamRoleTypes.MEMBER
-                                }))}
-                    />
-                    <Button
-                        className={"btn-plus"}
-                        variant="outline-secondary"
-                        id="button-addon2"
-                        onClick={addInvestigatorToTeam}
-                    >
-                        <BsPlusSquare className={"mb-1"}/>
-                    </Button>
-                </InputGroup>
-            </Form.Group>
             <br/>
             <Container>
+                <Form>
+                    <Form.Group>
+                        <Form.Label className={"font-bold"}>Procurar por investigador</Form.Label>
+                        <InputGroup>
+                            <AsyncAutoCompleteSearch
+                                requestUsers={(q: string) => {
+                                    return props.searchInvestigators(q)
+                                }}
+                                setInvestigator={(user =>
+                                    handleInvestigatorInputChange(
+                                        {
+                                            ...user,
+                                            teamRole: TeamRoleTypes.MEMBER
+                                        }))}
+                            />
+                            <Button
+                                className={"btn-plus"}
+                                variant="outline-secondary"
+                                id="button-addon2"
+                                onClick={addInvestigatorToTeam}
+                            >
+                                <BsPlusSquare className={"mb-1"}/>
+                            </Button>
+                        </InputGroup>
+                    </Form.Group>
+                </Form>
+                <br/>
                 <Card>
                     <Card.Header className={"text-center border-bottom border-2 m"} style={{backgroundColor: ''}}>
                         <b>Equipa</b>

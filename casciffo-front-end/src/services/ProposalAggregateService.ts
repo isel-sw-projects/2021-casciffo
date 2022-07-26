@@ -9,14 +9,15 @@ import {TimelineEventModel} from "../model/TimelineEventModel";
 import {ValidationCommentDTO, ValidityComment} from "../model/proposal/finance/ValidationModels";
 import {StateModel} from "../model/state/StateModel";
 import {httpGet} from "../common/Util";
+import {UserService} from "./UserService";
 
 export default class ProposalAggregateService {
     private proposalService = new ProposalService()
     private commentsService = new CommentsService()
+    private userService = new UserService()
 
     fetchInvestigators(name: string) : Promise<UserModel[]> {
-        const url = ApiUrls.usersByRoleAndNameUrl(name,["UIC", "SUPERUSER"])
-        return httpGet(url)
+        return this.userService.fetchUsersLike(name, ["UIC", "SUPERUSER"])
     }
 
     fetchConstants(): Promise<Constants> {

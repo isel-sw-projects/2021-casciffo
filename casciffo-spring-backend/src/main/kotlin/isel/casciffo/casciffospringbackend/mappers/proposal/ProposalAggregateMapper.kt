@@ -27,6 +27,7 @@ class ProposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate> {
             therapeuticAreaId = dto.therapeuticAreaId,
             pathologyId = dto.pathologyId,
             principalInvestigatorId = dto.piId,
+            researchId = dto.researchId,
             state = State(id = dto.stateId, name = dto.stateName),
             serviceType = ServiceType(id = dto.serviceId, name = dto.serviceName),
             pathology = Pathology(id = dto.pathologyId, name = dto.pathologyName),

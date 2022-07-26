@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {AsyncTypeahead, Highlighter} from 'react-bootstrap-typeahead';
 
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import {Stack} from "react-bootstrap";
+import {Button, CloseButton, Col, OverlayTrigger, Row, Stack, Tooltip} from "react-bootstrap";
 import UserModel from "../../model/user/UserModel";
 
 type UserInfo = {
@@ -29,6 +29,10 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
 
     const handleInputChange = (q: string) => {
         setQuery(q);
+        if(q.length !== 0 && q.length < 3) {
+            setShowToolTip(true)
+            setIsLoading(false)
+        }
         setSelectedUser({email: "", id: "", name: ""})
     };
 
@@ -89,41 +93,65 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
         setSelectedUser(user)
     }
 
+    const [showToolTip, setShowToolTip] = useState(false)
+
+    const toggleToolTip = () => setShowToolTip(!showToolTip)
+
     return (
-        <AsyncTypeahead
-            isInvalid={(selectedUser.id === "" && query !== "")}
-            isValid={(selectedUser.id !== "" && query === selectedUser.name && query !== "")}
-            inputProps={{required: true}}
-            id="async-autocomplete"
-            delay={200}
-            filterBy={filterBy}
-            isLoading={isLoading}
-            labelKey="name"
-            maxResults={PER_PAGE - 1}
-            minLength={3}
-            ignoreDiacritics={true}
-            onInputChange={handleInputChange}
-            onPaginate={handlePagination}
-            onSearch={handleSearch}
-            options={options}
-            paginate
-            promptText="Searching"
-            searchText="A carregar..."
-            renderMenuItemChildren={(option: any) => {
-                return (
-                    <div key={option.id} className={"border-bottom"} onClick={() => onSelectedUser(option)}>
-                        <Highlighter search={query}>
-                            {option.name}
-                        </Highlighter>
-                        <div>
-                            <small>
-                                {option.email}
-                            </small>
+        <OverlayTrigger
+            key={"search-warning"}
+            placement={"left"}
+            delay={150}
+            show={showToolTip}
+            overlay={
+                <Tooltip id={`tooltip-top`} onClick={toggleToolTip}>
+                    <Stack direction={"horizontal"}>
+                        <div style={{width:"10%"}}>
+                            <span  className={"float-start"} style={{fontSize: "1rem"}}>⚠️</span>
                         </div>
-                    </div>
-                )}}
-            useCache={false}
-        />
+                        <div style={{width:"90%"}}>
+                            <span>Introduza pelo menos 3 caracteres.</span>
+                        </div>
+                    </Stack>
+                </Tooltip>
+            }
+        >
+            <AsyncTypeahead
+                isInvalid={(selectedUser.id === "" && query !== "")}
+                isValid={(selectedUser.id !== "" && query === selectedUser.name && query !== "")}
+                inputProps={{required: true}}
+                id="async-autocomplete"
+                delay={200}
+                filterBy={filterBy}
+                isLoading={isLoading}
+                labelKey="name"
+                maxResults={PER_PAGE - 1}
+                minLength={3}
+                ignoreDiacritics={true}
+                onInputChange={handleInputChange}
+                onPaginate={handlePagination}
+                onSearch={handleSearch}
+                options={options}
+                placeholder={"Procurar por investigador"}
+                paginate
+                promptText="Searching"
+                searchText="A carregar..."
+                renderMenuItemChildren={(option: any) => {
+                    return (
+                        <div key={option.id} className={"border-bottom"} onClick={() => onSelectedUser(option)}>
+                            <Highlighter search={query}>
+                                {option.name}
+                            </Highlighter>
+                            <div>
+                                <small>
+                                    {option.email}
+                                </small>
+                            </div>
+                        </div>
+                    )}}
+                useCache={false}
+            />
+        </OverlayTrigger>
     );
 }
 

@@ -4,13 +4,16 @@ export const TeamRoleTypes = {
 }
 
 export const ResearchTypes = {
-    CLINICAL_TRIAL: {name:"Ensaios Clínicos", id:"CLINICAL_TRIAL"},
-    OBSVERTIONAL_STUDY: {name:"Estudos Observacionais", id:"OBSERVATIONAL_STUDY"}
+    CLINICAL_TRIAL: {name:"Ensaios Clínicos", id:"CLINICAL_TRIAL", singularName: "Ensaio Clínico"},
+    OBSVERTIONAL_STUDY: {name:"Estudos Observacionais", id:"OBSERVATIONAL_STUDY", singularName: "Ensaio Observacional"}
 }
 
 export const PromoterTypes = {
+    INDUSTRY: {name:"Indústria", id:"INDUSTRY"},
+    ACADEMIA: {name:"Academia", id:"ACADEMIA"},
     COMMERCIAL: {name:"Comercial (i.e Farmaceutico)", id:"COMMERCIAL"},
-    NOT_COMMERCIAL: {name:"Não Comercial (i.e Académico)", id:"NOT_COMMERCIAL"}
+    NOT_COMMERCIAL: {name:"Não Comercial (i.e Académico)", id:"NOT_COMMERCIAL"},
+    NOT_APPLICABLE: {name:"Não Aplicável", id:"NOT_APPLICABLE"}
 }
 
 export const CommentTypes = {

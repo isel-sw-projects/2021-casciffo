@@ -159,10 +159,11 @@ export function PartnershipsColumn(props: PsC_Props) {
                     ))}
                 </Form>
             }
-            {state.isNewPartnership ?
+            {state.isNewPartnership &&
                 <Form onSubmit={addNewPartnership}>
                     <Container>
                         <Card>
+                            <Card.Header>Nova Parceria {<CloseButton className={"float-end"} onClick={toggleIsNewPartnership}/> }</Card.Header>
                             <Card.Body>
                                 <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
                                     <Form.Label>Nome</Form.Label>
@@ -228,7 +229,7 @@ export function PartnershipsColumn(props: PsC_Props) {
 
                         <Button type={"submit"}>Adicionar</Button>
                     </Container>
-                </Form> : <></>
+                </Form>
             }
             <br/>
             <Container className={"align-content-center"}>

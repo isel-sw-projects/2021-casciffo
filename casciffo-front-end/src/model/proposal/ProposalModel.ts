@@ -19,6 +19,7 @@ export interface ProposalModel {
     serviceTypeId: number,
     therapeuticAreaId: number,
     principalInvestigatorId: number,
+    researchId?: string,
     state?: StateModel,
     serviceType?: ServiceTypeModel,
     therapeuticArea?: TherapeuticAreaModel,

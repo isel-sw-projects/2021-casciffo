@@ -76,6 +76,15 @@ export function ProposalFormColumn(props: PFC_Props) {
         }
         props.setFormData(updateState("promoter", p))
     }
+    function handlePromoterTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
+        const value = event.target.value
+        const key = event.target.name as keyof PromoterModel
+        const p = {
+            ...props.formData.promoter,
+            [key]: value
+        }
+        props.setFormData(updateState("promoter", p))
+    }
 
     function showErrorMessage(msg: string) {
         setErrorState({show: true, message: msg})
@@ -99,6 +108,12 @@ export function ProposalFormColumn(props: PFC_Props) {
         props.setFormData(updateState("file", file))
     }
 
+    const [isClinicalTrial, setIsClinicalTrial] = useState(false)
+
+    useEffect(() => {
+      setIsClinicalTrial(props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id)
+    }, [props.formData.researchType])
+
     return (
         <Col key={"proposal-form-col"} className="block-example border border-dark">
             <Alert
@@ -114,7 +129,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                     <h5>Proposta</h5>
                     <Form.Group className={"mb-3"} controlId={"formBasicSwitch"}>
                         <Stack direction={"horizontal"} gap={3}>
-                            <Form.Label>Parcerias</Form.Label>
+                            <Form.Label className={"font-bold"}>Parcerias</Form.Label>
                             <Form.Check
                                 key={"switch-partnerships"}
                                 type={"switch"}
@@ -125,18 +140,20 @@ export function ProposalFormColumn(props: PFC_Props) {
                         </Stack>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicInput">
-                        <Form.Label>Sigla</Form.Label>
-                        <Form.Control
-                            key={"sigla"}
-                            required
-                            type={"text"}
-                            name={"sigla"}
-                            value={props.formData.sigla}
-                            onChange={handleInputChange}
-                        />
+                        <Form.FloatingLabel className={"font-bold"} label={"Sigla"}>
+                            <Form.Control
+                                key={"sigla"}
+                                required
+                                type={"text"}
+                                name={"sigla"}
+                                placeholder={"Sigla"}
+                                value={props.formData.sigla}
+                                onChange={handleInputChange}
+                            />
+                        </Form.FloatingLabel>
                     </Form.Group>
                     <Form.Group className="mb-3" controlId="formBasicInput">
-                        <Form.Label>Investigador</Form.Label>
+                        <Form.Label className={"font-bold"}>Investigador</Form.Label>
                         <AsyncAutoCompleteSearch
                             requestUsers={(q: string) => {
                                 return props.service.fetchInvestigators(q)
@@ -150,7 +167,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                         />
                     </Form.Group>
                     <Form.Group key={"patologia-bit"}>
-                        <Form.Label>Patologia</Form.Label>
+                        <Form.Label className={"font-bold"}>Patologia</Form.Label>
                         <Form.Select
                             key={"pathology-id"}
                             required
@@ -167,7 +184,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                     </Form.Group>
                     <br/>
                     <Form.Group>
-                        <Form.Label>Tipo de serviço</Form.Label>
+                        <Form.Label className={"font-bold"}>Tipo de serviço</Form.Label>
                         <Form.Select
                             key={"service-id"}
                             required
@@ -184,7 +201,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                     </Form.Group>
                     <br/>
                     <Form.Group>
-                        <Form.Label>Área terapeutica</Form.Label>
+                        <Form.Label className={"font-bold"}>Área terapeutica</Form.Label>
                         <Form.Select
                             key={"therapeutic-area-id"}
                             required
@@ -201,6 +218,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                     </Form.Group>
                     <br/>
                     <Form.Group>
+                        <Form.Label className={"font-bold"}> Tipo de estudo</Form.Label>
                         {Object.values(ResearchTypes).map((rt, idx) => (
                             <div key={`default-radio-${idx}`} className="mb-3">
                                 <Form.Check
@@ -209,59 +227,64 @@ export function ProposalFormColumn(props: PFC_Props) {
                                     name={"researchType"}
                                     type={"radio"}
                                     value={rt.id}
-                                    label={rt.name}
+                                    label={rt.singularName}
                                     onChange={handleInputChange}
                                 />
                             </div>
                         ))}
                     </Form.Group>
 
-                    {props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id
-                        ?
+                    {isClinicalTrial
+                        &&
                         <>
                             <Form.Group>
-                                <Form.Label>Promotor</Form.Label>
-                                <Form.Control
-                                    key={"promoter-name"}
-                                    required={props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id}
-                                    type={"text"}
-                                    name={"name"}
-                                    value={props.formData.promoter.name}
-                                    onChange={handlePromoterChange}
-                                />
+                                <Form.FloatingLabel className={"font-bold"} label={"Promotor"}>
+                                    <Form.Control
+                                        key={"promoter-name"}
+                                        required={isClinicalTrial}
+                                        type={"text"}
+                                        name={"name"}
+                                        placeholder={"Promotor"}
+                                        value={props.formData.promoter.name}
+                                        onChange={handlePromoterChange}
+                                    />
+                                </Form.FloatingLabel>
                             </Form.Group>
                             <br/>
                             <Form.Group>
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control
-                                    key={"promoter-email"}
-                                    required={props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id}
-                                    type={"email"}
-                                    name={"email"}
-                                    value={props.formData.promoter.email}
-                                    onChange={handlePromoterChange}
-                                />
+                                <Form.FloatingLabel className={"font-bold"} label={"Email"}>
+                                    <Form.Control
+                                        key={"promoter-email"}
+                                        required={isClinicalTrial}
+                                        placeholder={"Email"}
+                                        type={"email"}
+                                        name={"email"}
+                                        value={props.formData.promoter.email}
+                                        onChange={handlePromoterChange}
+                                    />
+                                </Form.FloatingLabel>
                             </Form.Group>
                             <br/>
                             <Form.Group>
-                                {Object.values(PromoterTypes).map((p, idx) => (
-                                    <div key={`default-radio-${idx}`} className="mb-3">
-                                        <Form.Check
-                                            key={`promoter-type-${p.id}`}
-                                            required={props.formData.researchType === ResearchTypes["CLINICAL_TRIAL"].id}
-                                            name={"promoterType"}
-                                            type={"radio"}
-                                            id={`default-radio-${idx}`}
-                                            value={p.id}
-                                            label={p.name}
-                                            onChange={handlePromoterChange}
-                                        />
-                                    </div>
-                                ))}
+                                <Form.Label className={"font-bold"}>Tipo de promotor</Form.Label>
+                                <Form.Select
+                                    key={"therapeutic-area-id"}
+                                    required={isClinicalTrial}
+                                    aria-label="therapeutica area selection"
+                                    name={"therapeuticAreaId"}
+                                    defaultValue={""}
+                                    onChange={handlePromoterTypeChange}
+                                >
+                                    <option key={"op-invalid"} value={""} disabled>Tipo de promotor</option>
+                                    {Object.values(PromoterTypes).map((p, idx) => (
+                                        <option key={`default-radio-${idx}`} value={p.id}>
+                                            {p.name}
+                                        </option>))}
+                                </Form.Select>
                             </Form.Group>
                             <br/>
                             <Form.Group controlId="formFile" className="mb-3">
-                                <Form.Label>Contrato financeiro</Form.Label>
+                                <Form.Label className={"font-bold"}>Contrato financeiro</Form.Label>
                                 <Form.Control
                                     key={"financial-contract-file"}
                                     required={props.formData.researchType === ResearchTypes.CLINICAL_TRIAL.id}
@@ -270,7 +293,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                                     onInput={handleFileInput}
                                 />
                             </Form.Group>
-                        </> : <></>
+                        </>
                     }
                     <Button type={"submit"} className={"mb-2"}>
                         Criar proposta

@@ -5,9 +5,10 @@ import {SearchComponent} from "../components/SearchComponent";
 import {PaginationComponent} from "../components/PaginationComponent";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {Util} from "../../common/Util";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {CSVLink} from "react-csv";
 import {ResearchTypes} from "../../common/Constants";
+import {STATES} from "../../model/state/STATES";
 
 type Proposals_Props = {
     service: ProposalService
@@ -38,6 +39,11 @@ type CSVHeader = {
 }
 
 export function Proposals(props: Proposals_Props) {
+
+    useEffect(() => {
+        document.title = Util.PROPOSALS_TITLE
+    })
+
     const service = props.service
 
     const tableHeadersClinicalTrials: CSVHeader[] = [
@@ -83,7 +89,7 @@ export function Proposals(props: Proposals_Props) {
                     id: p.id!.toString(),
                     createdDate: Util.formatDate(p.createdDate!),
                     sigla: p.sigla,
-                    state: p.state!.name,
+                    state: Object.values(STATES).find( s => s.id === p.state!.name)!.name,
                     pathology: p.pathology!.name,
                     serviceType: p.serviceType!.name,
                     therapeuticArea: p.therapeuticArea!.name,
@@ -312,7 +318,6 @@ export function Proposals(props: Proposals_Props) {
             {/*    /> : <></>*/}
             {/*}*/}
 
-            <PaginationComponent/>
         </React.Fragment>
     )
 }
