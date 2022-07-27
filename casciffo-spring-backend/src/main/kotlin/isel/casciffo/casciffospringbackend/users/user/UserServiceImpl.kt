@@ -95,7 +95,7 @@ class UserServiceImpl(
         return deletedUser
     }
 
-    override suspend fun updateUserRoles(roles: List<Int>, userId: Int): BearerTokenWrapper {
+    override suspend fun updateUserRoles(roles: List<Int>, userId: Int): UserModel {
         if (roles.isEmpty()) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Roles cannot come empty!")
 
         val user = getUser(userId, true)!!
@@ -113,14 +113,14 @@ class UserServiceImpl(
                 logger.info { it }
             }.subscribe()
 
-        val token = jwtSupport.generate(user.name!!)
         val updatedRoles = roleService.findByUserId(userId).map { it.roleName!! }.collectList().awaitSingle()
-        return BearerTokenWrapper(
-            token = token.value,
-            userId = userId,
-            userName = user.name,
-            roles = updatedRoles
-        )
+        return getUser(userId, true)!!
+//        BearerTokenWrapper(
+//            token = token.value,
+//            userId = userId,
+//            userName = user.name,
+//            roles = updatedRoles
+//        )
     }
 
     override suspend fun getAllUsers(): Flow<UserModel?> {
@@ -132,6 +132,12 @@ class UserServiceImpl(
         return mapAggregateToModel(userRolesAggregateRepo.findByUserId(id))
             .awaitFirstOrNull()
             ?: throw UserNotFoundException()
+    }
+
+    override suspend fun createNewUser(model: UserModel): UserModel {
+        model.password = encoder.encode(model.password)
+        return  userRepository.save(model).awaitSingleOrNull()
+                        ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
     }
 
     @Transactional

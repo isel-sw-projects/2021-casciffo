@@ -14,10 +14,19 @@ const val ROLE_DELETE_URL = "$ROLES_URL/{roleId}"
 
 const val USERS_URL = "/users"
 const val LOGIN_URL = "$USERS_URL/login"
+
+/**
+ * Url for self-created accounts
+ */
 const val REGISTER_URL = "$USERS_URL/register"
 const val USER_DETAIL_URL = "$USERS_URL/{userId}"
 const val USER_ROLES_URL = "$USER_DETAIL_URL/roles"
 const val USER_SEARCH_URL = "$USERS_URL/search"
+
+/**
+ * Url for manually creating user accounts
+ */
+const val REGISTER_USER_SEPARATE_URL = "$USERS_URL/create"
 
 
 /*********************************** CONSTANTS *****************************************/

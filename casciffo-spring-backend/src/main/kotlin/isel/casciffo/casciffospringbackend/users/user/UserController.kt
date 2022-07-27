@@ -2,9 +2,7 @@ package isel.casciffo.casciffospringbackend.users.user
 
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
-import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtDTO
-import isel.casciffo.casciffospringbackend.security.JwtSupport
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,7 +18,7 @@ class UserController(
 
     @PostMapping(REGISTER_URL)
     @ResponseStatus(HttpStatus.CREATED)
-    suspend fun createUser(@RequestBody userDTO: UserDTO): JwtDTO {
+    suspend fun registerUser(@RequestBody userDTO: UserDTO): JwtDTO {
         val model = mapper.mapDTOtoModel(userDTO)
         val tokenWrapper = service.registerUser(model)
         return JwtDTO(tokenWrapper.token, tokenWrapper.userId, tokenWrapper.userName, tokenWrapper.roles ?: listOf())
@@ -37,9 +35,17 @@ class UserController(
     suspend fun updateUserRoles(
         @RequestBody roles: List<Int>,
         @PathVariable userId: Int
-    ): ResponseEntity<BearerTokenWrapper> {
-        val newToken = service.updateUserRoles(roles, userId)
-        return ResponseEntity.ok().body(newToken)
+    ): ResponseEntity<UserDTO> {
+        val user = service.updateUserRoles(roles, userId)
+        val dto = mapper.mapModelToDTO(user)
+        return ResponseEntity.ok().body(dto)
+    }
+
+    @PostMapping(REGISTER_USER_SEPARATE_URL)
+    suspend fun createUser(@RequestBody userDTO: UserDTO): UserDTO {
+        val model = mapper.mapDTOtoModel(userDTO)
+        val res = service.createNewUser(model)
+        return mapper.mapModelToDTO(res)
     }
 
 

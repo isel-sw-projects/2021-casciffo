@@ -20,5 +20,6 @@ interface UserService: ReactiveUserDetailsService {
     suspend fun findUserByEmail(email: String): UserModel?
 
     suspend fun deleteUser(userId: Int): UserModel
-    suspend fun updateUserRoles(roles: List<Int>, userId: Int): BearerTokenWrapper
+    suspend fun updateUserRoles(roles: List<Int>, userId: Int): UserModel
+    suspend fun createNewUser(model: UserModel): UserModel
 }
