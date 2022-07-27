@@ -23,6 +23,6 @@ class StateController(
 
     @GetMapping(STATES_CHAIN_TYPE_URL)
     suspend fun getStateChainByType(@PathVariable chainType: String): Flow<StateDTO> {
-        return stateService.findStateChainByType(StateType.valueOf(chainType.uppercase())).map(mapper::mapModelToDTO)
+        return stateService.findStateChainByType(chainType).map(mapper::mapModelToDTO)
     }
 }

@@ -80,19 +80,21 @@ const val PROPOSAL_FINANCIAL_FILE_DOWNLOAD_URL = "$PROPOSAL_URL/pfc/{pfcId}/down
 /*********************************** RESEARCH ******************************************/
 /***************************************************************************************/
 
-const val RESEARCHES_URL = "/research"
+const val RESEARCH_URL = "/research"
 
-const val RESEARCH_URL = "${RESEARCHES_URL}/{researchId}"
+const val RESEARCH_DETAIL_URL = "${RESEARCH_URL}/{researchId}"
 
-val buildGetResearchUrl = { id: Int -> "/${RESEARCHES_URL}/${id}"}
+val buildGetResearchUrl = { id: Int -> "/${RESEARCH_URL}/${id}"}
 
-const val POST_ADDENDA_URL = "${RESEARCH_URL}/addenda"
+const val POST_ADDENDA_URL = "${RESEARCH_DETAIL_URL}/addenda"
 const val GET_ADDENDA_URL = "${POST_ADDENDA_URL}/{addendaId}"
 
-const val RESEARCH_STUDIES_URL = "${RESEARCH_URL}/studies"
+const val RESEARCH_STUDIES_URL = "${RESEARCH_DETAIL_URL}/studies"
 
-const val RESEARCH_VISIT_URL = "${RESEARCH_URL}/visits"
+const val RESEARCH_VISIT_URL = "${RESEARCH_DETAIL_URL}/visits"
 
-const val RESEARCH_PARTICIPANTS = "${RESEARCH_URL}/participants"
+const val RESEARCH_PARTICIPANTS = "${RESEARCH_DETAIL_URL}/participants"
 
 const val RESEARCH_VISIT_PATIENTS = "${RESEARCH_VISIT_URL}/{patientId}"
+
+const val RESEARCH_DOSSIER_URL = "${RESEARCH_DETAIL_URL}/dossier"

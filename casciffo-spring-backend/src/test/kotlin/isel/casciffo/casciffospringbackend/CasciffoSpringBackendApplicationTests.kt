@@ -29,7 +29,7 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.research.ResearchRepository
 import isel.casciffo.casciffospringbackend.research.research.ResearchService
-import isel.casciffo.casciffospringbackend.research.patients.Participant
+import isel.casciffo.casciffospringbackend.research.patients.Patient
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantRepository
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.roles.Role
@@ -48,7 +48,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.core.io.ClassPathResource
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
@@ -276,8 +275,8 @@ class CasciffoSpringBackendApplicationTests(
     fun testResearchRepositoryCreate() {
         val researchModel = ResearchModel(
             null, 1, 1, "eudra_ct", 10, 20, "cro",
-            LocalDate.now(), null, null, "industry", "protocol",
-            "promotor", "1 | 4", ResearchType.CLINICAL_TRIAL
+            LocalDate.now(), null, null, industry = "industry", protocol =  "protocol",
+            initiativeBy = "promotor", phase = "1 | 4", type = ResearchType.CLINICAL_TRIAL
         )
         runBlocking {
             val res = researchRepository.save(researchModel).awaitSingle()
@@ -288,16 +287,16 @@ class CasciffoSpringBackendApplicationTests(
 
     @Test
     fun testServiceAddParticipantToResearch() {
-        var participant = Participant(
+        var patient = Patient(
             processId = 102,
             fullName = "manel dos testes",
             gender = "m",
             age = 50
         )
         runBlocking {
-            participant = participantService.save(participant)
-            val addedParticipant = participantService.addParticipantToResearch(participant.id!!, 1)
-            val participants = participantService.getParticipantsByResearchId(1)
+            patient = participantService.save(patient)
+            val addedParticipant = participantService.addParticipantToResearch(patient.id!!, 1)
+            val participants = participantService.findAllByResearchId(1)
             assertDoesNotThrow {
                 participants.first { it.id === addedParticipant.id }
             }

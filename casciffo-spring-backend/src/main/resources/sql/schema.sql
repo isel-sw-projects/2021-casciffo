@@ -264,6 +264,8 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     start_date DATE,
     end_date DATE,
     estimated_end_date DATE,
+    estimatedPatientPool INT,
+    actualPatientPool INT,
     industry VARCHAR,
     protocol VARCHAR,
     initiative_by VARCHAR,

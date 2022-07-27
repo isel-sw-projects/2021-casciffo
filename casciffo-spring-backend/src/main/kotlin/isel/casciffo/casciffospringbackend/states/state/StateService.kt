@@ -11,7 +11,7 @@ interface StateService {
     suspend fun getNextProposalState(pId: Int, type: StateType): State
     suspend fun findById(stateId: Int): State
     suspend fun findAll(): Flow<State>
-    suspend fun findStateChainByType(type: StateType): Flow<State>
+    suspend fun findStateChainByType(type: String): Flow<State>
 
     suspend fun findInitialStateByType(type: StateType): State
 

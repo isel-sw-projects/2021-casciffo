@@ -2,6 +2,7 @@ import {Col, Form } from "react-bootstrap"
 
 type HelperProps = {
     label: string,
+    type?: string
     value?: string,
     name?: string,
     editing?: boolean
@@ -18,7 +19,7 @@ export function FormInputHelper(props: HelperProps) {
 
             <Form.Control
                 className={"m-2"}
-                type={"input"}
+                type={props.type ?? "input"}
                 disabled={!props.editing ?? false}
                 value={props.value}
                 name={props.name}

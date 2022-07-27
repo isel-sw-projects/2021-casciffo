@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface StateTransitionService {
     suspend fun newTransition(oldStateId: Int, newStateId: Int, stateType: StateType, referenceId: Int): Boolean
-    suspend fun findAllByReferenceId(id: Int, type: StateType): Flow<StateTransition>
+    suspend fun findAllByRefId(id: Int, type: StateType): Flow<StateTransition>
 }

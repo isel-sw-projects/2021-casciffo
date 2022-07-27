@@ -347,7 +347,7 @@ class ProposalServiceImpl(
         val type = if(prop.type === ResearchType.CLINICAL_TRIAL) StateType.FINANCE_PROPOSAL
         else StateType.STUDY_PROPOSAL
 
-        prop.stateTransitions = stateTransitionService.findAllByReferenceId(prop.id!!, type)
+        prop.stateTransitions = stateTransitionService.findAllByRefId(prop.id!!, type)
 
         val page = PageRequest.of(0, 20, Sort.by("dateCreated"))
         prop.comments = commentsService.getComments(prop.id!!, page)

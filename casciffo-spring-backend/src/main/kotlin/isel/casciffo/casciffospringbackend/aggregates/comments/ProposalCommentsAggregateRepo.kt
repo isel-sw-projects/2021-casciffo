@@ -3,8 +3,10 @@ package isel.casciffo.casciffospringbackend.aggregates.comments
 import isel.casciffo.casciffospringbackend.common.CommentType
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveSortingRepository
+import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
+@Repository
 interface ProposalCommentsAggregateRepo : ReactiveSortingRepository<ProposalCommentsAggregate, Int> {
 
     @Query(

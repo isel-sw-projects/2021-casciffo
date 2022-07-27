@@ -4,7 +4,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("participant")
-data class Participant (
+data class Patient (
     @Id
     var id: Int? = null,
 

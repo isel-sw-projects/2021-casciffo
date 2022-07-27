@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface ScientificActivitiesRepository: ReactiveCrudRepository<ScientificActivities, Int> {
-    fun findAllByResearchId(researchId: Int): Flux<ScientificActivities>
+interface ScientificActivitiesRepository: ReactiveCrudRepository<ScientificActivity, Int> {
+    fun findAllByResearchId(researchId: Int): Flux<ScientificActivity>
 }

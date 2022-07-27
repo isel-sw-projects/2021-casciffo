@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.visits
 
-import isel.casciffo.casciffospringbackend.research.patients.Participant
+import isel.casciffo.casciffospringbackend.research.patients.Patient
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -36,7 +36,7 @@ data class Visit (
     val hasMarkedAttendance: Boolean?,
 
     @Transient
-    var participant: Participant?,
+    var patient: Patient?,
 
     @Transient
     var visitInvestigators: Flux<VisitInvestigators>?

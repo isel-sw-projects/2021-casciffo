@@ -3,9 +3,9 @@ package isel.casciffo.casciffospringbackend.mappers.research
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.research.ResearchDTO
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
-import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Component
-import reactor.kotlin.core.publisher.toFlux
 
 @Component
 class ResearchMapper: Mapper<ResearchModel, ResearchDTO> {
@@ -21,6 +21,8 @@ class ResearchMapper: Mapper<ResearchModel, ResearchDTO> {
             startDate = dto.startDate,
             endDate = dto.endDate,
             estimatedEndDate = dto.estimatedEndDate,
+            estimatedPatientPool = dto.estimatedPatientPool,
+            actualPatientPool = dto.actualPatientPool,
             initiativeBy = dto.initiativeBy,
             eudra_ct = dto.eudra_ct,
             phase = dto.phase,
@@ -28,8 +30,12 @@ class ResearchMapper: Mapper<ResearchModel, ResearchDTO> {
             proposalId = dto.proposalId,
             protocol = dto.protocol,
             sampleSize = dto.sampleSize,
-            participants = dto.participants?.toFlux(),
-            stateTransitions = dto.stateTransitions?.toFlux()
+            state = dto.state,
+            stateId = dto.stateId,
+            patients = dto.patients?.asFlow(),
+            stateTransitions = dto.stateTransitions?.asFlow(),
+            dossiers = dto.dossiers?.asFlow(),
+            scientificActivities = dto.scientificActivities?.asFlow()
         )
     }
 
@@ -44,6 +50,8 @@ class ResearchMapper: Mapper<ResearchModel, ResearchDTO> {
             startDate = model.startDate,
             endDate = model.endDate,
             estimatedEndDate = model.estimatedEndDate,
+            estimatedPatientPool = model.estimatedPatientPool,
+            actualPatientPool = model.actualPatientPool,
             initiativeBy = model.initiativeBy,
             eudra_ct = model.eudra_ct,
             phase = model.phase,
@@ -51,8 +59,12 @@ class ResearchMapper: Mapper<ResearchModel, ResearchDTO> {
             proposalId = model.proposalId,
             protocol = model.protocol,
             sampleSize = model.sampleSize,
-            participants = model.participants?.collectList()?.awaitSingle(),
-            stateTransitions = model.stateTransitions?.collectList()?.awaitSingle()
+            state = model.state,
+            stateId = model.stateId,
+            patients = model.patients?.toList(),
+            stateTransitions = model.stateTransitions?.toList(),
+            dossiers = model.dossiers?.toList(),
+            scientificActivities = model.scientificActivities?.toList()
         )
     }
 }

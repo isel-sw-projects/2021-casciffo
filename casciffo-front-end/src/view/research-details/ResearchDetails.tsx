@@ -29,13 +29,6 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
 
     const [research, setResearch] = useState<ResearchModel>({})
     const [stateChain, setStateChain] = useState<StateModel[]>([])
-    const [isStateTerminal, setIsStateTerminal] = useState(false)
-
-    useEffect(() => {
-        if(stateChain?.length === 0 || research.id == null) return
-
-        setIsStateTerminal(stateChain.some(sc => sc.id === research.id && sc.stateFlowType === StateFlowTypes.TERMINAL))
-    }, [research, stateChain])
 
     useEffect(() => {
         props.researchService
@@ -49,33 +42,15 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
             .then(setResearch, errorHandler)
     }, [props.researchService, researchId, errorHandler])
 
-    const onCancel = (reason: string) => {
-        //TODO call service to cancel and update research
-        console.log(reason)
-        if(reason.length === 0) {
-            alert("A razão de cancelamento tem de ser introduzida!")
-            return
-        }
-        //call service and close popup and stop isEditing
-        setShowCancelPopup(false)
-        setIsEditing(false)
-    }
-
-    const onComplete = () => {
-        //TODO call service to complete and update research
-    }
 
     const updateResearch = useCallback((data: ResearchModel) => {
-        props.researchService
-            .updateResearch(data)
-            .then(setResearch)
-    }, [props.researchService])
+        console.log("data received to update research: ", data)
+        // props.researchService
+        //     .updateResearch(data)
+        //     .then(setResearch)
+    }, [])
 
     const [selectedTab, setSelectedTab] = useState("research")
-    const [isEditing, setIsEditing] = useState(false)
-    const toggleIsEditing = () => setIsEditing(prevState => !prevState)
-
-    const [showCancelPopup, setShowCancelPopup] = useState(false)
 
     return (
         <Container>
@@ -87,47 +62,9 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
             >
                 <Tab eventKey={"research"} title={"Ensaio Clínico"}>
                     {/*TODO MAKE THE NECESSARY CALLS ON COMPLETE / CANCEL*/}
-                    <CancelPopup show={showCancelPopup}
-                                 onCloseButtonClick={() => setShowCancelPopup(false)}
-                                 onSuccessButtonClick={onCancel}/>
-                    <Row className={"border-bottom m-3 justify-content-evenly"}>
-                        <Col>
-                            <ResearchStates
-                                states={stateChain}
-                                stateTransitions={research.stateTransitions ?? []}
-                                currentStateId={research.stateId ?? ""}
-                                createdDate={research.startDate ?? ""}
-                            />
-                        </Col>
-                        <Col>
-                            {isEditing &&
-                                    <Stack direction={"vertical"}>
-                                        <Button className={"flex float-start m-2"} variant={"outline-danger"}
-                                                onClick={() => setShowCancelPopup(true)}>Cancelar Ensaio</Button>
-                                        <Button className={"flex float-start m-2"} variant={"outline-success"}
-                                                onClick={onComplete}>Concluir Ensaio</Button>
-                                    </Stack>
-                            }
-                        </Col>
-                            <Col>
-                                <Button className={"float-end m-2"}
-                                        variant={isEditing ? "outline-danger" : "outline-primary"}
-                                        onClick={toggleIsEditing}
-                                        style={{display: isStateTerminal ? "none" : "inherit"}}
-                                >
-                                    {isEditing ? "Cancelar modo editar" : "Edit"}
-                                </Button>
-                                <Button className={"float-end m-2"}
-                                        variant={"outline-success"}
-                                        style={{display: isEditing ? "inherit" : "none"}}
-                                        // onClick={up}
-                                >
-                                    Guardar alterações
-                                </Button>
-                            </Col>
-                    </Row>
+
                     <ResearchDetailsTab
-                        isEditing={isEditing}
+                        stateChain={stateChain}
                         research={research}
                         updateResearch={updateResearch}/>
 
@@ -175,53 +112,5 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
                 </Tab>
             </Tabs>
         </Container>
-    )
-}
-
-function CancelPopup(
-    props: {
-    show: boolean,
-    onCloseButtonClick: () => void,
-    onSuccessButtonClick: (reason: string) => void
-}) {
-    const [reason, setReason] = useState<string>("")
-
-    return (
-        <Modal
-            show={props.show}
-            onHide={props.onCloseButtonClick}
-            size="lg"
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter" className={"font-bold"} style={{color: "lightsalmon"}}>
-                    Cancelar Ensaio
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form>
-                    <Form.Group>
-                        <FloatingLabel label={"Razão de cancelamento"}>
-                            <Form.Control
-                                required
-                                isInvalid={reason.length === 0}
-                                onChange={(e: any) => setReason(e.target.value)}
-                                value={reason}
-                            />
-                            <Form.Control.Feedback type={"invalid"}>
-                                Tem de existir razão de cancelamento!
-                            </Form.Control.Feedback>
-                        </FloatingLabel>
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button className={"flex float-start"} onClick={props.onCloseButtonClick}
-                        variant={"outline-danger"}>Fechar</Button>
-                <Button className={"flex float-end"} onClick={() => props.onSuccessButtonClick(reason)}
-                        variant={"outline-success"}>Ok</Button>
-            </Modal.Footer>
-        </Modal>
     )
 }

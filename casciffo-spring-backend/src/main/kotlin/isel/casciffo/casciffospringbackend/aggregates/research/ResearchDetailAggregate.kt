@@ -4,7 +4,7 @@ import isel.casciffo.casciffospringbackend.common.ResearchType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDate
-
+//FIXME MIGHT MERGE WITH RESEARCH AGGREGATE SINCE RIGHT NOW ITS USELESS
 data class ResearchDetailAggregate(
     @Id
     @Column("research_id")
@@ -16,6 +16,8 @@ data class ResearchDetailAggregate(
     var startDate: LocalDate? = null,
     var endDate: LocalDate? = null,
     var estimatedEndDate: LocalDate? = null,
+    var estimatedPatientPool: Int? = null,
+    var actualPatientPool: Int? = null,
     var industry: String? = null,
     var protocol: String? = null,
     var initiativeBy: String? = null,
@@ -38,6 +40,10 @@ data class ResearchDetailAggregate(
     var pathologyId: Int? = null,
 
     //principal investigator
+    @Column("user_id")
     var principalInvestigatorId: Int? = null,
+    @Column("user_name")
     var principalInvestigatorName: String? = null,
+    @Column("user_email")
+    var principalInvestigatorEmail: String? = null
 )

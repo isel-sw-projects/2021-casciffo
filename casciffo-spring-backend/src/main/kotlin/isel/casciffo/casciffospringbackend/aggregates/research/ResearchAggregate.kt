@@ -16,6 +16,8 @@ data class ResearchAggregate(
     var startDate: LocalDate? = null,
     var endDate: LocalDate? = null,
     var estimatedEndDate: LocalDate? = null,
+    var estimatedPacientPool: Int? = null,
+    var actualPacientPool: Int? = null,
     var industry: String? = null,
     var protocol: String? = null,
     var initiativeBy: String? = null,

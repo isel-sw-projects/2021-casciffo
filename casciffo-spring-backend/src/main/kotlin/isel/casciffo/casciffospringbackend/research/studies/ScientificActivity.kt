@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
 
 @Table("scientific_activities")
-data class ScientificActivities (
+data class ScientificActivity (
     @Id
     @Column("activity_id")
     var id: Int?,

@@ -39,7 +39,7 @@ class StateTransitionServiceImpl(
         return true
     }
 
-    override suspend fun findAllByReferenceId(id: Int, type: StateType): Flow<StateTransition> {
+    override suspend fun findAllByRefId(id: Int, type: StateType): Flow<StateTransition> {
         return stateTransitionAggregateRepo
             .findAllByReferenceIdAndTransitionType(id, type)
             .asFlow()

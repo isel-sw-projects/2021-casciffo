@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Mono
 
 @Repository
-interface ParticipantRepository: ReactiveSortingRepository<Participant, Int> {
-    fun findByProcessId(processId: Int) : Mono<Participant>
+interface ParticipantRepository: ReactiveSortingRepository<Patient, Int> {
+    fun findByProcessId(processId: Int) : Mono<Patient>
 }

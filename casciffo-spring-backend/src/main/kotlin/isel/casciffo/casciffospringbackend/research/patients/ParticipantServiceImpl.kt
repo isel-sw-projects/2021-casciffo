@@ -15,7 +15,7 @@ class ParticipantServiceImpl(
     @Autowired val participantRepository: ParticipantRepository
 ): ParticipantService {
     @Transactional
-    override suspend fun addParticipantToResearch(participantId: Int, researchId: Int): Participant {
+    override suspend fun addParticipantToResearch(participantId: Int, researchId: Int): Patient {
         //todo consider if in case the Id doesnt exist in casciffo db, check in admission db
         val participant = participantRepository.findById(participantId).awaitSingleOrNull()
             ?: throw IllegalArgumentException("The patient Id doesnt exist in the db!!!")
@@ -25,18 +25,18 @@ class ParticipantServiceImpl(
         return participant
     }
 
-    override suspend fun getParticipantsByResearchId(researchId: Int): Flow<Participant> {
+    override suspend fun findAllByResearchId(researchId: Int): Flow<Patient> {
         return researchParticipantsRepository
             .findAllByResearchId(researchId)
             .flatMap { participantRepository.findById(it.participantId!!) }
             .asFlow()
     }
 
-    override suspend fun findByProcessId(pid: Int): Participant? {
+    override suspend fun findByProcessId(pid: Int): Patient? {
         return participantRepository.findByProcessId(pid).awaitSingle()
     }
 
-    override suspend fun save(participant: Participant): Participant {
-        return participantRepository.save(participant).awaitSingle()
+    override suspend fun save(patient: Patient): Patient {
+        return participantRepository.save(patient).awaitSingle()
     }
 }

@@ -81,8 +81,13 @@ class StateServiceImpl(
         return mapToState(stateAggregateRepo.findAllStateAggregate()).asFlow()
     }
 
-    override suspend fun findStateChainByType(type: StateType): Flow<State> {
-        return mapToState(stateAggregateRepo.findStateChainByType(type)).asFlow()
+    override suspend fun findStateChainByType(type: String): Flow<State> {
+        try {
+            val chainType = StateType.valueOf(type.uppercase())
+            return mapToState(stateAggregateRepo.findStateChainByType(chainType)).asFlow()
+        } catch (e: Exception) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Mal-formatted parameter type!!")
+        }
     }
 
     override suspend fun isTerminalState(stateId: Int, stateType: StateType): Boolean {

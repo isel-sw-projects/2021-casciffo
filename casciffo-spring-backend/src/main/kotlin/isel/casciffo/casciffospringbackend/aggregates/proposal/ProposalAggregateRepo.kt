@@ -3,9 +3,10 @@ package isel.casciffo.casciffospringbackend.aggregates.proposal
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-
+@Repository
 interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> {
     @Query(
         "SELECT p.*, " +
