@@ -87,8 +87,6 @@ export function ProposalDetails(props: ProposalDetailsProps) {
     const advanceState = useCallback((currentId: string, currStateName: string, nextStateId:string) => {
         props.proposalService
             .advanceState(proposalId!, nextStateId)
-            .then(log)
-            //TODO SET PROPOSAL IS FAILING HERE BECAUSE LISTS ARE NULL, PARTIAL UPDATE SHOULD SOLVE EASY
             .then(setProposal)
             .catch(handler)
     }, [handler, proposalId, props.proposalService])
@@ -130,7 +128,6 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         }
 
         props.proposalService.fetchProposalById(proposalId!)
-            .then(log)
             .then(setProposalAndGetItsType)
             .then(fetchStates)
             .then(() => setDataReady(true))
@@ -179,7 +176,6 @@ export function ProposalDetails(props: ProposalDetailsProps) {
     }
 
     const onSubmitValidation = (c: ValidationCommentDTO, validationType: string) => {
-        //todo add pfcId hardcoded for and then setProposal with partial updates from both receiving and local proposal
         props.proposalService.validate(proposalId!, proposal.financialComponent!.id!, validationType, c)
             .then(log)
             .then(value => {

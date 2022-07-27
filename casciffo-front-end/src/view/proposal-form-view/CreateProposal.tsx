@@ -121,7 +121,7 @@ export function CreateProposal(props : CP_Props) {
                 />
                 <InvestigatorTeamColumn
                     setTeam={(team => setProposalForm(updateState("team", team)))}
-                    searchInvestigators={props.service.fetchInvestigators}
+                    service={props.service}
                 />
                 {hasPartnerships ?
                     <PartnershipsColumn

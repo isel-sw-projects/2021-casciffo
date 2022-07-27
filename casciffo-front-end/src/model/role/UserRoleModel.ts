@@ -1,4 +1,4 @@
 export interface UserRoleModel {
-    id?: number,
-    name: string
+    roleId?: string,
+    roleName?: string
 }

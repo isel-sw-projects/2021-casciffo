@@ -5,6 +5,7 @@ const BASE_URL = `http://localhost:8080/api/casciffo`
 const USERS_URL = `${BASE_URL}/users`
 const USER_LOGIN_URL = `${USERS_URL}/login`
 const USER_REGISTER_URL = `${USERS_URL}/register`
+const USERS_CREATE_URL = `${USERS_URL}/create`
 const USERS_BY_ROLE_URL = (roles: string[]) => `${USERS_URL}/search?roles=${roles}`
 const USERS_BY_ROLE_AND_NAME =
     (name: string, roles: string[]) =>
@@ -14,7 +15,7 @@ const USERS_BY_NAME_URL = (name: string) => `${USERS_URL}/search?name=${name}`
 
 /************************** ROLE **************************/
 const ROLES_URL = `${BASE_URL}/roles`
-
+const USER_ROLES = (userId: string) => `${USERS_URL}/${userId}/roles`
 
 /************************** STATE **************************/
 const STATES_URL = `${BASE_URL}/states`
@@ -87,7 +88,9 @@ const ApiUrls = {
     proposalUploadCF: PROPOSAL_CF_UPLOAD,
     statesChainUrl: STATES_CHAIN_URL,
     proposalValidationUrl: PROPOSAL_VALIDATION_URL,
-    researchByTypeUrl: RESEARCH_BY_TYPE_URL
+    researchByTypeUrl: RESEARCH_BY_TYPE_URL,
+    userRolesUrl: USER_ROLES,
+    usersCreateUrl: USERS_CREATE_URL
 }
 
 export default ApiUrls

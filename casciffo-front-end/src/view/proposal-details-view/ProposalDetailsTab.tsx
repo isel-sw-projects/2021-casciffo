@@ -114,20 +114,37 @@ export function ProposalDetailsTab(props: PDT_Props) {
                         <label>Equipa</label>
                         <ListGroup className={"mb-2"} style={{overflow: "auto", maxHeight: 400}}>
                             {/*TODO eventually add a way to seperate the columns or add overflow*/}
-                            {proposal.investigationTeam!.map((team, idx) => (
-                                <ListGroup.Item
-                                    as="li"
-                                    className="d-flex justify-content-between align-items-start"
-                                    style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
-                                    key={`${team.member?.name}-${idx}`}
-                                >
-                                    <small>
-                                        <div className="ms-2 me-auto">
-                                            <div className="fw-bold">{team.member?.name}</div>
-                                            {team.member?.email}
+                            <ListGroup.Item
+                                as="li"
+                                className="d-flex justify-content-between align-items-start"
+                                style={{backgroundColor: 'white'}}
+                                key={`${proposal.principalInvestigator!.userId}-0`}
+                            >
+                                <small>
+                                    <div className="ms-2 me-auto">
+                                        <div className="fw-bold flex-column">
+                                            <span className={"float-left"}>{proposal.principalInvestigator!.name}</span>
                                         </div>
-                                    </small>
-                                </ListGroup.Item>
+                                        {proposal.principalInvestigator!.email}
+                                    </div>
+                                </small>
+                            </ListGroup.Item>
+                            {proposal.investigationTeam!
+                                .filter(it => it.memberRole === 'MEMBER')
+                                .map((team, idx) => (
+                                    <ListGroup.Item
+                                        as="li"
+                                        className="d-flex justify-content-between align-items-start"
+                                        style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
+                                        key={`${team.member?.name}-${idx}`}
+                                    >
+                                        <small>
+                                            <div className="ms-2 me-auto">
+                                                <div className="fw-bold">{team.member?.name}</div>
+                                                {team.member?.email}
+                                            </div>
+                                        </small>
+                                    </ListGroup.Item>
                             ))}
                         </ListGroup>
                     </Container>

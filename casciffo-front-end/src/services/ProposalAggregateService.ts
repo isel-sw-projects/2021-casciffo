@@ -17,6 +17,8 @@ export default class ProposalAggregateService {
     private userService = new UserService()
 
     fetchInvestigators(name: string) : Promise<UserModel[]> {
+        console.log(name)
+        console.log(this.userService)
         return this.userService.fetchUsersLike(name, ["UIC", "SUPERUSER"])
     }
 

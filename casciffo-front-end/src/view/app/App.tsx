@@ -21,13 +21,8 @@ import {useUserAuthContext} from '../context/UserAuthContext';
 import {ErrorBoundary} from "react-error-boundary";
 import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 import {Roles} from "../../model/role/Roles";
-import {Users} from "../users-view/Users";
-import {CgUser} from "react-icons/cg";
-import {AiOutlineUser} from "react-icons/ai";
-import  {BiUser}    from "react-icons/bi";
 import {FaUser}   from "react-icons/fa";
-import {FiUser}  from "react-icons/fi";
-import {HiUser} from "react-icons/hi";
+import {Users} from "../users-view/Users";
 
 function NavigationBar() {
 
@@ -61,8 +56,8 @@ function NavigationBar() {
                     {/*username not displaying, get inside a container and then magic happens probably*/}
                 <div className={"flex-column"}>
                     <Stack direction={"vertical"} className={"flex-column"}>
-                        <FaUser className={"float-end"} color={"white"} style={{position: "relative", left: 30}}/>
-                        {userToken && <span className={"float-start"} style={{color:"white"}}>Olá {userToken.userName}!</span>}
+                        <FaUser className={"float-end"} color={"#f3ffff"} style={{position: "relative", left: 30}}/>
+                        {userToken && <span className={"float-start"} style={{color:"#f3ffff"}}>Olá {userToken.userName}!</span>}
                     </Stack>
                 </div>
             </Container>
@@ -91,16 +86,16 @@ function CreateRoutes() {
             <Route path={"/propostas/:proposalId"}
                    element={RequiresAuth(<ProposalDetails proposalService={new ProposalAggregateService()}/>)}
             />
-            {/*<Route path={"/ensaios"}*/}
-            {/*    element={RequiresAuth(<Research researchService={new ResearchAggregateService()}/>)}*/}
-            {/*/>*/}
-            {/*<Route path={"/ensaios/:researchId"}*/}
-            {/*    element={RequiresAuth(<ResearchDetails researchService={new ResearchAggregateService()}/>)}*/}
-            {/*/>*/}
-            {/*<Route path={"/users"}*/}
-            {/*       element={RequiresAuth(<Users service={new UserService()}/>)}/>*/}
+            <Route path={"/ensaios"}
+                element={RequiresAuth(<Research researchService={new ResearchAggregateService()}/>)}
+            />
+            <Route path={"/ensaios/:researchId"}
+                element={RequiresAuth(<ResearchDetails researchService={new ResearchAggregateService()}/>)}
+            />
+            <Route path={"/users"}
+                   element={RequiresAuth(<Users service={new UserService()}/>)}/>
             {/*<Route path={"/users/:userId"}*/}
-            {/*       element={RequiresAuth(<Users service={new UserService()}/>)}/>*/}
+            {/*       element={RequiresAuth(<UserDetails service={new UserService()}/>)}/>*/}
 
 
         </Routes>

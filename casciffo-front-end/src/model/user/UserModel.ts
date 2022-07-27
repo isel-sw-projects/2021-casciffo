@@ -1,14 +1,11 @@
-type Roles = {
-    id: string,
-    roleName: string
-}
+import {UserRoleModel} from "../role/UserRoleModel";
 
 interface UserModel {
     userId ?: string,
     name?: string,
     email?: string,
     password?: string,
-    roles?: Roles[],
+    roles?: UserRoleModel[],
 }
 
 export default UserModel

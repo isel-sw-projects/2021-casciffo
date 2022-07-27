@@ -56,7 +56,7 @@ export function ProposalStateView(props: StateProps) {
         const states = props.states
             .map(s => ({
                 ...s,
-                displayName: Object.values(STATES).find(st => st.id === s.name)!.name
+                displayName: STATES[s.name as keyof typeof STATES].name
             }))
         setStateChain(states)
     }, [props.states])
@@ -69,26 +69,10 @@ export function ProposalStateView(props: StateProps) {
         const sort = (st1: StateTransitionModel, st2: StateTransitionModel) => Util.cmp(st1.transitionDate, st2.transitionDate, true)
         const sorted = props.stateTransitions.sort(sort)
         setStateTransitions(sorted)
-        // const lastTransitionName = props.stateTransitions.length === 0 ?
-        //     STATES.SUBMETIDO.id
-        //     :
-        //     sorted[props.stateTransitions.length-1].newState!.name;
-        // const name = Object.values(STATES).find(s => s.id === lastTransitionName)!.name
-        // setCurrentState({
-        //     stateName: lastTransitionName,
-        //     stateDisplayName: name
-        // })
     }, [props.stateTransitions])
 
 
     const advanceState = () => {
-        // const currentState = stateChain.find(sc => sc.name === currentState.stateName)!
-
-        // const nextStateId = stateTransitions.length > 0 ?
-        //     stateChain.find(s => s.id === stateTransitions[stateTransitions.length-1].newState!.id!)!.nextInChain![0].id!
-        //     :
-        //     stateChain[0].nextInChain![0].id!
-        console.log(currentState)
         if(!currentState.nextInChain || currentState.nextInChain.length < 1) {
             throw new MyError("Não existe estado próximo possível!", 400)
         }
@@ -98,6 +82,10 @@ export function ProposalStateView(props: StateProps) {
     function mapStates() {
         if(stateChain.length === 0) return <span>a carregar estados...</span>
         let state = stateChain.find(s => s.stateFlowType === StateFlowTypes.INITIAL)!
+        if(state == null) {
+            throw new MyError("The state chain doesnt have an initial state!!!!\n currentChain: " + props.states,
+                500)
+        }
         if(stateChain.find(s => s.stateFlowType === StateFlowTypes.TERMINAL) == null) {
             throw new MyError("The state chain doesnt have a terminal state!!!!\n currentChain: " + props.states,
                 500)
@@ -107,7 +95,6 @@ export function ProposalStateView(props: StateProps) {
         let variant = getVariantColor(state!, false)
         let elem =  createToggleButton(state!, {transitionDate: props.submittedDate, variant, disabled: false, active: currentState.id === state.id})
         stateComponents.push(elem)
-
         do {
             let nextStateId = state!.nextInChain![0].id
             state = stateChain.find(s => s.id === nextStateId)!
@@ -211,57 +198,3 @@ export function ProposalStateView(props: StateProps) {
         </Container>
     )
 }
-
-// function getDeadlineDateForState(stateName: string) {
-//     const event = timelineEvents?.find(e => e.stateName === stateName)
-//     if (event === undefined) {
-//         return "Limite: ---"
-//     }
-//     return "Limite: " + Util.formatDate(event!.deadlineDate!)
-// }
-//
-// function getTransitionDate(stateName: string) {
-//     const transition = stateTransitions?.find(st => st.newState?.name === stateName)
-//
-//     if (transition == null) return <span>{"---"}</span>
-//
-//     return <span>{Util.formatDate(transition!.transitionDate)}</span>
-// }
-// <ToggleButton
-//     key={`initial-state`}
-//     id={`radio-0`}
-//     type="radio"
-//     variant={selectedState === STATES.SUBMETIDO.id ? 'primary' : 'outline-primary'}
-//     name="radio"
-//     value={STATES.SUBMETIDO.id}
-//     checked={selectedState === STATES.SUBMETIDO.id}
-//     onChange={(e) => setSelectedState(e.currentTarget.value)}
-// >
-//     <Stack direction={"vertical"}>
-//         <span>{STATES.SUBMETIDO.name}</span>
-//         <span>{Util.formatDate(props.proposal.createdDate!)}</span>
-//         <br/>
-//         <span>{STATES.SUBMETIDO.owner}</span>
-//     </Stack>
-// </ToggleButton>
-// {Util.proposalStates
-//     .map((state, i) => (
-//         <ToggleButton
-//             key={`${state}-${i}`}
-//             id={`radio-${i}`}
-//             type="radio"
-//             variant={props.proposal.stateTransitions?.every(st => st.newState?.name !== state.id) ? 'outline-dark' : 'outline-primary'}
-//             name="radio"
-//             value={state.id}
-//             checked={selectedState === state.id}
-//             disabled={props.proposal.stateTransitions?.every(st => st.newState?.name !== state.id)}
-//             onChange={(e) => setSelectedState(e.currentTarget.value)}
-//         >
-//             <Stack direction={"vertical"}>
-//                 <span>{state.name}</span>
-//                 {getTransitionDate(state.id)}
-//                 <span>{getDeadlineDateForState(state.id)}</span>
-//                 <span>{state.owner}</span>
-//             </Stack>
-//         </ToggleButton>
-//     ))}

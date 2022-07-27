@@ -72,7 +72,7 @@ export function PartnershipsColumn(props: PsC_Props) {
 
     return (
         <Col className="block-example border border-dark">
-            Parcerias
+            <h5 className={"text-center m-2"}>Parcerias</h5>
             <br/>
             <br/>
 
@@ -232,10 +232,13 @@ export function PartnershipsColumn(props: PsC_Props) {
                 </Form>
             }
             <br/>
-            <Container className={"align-content-center"}>
+            <Container className={"align-content-center text-center"}>
                 <Button
                     type={"button"}
-                    className={"rounded-circle align-content-center"}
+                    variant={"outline-primary"}
+                    style={{
+                        borderRadius: "8px"
+                    }}
                     onClick={() => toggleIsNewPartnership()}
                     hidden={state.isNewPartnership}
                 >

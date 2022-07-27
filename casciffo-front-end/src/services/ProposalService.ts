@@ -112,6 +112,7 @@ class ProposalService {
     fetchStates(proposalType: string): Promise<StateModel[]> {
         const stateChainType = proposalType === ResearchTypes.CLINICAL_TRIAL.id
             ? StateChainTypes.FINANCE_PROPOSAL : StateChainTypes.STUDY_PROPOSAL
+        console.log(stateChainType)
         const url = ApiUrls.statesChainUrl(stateChainType)
         return httpGet(url);
     }

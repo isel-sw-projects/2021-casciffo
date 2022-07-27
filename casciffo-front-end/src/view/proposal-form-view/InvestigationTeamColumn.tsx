@@ -2,9 +2,9 @@ import {Alert, Badge, Button, Card, CloseButton, Col, Container, Form, InputGrou
 import React, {useState} from "react";
 import {Investigator} from "../../common/Types";
 import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
-import UserModel from "../../model/user/UserModel";
 import {BsPlusSquare} from "react-icons/bs";
 import {TeamRoleTypes} from "../../common/Constants";
+import ProposalAggregateService from "../../services/ProposalAggregateService";
 
 
 type InvestigatorTeamState = {
@@ -14,7 +14,7 @@ type InvestigatorTeamState = {
 
 type ITC_Props = {
     setTeam: (team: Array<Investigator>) => void,
-    searchInvestigators: (q: string) => Promise<UserModel[]>
+    service: ProposalAggregateService
 }
 
 export function InvestigatorTeamColumn(props: ITC_Props) {
@@ -86,7 +86,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
             >
                 {errorState.message}
             </Alert>
-            <h5>Equipa de investigação</h5>
+            <h5 className={"text-center m-2"}>Equipa de investigação</h5>
             <br/>
             <br/>
             <Container>
@@ -96,7 +96,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                         <InputGroup>
                             <AsyncAutoCompleteSearch
                                 requestUsers={(q: string) => {
-                                    return props.searchInvestigators(q)
+                                    return props.service.fetchInvestigators(q)
                                 }}
                                 setInvestigator={(user =>
                                     handleInvestigatorInputChange(

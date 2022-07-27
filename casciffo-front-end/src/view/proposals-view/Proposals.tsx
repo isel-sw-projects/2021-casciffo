@@ -89,7 +89,7 @@ export function Proposals(props: Proposals_Props) {
                     id: p.id!.toString(),
                     createdDate: Util.formatDate(p.createdDate!),
                     sigla: p.sigla,
-                    state: Object.values(STATES).find( s => s.id === p.state!.name)!.name,
+                    state: STATES[p.state!.name as keyof typeof STATES].name,
                     pathology: p.pathology!.name,
                     serviceType: p.serviceType!.name,
                     therapeuticArea: p.therapeuticArea!.name,
@@ -104,7 +104,7 @@ export function Proposals(props: Proposals_Props) {
         const resetSearchProperty = () => {
             setSearchProperty("sigla")
         }
-
+        setIsDataReady(false)
         service
             .fetchByType(researchType)
             .then(updateCheckBoxGroup)
@@ -148,15 +148,18 @@ export function Proposals(props: Proposals_Props) {
 
     function mapToRowElement(row: ProposalRow): JSX.Element {
         // const proposal = element as ProposalModel
+        const color = {
+            backgroundColor: row.selected ? "#d3fcff" : "inherit"
+        }
         return (
-            <tr key={`row-element-${row.proposal.id}`} id={`row-element-${row.proposal.id}`}>
+            <tr key={`row-element-${row.proposal.id}`} id={`row-element-${row.proposal.id}`} style={color}>
                 <td><input
                     type={"checkbox"}
                     checked={row.selected}
                     className={"form-check-input"}
                     id={`row-check-${row.proposal.id}`}
-                    onChange={selectProposalRow(row)}
-                /></td>
+                    onChange={selectProposalRow(row)}/>
+                </td>
                 <td>
                     <span>{row.proposal.id}</span>
                     <br/>
@@ -203,7 +206,7 @@ export function Proposals(props: Proposals_Props) {
                 <Col/>
                 <Col>
                     <Form.Group>
-                        <Form.Label>A visualizar</Form.Label>
+                        <Form.Label className={"font-bold"}>A visualizar</Form.Label>
                         <Form.Select
                             key={"proposal-type-id"}
                             required
@@ -225,7 +228,7 @@ export function Proposals(props: Proposals_Props) {
                 <Col aria-colspan={2}>
                     <Stack direction={"vertical"} gap={2} style={{position: "relative"}}>
                         <Form.Group>
-                            <Form.Label>Procurar por</Form.Label>
+                            <Form.Label className={"font-bold"}>Procurar por</Form.Label>
                             <Form.Select
                                 required
                                 aria-label="Default select example"
@@ -236,8 +239,8 @@ export function Proposals(props: Proposals_Props) {
                                     setSearchProperty(event.target.value as keyof ProposalRowInfo)
                                 })}
                             >
-                                <option value={"id"}>Identificador</option>
                                 <option value={"sigla"}>Sigla</option>
+                                <option value={"id"}>Identificador</option>
                                 <option value={"pathology"}>Patologias</option>
                                 <option value={"serviceType"}>Tipo de serviço</option>
                                 <option value={"therapeuticArea"}>Área terapeutica</option>
@@ -270,7 +273,7 @@ export function Proposals(props: Proposals_Props) {
                 </CSVLink>
             </Container>
             <Container>
-                <Table striped bordered hover size={"sm"}>
+                <Table striped bordered hover size={"sm"} className={"border border-2"}>
                     <thead>
                     <tr key={"headers"}>
                         <th>

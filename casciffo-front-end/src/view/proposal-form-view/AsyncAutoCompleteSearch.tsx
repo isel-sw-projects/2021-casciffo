@@ -29,8 +29,9 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
 
     const handleInputChange = (q: string) => {
         setQuery(q);
-        if(q.length !== 0 && q.length < 3) {
-            setShowToolTip(true)
+        const underMinimum = q.length !== 0 && q.length < 3
+        setShowToolTip(underMinimum)
+        if(underMinimum) {
             setIsLoading(false)
         }
         setSelectedUser({email: "", id: "", name: ""})
@@ -89,6 +90,8 @@ export function AsyncAutoCompleteSearch(props: AutoCompleteProps) {
     const filterBy = () => true;
 
     function onSelectedUser(user: UserInfo) {
+        setIsLoading(false)
+        setShowToolTip(false)
         props.setInvestigator(user)
         setSelectedUser(user)
     }
