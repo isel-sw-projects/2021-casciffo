@@ -1,0 +1,173 @@
+import {ResearchAggregateService} from "../../services/ResearchAggregateService";
+import React, {useEffect, useState} from "react";
+import {StateModel} from "../../model/state/StateModel";
+import {TimelineEventModel} from "../../model/TimelineEventModel";
+import {StateTransitionModel} from "../../model/state/StateTransitionModel";
+import {STATES} from "../../model/state/STATES";
+import {Util} from "../../common/Util";
+import {MyError} from "../error-view/MyError";
+import {StateFlowTypes} from "../../common/Constants";
+import {Button, ButtonGroup, Container, Form, OverlayTrigger, Stack, ToggleButton, Tooltip} from "react-bootstrap";
+
+
+type ResearchStatesProps = {
+    states: StateModel[],
+    stateTransitions: StateTransitionModel[],
+    currentStateId: string,
+    createdDate: string,
+    canceledReason?: string,
+}
+
+type StateWithDisplayName = {
+    id?: string
+    name?: string
+    displayName?: string
+    nextInChain?: StateModel[]
+    roles?: string[]
+    stateFlowType?: string
+}
+
+type StateRadioButtonProps = {
+    active: boolean,
+    variant: string,
+    transitionDate?: string
+}
+
+export function ResearchStates(props: ResearchStatesProps) {
+    const [stateChain, setStateChain] = useState<StateModel[]>([])
+    const [currentState, setCurrentState] = useState<StateWithDisplayName>()
+    const [stateTransitions, setStateTransitions] = useState<StateTransitionModel[]>([])
+    const [dataReady, setDataReady] = useState({
+        stateChainReady: false,
+        currentStateReady: false,
+        stateTransitionsReady: false
+    })
+    const [isDataFullyReady, setIsDataFullyReady] = useState(false)
+
+    useEffect(() => {
+        const isLoadingDone = dataReady.stateChainReady && dataReady.stateTransitionsReady && dataReady.currentStateReady
+        if (isLoadingDone) {
+            setIsDataFullyReady(true)
+        }
+    }, [dataReady])
+
+    useEffect(() => {
+        if (stateChain?.length === 0 || props.currentStateId?.length === 0) return
+        const state = stateChain.find(sc => sc.id! === props.currentStateId)!
+        const displayName = STATES[state.name as keyof typeof STATES].name
+        setCurrentState({...state, displayName: displayName})
+        setDataReady(prevState => ({...prevState, currentStateReady: true}))
+    }, [stateChain, props.currentStateId])
+
+    useEffect(() => {
+        const states = props.states
+            .map(s => ({
+                ...s,
+                displayName: STATES[s.name as keyof typeof STATES].name
+            }))
+        setStateChain(states)
+        setDataReady(prevState => ({...prevState, stateChainReady: true}))
+    }, [props.states])
+
+
+    useEffect(() => {
+        const sort = (st1: StateTransitionModel, st2: StateTransitionModel) => Util.cmp(st1.transitionDate, st2.transitionDate, true)
+        const sorted = props.stateTransitions.sort(sort)
+        setStateTransitions(sorted)
+        setDataReady(prevState => ({...prevState, stateTransitionsReady: true}))
+    }, [props.stateTransitions])
+
+
+    function mapStates() {
+        if (stateChain.length === 0) return <span>a carregar estados...</span>
+        let state = stateChain.find(s => s.stateFlowType === StateFlowTypes.INITIAL)!
+        if (state == null) {
+            throw new MyError("The state chain doesnt have an initial state!!!!\n currentChain: " + props.states,
+                500)
+        }
+        if (stateChain.find(s => s.stateFlowType === StateFlowTypes.TERMINAL) == null) {
+            throw new MyError("The state chain doesnt have a terminal state!!!!\n currentChain: " + props.states,
+                500)
+        }
+        const stateComponents: JSX.Element[] = []
+
+        let variant = getVariantColor(state!, false)
+        let elem = createRadioButton(state!, {
+            variant,
+            active: currentState!.id === state.id
+        })
+        stateComponents.push(elem)
+        do {
+            let nextStateId = state!.nextInChain![0].id
+            state = stateChain.find(s => s.id === nextStateId)!
+            let tprops = getRadioButtonProps(state!)
+            elem = createRadioButton(state!, tprops)
+            stateComponents.push(elem)
+        } while (state!.stateFlowType !== StateFlowTypes.TERMINAL);
+
+        return stateComponents
+    }
+
+    function getRadioButtonProps(state: StateWithDisplayName): StateRadioButtonProps {
+        const isDisabled = getIsDisabled(state!)
+        return {
+            active: currentState!.id === state.id,
+            variant: getVariantColor(state!, isDisabled)
+        }
+    }
+
+    function getIsDisabled(state: StateWithDisplayName): boolean {
+        return stateTransitions.length === 0 || stateTransitions.every(st => st.newStateId !== state.id)
+    }
+
+    function getVariantColor(state: StateWithDisplayName, disabled: boolean = false): string {
+        return currentState!.displayName === state.name ? 'primary'
+            : disabled ? 'outline-dark' : 'outline-primary'
+    }
+
+    function getTransitionDate(state: StateWithDisplayName) {
+        const transition = stateTransitions.find(st => st.newStateId === state.id)
+
+        if (transition == null) return ""
+
+        return Util.formatDate(transition!.transitionDate)
+    }
+
+
+    function createRadioButton(
+        state: StateWithDisplayName,
+        tprops: StateRadioButtonProps
+    ) {
+        return <Form.Group key={`form-group-state-${state.id}`}>
+            <Stack direction={"horizontal"} gap={2}>
+                <Form.Check
+                    key={`radio-${state.id}`}
+                    type="radio"
+                    name={`radio-${state.id}`}
+                    className={""}
+                    value={state.name!}
+                    disabled
+                    checked={tprops.active}
+                />
+                <Form.Label className={"mt-2"}><span className={"font-bold"}>{state.displayName}</span></Form.Label>
+            </Stack>
+        </Form.Group>
+    }
+
+    return <div className={"float-start"} style={{width:"30%"}}>
+        {
+            isDataFullyReady ?
+                <div>
+                    <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
+                    <br/>
+                    <Form>
+                        {mapStates()}
+                    </Form>
+                </div>
+                :
+                <div>
+                    A carregar...
+                </div>
+        }
+    </div>
+}

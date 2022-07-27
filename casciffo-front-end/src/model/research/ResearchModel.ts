@@ -1,9 +1,10 @@
 import {ProposalModel} from "../proposal/ProposalModel";
-import UserModel from "../user/UserModel";
+import {StateTransitionModel} from "../state/StateTransitionModel";
+import {StateModel} from "../state/StateModel";
+
 
 export interface ResearchModel {
     id?: string
-    stateId?: string
     eudra_ct?: string
     sampleSize?: string
     duration?: string
@@ -11,13 +12,21 @@ export interface ResearchModel {
     startDate?: string
     endDate?: string
     estimatedEndDate?: string
+    estimatedPatientPool?: string,
+    actualPatientPool?: string,
     industry?: string
     protocol?: string
     initiativeBy?: string
     phase?: string
     type?: string
+    stateId?: string
+    state?: StateModel
     proposalId?: string
     proposal?: ProposalModel
+    stateTransitions?: StateTransitionModel[]
+    dossiers?: Dossier[]
+    patients?: Patient[]
+    scientificActivities?: ScientificActivity[]
 }
 
 export interface ResearchAggregateModel {
@@ -48,4 +57,14 @@ export interface ResearchAggregateModel {
     principalInvestigatorName?: string
     principalInvestigatorEmail?: string
     promoterName?: string
+}
+
+export interface Dossier {
+
+}
+
+export interface Patient {
+}
+
+export interface ScientificActivity {
 }

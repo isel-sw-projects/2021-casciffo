@@ -51,7 +51,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                 cell: info => <div>
                     <span>{info.getValue()}</span>
                     <br/>
-                    <Link to={`/${info.getValue()}`}>Ver Detalhes</Link>
+                    <Link to={`${info.getValue()}`}>Ver Detalhes</Link>
                 </div>,
                 header: () => <span>Id</span>,
                 footer: props => props.column.id,
@@ -108,7 +108,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
 
 
     return (
-        <Container className={"m-2"}>
+        <Container>
             <Container>
                 <Form>
                     <Form.Group>

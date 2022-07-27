@@ -201,7 +201,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                     id="controlled-tab-example"
                     activeKey={selectedTab}
                     onSelect={tab => setSelectedTab(tab!)}
-                    className="mb-3"
+                    className="mb-3 justify-content-evenly"
                 >
                     <Tab eventKey="proposal" title="Proposta">
                         {isStatesReady && isDataReady && <ProposalStateView

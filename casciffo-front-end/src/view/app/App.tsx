@@ -2,7 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../assets/css/main/app.css";
 import "../../assets/css/shared/iconly.css";
-import {Container, Nav, Navbar, Stack} from 'react-bootstrap';
+import {Container, Nav, Navbar, NavDropdown, Stack} from 'react-bootstrap';
 import {BrowserRouter as Router, Link, Route, Routes, useLocation} from "react-router-dom";
 import {CreateProposal} from '../proposal-form-view/CreateProposal'
 import {Proposals} from '../proposals-view/Proposals';
@@ -15,7 +15,6 @@ import {Login} from "../login-view/Login";
 import {UserService} from "../../services/UserService";
 import {Research} from "../researches-view/Research";
 import {ResearchAggregateService} from "../../services/ResearchAggregateService";
-import {ResearchDetails} from "../researches-view/ResearchDetails";
 import {Logout} from "../login-view/Logout";
 import {useUserAuthContext} from '../context/UserAuthContext';
 import {ErrorBoundary} from "react-error-boundary";
@@ -23,6 +22,7 @@ import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 import {Roles} from "../../model/role/Roles";
 import {FaUser}   from "react-icons/fa";
 import {Users} from "../users-view/Users";
+import {ResearchDetails} from "../research-details/ResearchDetails";
 
 function NavigationBar() {
 
@@ -30,41 +30,42 @@ function NavigationBar() {
 
     const logout = () => setUserToken(null)
     return (
-        <Navbar className={"ml-auto flex-fill"} bg="primary" variant="dark">
-            <Container>
-                <Navbar.Collapse>
-                    <Navbar.Brand as={Link} to={"/"}>Casciffo</Navbar.Brand>
-                    <Nav className="me-auto">
-                        <Nav.Link as={Link} to={"/"}>Dashboard</Nav.Link>
-                            {userToken != null ?
-                                <Nav.Link as={Link} to={"/logout"} onClick={logout}>Logout</Nav.Link>
-                                :
-                                <Nav.Link as={Link} to={"/login"}>Login</Nav.Link>
-                            }
-                        <Nav.Link as={Link} to={"/propostas"}>Propostas</Nav.Link>
-                        <Nav.Link as={Link} to={"/ensaios"}>Ensaios Clínicos</Nav.Link>
-                        {
-                            userToken && userToken.roles.find(r => r === Roles.SUPERUSER.id) &&
-                            <Nav.Link as={Link} to={"/users"}>Utilizadores</Nav.Link>
+        //FIXME BACKGROUND ON MOBILE IS TRANSPARENT FOR GOD KNOWS WHAT REASON
+        <Navbar collapseOnSelect className={"ml-auto flex-fill"} bg="primary" variant="dark" expand="lg">
+            <Navbar.Toggle  title={"Menu"}/>
+            <Navbar.Collapse>
+                <Navbar.Brand as={Link} to={"/"}>Casciffo</Navbar.Brand>
+                <Nav className="me-auto">
+                    <Nav.Item>
+                        <Nav.Link eventKey="1" as={Link} to={"/"}>Dashboard</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        {userToken != null ?
+                            <Nav.Link eventKey="2" as={Link} to={"/logout"} onClick={logout}>Logout</Nav.Link>
+                            :
+                            <Nav.Link eventKey="3" as={Link} to={"/login"}>Login</Nav.Link>
                         }
-                        {/*add div with user icon and Olá {userToken.name}*/}
-                        {/*{userToken &&*/}
-                        {/*    <Nav.Link className={"float-end"} as={Link} to={`/user/${userToken.userId}`}>{userToken.userName}</Nav.Link>*/}
-                        {/*}*/}
-                    </Nav>
-                </Navbar.Collapse>
-                    {/*username not displaying, get inside a container and then magic happens probably*/}
-                <div className={"flex-column"}>
-                    <Stack direction={"vertical"} className={"flex-column"}>
-                        <FaUser className={"float-end"} color={"#f3ffff"} style={{position: "relative", left: 30}}/>
-                        {userToken && <span className={"float-start"} style={{color:"#f3ffff"}}>Olá {userToken.userName}!</span>}
-                    </Stack>
-                </div>
-            </Container>
-            {/*<Container className={"float-end"}>*/}
-            {/*    */}
-            {/*    {userToken && <span>Olá {userToken.userName}!</span>}*/}
-            {/*</Container>*/}
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link eventKey="4" as={Link} to={"/propostas"}>Propostas</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link eventKey="5" as={Link} to={"/ensaios"}>Ensaios Clínicos</Nav.Link>
+                    </Nav.Item>
+                    {
+                        userToken && userToken.roles.find(r => r === Roles.SUPERUSER.id) &&
+                        <Nav.Item>
+                            <Nav.Link eventKey="6" as={Link} to={"/users"}>Utilizadores</Nav.Link>
+                        </Nav.Item>
+                    }
+                </Nav>
+            </Navbar.Collapse>
+            <div className={"flex-column"}>
+                <Stack direction={"vertical"} className={"flex-column"}>
+                    <FaUser className={"float-end"} color={"#f3ffff"} style={{position: "relative", left: 30}}/>
+                    {userToken && <span className={"float-start"} style={{color:"#f3ffff"}}>Olá {userToken.userName}!</span>}
+                </Stack>
+            </div>
         </Navbar>
     );
 }
@@ -86,12 +87,15 @@ function CreateRoutes() {
             <Route path={"/propostas/:proposalId"}
                    element={RequiresAuth(<ProposalDetails proposalService={new ProposalAggregateService()}/>)}
             />
+
             <Route path={"/ensaios"}
                 element={RequiresAuth(<Research researchService={new ResearchAggregateService()}/>)}
             />
+
             <Route path={"/ensaios/:researchId"}
                 element={RequiresAuth(<ResearchDetails researchService={new ResearchAggregateService()}/>)}
             />
+
             <Route path={"/users"}
                    element={RequiresAuth(<Users service={new UserService()}/>)}/>
             {/*<Route path={"/users/:userId"}*/}

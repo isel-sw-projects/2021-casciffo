@@ -26,11 +26,6 @@ type StateToggleButtonProps = {
     deadlineDate?: string
 }
 
-type SelectedState = {
-    stateName: string,
-    stateDisplayName: string
-}
-
 type StateWithDisplayName = {
     id?: string
     name?: string

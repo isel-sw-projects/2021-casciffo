@@ -59,7 +59,9 @@ export function register(config?: Config) {
 
 function registerValidSW(swUrl: string, config?: Config) {
   navigator.serviceWorker
-    .register(swUrl)
+      //updateViaCache: "none" ensures that the HTTP cache is never consulted when checking for updates
+      // allowing to always get most recent version
+    .register(swUrl, {updateViaCache: "none"})
     .then((registration) => {
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;

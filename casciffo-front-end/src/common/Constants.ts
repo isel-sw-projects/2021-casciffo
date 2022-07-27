@@ -37,7 +37,7 @@ export const DepartmentTypes = {
 export const StateChainTypes = {
     FINANCE_PROPOSAL: "FINANCE_PROPOSAL",
     STUDY_PROPOSAL: "STUDY_PROPOSAL",
-    ENSAIO: "ENSAIO",
+    RESEARCH: "RESEARCH",
     ADDENDA: "ADDENDA",
     ALL: "ALL",
 }

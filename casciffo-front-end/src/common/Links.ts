@@ -20,6 +20,7 @@ const USER_ROLES = (userId: string) => `${USERS_URL}/${userId}/roles`
 /************************** STATE **************************/
 const STATES_URL = `${BASE_URL}/states`
 const STATES_CHAIN_URL = (type: string) => `${STATES_URL}/${type}`
+// const STATES_CHAIN_BY_RESEARCH_ID = (researchId: string) => `${STATES_CHAIN_URL}`
 
 /************************** PROPOSAL **************************/
 const PROPOSALS_URL =  `${BASE_URL}/proposals`
@@ -58,7 +59,6 @@ const RESEARCH_BY_TYPE_URL = (type: string) => `${RESEARCH_URL}?type=${type}`
 const DETAIL_RESEARCH_URL = (id: string) => `${RESEARCH_URL}/${id}`
 
 
-
 const ApiUrls = {
     baseUrl: BASE_URL,
     proposalsUrl: PROPOSALS_URL,
@@ -67,7 +67,7 @@ const ApiUrls = {
     commentsUrl: COMMENTS_URL,
     commentsByTypeUrl: COMMENTS_BY_TYPE_URL,
     researchUrl: RESEARCH_URL,
-    buildDetailResearchUrl: DETAIL_RESEARCH_URL,
+    researchDetailUrl: DETAIL_RESEARCH_URL,
     usersUrl: USERS_URL,
     userLoginUrl: USER_LOGIN_URL,
     userRegisterUrl: USER_REGISTER_URL,
@@ -90,7 +90,8 @@ const ApiUrls = {
     proposalValidationUrl: PROPOSAL_VALIDATION_URL,
     researchByTypeUrl: RESEARCH_BY_TYPE_URL,
     userRolesUrl: USER_ROLES,
-    usersCreateUrl: USERS_CREATE_URL
+    usersCreateUrl: USERS_CREATE_URL,
+    // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID
 }
 
 export default ApiUrls
