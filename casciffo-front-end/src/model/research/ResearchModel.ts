@@ -60,11 +60,31 @@ export interface ResearchAggregateModel {
 }
 
 export interface Dossier {
-
+    id?: string
+    clinicalResearchId?: string
+    volume?: string
+    label?: string
+    amount?: number
 }
 
 export interface Patient {
+    id?: string
+    processId?: string
+    fullName?: string
+    gender?: string
+    age?: string
 }
 
 export interface ScientificActivity {
+    id?: string
+    researchId?: string
+    datePublished?: string
+    author?: string
+    paperName?: string
+    volume?: string
+    volumeNumber?: string
+    paperNumPages?: string
+    countryPublished?: string
+    hasBeenIndexed?: string
+    publishedUrl?: string
 }

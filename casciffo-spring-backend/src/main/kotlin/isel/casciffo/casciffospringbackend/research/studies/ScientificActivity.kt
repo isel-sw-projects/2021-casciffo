@@ -10,24 +10,14 @@ data class ScientificActivity (
     @Id
     @Column("activity_id")
     var id: Int?,
-
     var researchId: Int?,
-
     var datePublished: LocalDate?,
-
     var author: String?,
-
     var paperName: String?,
-
     var volume: String?,
-
     var volumeNumber: Int?,
-
     var paperNumPages: Int?,
-
     var countryPublished: String?,
-
     var hasBeenIndexed: Boolean?,
-
     var publishedUrl: String?
 )

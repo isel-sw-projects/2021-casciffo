@@ -25,9 +25,10 @@ export function ProposalDetailsTab(props: PDT_Props) {
     const navigateToResearch = () => {
         if(proposal!.researchId == null)
             throw new MyError("Research Id cannot be null here!", 400)
-        navigate(`/research/${proposal!.researchId}`)
+        navigate(`/ensaios/${proposal!.researchId}`)
     }
 
+    //TODO TEST THIS PAGE
     return <React.Fragment>
         <Container className={"border border-top-0"}>
             {isDataReady && proposal ?
@@ -153,8 +154,8 @@ export function ProposalDetailsTab(props: PDT_Props) {
             }
         </Container>
         {proposal && proposal.researchId
-            && <Button className={"mt-5 mt-md-5"} onClick={navigateToResearch}
-                       variant={"outline-success"} style={{borderRadius: "8px", width:"100%"}}>
+            && <Button className={"mt-5 mt-md-5 mb-5 mb-md-5"} onClick={navigateToResearch}
+                       variant={"outline-primary"} style={{borderRadius: "8px", width:"100%"}}>
                 {proposal.type === ResearchTypes.CLINICAL_TRIAL.id
                     ? "Ir para ensaio clínico"
                     : "Ir para ensaio observacional"
