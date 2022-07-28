@@ -1,16 +1,18 @@
-package isel.casciffo.casciffospringbackend.research.visits
+package isel.casciffo.casciffospringbackend.research.visits.visits
 
 import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_PATIENTS
 import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_URL
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class VisitController(
-    @Autowired val visitService: VisitService
+    @Autowired val visitService: VisitService,
+//    @Autowired val
 ) {
 
     @GetMapping(RESEARCH_VISIT_URL)
@@ -18,15 +20,16 @@ class VisitController(
         return visitService.getVisitsForResearch(researchId)
     }
 
-    @PostMapping(RESEARCH_VISIT_URL)
-    suspend fun scheduleVisit(@RequestParam researchId: Int, @RequestBody visit: Visit) : Visit {
-        visit.researchId = researchId
-        try {
-            return visitService.createVisit(visit)
-        } catch (e: IllegalArgumentException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
-        }
-    }
+//    @PostMapping(RESEARCH_VISIT_URL)
+//    suspend fun scheduleVisits(@RequestParam researchId: Int, @RequestBody visit: Visit) : Visit {
+//        visit.researchId = researchId
+//        try {
+//            return visitService.createVisit(visit)
+//        } catch (e: IllegalArgumentException) {
+//            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
+//        }
+//    }
+
 
     @GetMapping(RESEARCH_VISIT_PATIENTS)
     suspend fun getVisitsForPatient(@RequestParam researchId: Int, @RequestParam patientId: Int) : Flow<Visit> {

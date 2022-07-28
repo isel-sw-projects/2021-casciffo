@@ -20,7 +20,7 @@ class ParticipantServiceImpl(
         val participant = participantRepository.findById(participantId).awaitSingleOrNull()
             ?: throw IllegalArgumentException("The patient Id doesnt exist in the db!!!")
 
-        val researchParticipant = ResearchParticipants(null, participantId, researchId, LocalDateTime.now())
+        val researchParticipant = ResearchPatients(null, participantId, researchId, LocalDateTime.now())
         researchParticipantsRepository.save(researchParticipant).awaitSingle()
         return participant
     }
@@ -28,7 +28,7 @@ class ParticipantServiceImpl(
     override suspend fun findAllByResearchId(researchId: Int): Flow<Patient> {
         return researchParticipantsRepository
             .findAllByResearchId(researchId)
-            .flatMap { participantRepository.findById(it.participantId!!) }
+            .flatMap { participantRepository.findById(it.patientId!!) }
             .asFlow()
     }
 

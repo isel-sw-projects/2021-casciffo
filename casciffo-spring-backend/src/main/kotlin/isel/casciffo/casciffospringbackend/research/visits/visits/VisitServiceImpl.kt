@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.research.visits
+package isel.casciffo.casciffospringbackend.research.visits.visits
 
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsRepository
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsService
@@ -15,14 +15,15 @@ import org.springframework.transaction.annotation.Transactional
 class VisitServiceImpl(
     @Autowired val visitRepository: VisitRepository,
     @Autowired val visitInvestigatorsRepository: VisitInvestigatorsRepository,
-    @Autowired val visitInvestigatorsService: VisitInvestigatorsService
+    @Autowired val visitInvestigatorsService: VisitInvestigatorsService,
 ) : VisitService {
 
+    //todo this method needs rework, visit needs to be created first so it can pass their id to the visitInvestigators
     @Transactional
     override suspend fun createVisit(visit: Visit): Visit {
         if(visit.visitInvestigators == null) throw IllegalArgumentException("A visit must have assigned investigators!!!")
         if(visit.participantId == null) throw IllegalArgumentException("Participant Id must not be null!!!")
-        visitInvestigatorsRepository.saveAll(visit.visitInvestigators!!)
+        visitInvestigatorsRepository.saveAll(visit.visitInvestigators!!.asFlux()).subscribe()
 
         return visitRepository.save(visit).awaitSingle()
     }
@@ -30,7 +31,7 @@ class VisitServiceImpl(
     @Transactional
     override suspend fun updateVisit(visit: Visit): Visit {
         if(visit.visitInvestigators == null) throw IllegalArgumentException("A visit must have assigned investigators!")
-        visitInvestigatorsRepository.saveAll(visit.visitInvestigators!!)
+        visitInvestigatorsRepository.saveAll(visit.visitInvestigators!!.asFlux()).subscribe()
         return visitRepository.save(visit).awaitSingle()
     }
 
@@ -42,10 +43,14 @@ class VisitServiceImpl(
         return visitRepository.findAllByResearchId(researchId).asFlow().map(this::loadAssignedInvestigators)
     }
 
+    override suspend fun scheduleVisits(researchId: Int, patientId: Int, visits: List<Visit>): Flow<Visit> {
+        TODO("Not yet implemented")
+    }
+
     suspend fun loadAssignedInvestigators(visit: Visit): Visit {
         visit.visitInvestigators =
             visitInvestigatorsService
-                .findAllByVisitId(visit.id!!).asFlux()
+                .findAllByVisitId(visit.id!!)
 
         return visit
     }

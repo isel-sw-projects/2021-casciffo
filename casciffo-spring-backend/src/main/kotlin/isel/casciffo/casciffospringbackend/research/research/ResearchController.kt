@@ -6,8 +6,11 @@ import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
+import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -26,12 +29,14 @@ class ResearchController(
         return mapper.mapModelToDTO(researchService.getResearch(researchId))
     }
 
-    @PatchMapping(RESEARCH_DETAIL_URL)
+    @PutMapping(RESEARCH_DETAIL_URL)
     suspend fun updateResearch(@RequestBody researchDTO: ResearchDTO, @PathVariable researchId: Int) : ResearchDTO {
         val mappedModel = mapper.mapDTOtoModel(researchDTO)
         val model = researchService.updateResearch(mappedModel)
         return mapper.mapModelToDTO(model)
     }
+
+
 
     @PostMapping(RESEARCH_URL)
     suspend fun createResearch(@RequestBody researchDTO: ResearchDTO) : ResearchDTO {
@@ -40,7 +45,17 @@ class ResearchController(
         return mapper.mapModelToDTO(model)
     }
 
-    @PostMapping(RESEARCH_PARTICIPANTS)
+
+    @PostMapping(RESEARCH_VISIT_URL)
+    suspend fun addPatientAndScheduleVisits(
+        @PathVariable researchId: Int,
+        @RequestBody visitDTO: VisitDTO
+    ): ResponseEntity<VisitDTO> {
+        val result = researchService.addPatientWithVisits(researchId, visitDTO)
+        return ResponseEntity.status(HttpStatus.CREATED).body(result)
+    }
+
+    @PostMapping(RESEARCH_PATIENTS)
     suspend fun addParticipant(
         @PathVariable researchId: Int,
         @RequestParam participantId: Int

@@ -57,6 +57,25 @@ function formatDateWithMonthName(date: string) {
     return dateWithMonth.join('-')
 }
 
+function yearRatioDiff(firstDate: string | undefined | null, secondDate: string | undefined | null) {
+    const months = monthDiff(firstDate, secondDate) / 12
+    return Math.round((months + Number.EPSILON) * 100) / 100
+}
+
+function monthDiff(firstDate: string | undefined | null, secondDate: string | undefined | null) {
+    if(firstDate == null && secondDate == null) return 0;
+    if(firstDate == null && secondDate != null) return 0;
+    if(firstDate != null && secondDate == null) return 0;
+    let d1 = new Date(firstDate!)
+    let d2 = new Date(secondDate!)
+
+    let months;
+    months = (d2.getFullYear() - d1.getFullYear()) * 12;
+    months -= d1.getMonth();
+    months += d2.getMonth();
+    return Math.abs(months);
+}
+
 /**
  * Compares two dates in ISO format
  * @param firstDate First date in ISO format.
@@ -178,6 +197,8 @@ export const Util = {
     formatDate,
     proposalStates: Object.values(STATES).filter(s => s.code > STATES.SUBMETIDO.code && s.code <= STATES.VALIDADO.code),
     cmp,
+    monthDiff,
+    yearRatioDiff,
     formatDateWithMonthName,
     getTodayDate,
     getUserToken,

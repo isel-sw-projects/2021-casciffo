@@ -1,17 +1,19 @@
-import {Button, Col, Container, FloatingLabel, Form, ListGroup, Row, Stack, Table} from "react-bootstrap";
-import {Dossier, ResearchModel} from "../../model/research/ResearchModel";
+import {Button, Col, Container, FloatingLabel, Form, Row, Stack, Table} from "react-bootstrap";
+import {DossierModel, ResearchModel} from "../../model/research/ResearchModel";
 import React, {useCallback, useEffect, useState} from "react";
 import {FormInputHelper} from "./FormInputHelper";
 import {ResearchStates} from "./ResearchStates";
 import Modal from "react-bootstrap/Modal";
-import {StateFlowTypes} from "../../common/Constants";
+import {ResearchTypes, StateFlowTypes} from "../../common/Constants";
 import {StateModel} from "../../model/state/StateModel";
 import {useNavigate} from "react-router-dom";
+import {Util} from "../../common/Util";
 
 type RDT_Props = {
     research: ResearchModel
     stateChain: StateModel[]
     updateResearch: (data: ResearchModel) => void
+    addDossier: (d: DossierModel) => void
 }
 
 export function ResearchDetailsTab(props: RDT_Props) {
@@ -47,6 +49,7 @@ export function ResearchDetailsTab(props: RDT_Props) {
     const updateResearch = (e: any) => {
         const key: keyof ResearchModel = e.target.name
         const value: unknown = e.target.value
+        console.log(key, value)
         setResearch(updateState(key, value))
     }
 
@@ -55,7 +58,18 @@ export function ResearchDetailsTab(props: RDT_Props) {
 
     const [showCancelPopup, setShowCancelPopup] = useState(false)
 
-    const onCancel = (reason: string) => {
+    const saveChanges = () => {
+        props.updateResearch(research)
+        setIsEditing(false)
+    }
+
+    const cancelChanges = () => {
+        console.log(previousResearch)
+        setResearch(previousResearch)
+        setIsEditing(false)
+    }
+
+    const onCancelResearch = (reason: string) => {
         console.log(reason)
         if(reason.length === 0) {
             alert("A razão de cancelamento tem de ser introduzida!")
@@ -63,26 +77,15 @@ export function ResearchDetailsTab(props: RDT_Props) {
         }
         //TODO call service to cancel and set updated research
 
-
         // close popup and stop isEditing
         setShowCancelPopup(false)
         setIsEditing(false)
     }
 
-    const saveChanges = () => {
-        props.updateResearch(research)
-        setIsEditing(false)
-    }
-
-    const cancelChanges = () => {
-        setResearch(previousResearch)
-        setIsEditing(false)
-    }
-
-    const onComplete = () => {
+    const onConcludeResearch = () => {
         //TODO call service to complete and update research
     }
-    
+
     const navigate = useNavigate()
     const navigateToProposal = useCallback(() => {
         navigate(`/propostas/${research.proposalId!}`)
@@ -91,7 +94,7 @@ export function ResearchDetailsTab(props: RDT_Props) {
     return <Container>
         <CancelPopup show={showCancelPopup}
                      onCloseButtonClick={() => setShowCancelPopup(false)}
-                     onSuccessButtonClick={onCancel}/>
+                     onSuccessButtonClick={onCancelResearch}/>
         <Row className={"border-bottom m-3 justify-content-evenly"}>
             <Col>
                 <ResearchStates
@@ -107,12 +110,12 @@ export function ResearchDetailsTab(props: RDT_Props) {
                         <Button className={"flex float-start m-2"} variant={"outline-danger"}
                                 onClick={() => setShowCancelPopup(true)}>Cancelar Ensaio</Button>
                         <Button className={"flex float-start m-2"} variant={"outline-success"}
-                                onClick={onComplete}>Concluir Ensaio</Button>
+                                onClick={onConcludeResearch}>Concluir Ensaio</Button>
                     </Stack>
                 }
             </Col>
             <Col>
-                {/*TODO EVENTUALLY ADD TOOLTIP SAYING CANT EDIT TERMINAL STATE CBA RN SRY*/}
+                {/*TODO EVENTUALLY ADD TOOLTIP SAYING CANT EDIT TERMINAL STATE CBA RN SRY np*/}
                 <Button className={"float-end m-2"}
                         variant={isEditing ? "outline-danger" : "outline-primary"}
                         onClick={isEditing ? cancelChanges : toggleIsEditing}
@@ -137,6 +140,7 @@ export function ResearchDetailsTab(props: RDT_Props) {
                         <FormInputHelper
                             label={"Data início"}
                             type={"date"}
+                            name={"startDate"}
                             value={research.startDate}
                             editing={isEditing}
                             onChange={updateResearch}
@@ -144,19 +148,74 @@ export function ResearchDetailsTab(props: RDT_Props) {
                         <FormInputHelper
                             label={"Data prevista de conclusão"}
                             type={"date"}
+                            name={"estimatedEndDate"}
                             value={research.estimatedEndDate}
                             editing={isEditing}
                             onChange={updateResearch}
                         />
                         <FormInputHelper
+                            label={"Duração prevista (anos)"}
+                            type={"text"}
+                            value={""+Util.yearRatioDiff(research.startDate, research.estimatedEndDate)}
+                        />
+                        <FormInputHelper
+                            label={"Duração prevista (meses)"}
+                            type={"text"}
+                            value={""+Util.monthDiff(research.startDate, research.estimatedEndDate)}
+                        />
+                    </Row>
+                    <Row>
+                        <FormInputHelper
+                            label={"Tipo de ensaio"}
+                            value={ResearchTypes[research.type as keyof typeof ResearchTypes].singularName}
+                        />
+                        <FormInputHelper
+                            label={"Específicação"}
+                            value={research.specification}
+                            name={"specification"}
+                            editing={isEditing}
+                            onChange={updateResearch}
+                        />
+                        <FormInputHelper
+                            label={"Tipo de medicamento experimental"}
+                            value={research.treatmentType}
+                            name={"treatmentType"}
+                            editing={isEditing}
+                            onChange={updateResearch}
+                        />
+                        <FormInputHelper
+                            label={"Tipologia"}
+                            value={research.typology}
+                            name={"typology"}
+                            editing={isEditing}
+                            onChange={updateResearch}
+                        />
+                    </Row>
+                    <Row>
+                        <FormInputHelper
                             label={"Pacientes previstos"}
                             value={research.estimatedPatientPool}
+                            name={"estimatedPatientPool"}
                             editing={isEditing}
                             onChange={updateResearch}
                         />
                         <FormInputHelper
                             label={"Pacientes Atuais"}
                             value={`${research.patients?.length ?? 0}`}
+                            onChange={updateResearch}
+                        />
+                        <FormInputHelper
+                            label={"Amostra"}
+                            value={research.sampleSize}
+                            name={"sampleSize"}
+                            editing={isEditing}
+                            onChange={updateResearch}
+                        />
+                        <FormInputHelper
+                            label={"EudraCT"}
+                            value={research.eudra_ct}
+                            name={"eudra_ct"}
+                            editing={isEditing}
                             onChange={updateResearch}
                         />
                     </Row>
@@ -187,6 +246,7 @@ export function ResearchDetailsTab(props: RDT_Props) {
                         <FormInputHelper
                             label={"Indústria"}
                             value={research.industry}
+                            name={"industry"}
                             editing={isEditing}
                             onChange={updateResearch}
                         />
@@ -194,59 +254,44 @@ export function ResearchDetailsTab(props: RDT_Props) {
                     <Row>
                         <FormInputHelper
                             label={"Iniciativa"}
-                            value={research.eudra_ct!}
+                            value={research.initiativeBy}
+                            name={"initiativeBy"}
                             editing={isEditing}
                             onChange={updateResearch}
                         />
                         <FormInputHelper
                             label={"Protocolo"}
-                            value={research.sampleSize!}
+                            value={research.protocol}
+                            name={"protocol"}
                             editing={isEditing}
                             onChange={updateResearch}
                         />
-                        <FormInputHelper
-                            label={"Fases"}
-                            value={research.estimatedPatientPool}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Amostra"}
-                            value={research.cro}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                    </Row>
-                    <Row>
-                        <FormInputHelper
-                            label={"EudraCT"}
-                            value={research.eudra_ct!}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Amostra"}
-                            value={research.sampleSize!}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Doentes previstos"}
-                            value={research.estimatedPatientPool}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
+                        {
+                            research.type === ResearchTypes.CLINICAL_TRIAL.id ?
+                                <FormInputHelper
+                                    label={"Fases"}
+                                    value={research.phase}
+                                    name={"phase"}
+                                    editing={isEditing}
+                                    onChange={updateResearch}
+                                />
+                                :
+                                <FormInputHelper
+                                    label={"Fases"}
+                                    value={"Não aplicável"}
+                                />
+                        }
                         <FormInputHelper
                             label={"CRO"}
                             value={research.cro}
+                            name={"cro"}
                             editing={isEditing}
                             onChange={updateResearch}
                         />
                     </Row>
                 </Form>
 
-                {/* TODO TEST ADD AND STATE CHANGES */}
-                <DossierComponent dossiers={research.dossiers ?? []} onAddDossier={(d) => console.log("called! with ", d)}/>
+                <DossierComponent dossiers={props.research.dossiers ?? []} onAddDossier={props.addDossier}/>
                 <Container className={"mt-4"}>
                     <Button variant={"outline-primary"}
                             className={"ml-2 mt-3 mb-5 rounded rounded-end"}
@@ -260,15 +305,22 @@ export function ResearchDetailsTab(props: RDT_Props) {
     </Container>
 }
 
-function DossierComponent(props: { dossiers: Dossier[], onAddDossier: (d: Dossier) => void}) {
+function DossierComponent(props: { dossiers: DossierModel[], onAddDossier: (d: DossierModel) => void}) {
+    const freshDossier = (): DossierModel => ({label: "", volume: "", amount: 0})
+    const sortDossier = (d: DossierModel, d2: DossierModel) => d2.id! - d.id!
     const [showEntryForm, setShowEntryForm] = useState(false)
-    const [entry, setEntry] = useState<Dossier>({})
+    const [entry, setEntry] = useState<DossierModel>(freshDossier())
+    const [dossiers, setDossiers] = useState<DossierModel[]>([])
+
+    useEffect(() => {
+        setDossiers(props.dossiers.sort(sortDossier))
+    }, [props.dossiers])
 
     const toggleEntryForm = () => setShowEntryForm(prevState => !prevState)
     const updateEntry = (e: any) => setEntry(prevState => ({...prevState, [e.target.name]: e.target.value}))
     const reset = () => {
         toggleEntryForm()
-        setEntry({})
+        setEntry(freshDossier())
     }
     const handleSubmit = (e: any) => {
         e.preventDefault()
@@ -282,7 +334,7 @@ function DossierComponent(props: { dossiers: Dossier[], onAddDossier: (d: Dossie
             <legend className={"float-none w-auto p-2"}>Dossiers</legend>
             <div>
                 { !showEntryForm &&
-                    <Button variant={"outline-primary float-start mb-2"}
+                    <Button variant={"outline-primary float-start m-2"}
                             onClick={toggleEntryForm}
                             style={{borderRadius: "8px"}}>
                         Nova entrada
@@ -343,11 +395,11 @@ function DossierComponent(props: { dossiers: Dossier[], onAddDossier: (d: Dossie
                         </tr>
                     </thead>
                     <tbody>
-                        {props.dossiers.map(d =>
+                        {dossiers.length > 0 ? props.dossiers.map(d =>
                             <tr key={d.id}>
                                 {[d.label, d.volume, d.amount].map((cell, i) => <td key={i}>{cell}</td>)}
                             </tr>
-                        )}
+                        ) : <tr><td colSpan={3}>Sem dossiers.</td></tr>}
                     </tbody>
                 </Table>
             </div>

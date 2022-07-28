@@ -12,20 +12,23 @@ export interface ResearchModel {
     startDate?: string
     endDate?: string
     estimatedEndDate?: string
-    estimatedPatientPool?: string,
-    actualPatientPool?: string,
+    estimatedPatientPool?: string
+    actualPatientPool?: string
     industry?: string
     protocol?: string
     initiativeBy?: string
     phase?: string
     type?: string
+    treatmentType?: string
+    typology?: string
+    specification?: string
     stateId?: string
     state?: StateModel
     proposalId?: string
     proposal?: ProposalModel
     stateTransitions?: StateTransitionModel[]
-    dossiers?: Dossier[]
-    patients?: Patient[]
+    dossiers?: DossierModel[]
+    patients?: PatientModel[]
     scientificActivities?: ScientificActivity[]
 }
 
@@ -59,20 +62,29 @@ export interface ResearchAggregateModel {
     promoterName?: string
 }
 
-export interface Dossier {
-    id?: string
+export interface DossierModel {
+    id?: number
     clinicalResearchId?: string
     volume?: string
     label?: string
     amount?: number
 }
 
-export interface Patient {
+export interface ResearchVisitModel {
+
+}
+
+export interface PatientModel {
     id?: string
     processId?: string
     fullName?: string
     gender?: string
     age?: string
+}
+
+export interface PatientVisitsAggregate {
+    patient: PatientModel
+    scheduledVisits: ResearchVisitModel[]
 }
 
 export interface ScientificActivity {

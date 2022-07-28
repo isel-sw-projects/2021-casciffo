@@ -1,12 +1,12 @@
 import {Col, Form } from "react-bootstrap"
 
 type HelperProps = {
-    label: string,
+    label: string
     type?: string
-    value?: string,
-    name?: string,
+    value?: string
+    name?: string
     editing?: boolean
-    onChange?: (e: any) => void,
+    onChange?: (e: any) => void
 }
 
 export function FormInputHelper(props: HelperProps) {
@@ -21,7 +21,7 @@ export function FormInputHelper(props: HelperProps) {
                 className={"m-2"}
                 type={props.type ?? "input"}
                 disabled={!props.editing ?? false}
-                value={props.value}
+                value={props.value ?? ""}
                 name={props.name}
                 onChange={props.onChange}
             />

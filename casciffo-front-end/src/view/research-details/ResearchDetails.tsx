@@ -1,7 +1,7 @@
 import {ResearchAggregateService} from "../../services/ResearchAggregateService";
-import {Button, Col, Container, FloatingLabel, Row, Stack, Tab, Tabs} from "react-bootstrap";
+import {Container, Tab, Tabs} from "react-bootstrap";
 import React, {useCallback, useEffect, useState} from "react";
-import {ResearchModel} from "../../model/research/ResearchModel";
+import {DossierModel, ResearchModel} from "../../model/research/ResearchModel";
 import {ResearchStates} from "./ResearchStates";
 import {useParams} from "react-router-dom";
 import {MyError} from "../error-view/MyError";
@@ -13,15 +13,11 @@ import {ResearchVisitsTab} from "./ResearchVisitsTab";
 import {ResearchAddendaTab} from "./ResearchAddendaTab";
 import {ResearchPatientsTab} from "./ResearchPatientsTab";
 import {ResearchFinanceTab} from "./ResearchFinanceTab";
-import {VerticallyCenteredPopup} from "../components/VerticallyCenteredPopup";
-import Modal from "react-bootstrap/Modal";
-import { Form } from "react-bootstrap";
-import {bootstrapUtils} from "react-bootstrap/lib/utils";
-import {StateFlowTypes} from "../../common/Constants";
 
 export function ResearchDetails(props: { researchService: ResearchAggregateService }) {
 
     const {researchId} = useParams()
+    //todo may have to place into a useEffect, but since it's just a simple check idk if it's worth the extra trouble
     if(researchId == null) {
         throw new MyError("", 400)
     }
@@ -44,13 +40,27 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
 
 
     const updateResearch = useCallback((data: ResearchModel) => {
-        console.log("data received to update research: ", data)
-        // props.researchService
-        //     .updateResearch(data)
-        //     .then(setResearch)
-    }, [])
+        props.researchService
+            .updateResearch(data)
+            .then(setResearch)
+    }, [props.researchService])
 
     const [selectedTab, setSelectedTab] = useState("research")
+
+    const submitDossier = useCallback((researchId: string) => {
+        return (d: DossierModel) => {
+            console.log("calling research service with id: ", researchId, " and data: ", d)
+            props.researchService
+                .addDossierToResearch(researchId, d)
+                .then(d => {
+                    setResearch(prevState => ({
+                        ...prevState,
+                        dossiers: [d, ...prevState.dossiers ?? []]
+                    }))
+                })
+                .catch(errorHandler)
+        }
+    }, [errorHandler, props.researchService])
 
     return (
         <Container>
@@ -66,7 +76,8 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
                     <ResearchDetailsTab
                         stateChain={stateChain}
                         research={research}
-                        updateResearch={updateResearch}/>
+                        updateResearch={updateResearch}
+                        addDossier={submitDossier(researchId)}/>
 
                 </Tab>
                 <Tab eventKey={"addenda"} title={"Adendas"}>

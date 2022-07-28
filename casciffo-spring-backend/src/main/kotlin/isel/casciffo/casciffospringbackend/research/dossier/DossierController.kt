@@ -6,23 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@RestController(RESEARCH_DOSSIER_URL)
+@RestController
+@RequestMapping(RESEARCH_DOSSIER_URL)
 class DossierController(
     @Autowired val service: DossierService
 ) {
 
     @GetMapping
-    suspend fun getDossierByResearchId(@RequestParam researchId: Int): Flow<Dossier> = service.findAllByResearchId(researchId)
+    suspend fun getDossierByResearchId(@PathVariable researchId: Int): Flow<Dossier> = service.findAllByResearchId(researchId)
 
     @PostMapping
     suspend fun createDossier(
-        @RequestParam researchId: Int,
+        @PathVariable researchId: Int,
         @RequestBody dossier: Dossier
     ): ResponseEntity<Dossier> {
         val created = service.createDossier(dossier, researchId)
@@ -31,7 +34,7 @@ class DossierController(
 
     @PutMapping
     suspend fun updateDossier(
-        @RequestParam researchId: Int,
+        @PathVariable researchId: Int,
         @RequestBody dossier: Dossier
     ): ResponseEntity<Dossier> {
         val updated = service.updateDossier(dossier, researchId)

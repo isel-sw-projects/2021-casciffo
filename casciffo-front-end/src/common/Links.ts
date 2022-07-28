@@ -57,6 +57,11 @@ const PATHOLOGIES_URL = `${BASE_URL}/pathologies`
 const RESEARCH_URL = `${BASE_URL}/research`
 const RESEARCH_BY_TYPE_URL = (type: string) => `${RESEARCH_URL}?type=${type}`
 const DETAIL_RESEARCH_URL = (id: string) => `${RESEARCH_URL}/${id}`
+const DOSSIER_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/dossier`
+const STUDIES_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/studies`
+const VISITS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/visits`
+const PATIENTS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients`
+const RESEARCH_PATIENT_WITH_VISITS_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients/create`
 
 
 const ApiUrls = {
@@ -68,6 +73,12 @@ const ApiUrls = {
     commentsByTypeUrl: COMMENTS_BY_TYPE_URL,
     researchUrl: RESEARCH_URL,
     researchDetailUrl: DETAIL_RESEARCH_URL,
+    researchDossierUrl: DOSSIER_RESEARCH_URL,
+    researchByTypeUrl: RESEARCH_BY_TYPE_URL,
+    researchPatientsUrl: PATIENTS_RESEARCH_URL,
+    researchStudiesUrl: STUDIES_RESEARCH_URL,
+    researchVisitsUrl: VISITS_RESEARCH_URL,
+    researchPatientsVisitsUrl: RESEARCH_PATIENT_WITH_VISITS_URL,
     usersUrl: USERS_URL,
     userLoginUrl: USER_LOGIN_URL,
     userRegisterUrl: USER_REGISTER_URL,
@@ -88,7 +99,6 @@ const ApiUrls = {
     proposalUploadCF: PROPOSAL_CF_UPLOAD,
     statesChainUrl: STATES_CHAIN_URL,
     proposalValidationUrl: PROPOSAL_VALIDATION_URL,
-    researchByTypeUrl: RESEARCH_BY_TYPE_URL,
     userRolesUrl: USER_ROLES,
     usersCreateUrl: USERS_CREATE_URL,
     // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID

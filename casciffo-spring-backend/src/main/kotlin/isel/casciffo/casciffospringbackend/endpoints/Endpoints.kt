@@ -93,7 +93,7 @@ const val RESEARCH_STUDIES_URL = "${RESEARCH_DETAIL_URL}/studies"
 
 const val RESEARCH_VISIT_URL = "${RESEARCH_DETAIL_URL}/visits"
 
-const val RESEARCH_PARTICIPANTS = "${RESEARCH_DETAIL_URL}/participants"
+const val RESEARCH_PATIENTS = "${RESEARCH_DETAIL_URL}/patients"
 
 const val RESEARCH_VISIT_PATIENTS = "${RESEARCH_VISIT_URL}/{patientId}"
 

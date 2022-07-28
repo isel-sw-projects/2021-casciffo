@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.research.visits
+package isel.casciffo.casciffospringbackend.research.visits.visits
 
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveSortingRepository

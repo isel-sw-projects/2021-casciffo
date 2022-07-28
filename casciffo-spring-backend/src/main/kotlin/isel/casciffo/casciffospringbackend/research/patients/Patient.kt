@@ -7,8 +7,8 @@ import org.springframework.data.relational.core.mapping.Table
 data class Patient (
     @Id
     var id: Int? = null,
-    val processId: Int? = null,
-    val fullName: String? = null,
-    val gender: String? = null,
-    val age: Int? = null
+    var processId: Int? = null,
+    var fullName: String? = null,
+    var gender: String? = null,
+    var age: Int? = null
 )

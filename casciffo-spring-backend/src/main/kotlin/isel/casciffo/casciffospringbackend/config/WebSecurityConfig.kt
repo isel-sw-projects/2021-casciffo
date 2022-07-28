@@ -140,6 +140,8 @@ class WebSecurityConfig {
         http
             .authorizeExchange()
             .pathMatchers("$RESEARCH_URL/**").authenticated()
+            .pathMatchers(HttpMethod.PUT, "$RESEARCH_DETAIL_URL/*").hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.POST, RESEARCH_DOSSIER_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
     }
 
 }

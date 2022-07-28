@@ -37,6 +37,9 @@ data class ResearchModel (
     var initiativeBy: String? = null,
     var phase: String? = null,
     var type: ResearchType? = null,
+    var treatmentType: String? = null,
+    var typology: String? = null,
+    var specification: String? = null,
 
     @Transient
     @Value("null")

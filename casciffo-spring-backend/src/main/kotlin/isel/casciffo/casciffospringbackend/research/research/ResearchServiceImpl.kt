@@ -2,8 +2,6 @@ package isel.casciffo.casciffospringbackend.research.research
 
 import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregate
 import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregateRepo
-import isel.casciffo.casciffospringbackend.aggregates.research.ResearchDetailAggregate
-import isel.casciffo.casciffospringbackend.aggregates.research.ResearchDetailAggregateRepo
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.mappers.Mapper
@@ -14,6 +12,7 @@ import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.Resea
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesService
+import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
 import isel.casciffo.casciffospringbackend.states.state.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import kotlinx.coroutines.flow.Flow
@@ -35,24 +34,22 @@ class ResearchServiceImpl(
     @Autowired val stateRepository: StateRepository,
     @Autowired val stateTransitionService: StateTransitionService,
     @Autowired val researchRepository: ResearchRepository,
-    @Autowired val generalResearchAggregate: ResearchAggregateRepo,
-    @Autowired val detailResearchAggregate: ResearchDetailAggregateRepo,
+    @Autowired val aggregateRepo: ResearchAggregateRepo,
 //    @Autowired val proposalService: ProposalService,
     @Autowired val participantService: ParticipantService,
-    @Autowired val generalMapper: Mapper<ResearchModel, ResearchAggregate>,
-    @Autowired val detailMapper: Mapper<ResearchModel, ResearchDetailAggregate>,
+    @Autowired val aggregateMapper: Mapper<ResearchModel, ResearchAggregate>,
     @Autowired val dossierService: DossierService
 ): ResearchService {
 
     override suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchAggregate> {
-        return generalResearchAggregate.findAllByType(type).asFlow()
+        return aggregateRepo.findAllByType(type).asFlow()
     }
 
     override suspend fun getResearch(researchId: Int): ResearchModel {
-        val research = detailResearchAggregate.findAggregateById(researchId).awaitSingleOrNull()
+        val research = aggregateRepo.findAggregateById(researchId).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "research Id doesnt exist!!!")
 
-        return loadRelations(detailMapper.mapDTOtoModel(research))
+        return loadRelations(aggregateMapper.mapDTOtoModel(research))
     }
 
     @Transactional
@@ -67,6 +64,16 @@ class ResearchServiceImpl(
 
     override suspend fun addParticipant(researchId: Int, participantId: Int) {
         participantService.addParticipantToResearch(researchId = researchId, participantId =  participantId)
+    }
+
+    override suspend fun addPatientWithVisits(researchId: Int, visitDTO: VisitDTO): VisitDTO {
+
+        //TODO
+        // call patient service to add patient to research
+        // call visit service passing patientId, researchId and the visits array
+        // map ids to visitDTO or return Flow
+
+        return visitDTO
     }
 
     @Transactional

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface ResearchParticipantsRepository: ReactiveSortingRepository<ResearchParticipants, Int> {
+interface ResearchParticipantsRepository: ReactiveSortingRepository<ResearchPatients, Int> {
 
-    fun findAllByResearchId(researchId: Int) : Flux<ResearchParticipants>
+    fun findAllByResearchId(researchId: Int) : Flux<ResearchPatients>
 }
