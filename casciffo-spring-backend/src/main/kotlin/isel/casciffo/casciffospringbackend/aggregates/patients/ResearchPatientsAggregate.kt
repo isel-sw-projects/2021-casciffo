@@ -12,9 +12,15 @@ data class ResearchPatientsAggregate(
     var patientId: Int? = null,
     var joinDate: LocalDateTime? = null,
 
+    @Column("id")
+    var researchPatientId: Int? = null,
+
     //patient info
     var processId: Int? = null,
     var fullName: String? = null,
     var gender: String? = null,
-    var age: Int? = null
+    var age: Int? = null,
+
+    var treatmentBranch: String? = null,
+    var lastVisitDate: LocalDateTime? = null
 )

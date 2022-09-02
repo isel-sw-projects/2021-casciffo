@@ -8,4 +8,5 @@ import reactor.core.publisher.Flux
 interface ResearchParticipantsRepository: ReactiveSortingRepository<ResearchPatients, Int> {
 
     fun findAllByResearchId(researchId: Int) : Flux<ResearchPatients>
+
 }

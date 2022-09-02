@@ -52,13 +52,10 @@ const val PROPOSALS_URL = "/proposals"
 
 const val PROPOSAL_URL = "$PROPOSALS_URL/{proposalId}"
 
-val buildGetProposalUrl = { id: Int -> "/${PROPOSALS_URL}/${id}"}
-
 const val PROPOSAL_COMMENTS_URL = "$PROPOSAL_URL/comments"
 const val PROPOSAL_COMMENTS_DETAIL_URL = "$PROPOSAL_COMMENTS_URL/{cId}"
 
-val buildSingleCommentUrl = {id: Int -> "${PROPOSAL_URL}/comments/${id}"}
-
+//TODO remove below endpoints the new and working transitionStateV2 works wonders
 //role-based endpoints to advance certains parts of the state of a proposal
 const val PROPOSAL_TRANSITION_URL = "$PROPOSAL_URL/state"
 const val PROPOSAL_TRANSITION_SUPERUSER_URL = "$PROPOSAL_TRANSITION_URL/superuser"
@@ -79,22 +76,15 @@ const val PROPOSAL_FINANCIAL_FILE_DOWNLOAD_URL = "$PROPOSAL_URL/pfc/{pfcId}/down
 
 /*********************************** RESEARCH ******************************************/
 /***************************************************************************************/
-
 const val RESEARCH_URL = "/research"
-
 const val RESEARCH_DETAIL_URL = "${RESEARCH_URL}/{researchId}"
-
-val buildGetResearchUrl = { id: Int -> "/${RESEARCH_URL}/${id}"}
-
 const val POST_ADDENDA_URL = "${RESEARCH_DETAIL_URL}/addenda"
 const val GET_ADDENDA_URL = "${POST_ADDENDA_URL}/{addendaId}"
-
 const val RESEARCH_STUDIES_URL = "${RESEARCH_DETAIL_URL}/studies"
-
 const val RESEARCH_VISIT_URL = "${RESEARCH_DETAIL_URL}/visits"
-
+const val RESEARCH_VISIT_DETAIL_URL = "${RESEARCH_DETAIL_URL}/visits/{visitId}"
 const val RESEARCH_PATIENTS = "${RESEARCH_DETAIL_URL}/patients"
-
-const val RESEARCH_VISIT_PATIENTS = "${RESEARCH_VISIT_URL}/{patientId}"
-
+const val RESEARCH_VISIT_PATIENTS = "${RESEARCH_PATIENTS}/{patientId}/visits"
 const val RESEARCH_DOSSIER_URL = "${RESEARCH_DETAIL_URL}/dossier"
+const val RESEARCH_PATIENT_DETAILS = "$RESEARCH_PATIENTS/{patientId}"
+const val SEARCH_PATIENTS = "/patients/search"

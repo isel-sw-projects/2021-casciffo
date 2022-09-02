@@ -9,15 +9,18 @@ import java.time.LocalDate
 data class ScientificActivity (
     @Id
     @Column("activity_id")
-    var id: Int?,
-    var researchId: Int?,
-    var datePublished: LocalDate?,
-    var author: String?,
-    var paperName: String?,
-    var volume: String?,
-    var volumeNumber: Int?,
-    var paperNumPages: Int?,
-    var countryPublished: String?,
-    var hasBeenIndexed: Boolean?,
-    var publishedUrl: String?
+    var id: Int? = null,
+    var researchId: Int? = null,
+    var datePublished: LocalDate? = null,
+    var author: String? = null,
+    var paperName: String? = null,
+    var volume: String? = null,
+    var volumeNumber: Int? = null,
+    var paperNumPages: Int? = null,
+    var countryPublished: String? = null,
+    var hasBeenIndexed: Boolean? = null,
+    var publishedUrl: String? = null,
+    //TODO ADD THESE TO DB
+    // var publicationType: String? = null,
+    // var studyType: String? = null
 )

@@ -29,7 +29,7 @@ import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEve
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.research.ResearchRepository
 import isel.casciffo.casciffospringbackend.research.research.ResearchService
-import isel.casciffo.casciffospringbackend.research.patients.Patient
+import isel.casciffo.casciffospringbackend.research.patients.PatientModel
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantRepository
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.roles.Role
@@ -287,7 +287,7 @@ class CasciffoSpringBackendApplicationTests(
 
     @Test
     fun testServiceAddParticipantToResearch() {
-        var patient = Patient(
+        var patient = PatientModel(
             processId = 102,
             fullName = "manel dos testes",
             gender = "m",

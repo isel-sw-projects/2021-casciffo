@@ -12,5 +12,7 @@ data class ResearchPatients (
     @Column("participant_id")
     var patientId: Int? = null,
     var researchId: Int? = null,
-    var joinDate: LocalDateTime? = null
+    var joinDate: LocalDateTime? = null,
+    var treatmentBranch: String? = null,
+    var lastVisitDate: LocalDateTime? = null
 )

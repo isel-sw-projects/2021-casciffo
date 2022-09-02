@@ -1,5 +1,5 @@
 package isel.casciffo.casciffospringbackend.common
 
 enum class VisitType {
-    MONITORING, CLOSEOUT, FIRST_VISIT
+    MONITORING, CLOSEOUT, SCREENING
 }

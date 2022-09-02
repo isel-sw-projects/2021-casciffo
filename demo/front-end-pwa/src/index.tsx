@@ -1,19 +1,30 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import './assets/css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
-import SearchComponent from "./view/SearchComponent";
-import TracksModel from "./model/TracksModel";
-import App from "./App";
+import App from "./view/app/App";
 
-ReactDOM.render(
-    <React.StrictMode>
+import { createRoot } from 'react-dom/client';
+import {UserAuthContextProvider} from "./view/context/UserAuthContext";
+import {ErrorBoundary} from "react-error-boundary";
+import {GlobalErrorBoundary} from "./view/error-view/GlobalErrorBoundary";
+const container = document.getElementById('root');
+const root = createRoot(container!);
+root.render(
+    <UserAuthContextProvider>
         <App/>
-    </React.StrictMode>,
-    document.getElementById('root')
+    </UserAuthContextProvider>
 );
+
+// ReactDOM.render(
+//     <React.StrictMode>
+//             <App />
+//     </React.StrictMode>,
+//     document.getElementById('root')
+// );
+
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

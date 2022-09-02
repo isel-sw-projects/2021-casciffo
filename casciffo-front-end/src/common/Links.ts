@@ -60,9 +60,12 @@ const DETAIL_RESEARCH_URL = (id: string) => `${RESEARCH_URL}/${id}`
 const DOSSIER_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/dossier`
 const STUDIES_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/studies`
 const VISITS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/visits`
+const VISIT_DETAILS_URL = (rId: string, vId: string) => `${VISITS_RESEARCH_URL(rId)}/${vId}`
 const PATIENTS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients`
 const RESEARCH_PATIENT_WITH_VISITS_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients/create`
+const RESEARCH_PATIENT_DETAIL_URL = (rId: string, pId: string) => `${PATIENTS_RESEARCH_URL(rId)}/${pId}`
 
+const PATIENTS_LIKE_URL = (processId: string) => `${BASE_URL}/patients/search?q=${processId}`
 
 const ApiUrls = {
     baseUrl: BASE_URL,
@@ -78,7 +81,9 @@ const ApiUrls = {
     researchPatientsUrl: PATIENTS_RESEARCH_URL,
     researchStudiesUrl: STUDIES_RESEARCH_URL,
     researchVisitsUrl: VISITS_RESEARCH_URL,
+    researchVisitDetailsUrl: VISIT_DETAILS_URL,
     researchPatientsVisitsUrl: RESEARCH_PATIENT_WITH_VISITS_URL,
+    researchPatientDetailUrl: RESEARCH_PATIENT_DETAIL_URL,
     usersUrl: USERS_URL,
     userLoginUrl: USER_LOGIN_URL,
     userRegisterUrl: USER_REGISTER_URL,
@@ -102,6 +107,7 @@ const ApiUrls = {
     userRolesUrl: USER_ROLES,
     usersCreateUrl: USERS_CREATE_URL,
     // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID
+    patientsLikeUrl: PATIENTS_LIKE_URL,
 }
 
 export default ApiUrls

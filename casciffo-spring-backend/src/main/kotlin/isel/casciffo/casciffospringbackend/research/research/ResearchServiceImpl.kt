@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregate
 import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregateRepo
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.common.StateType
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaService
@@ -13,6 +14,7 @@ import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesService
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
+import isel.casciffo.casciffospringbackend.research.visits.visits.VisitService
 import isel.casciffo.casciffospringbackend.states.state.StateRepository
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +40,9 @@ class ResearchServiceImpl(
 //    @Autowired val proposalService: ProposalService,
     @Autowired val participantService: ParticipantService,
     @Autowired val aggregateMapper: Mapper<ResearchModel, ResearchAggregate>,
-    @Autowired val dossierService: DossierService
+    @Autowired val dossierService: DossierService,
+    @Autowired val investigationTeamService: InvestigationTeamService,
+    @Autowired val visitService: VisitService
 ): ResearchService {
 
     override suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchAggregate> {
@@ -99,7 +103,8 @@ class ResearchServiceImpl(
         researchModel.patients = participantService.findAllByResearchId(researchModel.id!!)
         researchModel.dossiers = dossierService.findAllByResearchId(researchModel.id!!)
         researchModel.scientificActivities = activitiesService.findAllByResearchId(researchModel.id!!)
-
+        researchModel.investigationTeam = investigationTeamService.findTeamByProposalId(researchModel.proposalId!!).asFlow()
+        researchModel.visits = visitService.getVisitsForResearch(researchModel.id!!)
         return researchModel
     }
 }

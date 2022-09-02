@@ -17,7 +17,7 @@ class VisitInvestigatorsServiceImpl(
     }
 
     suspend fun loadInvestigators(visitInvestigators: VisitInvestigators) : VisitInvestigators {
-        visitInvestigators.investigator = userService.getUser(visitInvestigators.investigatorId)
+        visitInvestigators.investigator = userService.getUser(visitInvestigators.investigatorId!!)
         return visitInvestigators
     }
 }

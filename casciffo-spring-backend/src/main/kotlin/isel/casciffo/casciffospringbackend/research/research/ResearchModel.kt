@@ -1,10 +1,14 @@
 package isel.casciffo.casciffospringbackend.research.research
 
+import isel.casciffo.casciffospringbackend.aggregates.patients.ResearchPatientsAggregate
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.research.dossier.Dossier
-import isel.casciffo.casciffospringbackend.research.patients.Patient
+import isel.casciffo.casciffospringbackend.research.patients.PatientModel
+import isel.casciffo.casciffospringbackend.research.patients.ResearchPatients
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
+import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import kotlinx.coroutines.flow.Flow
@@ -51,7 +55,11 @@ data class ResearchModel (
 
     @Transient
     @Value("null")
-    var patients: Flow<Patient>? = null,
+    var visits: Flow<VisitModel>? = null,
+
+    @Transient
+    @Value("null")
+    var patients: Flow<ResearchPatientsAggregate>? = null,
 
     @Transient
     @Value("null")
@@ -63,5 +71,9 @@ data class ResearchModel (
 
     @Transient
     @Value("null")
-    var scientificActivities: Flow<ScientificActivity>? = null
+    var scientificActivities: Flow<ScientificActivity>? = null,
+
+    @Transient
+    @Value("null")
+    var investigationTeam: Flow<InvestigationTeamModel>? = null
 )

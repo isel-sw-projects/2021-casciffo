@@ -81,10 +81,9 @@ self.addEventListener('message', (event) => {
 
 // Any other custom service worker logic can go here.
 
-const CACHE_NAME = 'demo cache'
+const CACHE_NAME = 'Casciffo cache'
 
 // fetch runs on every request made from the browser
-// TODO: figure out a strategy to cache api requests and responses or change registerRoute function
 self.addEventListener('fetch', (event) => {
     console.log("fetch request made to")
     console.log(event.request.url)
@@ -108,18 +107,18 @@ self.addEventListener('offline', (event) => {
 });
 
 // //activate idk yet, runs when service worker is active
-// self.addEventListener('activate', (e) => {
-//     //delete old caches, keep only most recent
-//     const recentCache: string[] = []
-//     recentCache.push(CACHE_NAME)
-//
-//     e.waitUntil(
-//         caches.keys().then((cacheNames) => Promise.all(
-//             cacheNames.map(name => {
-//                 if(!recentCache.includes(name)) {
-//                     return caches.delete(name)
-//                 }
-//             })
-//         ))
-//     )
-// })
+self.addEventListener('activate', (e) => {
+    //delete old caches, keep only most recent
+    const recentCache: string[] = []
+    recentCache.push(CACHE_NAME)
+
+    e.waitUntil(
+        caches.keys().then((cacheNames) => Promise.all(
+            cacheNames.map(name => {
+                if(!recentCache.includes(name)) {
+                    return caches.delete(name)
+                }
+            })
+        ))
+    )
+})
