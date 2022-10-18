@@ -5,6 +5,7 @@ import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_PATIENTS
 import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_URL
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 
@@ -15,8 +16,8 @@ class VisitController(
 ) {
 
     @GetMapping(RESEARCH_VISIT_URL)
-    suspend fun getVisitsByResearchId(@RequestParam researchId: Int) : Flow<VisitModel> {
-        return visitService.getVisitsForResearch(researchId)
+    suspend fun getVisitsByResearchId(@PathVariable researchId: Int) : Flow<VisitDTO> {
+        return visitService.getVisitsForResearch(researchId).map { mapper.mapModelToDTO(it) }
     }
 
 //    @PostMapping(RESEARCH_VISIT_URL)
@@ -30,9 +31,20 @@ class VisitController(
 //    }
 
 
+    @PostMapping(RESEARCH_VISIT_DETAIL_URL)
+    suspend fun concludeVisit(
+        @PathVariable researchId: Int,
+        @PathVariable visitId: Int,
+        @RequestBody visitDTO: VisitDTO
+    ): VisitDTO {
+        val model = mapper.mapDTOtoModel(visitDTO)
+        val result = visitService.concludeVisit(model)
+        return mapper.mapModelToDTO(result)
+    }
+
     @GetMapping(RESEARCH_VISIT_PATIENTS)
-    suspend fun getVisitsForPatient(@RequestParam researchId: Int, @RequestParam patientId: Int) : Flow<VisitModel> {
-        return visitService.getVisitsForPatient(patientId, patientId)
+    suspend fun getVisitsForPatient(@PathVariable researchId: Int, @PathVariable patientId: Int) : Flow<VisitDTO> {
+        return visitService.getVisitsForPatient(patientId, patientId).map { mapper.mapModelToDTO(it) }
     }
 
     @GetMapping(RESEARCH_VISIT_DETAIL_URL)

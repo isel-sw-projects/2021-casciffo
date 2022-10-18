@@ -56,6 +56,10 @@ export enum VisitsViewTab {
     OVERVIEW, DETAILS
 }
 
+export enum AddendaViewTab {
+    OVERVIEW, DETAILS
+}
+
 export const VisitTypes = {
     MONITORING : {id: "MONITORING", name: "Monitorização"},
     CLOSEOUT : {id: "CLOSEOUT", name: "Closeout"},
@@ -78,3 +82,7 @@ export const PeriodicityTypes = {
 }
 
 export const TOKEN_KEY = "token"
+
+export const KEY_VALUE_DELIMENTER = "="
+export const PARAM_DELIMENTER = "&"
+export const TAB_PARAMETER = "t"

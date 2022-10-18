@@ -3,6 +3,7 @@ import {StateTransitionModel} from "../state/StateTransitionModel";
 import {StateModel} from "../state/StateModel";
 import UserModel from "../user/UserModel";
 import {TeamInvestigatorModel} from "../TeamInvestigatorModel";
+import {ProposalCommentsModel} from "../proposal/ProposalCommentsModel";
 
 
 export interface ResearchModel {
@@ -24,16 +25,22 @@ export interface ResearchModel {
     treatmentType?: string
     typology?: string
     specification?: string
+    treatmentBranches?: string // comes separated by ';'
     stateId?: string
     state?: StateModel
     proposalId?: string
     proposal?: ProposalModel
     visits?: ResearchVisitModel[]
+    addendas?: ResearchAddenda[]
     stateTransitions?: StateTransitionModel[]
     dossiers?: DossierModel[]
     patients?: PatientModel[]
     scientificActivities?: ScientificActivityModel[]
     investigationTeam?: TeamInvestigatorModel[]
+    financeComponent?: ResearchFinance
+    canceledReason?: string
+    canceledById?: string
+    canceledBy?: UserModel
 }
 
 export interface ResearchAggregateModel {
@@ -128,4 +135,62 @@ export interface ScientificActivityModel {
     publishedUrl?: string
     publicationType?: string
     studyType?: string
+}
+
+export interface ResearchAddenda {
+    id?: string
+    researchId?: string
+    stateId?: string
+    fileId?: string
+    createdDate?: string
+    state?: StateModel
+    stateTransitions?: StateTransitionModel[]
+    observations?: AddendaCommentsModel
+    fileInfo?: string
+}
+
+export interface AddendaCommentsModel {
+    id?: string
+    createdDate?: string
+    addendaId?: string
+    observation?: string
+    authorId?: string
+    author?: UserModel
+}
+
+export interface ResearchModelAnswer {
+    research?: ResearchModel
+    success?: boolean
+}
+
+export interface ResearchFinance {
+    id?: string
+    researchId?: string
+    valuePerParticipant?: string
+    roleValuePerParticipant?: string
+    balance?: string
+    teamFinance?: ResearchTeamFinanceEntries[]
+    researchFinanceEntries?: ResearchFinanceEntries[]
+}
+
+export interface ResearchFinanceEntries {
+    researchFinanceId?: string
+    trialFinancialComponentId?: string
+    transactionDate?: string
+    typeOfFlow?: string
+    motive?: string
+    amount?: string
+}
+
+export interface ResearchTeamFinanceEntries {
+    teamFinanceId?: string
+    trialFinancialComponentId?: string
+    typeOfFlow?: string
+    transactionDate?: string
+    responsibleForPayment?: string
+    amount?: string
+    partitionPercentage?: string
+    roleAmount?: string
+    investigatorId?: string
+    investigator?: UserModel
 }

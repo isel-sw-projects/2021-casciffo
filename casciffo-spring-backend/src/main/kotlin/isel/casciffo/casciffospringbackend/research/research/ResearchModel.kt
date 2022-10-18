@@ -4,13 +4,14 @@ import isel.casciffo.casciffospringbackend.aggregates.patients.ResearchPatientsA
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
+import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.dossier.Dossier
-import isel.casciffo.casciffospringbackend.research.patients.PatientModel
-import isel.casciffo.casciffospringbackend.research.patients.ResearchPatients
+import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinance
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
@@ -44,6 +45,13 @@ data class ResearchModel (
     var treatmentType: String? = null,
     var typology: String? = null,
     var specification: String? = null,
+    var treatmentBranches: String? = null,
+    var canceledReason: String? = null,
+    var canceledById: Int? = null,
+
+    @Transient
+    @Value("null")
+    var canceledBy: UserModel? = null,
 
     @Transient
     @Value("null")
@@ -75,5 +83,13 @@ data class ResearchModel (
 
     @Transient
     @Value("null")
-    var investigationTeam: Flow<InvestigationTeamModel>? = null
+    var investigationTeam: Flow<InvestigationTeamModel>? = null,
+
+    @Transient
+    @Value("null")
+    var addendas: Flow<Addenda>? = null,
+
+    @Transient
+    @Value("null")
+    var financeComponent: ResearchFinance? = null
 )

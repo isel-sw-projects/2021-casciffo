@@ -35,6 +35,9 @@ class ResearchAggregateMapper: Mapper<ResearchModel, ResearchAggregate> {
             treatmentType = dto.treatmentType,
             typology = dto.typology,
             specification = dto.specification,
+            treatmentBranches = dto.treatmentBranches,
+            canceledReason = dto.canceledReason,
+            canceledById = dto.canceledById,
             state = State(id=dto.stateId, name = dto.stateName),
             proposal = mapSimpleProposal(dto),
             patients = null, //left null on purpose

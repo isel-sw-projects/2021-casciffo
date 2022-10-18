@@ -15,7 +15,6 @@ export function FormInputHelper(props: HelperProps) {
 
     return <Col>
         <Form.Group>
-
             {
                 props.inline !== true
                     ? <>

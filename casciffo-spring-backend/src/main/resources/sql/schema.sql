@@ -261,8 +261,6 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     sample_size INT,
     duration INT,
     cro VARCHAR,
-    start_date DATE,
-    end_date DATE,
     estimated_end_date DATE,
     estimated_patient_pool INT,
     actual_patient_pool INT,
@@ -273,10 +271,16 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     protocol VARCHAR,
     initiative_by VARCHAR,
     phase VARCHAR, -- phase 1 | 2 | 3 | 4,
+    treatment_branches VARCHAR,
+    canceled_reason VARCHAR,
+    canceled_by_id INT,
     type VARCHAR NOT NULL,
     CONSTRAINT fk_cr_proposal_id FOREIGN KEY(proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
-    CONSTRAINT fk_cr_state_id FOREIGN KEY(research_state_id) REFERENCES states(state_id)
+    CONSTRAINT fk_cr_state_id FOREIGN KEY(research_state_id)
+        REFERENCES states(state_id),
+    CONSTRAINT fk_cr_canceled_by_id FOREIGN KEY (canceled_by_id)
+        REFERENCES user_account(user_id)
 );
 
 
@@ -371,7 +375,7 @@ CREATE TABLE IF NOT EXISTS visit_assigned_investigators (
 ------------------------CLINICAL TRIAL FINANCIAL COMPONENTS----------------------------
 ---------------------------------------------------------------------------------------
 
-CREATE TABLE IF NOT EXISTS trial_financial_component (
+CREATE TABLE IF NOT EXISTS research_financial_component (
     financial_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     research_id INT,
     value_per_participant INT,
@@ -395,13 +399,13 @@ CREATE TABLE IF NOT EXISTS research_team_financial_scope (
     role_amount FLOAT NOT NULL,
     CONSTRAINT fk_rtfc_trial_financial_component
         FOREIGN KEY (trial_financial_component_id)
-            REFERENCES trial_financial_component(financial_id)
+            REFERENCES research_financial_component(financial_id)
             ON DELETE CASCADE,
     CONSTRAINT fk_rtfc_investigator_id FOREIGN KEY (investigator_id) REFERENCES user_account(user_id)
 );
 
 
-CREATE TABLE IF NOT EXISTS research_finance (
+CREATE TABLE IF NOT EXISTS research_finance_row (
     research_finance_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     trial_financial_component_id INT,
     transaction_date TIMESTAMP DEFAULT NOW(),
@@ -409,7 +413,7 @@ CREATE TABLE IF NOT EXISTS research_finance (
     motive VARCHAR NOT NULL,
     amount FLOAT NOT NULL,
     CONSTRAINT fk_rf_trial_financial_component FOREIGN KEY(trial_financial_component_id)
-        REFERENCES trial_financial_component(financial_id)
+        REFERENCES research_financial_component(financial_id)
         ON DELETE CASCADE
 );
 
@@ -427,6 +431,16 @@ CREATE TABLE IF NOT EXISTS addenda (
     CONSTRAINT fk_a_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
     CONSTRAINT fk_addenda_state FOREIGN KEY(addenda_state_id) REFERENCES states(state_id),
     CONSTRAINT fk_a_file_id FOREIGN KEY(addenda_file_id) REFERENCES files(file_id)
+);
+
+CREATE TABLE IF NOT EXISTS addenda_comment (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    addenda_id INT,
+    author_id INT,
+    created_date TIMESTAMP NOT NULL DEFAULT NOW(),
+    observation VARCHAR NOT NULL,
+    CONSTRAINT fk_ac_addenda_id FOREIGN KEY(addenda_id) REFERENCES addenda(addenda_id) ON DELETE CASCADE,
+    CONSTRAINT fk_ac_author_id FOREIGN KEY(author_id) REFERENCES user_account(user_id)
 );
 
 

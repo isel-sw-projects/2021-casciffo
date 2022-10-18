@@ -45,6 +45,10 @@ data class ProposalAggregate (
     var financialContractId: Int? = null,
     var hasPartnerships: Boolean? = null,
 
+    //financial contract info
+    var fileName: String? = null,
+    var fileSize: Long? = null,
+
     //promoter
     var promoterName: String? = null,
     var promoterEmail: String? = null,

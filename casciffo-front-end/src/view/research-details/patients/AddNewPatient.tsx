@@ -120,7 +120,7 @@ export function AddNewPatient(props: Props) {
                         type={"text"}
                         name={"treatmentBranch"}
                         placeholder={"Braço de tratamento"}
-                        value={patientToAdd.patient.treatmentBranch}
+                        value={patientToAdd.patient.treatmentBranch || ""}
                         onChange={updateUserToAdd}
                     />
                 </Form.FloatingLabel>

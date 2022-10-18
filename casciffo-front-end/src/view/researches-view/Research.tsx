@@ -8,7 +8,7 @@ import {Col, Container, FloatingLabel, Form, FormGroup, Row, Stack} from "react-
 import {MyTable} from "../components/MyTable";
 import {ResearchAggregateModel, ResearchModel} from "../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
-import {FormInputHelper} from "../research-details/research/FormInputHelper";
+import {FormInputHelper} from "../components/FormInputHelper";
 import {SearchComponent} from "../components/SearchComponent";
 import {CSVLink} from "react-csv";
 
@@ -49,9 +49,9 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                 accessorFn: row => row.id,
                 id: 'id',
                 cell: info => <div>
-                    <span>{info.getValue()}</span>
+                    <span>{info.getValue() as string}</span>
                     <br/>
-                    <Link to={`${info.getValue()}`}>Ver Detalhes</Link>
+                    <Link to={`${info.getValue()}#t=research`}>Ver Detalhes</Link>
                 </div>,
                 header: () => <span>Id</span>,
                 footer: props => props.column.id,
@@ -170,7 +170,8 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                 <br/>
                 <br/>
 
-                {/*<Container>*/}
+                {/*TODO*/}
+                {/* <Container>*/}
                 {/*    <CSVLink*/}
                 {/*        className={"float-end mb-2"}*/}
                 {/*        headers={getHeaders()}*/}
@@ -179,7 +180,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                 {/*    >*/}
                 {/*        {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel`}*/}
                 {/*    </CSVLink>*/}
-                {/*</Container>*/}
+                {/* </Container>*/}
 
 
                 {isDataReady &&

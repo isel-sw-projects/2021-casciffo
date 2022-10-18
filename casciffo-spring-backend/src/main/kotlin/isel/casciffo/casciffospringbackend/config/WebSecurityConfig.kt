@@ -141,10 +141,17 @@ class WebSecurityConfig {
             .authorizeExchange()
             .pathMatchers("$RESEARCH_URL/**").authenticated()
             .pathMatchers(HttpMethod.PUT, "$RESEARCH_DETAIL_URL/*").hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.POST, RESEARCH_CANCEL_URL, RESEARCH_COMPLETE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.POST, RESEARCH_DOSSIER_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            //research patients
             .pathMatchers(HttpMethod.GET, SEARCH_PATIENTS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.GET, RESEARCH_PATIENT_DETAILS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            //research visits
             .pathMatchers(HttpMethod.POST, RESEARCH_VISIT_DETAIL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            //research finance
+            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_RESEARCH_ENTRY).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_TEAM_ENTRY).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
     }
 
 }

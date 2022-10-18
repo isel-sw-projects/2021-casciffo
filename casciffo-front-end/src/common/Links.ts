@@ -57,15 +57,19 @@ const PATHOLOGIES_URL = `${BASE_URL}/pathologies`
 const RESEARCH_URL = `${BASE_URL}/research`
 const RESEARCH_BY_TYPE_URL = (type: string) => `${RESEARCH_URL}?type=${type}`
 const DETAIL_RESEARCH_URL = (id: string) => `${RESEARCH_URL}/${id}`
+const COMPLETE_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/complete`
+const CANCEL_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/cancel`
 const DOSSIER_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/dossier`
 const STUDIES_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/studies`
 const VISITS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/visits`
 const VISIT_DETAILS_URL = (rId: string, vId: string) => `${VISITS_RESEARCH_URL(rId)}/${vId}`
 const PATIENTS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients`
-const RESEARCH_PATIENT_WITH_VISITS_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients/create`
+// const RESEARCH_PATIENT_WITH_VISITS_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients/create`
 const RESEARCH_PATIENT_DETAIL_URL = (rId: string, pId: string) => `${PATIENTS_RESEARCH_URL(rId)}/${pId}`
+const RESEARCH_FINANCE_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/finance`
 
 const PATIENTS_LIKE_URL = (processId: string) => `${BASE_URL}/patients/search?q=${processId}`
+const RANDOMIZE_PATIENTS = (researchId: string) => `${PATIENTS_RESEARCH_URL(researchId)}/randomize`
 
 const ApiUrls = {
     baseUrl: BASE_URL,
@@ -76,13 +80,15 @@ const ApiUrls = {
     commentsByTypeUrl: COMMENTS_BY_TYPE_URL,
     researchUrl: RESEARCH_URL,
     researchDetailUrl: DETAIL_RESEARCH_URL,
+    researchCompleteUrl: COMPLETE_RESEARCH_URL,
+    researchCancelUrl: CANCEL_RESEARCH_URL,
     researchDossierUrl: DOSSIER_RESEARCH_URL,
     researchByTypeUrl: RESEARCH_BY_TYPE_URL,
     researchPatientsUrl: PATIENTS_RESEARCH_URL,
     researchStudiesUrl: STUDIES_RESEARCH_URL,
     researchVisitsUrl: VISITS_RESEARCH_URL,
     researchVisitDetailsUrl: VISIT_DETAILS_URL,
-    researchPatientsVisitsUrl: RESEARCH_PATIENT_WITH_VISITS_URL,
+    // researchPatientsVisitsUrl: RESEARCH_PATIENT_WITH_VISITS_URL,
     researchPatientDetailUrl: RESEARCH_PATIENT_DETAIL_URL,
     usersUrl: USERS_URL,
     userLoginUrl: USER_LOGIN_URL,
@@ -108,6 +114,8 @@ const ApiUrls = {
     usersCreateUrl: USERS_CREATE_URL,
     // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID
     patientsLikeUrl: PATIENTS_LIKE_URL,
+    researchPatientsRandomize: RANDOMIZE_PATIENTS,
+    researchFinanceUrl: RESEARCH_FINANCE_URL
 }
 
 export default ApiUrls

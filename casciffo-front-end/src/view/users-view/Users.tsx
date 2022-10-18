@@ -99,7 +99,7 @@ export function Users(props: UsersProps) {
                 accessorFn: row => row,
                 id: 'add-button',
                 header: () => <span/>,
-                cell: info => <AddRolesFromTable row={info.getValue()} roles={roles} addRoleToUser={onAddRolesToUser}/>,
+                cell: info => <AddRolesFromTable row={info.getValue() as UserModel} roles={roles} addRoleToUser={onAddRolesToUser}/>,
                 footer: props => props.column.id,
             }], [onAddRolesToUser, roles])
 

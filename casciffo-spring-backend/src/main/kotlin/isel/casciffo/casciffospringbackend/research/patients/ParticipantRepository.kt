@@ -21,7 +21,7 @@ interface ParticipantRepository: ReactiveSortingRepository<PatientModel, Int> {
         "SELECT p.* " +
         "FROM participant p " +
         "JOIN research_participants rp on p.id = rp.participant_id " +
-        "WHERE rp.research_id=:researchId AND rp.research_id=:patientId"
+        "WHERE rp.research_id=:researchId AND p.process_id=:patientProcessNum"
     )
-    fun findByResearchIdAndPatientId(researchId: Int, patientId: Int): Mono<PatientModel>
+    fun findByResearchIdAndPatientProcessNum(researchId: Int, patientProcessNum: Long): Mono<PatientModel>
 }

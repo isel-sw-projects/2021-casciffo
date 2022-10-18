@@ -13,7 +13,8 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
                 "pfc.proposal_financial_id, pfc.financial_contract_id, pfc.promoter_id, pfc.has_partnerships, " +
                 "state.state_name, st.service_name, ta.therapeutic_area_name, pl.pathology_name, " +
                 "pinv.user_name, pinv.user_email, pr.promoter_name, pr.promoter_email, prot.protocol_id, " +
-                "prot.validated, prot.validated_date, prot.comment_ref " +
+                "prot.validated, prot.validated_date, prot.comment_ref, " +
+                "f.file_name, f.file_size " +
         "FROM proposal p " +
         "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
         "JOIN service st ON st.service_id = p.service_id " +
@@ -23,6 +24,7 @@ interface ProposalAggregateRepo: ReactiveCrudRepository<ProposalAggregate, Int> 
         "LEFT JOIN proposal_financial_component pfc ON p.proposal_id = pfc.proposal_id " +
         "LEFT JOIN promoter pr ON pfc.promoter_id = pr.promoter_id " +
         "LEFT JOIN protocol prot on pfc.proposal_financial_id = prot.pfc_id " +
+        "LEFT JOIN files f ON pfc.financial_contract_id = f.file_id " +
         "WHERE p.proposal_id = :id"
     )
     fun findByProposalId(id: Int): Mono<ProposalAggregate>

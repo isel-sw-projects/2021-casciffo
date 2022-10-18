@@ -46,9 +46,13 @@ class ParticipantServiceImpl(
         return participantRepository.save(patient).awaitSingle()
     }
 
-    override suspend fun getPatientDetails(researchId: Int, patientId: Int): PatientModel {
-        return participantRepository.findByResearchIdAndPatientId(researchId, patientId).awaitSingleOrNull()
+    override suspend fun getPatientDetails(researchId: Int, patientProcessNum: Long): PatientModel {
+        return participantRepository.findByResearchIdAndPatientProcessNum(researchId, patientProcessNum).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST
-                , "No resource found with params [researchId:$researchId,patientId:$patientId")
+                , "No resource found with params [researchId:$researchId,patientId:$patientProcessNum]")
+    }
+
+    override suspend fun randomizeTreatmentBranches(patients: List<ResearchPatients>): Flow<ResearchPatients> {
+        return researchParticipantsRepository.saveAll(patients).asFlow()
     }
 }

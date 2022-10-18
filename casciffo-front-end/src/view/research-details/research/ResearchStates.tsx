@@ -34,7 +34,6 @@ type StateRadioButtonProps = {
 
 export function ResearchStates(props: ResearchStatesProps) {
     const [stateChain, setStateChain] = useState<StateModel[]>([])
-    //FIXME CAN SIMPLIFY INTO DERIVED STATE INSTEAD OF STATE
     const [currentState, setCurrentState] = useState<StateWithDisplayName>()
 
     const [stateTransitions, setStateTransitions] = useState<StateTransitionModel[]>([])
@@ -72,13 +71,15 @@ export function ResearchStates(props: ResearchStatesProps) {
 
 
     useEffect(() => {
-        const sort = (st1: StateTransitionModel, st2: StateTransitionModel) => MyUtil.cmp(st1.transitionDate, st2.transitionDate, true)
+        const sort = (st1: StateTransitionModel, st2: StateTransitionModel) =>
+            MyUtil.cmp(st1.transitionDate, st2.transitionDate, true)
         const sorted = props.stateTransitions.sort(sort)
         setStateTransitions(sorted)
         setDataReady(prevState => ({...prevState, stateTransitionsReady: true}))
     }, [props.stateTransitions])
 
 
+    //FIXME REFACTOR THIS DUPLICATE CODE INTO AN UTIL FUNCTION
     function mapStates() {
         if (stateChain.length === 0) return <span>a carregar estados...</span>
         let state = stateChain.find(s => s.stateFlowType === StateFlowTypes.INITIAL)!
@@ -162,6 +163,14 @@ export function ResearchStates(props: ResearchStatesProps) {
                     <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
                     <br/>
                     <Form>
+                        {
+                            props.canceledReason &&
+                            <Container><span className={"text-danger bold"}>
+                                O ensaio atual foi cancelado pelo seguinte motivo:
+                                <br/>
+                                {props.canceledReason}
+                            </span></Container>
+                        }
                         {mapStates()}
                     </Form>
                 </div>

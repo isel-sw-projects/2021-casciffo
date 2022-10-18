@@ -88,7 +88,11 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
         })
         props.requestPatients(query)
             .then((patients) => {
+                console.log("------------NEW REQUEST MADE-------------")
+                console.log(query)
+                console.log(patients)
                 requestCache.set(query, patients);
+                console.log("------------END OF NEW REQUEST-------------")
 
                 setOptions(patients);
                 setIsLoading(false);
@@ -111,25 +115,25 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
     const toggleToolTip = () => setShowToolTip(!showToolTip)
 
     return (
-        <OverlayTrigger
-            key={"search-warning"}
-            placement={"left"}
-            delay={150}
-            show={showToolTip}
-            overlay={
-                <Tooltip id={`tooltip-top`} onClick={toggleToolTip}>
-                    <Stack direction={"horizontal"}>
-                        <div style={{width:"10%"}}>
-                            <span  className={"float-start"} style={{fontSize: "1rem"}}>⚠️</span>
-                        </div>
-                        <div style={{width:"90%"}}>
-                            <span>Introduza o número do processo do paciente.
-                                A pesquisa começa após o primerio digito.</span>
-                        </div>
-                    </Stack>
-                </Tooltip>
-            }
-        >
+        // <OverlayTrigger
+        //     key={"search-warning"}
+        //     placement={"left"}
+        //     delay={150}
+        //     show={showToolTip}
+        //     overlay={
+        //         <Tooltip id={`tooltip-top`} onClick={toggleToolTip}>
+        //             <Stack direction={"horizontal"}>
+        //                 <div style={{width:"10%"}}>
+        //                     <span  className={"float-start"} style={{fontSize: "1rem"}}>⚠️</span>
+        //                 </div>
+        //                 <div style={{width:"90%"}}>
+        //                     <span>Introduza o número do processo do paciente.
+        //                         A pesquisa começa após o primerio digito.</span>
+        //                 </div>
+        //             </Stack>
+        //         </Tooltip>
+        //     }
+        // >
             <AsyncTypeahead
                 isInvalid={(selectedPatient.processId === "" && query !== "")}
                 isValid={(selectedPatient.processId !== "" && query === selectedPatient.processId && query !== "")}
@@ -138,7 +142,7 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
                 delay={200}
                 filterBy={filterBy}
                 isLoading={isLoading}
-                labelKey="processId"
+                labelKey="fullName"
                 maxResults={PER_PAGE - 1}
                 minLength={1}
                 ignoreDiacritics={true}
@@ -151,8 +155,7 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
                 promptText="Searching"
                 searchText="A carregar..."
                 renderMenuItemChildren={(option: any) => {
-                    console.log("OPTION IS")
-                    console.log(option)
+                    //FIXME THIS GARBAGE RENDERS A TRILLION TIMES WTF BRO
                     return (
                         <div key={option.id} className={"border-bottom"} onClick={() => onSelectedPatient(option)}>
                             <Highlighter search={query}>
@@ -167,6 +170,6 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
                     )}}
                 useCache={false}
             />
-        </OverlayTrigger>
+        // </OverlayTrigger>
     );
 }

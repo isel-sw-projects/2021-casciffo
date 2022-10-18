@@ -11,13 +11,13 @@ data class VisitDTO(
     var participantId: Int? = null,
     var visitType: VisitType? = null,
     var scheduledDate: LocalDateTime? = null,
-    var startDate: LocalDateTime? = null,
-    var endDate: LocalDateTime? = null,
-    var periodicity: String? = null,
     var observations: String? = null,
     var hasAdverseEventAlert: Boolean? = null,
     var hasMarkedAttendance: Boolean? = null,
     var patient: PatientModel? = null,
     var concluded: Boolean? = null,
-    var visitInvestigators: List<VisitInvestigators>? = null
+    var visitInvestigators: List<VisitInvestigators>? = null,
+    var periodicity: String? = null,
+    var startDate: LocalDateTime? = null,
+    var endDate: LocalDateTime? = null
 )

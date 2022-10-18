@@ -49,7 +49,7 @@ export function ResearchVisitsTab(props: VisitProps) {
                 accessorFn: row => row.id,
                 id: 'id',
                 cell: info => <div>
-                    <span>{info.getValue()}</span>
+                    {info.getValue() as string}
                     <br/>
                     <Link to={`#vId=${info.getValue()}`} onClick={props.renderDetails}>Ver Detalhes</Link>
                 </div>,

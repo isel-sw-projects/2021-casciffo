@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.finance.finance
 
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.Partnership
 import isel.casciffo.casciffospringbackend.proposals.finance.promoter.Promoter
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol
@@ -20,7 +21,6 @@ data class ProposalFinancialComponent (
     var proposalId: Int? = null,
     var promoterId: Int? = null,
     var financialContractId: Int? = null,
-
     var hasPartnerships: Boolean? = null,
 
     @Transient
@@ -37,5 +37,9 @@ data class ProposalFinancialComponent (
 
     @Transient
     @Value("null")
-    var validations: Flux<Validation>? = null
+    var validations: Flux<Validation>? = null,
+
+    @Transient
+    @Value("null")
+    var financialContract: FileInfo? = null
 )

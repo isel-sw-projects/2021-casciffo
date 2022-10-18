@@ -25,6 +25,7 @@ data class ResearchVisitsAggregate(
     var observations: String? = null,
     var hasAdverseEventAlert: Boolean? = null,
     var hasMarkedAttendance: Boolean? = null,
+    var concluded: Boolean? = null,
 
     //visit investigators
     var visitInvestigatorId: Int? = null,

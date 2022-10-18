@@ -20,8 +20,6 @@ data class VisitModel (
     var participantId: Int? = null,
     var visitType: VisitType? = null,
     var scheduledDate: LocalDateTime? = null,
-    var startDate: LocalDateTime? = null,
-    var endDate: LocalDateTime? = null,
     var periodicity: String? = null,
     var observations: String? = null,
     var hasAdverseEventAlert: Boolean? = null,

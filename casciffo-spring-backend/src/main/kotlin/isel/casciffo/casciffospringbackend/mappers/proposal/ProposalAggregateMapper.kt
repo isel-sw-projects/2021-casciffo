@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.mappers.proposal
 
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
 import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
@@ -45,13 +46,18 @@ class ProposalAggregateMapper: Mapper<ProposalModel, ProposalAggregate> {
                 proposalId = dto.proposalId,
                 promoterId = dto.promoterId,
                 financialContractId = dto.financialContractId,
+                hasPartnerships = dto.hasPartnerships,
                 promoter = Promoter(id = dto.promoterId, name = dto.promoterName, email= dto.promoterEmail),
                 protocol = ProposalProtocol(
                     id = dto.protocolId, validated = dto.validated,
                     validatedDate = dto.validatedDate, financialComponentId = dto.pfcId,
                     commentRef = dto.commentRef
                 ),
-                hasPartnerships = dto.hasPartnerships
+                financialContract = FileInfo(
+                    id = dto.financialContractId,
+                    fileName = dto.fileName,
+                    fileSize = dto.fileSize
+                )
         )
     }
 

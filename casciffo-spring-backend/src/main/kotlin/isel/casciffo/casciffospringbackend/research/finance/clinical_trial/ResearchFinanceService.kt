@@ -1,3 +1,0 @@
-package isel.casciffo.casciffospringbackend.research.finance.clinical_trial
-
-interface ResearchFinanceService

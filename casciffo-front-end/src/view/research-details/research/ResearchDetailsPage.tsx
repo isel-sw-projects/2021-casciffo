@@ -1,16 +1,19 @@
 import {MyError} from "../../error-view/MyError";
+
 import {
     DossierModel,
+    PatientModel,
     ResearchModel,
     ResearchVisitModel,
     ScientificActivityModel
 } from "../../../model/research/ResearchModel";
+
 import {ResearchDetailsTab} from "./ResearchDetailsTab";
 import {PatientDetails} from "../patients/PatientDetails";
 import {ResearchFinanceTab} from "../finance/ResearchFinanceTab";
 import {ResearchPatientsTab} from "../patients/ResearchPatientsTab";
 import {ResearchVisitsTab} from "../visits/ResearchVisitsTab";
-import {ResearchAddendaTab} from "./ResearchAddendaTab";
+import {ResearchAddendaTab} from "../addenda/ResearchAddendaTab";
 import {AddNewPatient} from "../patients/AddNewPatient";
 import {Container, Tab, Tabs} from "react-bootstrap";
 import {ResearchAggregateService} from "../../../services/ResearchAggregateService";
@@ -19,22 +22,45 @@ import {useErrorHandler} from "react-error-boundary";
 import {StateModel} from "../../../model/state/StateModel";
 import {ResearchScientificActivitiesTab} from "../scientic-activities/ResearchScientificActivitiesTab";
 import {ResearchStates} from "./ResearchStates";
-import {useParams} from "react-router-dom";
-import {PatientViewTab, VisitsViewTab} from "../../../common/Constants";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {AddendaViewTab, PatientViewTab, ResearchTypes, TAB_PARAMETER, VisitsViewTab} from "../../../common/Constants";
 import {ResearchVisitDetailsTab} from "../visits/ResearchVisitDetailsTab";
+import {useUserAuthContext} from "../../context/UserAuthContext";
+import {MyUtil} from "../../../common/MyUtil";
 
 
-export function ResearchDetails(props: { researchService: ResearchAggregateService }) {
+const TAB_NAMES = {
+    research: "research",
+    addenda: "addenda",
+    activities: "activities",
+    visits: "visits",
+    patients: "patients",
+    finance: "finance"
+}
+
+export function ResearchDetailsPage(props: { researchService: ResearchAggregateService }) {
     const {researchId} = useParams()
-    //todo may have to place into a useEffect, but since it's just a simple check idk if it's worth the extra trouble
+
     if(researchId == null) {
         throw new MyError("", 400)
     }
+    const [selectedTab, setSelectedTab] = useState("research")
     const errorHandler = useErrorHandler()
     // const ResearchDetailsContext = createContext({research: {}, setResearch: (r: ResearchModel): void => {}})
 
+    const userId = useUserAuthContext().userToken?.userId
+    if(userId == null) {
+        throw new MyError("", 400)
+    }
     const [research, setResearch] = useState<ResearchModel>({})
     const [stateChain, setStateChain] = useState<StateModel[]>([])
+    const {hash} = useLocation()
+
+    useEffect(() => {
+        const params = MyUtil.parseUrlHash(hash).find(pair => pair.key === TAB_PARAMETER)
+        const tab = params && params.value in TAB_NAMES ? params!.value : TAB_NAMES.research
+        setSelectedTab(tab)
+    }, [hash])
 
     useEffect(() => {
         props.researchService
@@ -60,7 +86,6 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
             .catch(errorHandler)
     }, [errorHandler, props.researchService])
 
-    const [selectedTab, setSelectedTab] = useState("research")
 
     const submitDossier = useCallback((researchId: string) => {
         return (d: DossierModel) => {
@@ -76,6 +101,26 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
                 .catch(errorHandler)
         }
     }, [errorHandler, props.researchService])
+
+    const saveRandomization = useCallback((patients: PatientModel[]) => {
+        props.researchService.saveRandomization(researchId, patients)
+            .then(value => setResearch(prevState => ({...prevState, patients: value})))
+    }, [props.researchService, researchId])
+
+
+
+
+    const changeTabAndRenderPatientDetails = () => {
+        //TODO MAYBE MOVE THE NAVIGATE PORTION HERE, BASICALLY ALTER URL HERE
+        setPatientViewTab(PatientViewTab.DETAILS)
+        setSelectedTab(TAB_NAMES.patients)
+    }
+
+    const changeTabAndRenderVisitDetails = () => {
+        setVisitsViewTab(VisitsViewTab.DETAILS)
+        setSelectedTab(TAB_NAMES.visits)
+    }
+
 
     const [patientViewTab, setPatientViewTab] = useState<PatientViewTab>(PatientViewTab.OVERVIEW)
 
@@ -94,19 +139,20 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
                 return <PatientDetails
                     fetchPatient={props.researchService.fetchResearchPatient}
                     visits={research.visits ?? []}
-                    onRenderOverviewClick={renderPatientOverviewScreen}/>
+                    onRenderOverviewClick={renderPatientOverviewScreen}
+                    renderVisitDetails={changeTabAndRenderVisitDetails}
+                />
             case PatientViewTab.OVERVIEW:
                 return <ResearchPatientsTab
                     patients={research.patients ?? []}
                     onChangeScreenToAddPatient={renderPatientAddScreen}
-                    onClickToPatientDetails={renderPatientDetailsScreen}/>
+                    onClickToPatientDetails={renderPatientDetailsScreen}
+                    treatmentBranches={research.treatmentBranches?.split(';') || []}
+                    saveRandomization={saveRandomization}/>
             default:
                 throw new MyError("Illegal patient tab screen", 400)
         }
     }
-
-    const [visitsViewTab, setVisitsViewTab] = useState<VisitsViewTab>(VisitsViewTab.OVERVIEW)
-
 
     const addNewVisit = useCallback((visit: ResearchVisitModel) => {
         const addVisitToList = (v: ResearchVisitModel) => {
@@ -118,9 +164,11 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
             .then(addVisitToList)
     },[props.researchService, researchId])
 
+    const [visitsViewTab, setVisitsViewTab] = useState<VisitsViewTab>(VisitsViewTab.OVERVIEW)
 
     const renderVisitsOverviewScreen = () => setVisitsViewTab(VisitsViewTab.OVERVIEW)
     const renderVisitsDetailsScreen = () => setVisitsViewTab(VisitsViewTab.DETAILS)
+
 
     const visitSwitchRender = (tab: VisitsViewTab) => {
         switch (tab) {
@@ -132,24 +180,75 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
             case VisitsViewTab.DETAILS:
                 return <ResearchVisitDetailsTab service={props.researchService}
                                                 onRenderOverviewClick={renderVisitsOverviewScreen}
+                                                onRenderPatientDetails={changeTabAndRenderPatientDetails}
                 />
             default:
                 throw new MyError("Illegal visits tab screen", 400)
         }
     }
 
-    const selectTab = (tab:string | null) => {
-        setSelectedTab(tab!);
-        if(tab === 'patients' && patientViewTab !== PatientViewTab.OVERVIEW) {
-             renderPatientOverviewScreen()
+    const [addendaViewTab, setAddendaViewTab] = useState<AddendaViewTab>(AddendaViewTab.OVERVIEW)
+
+    const renderAddendaOverviewScreen = () => setAddendaViewTab(AddendaViewTab.OVERVIEW)
+    const renderAddendaDetailsScreen = () => setAddendaViewTab(AddendaViewTab.DETAILS)
+
+    const addendaSwitchRender = (tab: AddendaViewTab) => {
+        switch (tab) {
+            case AddendaViewTab.OVERVIEW:
+                return <ResearchAddendaTab
+                            addendas={research.addendas ?? []}
+                            renderDetails={renderAddendaDetailsScreen}
+                />
+            // case AddendaViewTab.DETAILS:
+            //     return <ResearchAddendaDetails service={props.researchService}
+            //                                     onRenderOverviewClick={renderAddendaOverviewScreen}
+            //     />
+            default:
+                throw new MyError("Illegal addenda tab screen", 400)
         }
     }
+
+    const navigate = useNavigate()
+    const selectTab = (tab:string | null) => {
+        console.log("NAVIGATING TO " + tab)
+        navigate(`#${TAB_PARAMETER}=${tab}`)
+        // setSelectedTab(tab!);
+        // if(tab === 'patients' && patientViewTab !== PatientViewTab.OVERVIEW) {
+        //      renderPatientOverviewScreen()
+        // }
+    }
     
-    const onSaveActivity = useCallback((activity: ScientificActivityModel) => {
+    const onSaveScientificActivity = useCallback((activity: ScientificActivityModel) => {
         props.researchService.newScientificActivityEntry(researchId!, activity)
             .then(value => setResearch(prevState => ({...prevState, scientificActivities: [value, ...prevState.scientificActivities || []]})))
             .catch(errorHandler)
     }, [errorHandler, props.researchService, researchId])
+
+    const onCompleteResearch = useCallback(() =>
+        props.researchService
+            .completeResearch(researchId!)
+            .then((answer) => {
+                if(answer.success) {
+                    setResearch(answer.research!)
+                } else {
+                    alert("Failure to complete.")
+                }
+            })
+            .catch(errorHandler)
+        , [errorHandler, props.researchService, researchId])
+
+    const onCancelResearch = useCallback((reason: string) =>
+        props.researchService
+            .cancelResearch(researchId!, reason, userId)
+            .then((answer) => {
+                if(answer.success) {
+                    setResearch(answer.research!)
+                } else {
+                    alert("Failure to cancel.")
+                }
+            })
+            .catch(errorHandler)
+    ,[errorHandler, props.researchService, researchId, userId])
 
     return (
         // <ResearchDetailsContext.Provider value={re}>
@@ -160,56 +259,71 @@ export function ResearchDetails(props: { researchService: ResearchAggregateServi
                     onSelect={selectTab}
                     className="mb-3 justify-content-evenly"
                 >
-                    <Tab eventKey={"research"} title={"Ensaio Clínico"}>
+                    <Tab eventKey={TAB_NAMES.research} title={"Ensaio Clínico"}>
                         <ResearchDetailsTab
                             stateChain={stateChain}
                             research={research}
                             updateResearch={updateResearch}
-                            addDossier={submitDossier(researchId)}/>
+                            addDossier={submitDossier(researchId)}
+                            onCancel={onCancelResearch}
+                            onComplete={onCompleteResearch}/>
 
                     </Tab>
-                    <Tab eventKey={"addenda"} title={"Adendas"}>
-                        <ResearchAddendaTab/>
+                    <Tab eventKey={TAB_NAMES.addenda} title={"Adendas"}>
+                        {addendaSwitchRender(addendaViewTab)}
                     </Tab>
-                    <Tab eventKey={"ativities"} title={"Atividades científicas"}>
+                    <Tab eventKey={TAB_NAMES.activities} title={"Atividades científicas"}>
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
                             currentStateId={research.stateId ?? ""}
                             createdDate={research.startDate ?? ""}
+                            canceledReason={research.canceledReason}
                         />
-                        <ResearchScientificActivitiesTab onSaveActivity={onSaveActivity} scientificActivities={research.visits || []}/>
+                        <ResearchScientificActivitiesTab onSaveActivity={onSaveScientificActivity} scientificActivities={research.visits || []}/>
 
                     </Tab>
-                    <Tab eventKey={"visits"} title={"Visitas"}>
+                    <Tab eventKey={TAB_NAMES.visits} title={"Visitas"}>
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
                             currentStateId={research.stateId ?? ""}
                             createdDate={research.startDate ?? ""}
+                            canceledReason={research.canceledReason}
                         />
                         {visitSwitchRender(visitsViewTab)}
 
                     </Tab>
-                    <Tab eventKey={"patients"} title={"Pacientes"}>
+                    <Tab eventKey={TAB_NAMES.patients} title={"Pacientes"}>
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
                             currentStateId={research.stateId ?? ""}
                             createdDate={research.startDate ?? ""}
+                            canceledReason={research.canceledById}
                         />
                         {patientSwitchRender(patientViewTab)}
 
                     </Tab>
-                    <Tab eventKey={"finance"} title={"Financiamento"}>
-                        <ResearchStates
-                            states={stateChain}
-                            stateTransitions={research.stateTransitions ?? []}
-                            currentStateId={research.stateId ?? ""}
-                            createdDate={research.startDate ?? ""}
-                        />
-                        <ResearchFinanceTab/>
-                    </Tab>
+                    {
+                        research.type === ResearchTypes.CLINICAL_TRIAL.id &&
+                        <Tab eventKey={TAB_NAMES.finance} title={"Financiamento"}>
+                            <ResearchStates
+                                states={stateChain}
+                                stateTransitions={research.stateTransitions ?? []}
+                                currentStateId={research.stateId ?? ""}
+                                createdDate={research.startDate ?? ""}
+                                canceledReason={research.canceledReason}
+                            />
+                            {research.financeComponent &&
+                                <ResearchFinanceTab
+                                    numOfPatients={research.patients?.length ?? 0}
+                                    onUpdateResearch={updateResearch}
+                                    researchFinance={research.financeComponent}
+                                    researchService={props.researchService}/>
+                            }
+                        </Tab>
+                    }
                 </Tabs>
             </Container>
         // </ResearchDetailsContext.Provider>

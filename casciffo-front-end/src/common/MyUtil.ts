@@ -1,15 +1,27 @@
 import {STATES} from "../model/state/STATES";
-import {TOKEN_KEY} from "./Constants";
-import {UserToken} from "./Types";
+import {KEY_VALUE_DELIMENTER, PARAM_DELIMENTER, TOKEN_KEY} from "./Constants";
+import {KeyValuePair, UserToken} from "./Types";
 import axios, {AxiosRequestConfig, AxiosRequestHeaders} from "axios";
 import FileSaver from "file-saver";
 import {MyError} from "../view/error-view/MyError";
+import {filterFns} from "@tanstack/react-table";
 
 function padToNDigits(num: number, n: number = 2) {
     return num.toString().padStart(n, '0');
 }
 const isoDatetimeDelimiterIdx = 10
 const isoDateDelim = '-'
+const isoTimeDelim = ':'
+const isoDateTimeLength = 19
+
+
+const dateFieldIdx = {
+    year: 0,
+    month: 1,
+    day: 2,
+    hour: 3,
+    minute: 4
+}
 
 const months = [
     "Janeiro",
@@ -26,29 +38,23 @@ const months = [
     "Dezembro"
 ]
 
-function getMinutes(date: string | null | undefined): string {
-    if(date == null || date.length !== 10) return ""
-    return padToNDigits(new Date(date).getMinutes())
-}
-function getHour(date: string | null | undefined): string {
-    if(date == null || date.length !== 10) return ""
-    return padToNDigits(new Date(date).getHours())
-}
-function getDay(date: string | null | undefined): string {
-    if(date == null || date.length !== 10) return ""
-    return padToNDigits(new Date(date).getDay())
-}
-function getMonth(date: string | null | undefined): string {
-    if(date == null || date.length !== 10) return ""
-    return padToNDigits(new Date(date).getMonth())
-}
-function getYear(date: string | null | undefined): string {
-    if(date == null || date.length !== 10) return ""
-    return new Date(date).getFullYear() + ""
+function getDateTimeField(date: string | null | undefined, fieldName: keyof typeof dateFieldIdx): string {
+
+    // == is used because null == undefined
+    if(date == null) return ""
+
+    let dateFields = date.substring(0, isoDatetimeDelimiterIdx).split(isoDateDelim)
+
+    if(date.length === isoDateTimeLength) {
+        dateFields = [...dateFields, ...date.substring(isoDatetimeDelimiterIdx+1).split(isoTimeDelim)]
+    }
+
+    return dateFields[dateFieldIdx[fieldName]]
 }
 
+
 /**
- * Receives ISO formatted date yyyy-MM-dd'T'HH:mm:ss.SSSSS
+ * Receives ISO formatted date yyyy-MM-ddTHH:mm:ss.SSSSS
  * @param date ISO Formatted date.
  * @param withHours Optional to decide whether to format the hours as well.
  * @return The date formatted as yyyy-MM-dd HH:mm
@@ -125,10 +131,19 @@ function cmpWithToday(date: string | undefined | null, withHours: boolean = fals
 }
 
 const APPLICATION_CONTENT_TYPE = 'application/json'
-const HEADER_ACCEPT_JSON = ['Accept', APPLICATION_CONTENT_TYPE]
-const HEADER_CONTENT_TYPE = ['Content-Type', APPLICATION_CONTENT_TYPE]
-const HEADER_AUTHORIZATION = (token: string) => ['Authorization', 'Bearer ' + token]
+const HEADER_ACCEPT_JSON: [string,string] = ['Accept', APPLICATION_CONTENT_TYPE]
+const HEADER_CONTENT_TYPE: [string,string] = ['Content-Type', APPLICATION_CONTENT_TYPE]
+const HEADER_AUTHORIZATION = (token: string): [string,string] => ['Authorization', 'Bearer ' + token]
 
+function parseUrlHash(hash: string): KeyValuePair<string, string>[] {
+    const params = hash.substring(1).split(PARAM_DELIMENTER)
+    const res = params.map(p => {
+        const pair = p.split(KEY_VALUE_DELIMENTER)
+        return {key: pair[0], value: pair[1]}
+    })
+    console.log(res)
+    return res
+}
 
 
 function checkAndRaiseError(rsp: Response): Response {
@@ -142,7 +157,7 @@ function checkAndRaiseError(rsp: Response): Response {
 function _httpFetch<T>(
     url: string,
     method: string,
-    headers: string[][] = [],
+    headers: [string, string][] = [],
     body: unknown = null
 
 ): Promise<T> {
@@ -174,6 +189,10 @@ export function httpDelete<T>(url: string) : Promise<T> {
 
 export function httpPost<T>(url: string, body: unknown): Promise<T> {
     return _httpFetch(url, 'POST', [HEADER_CONTENT_TYPE], body)
+}
+
+export function httpPostNoBody<T>(url: string): Promise<T> {
+    return _httpFetch(url, 'POST')
 }
 
 export function httpPut<T>(url: string, body: unknown = null): Promise<T> {
@@ -225,14 +244,11 @@ const clearUserToken = () => {
 const apiTitle = (title: string) => `CASCIFFO | ${title}`
 
 export const MyUtil = {
+    parseUrlHash,
     formatDate,
     proposalStates: Object.values(STATES).filter(s => s.code > STATES.SUBMETIDO.code && s.code <= STATES.VALIDADO.code),
     cmp,
-    getMinutes,
-    getHour,
-    getDay,
-    getMonth,
-    getYear,
+    getDateTimeField,
     monthDiff,
     yearRatioDiff,
     formatDateWithMonthName,

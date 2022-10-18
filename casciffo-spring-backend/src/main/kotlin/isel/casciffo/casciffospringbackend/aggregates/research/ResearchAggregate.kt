@@ -26,6 +26,9 @@ data class ResearchAggregate(
     var treatmentType: String? = null,
     var typology: String? = null,
     var specification: String? = null,
+    var treatmentBranches: String? = null,
+    var canceledReason: String? = null,
+    var canceledById: Int? = null,
     @Column("research_state_id")
     var stateId: Int? = null,
     var stateName: String? = null,

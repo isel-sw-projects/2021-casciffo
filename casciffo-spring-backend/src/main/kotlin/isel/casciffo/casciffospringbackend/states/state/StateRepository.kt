@@ -33,7 +33,8 @@ interface StateRepository : ReactiveCrudRepository<State, Int> {
         "SELECT CASE WHEN COUNT(S) > 0 THEN TRUE ELSE FALSE END " +
         "FROM states S " +
         "JOIN next_possible_states nps on S.state_id = nps.origin_state_id " +
-        "WHERE nps.origin_state_id=:stateId AND nps.state_type=:stateType AND nps.state_flow_type='TERMINAL'"
+        "WHERE nps.origin_state_id=:stateId AND nps.state_type=:stateType AND nps.state_flow_type='TERMINAL' " +
+                "OR s.state_name='CANCELADO' AND s.state_id = :stateId"
     )
     fun isTerminalState(stateId: Int, stateType: StateType): Mono<Boolean>
 

@@ -19,9 +19,9 @@ class PatientController(
     @GetMapping(RESEARCH_PATIENT_DETAILS)
     suspend fun getPatientDetails(
         @PathVariable researchId: Int,
-        @PathVariable patientId: Int
+        @PathVariable patientProcessNum: Long
     ): ResponseEntity<PatientModel> {
-        return ResponseEntity.ok(service.getPatientDetails(researchId, patientId))
+        return ResponseEntity.ok(service.getPatientDetails(researchId, patientProcessNum))
     }
 
     @GetMapping(SEARCH_PATIENTS)

@@ -66,8 +66,13 @@ type GeneralError = {
     message: string
 }
 
+type KeyValuePair<K, V> = {
+    key: K,
+    value: V
+}
+
 export type {
     Page, ResearchType, Investigator,
     Constants, Filter, ProposalForm, Promoter,
-    UserToken, GeneralError
+    UserToken, GeneralError, KeyValuePair
 }

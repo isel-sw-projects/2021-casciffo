@@ -22,7 +22,7 @@ import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 import {Roles} from "../../model/role/Roles";
 import {FaUser}   from "react-icons/fa";
 import {Users} from "../users-view/Users";
-import {ResearchDetails} from "../research-details/research/ResearchDetails";
+import {ResearchDetailsPage} from "../research-details/research/ResearchDetailsPage";
 
 function NavigationBar() {
 
@@ -93,7 +93,7 @@ function CreateRoutes() {
             />
 
             <Route path={"/ensaios/:researchId"}
-                element={RequiresAuth(<ResearchDetails researchService={new ResearchAggregateService()}/>)}
+                element={RequiresAuth(<ResearchDetailsPage researchService={new ResearchAggregateService()}/>)}
             />
 
             <Route path={"/users"}

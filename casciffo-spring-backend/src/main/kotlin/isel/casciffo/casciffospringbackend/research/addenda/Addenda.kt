@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.addenda
 
 import isel.casciffo.casciffospringbackend.files.FileInfo
+import isel.casciffo.casciffospringbackend.research.addenda.comments.AddendaComment
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import org.springframework.beans.factory.annotation.Value
@@ -37,5 +38,9 @@ data class Addenda (
 
     @Transient
     @Value("null")
-    var fileInfo: FileInfo? = null
+    var fileInfo: FileInfo? = null,
+
+    @Transient
+    @Value("null")
+    var observations: Flux<AddendaComment>? = null
 )

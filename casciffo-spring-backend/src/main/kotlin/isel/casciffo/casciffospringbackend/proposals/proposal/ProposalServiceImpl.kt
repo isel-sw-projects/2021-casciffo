@@ -193,7 +193,7 @@ class ProposalServiceImpl(
 
         val currState = stateService.findById(proposal.stateId!!)
 
-        //TODO change to ResponseEntity and handle exception in ControllerAdvice
+
         val nextState = stateService.findById(nextStateId)
 
         val isClinicalTrial = proposal.type === ResearchType.CLINICAL_TRIAL

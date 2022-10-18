@@ -1,7 +1,19 @@
 import {DossierModel, ResearchModel} from "../../../model/research/ResearchModel";
-import {Button, Col, Container, FloatingLabel, Form, Modal, Row, Stack, Table} from "react-bootstrap";
+import {
+    Button, CloseButton,
+    Col,
+    Container,
+    FloatingLabel,
+    Form,
+    FormGroup, ListGroup,
+    ListGroupItem,
+    Modal,
+    Row,
+    Stack,
+    Table
+} from "react-bootstrap";
 import {ResearchTypes, StateFlowTypes} from "../../../common/Constants";
-import {FormInputHelper} from "./FormInputHelper";
+import {FormInputHelper} from "../../components/FormInputHelper";
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {StateModel} from "../../../model/state/StateModel";
@@ -14,6 +26,8 @@ type RDT_Props = {
     stateChain: StateModel[]
     updateResearch: (data: ResearchModel) => void
     addDossier: (d: DossierModel) => void
+    onComplete: () => void
+    onCancel: (reason: string) => void
 }
 
 export function ResearchDetailsTab(props: RDT_Props) {
@@ -58,7 +72,15 @@ export function ResearchDetailsTab(props: RDT_Props) {
     const [showCancelPopup, setShowCancelPopup] = useState(false)
 
     const saveChanges = () => {
+        if (treatmentBranches.length !== 0) {
+            research.treatmentBranches = treatmentBranches.join(';')
+            setTreatmentBranches([])
+            setCurrentBranch("")
+        }
+        //TODO CLEAN UP LOG WHEN DONE
+        // console.log(research)
         props.updateResearch(research)
+        toggleTreatmentBranchForm()
         setIsEditing(false)
     }
 
@@ -73,15 +95,15 @@ export function ResearchDetailsTab(props: RDT_Props) {
             alert("A razão de cancelamento tem de ser introduzida!")
             return
         }
-        //TODO call service to cancel and set updated research
-
+        //call service to cancel research, update is done automatically in parent
+        props.onCancel(reason)
         // close popup and stop isEditing
         setShowCancelPopup(false)
         setIsEditing(false)
     }
 
     const onConcludeResearch = () => {
-        //TODO call service to complete and update research
+        props.onComplete()
     }
 
     const navigate = useNavigate()
@@ -89,17 +111,36 @@ export function ResearchDetailsTab(props: RDT_Props) {
         navigate(`/propostas/${research.proposalId!}`)
     }, [navigate, research.proposalId])
 
+    const [currentBranch, setCurrentBranch] = useState("")
+    const [showTreatmentBranchForm, setShowTreatmentBranchForm] = useState(false)
+
+    const addBranch = () => {
+        //todo eventually add a warning message when input is invalid
+        if(currentBranch.length === 0) return
+        setTreatmentBranches(prevState => [currentBranch, ...prevState])
+        setCurrentBranch("")
+    }
+
+    const removeBranch = (b: string) => {
+        setTreatmentBranches(prevState => prevState.filter(v => v !== b))
+    }
+
+    const toggleTreatmentBranchForm = () => setShowTreatmentBranchForm(prevState => !prevState)
+
+    const [treatmentBranches, setTreatmentBranches] = useState<string[]>([])
+
     return <Container>
         <CancelPopup show={showCancelPopup}
                      onCloseButtonClick={() => setShowCancelPopup(false)}
                      onSuccessButtonClick={onCancelResearch}/>
-        <Row className={"justify-content-evenly"}>
+        <Row className={"justify-content-evenly border-bottom border-2 border-secondary"}>
             <Col>
                 <ResearchStates
                     states={props.stateChain}
                     stateTransitions={research.stateTransitions ?? []}
                     currentStateId={research.stateId ?? ""}
                     createdDate={research.startDate ?? ""}
+                    canceledReason={research.canceledReason}
                 />
             </Col>
             <Col>
@@ -113,7 +154,6 @@ export function ResearchDetailsTab(props: RDT_Props) {
                 }
             </Col>
             <Col>
-                {/*TODO EVENTUALLY ADD TOOLTIP SAYING CANT EDIT TERMINAL STATE CBA RN SRY np*/}
                 <Button className={"float-end m-2"}
                         variant={isEditing ? "outline-danger" : "outline-primary"}
                         onClick={isEditing ? cancelChanges : toggleIsEditing}
@@ -131,9 +171,66 @@ export function ResearchDetailsTab(props: RDT_Props) {
             </Col>
         </Row>
 
+        <Container className={"mt-4 mb-4"}>
+            <Row className={"mb-4"}>
+                <Col>
+                    { isEditing &&
+                        <Container className={"flex-column float-start"}>
+                            <Button variant={"outline-primary"} onClick={toggleTreatmentBranchForm}>Definir braços de tratamento</Button>
+                            {
+                                showTreatmentBranchForm &&
+                                <Form className={"m-2"}>
+                                    <FormGroup className={"mt-2 mb-2"}>
+                                        <FloatingLabel label={"Nome do braço de tratamento"}>
+                                            <Form.Control
+                                                placeholder={"Nome do braço de tratamento"}
+                                                type={"text"}
+                                                value={currentBranch}
+                                                onChange={e => setCurrentBranch(e.target.value)}
+                                            />
+                                        </FloatingLabel>
+                                    </FormGroup>
+                                    <Button variant={"outline-primary"} onClick={addBranch}>Adicionar</Button>
+
+                                    <ListGroup>
+                                        {treatmentBranches.map((b, i) =>
+                                            <ListGroupItem className={"mt-1 mb-1"} key={b} style={{backgroundColor: (i & 1) === 1 ? "whitesmoke" : "wheat"}}>
+                                                {b} <CloseButton onClick={() => removeBranch(b)}/>
+                                            </ListGroupItem>
+                                        )}
+                                    </ListGroup>
+                                </Form>
+                            }
+                        </Container>
+                    }
+                </Col>
+                <Col/>
+                <Col/>
+            </Row>
+
+            <Row>
+                <Col>
+                    <h5>Braços de tratamento</h5>
+                    <ListGroup>
+                        {research.treatmentBranches?.split(';')?.map((b, i) =>
+                        <ListGroupItem
+                            disabled={!isEditing}
+                            as="li"
+                            className="d-flex justify-content-between align-items-start mb-1"
+                            key={`${b}-${i}}`}
+                            style={{backgroundColor: (i & 1) === 1 ? "whitesmoke" : "white"}}>{b}</ListGroupItem>
+                        ) || "Nenhum definido"}
+                    </ListGroup>
+                </Col>
+                <Col/>
+                <Col/>
+            </Row>
+
+        </Container>
+
         {dataReady &&
             <>
-                <Form className={"border-top border-2 border-secondary"}>
+                <Form>
                     <Row>
                         <FormInputHelper
                             label={"Data início"}

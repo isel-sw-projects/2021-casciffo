@@ -4,8 +4,9 @@ import {ResearchAggregateModel, ScientificActivityModel} from "../../../model/re
 import {Link} from "react-router-dom";
 import {MyTable} from "../../components/MyTable";
 import {Breadcrumb, Button, Container, FloatingLabel, Form, FormControl, FormGroup, Stack} from "react-bootstrap";
-import {FormInputHelper} from "../research/FormInputHelper";
+import {FormInputHelper} from "../../components/FormInputHelper";
 import {MyUtil} from "../../../common/MyUtil";
+import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
 
 type MyProps = {
     onSaveActivity: (activity: ScientificActivityModel) => void
@@ -26,7 +27,7 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                 accessorFn: row => row.id,
                 id: 'id',
                 cell: info => <div>
-                    <span>{info.getValue()}</span>
+                    <span>{info.getValue() as string}</span>
                 </div>,
                 header: () => <span>Id</span>,
                 footer: props => props.column.id,
@@ -184,7 +185,7 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                             <FloatingLabelHelper
                                 label={"Ano de publicação"}
                                 name={"yearPublished"}
-                                value={MyUtil.getYear(newEntry.datePublished)}
+                                value={MyUtil.getDateTimeField(newEntry.datePublished, "year")}
                             />
                             <FloatingLabelHelper
                                 label={"Volume"}
@@ -222,9 +223,9 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                     </Form>
             }
             { isNewEntry
-                ? <div className={"flex-column m-2"}>
+                ? <div className={"flex-column m-2 m-md-2"}>
                     <div>
-                        <Button variant={"outline-primary float-start"} onClick={saveEntry}>Submeter dados</Button>
+                        <Button variant={"outline-primary float-start ms-2 ms-md-2"} onClick={saveEntry}>Submeter</Button>
                     </div>
                     <div>
                         <Button variant={"outline-danger float-end"} onClick={() => {setIsNewEntry(false); resetEntry()}}>Cancelar</Button>
@@ -238,19 +239,4 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
             <MyTable data={activities} columns={columns}/>
         </Container>
     </React.Fragment>
-}
-
-function FloatingLabelHelper(props: {label: string, name: string, value?: string, onChange?: (e: any) => void}) {
-    return (
-        <FloatingLabel className={"font-bold text-capitalize m-2"} label={props.label}>
-            <Form.Control
-                type={"text"}
-                value={props.value ?? ""}
-                name={props.name}
-                placeholder={props.label}
-                readOnly={props.onChange == null}
-                onChange={props.onChange}
-            />
-        </FloatingLabel>
-    )
 }

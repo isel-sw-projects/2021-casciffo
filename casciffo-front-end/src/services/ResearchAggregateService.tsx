@@ -1,10 +1,10 @@
 import ApiUrls from "../common/Links";
-import {httpGet, httpPost, httpPut} from "../common/MyUtil";
+import {httpGet, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
 import {
     DossierModel,
     PatientModel,
-    PatientVisitsAggregate, ResearchAggregateModel,
-    ResearchModel,
+    PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance,
+    ResearchModel, ResearchModelAnswer,
     ResearchVisitModel, ScientificActivityModel
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
@@ -19,7 +19,7 @@ export class ResearchAggregateService {
 
     concludeVisit(researchId: string, visitId: string, visit: ResearchVisitModel): Promise<ResearchVisitModel> {
         const url = ApiUrls.researchVisitDetailsUrl(researchId, visitId)
-        return httpPut(url, visit)
+        return httpPost(url, visit)
     }
 
     fetchByType(researchType: string): Promise<ResearchAggregateModel[]> {
@@ -48,24 +48,10 @@ export class ResearchAggregateService {
         return httpPost(url, dossier)
     }
 
-    addStudiesToResearch(researchId: string, dossier: DossierModel): Promise<DossierModel> {
-        const url = ApiUrls.researchStudiesUrl(researchId)
-        return httpPost(url, dossier)
-    }
 
     scheduleVisit(researchId: string, visit: ResearchVisitModel): Promise<ResearchVisitModel> {
         const url = ApiUrls.researchVisitsUrl(researchId)
         return httpPost(url, visit)
-    }
-
-    addPatientToResearch(researchId: string, patient: PatientModel): Promise<PatientModel> {
-        const url = ApiUrls.researchPatientsUrl(researchId)
-        return httpPost(url, patient)
-    }
-
-    addPatientAndVisitsToResearch(researchId: string, aggregate: PatientVisitsAggregate): Promise<PatientVisitsAggregate> {
-        const url = ApiUrls.researchPatientsVisitsUrl(researchId)
-        return httpPost(url, aggregate)
     }
 
     searchPatientsByProcessId(processId: string): Promise<PatientModel[]> {
@@ -81,5 +67,35 @@ export class ResearchAggregateService {
     newScientificActivityEntry(researchId: string, activity: ScientificActivityModel): Promise<ScientificActivityModel> {
         const url = ApiUrls.researchStudiesUrl(researchId)
         return httpPost(url, activity)
+    }
+
+    saveRandomization(researchId: string, patients: PatientModel[]): Promise<PatientModel[]> {
+        const url = ApiUrls.researchPatientsRandomize(researchId)
+        return httpPut(url, patients)
+    }
+
+    completeResearch(researchId: string): Promise<ResearchModelAnswer> {
+        const url = ApiUrls.researchCompleteUrl(researchId)
+        return httpPostNoBody(url)
+    }
+
+    cancelResearch(researchId: string, reason: string, userId: string): Promise<ResearchModelAnswer> {
+        const url = ApiUrls.researchCompleteUrl(researchId)
+        return httpPost(url, {reason: reason, userId: userId})
+    }
+
+    saveResearchFinance(researchId: string, rf: ResearchFinance): Promise<ResearchFinance> {
+        const url = ApiUrls.researchFinanceUrl(researchId)
+        return httpPut(url, rf)
+    }
+
+    addPatientToResearch(researchId: string, patient: PatientModel): Promise<PatientModel> {
+        const url = ApiUrls.researchPatientsUrl(researchId)
+        return httpPost(url, patient)
+    }
+
+    addPatientAndVisitsToResearch(researchId: string, aggregate: PatientVisitsAggregate): Promise<PatientVisitsAggregate> {
+        const url = ApiUrls.researchVisitsUrl(researchId)
+        return httpPost(url, aggregate)
     }
 }

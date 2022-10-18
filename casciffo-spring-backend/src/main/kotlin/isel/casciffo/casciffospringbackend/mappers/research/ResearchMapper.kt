@@ -3,6 +3,12 @@ package isel.casciffo.casciffospringbackend.mappers.research
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamDTO
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.mappers.Mapper
+import isel.casciffo.casciffospringbackend.mappers.addenda.AddendaMapper
+import isel.casciffo.casciffospringbackend.mappers.research_finance.ResesearchFinanceMapper
+import isel.casciffo.casciffospringbackend.research.addenda.Addenda
+import isel.casciffo.casciffospringbackend.research.addenda.AddendaDTO
+import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinance
+import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinanceDTO
 import isel.casciffo.casciffospringbackend.research.research.ResearchDTO
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
@@ -16,7 +22,9 @@ import org.springframework.stereotype.Component
 @Component
 class ResearchMapper(
     @Autowired private val invTeamMapper: Mapper<InvestigationTeamModel, InvestigationTeamDTO>,
-    @Autowired private val visitsMapper: Mapper<VisitModel, VisitDTO>
+    @Autowired private val visitsMapper: Mapper<VisitModel, VisitDTO>,
+    @Autowired private val addendaMapper: Mapper<Addenda, AddendaDTO>,
+    @Autowired private val financeMapper: Mapper<ResearchFinance, ResearchFinanceDTO>
 ): Mapper<ResearchModel, ResearchDTO> {
 
     override suspend fun mapDTOtoModel(dto: ResearchDTO?): ResearchModel {
@@ -42,6 +50,9 @@ class ResearchMapper(
             treatmentType = dto.treatmentType,
             typology = dto.typology,
             specification = dto.specification,
+            treatmentBranches = dto.treatmentBranches,
+            canceledReason = dto.canceledReason,
+            canceledById = dto.canceledById,
             state = dto.state,
             stateId = dto.stateId,
             visits = dto.visits?.map { visitsMapper.mapDTOtoModel(it) }?.asFlow(),
@@ -49,7 +60,9 @@ class ResearchMapper(
             stateTransitions = dto.stateTransitions?.asFlow(),
             dossiers = dto.dossiers?.asFlow(),
             scientificActivities = dto.scientificActivities?.asFlow(),
-            investigationTeam = dto.investigationTeam?.asFlow()?.map(invTeamMapper::mapDTOtoModel)
+            investigationTeam = dto.investigationTeam?.asFlow()?.map(invTeamMapper::mapDTOtoModel),
+            addendas = dto.addendas?.asFlow()?.map(addendaMapper::mapDTOtoModel),
+            financeComponent = if (dto.financeComponent != null) financeMapper.mapDTOtoModel(dto.financeComponent) else null
         )
     }
 
@@ -76,6 +89,9 @@ class ResearchMapper(
             treatmentType = model.treatmentType,
             typology = model.typology,
             specification = model.specification,
+            treatmentBranches = model.treatmentBranches,
+            canceledReason = model.canceledReason,
+            canceledById = model.canceledById,
             stateId = model.stateId,
             state = model.state,
             visits = model.visits?.map { visitsMapper.mapModelToDTO(it) }?.toList(),
@@ -83,7 +99,9 @@ class ResearchMapper(
             stateTransitions = model.stateTransitions?.toList(),
             dossiers = model.dossiers?.toList(),
             scientificActivities = model.scientificActivities?.toList(),
-            investigationTeam = model.investigationTeam?.map(invTeamMapper::mapModelToDTO)?.toList()
+            investigationTeam = model.investigationTeam?.map(invTeamMapper::mapModelToDTO)?.toList(),
+            addendas = model.addendas?.map(addendaMapper::mapModelToDTO)?.toList(),
+            financeComponent = if (model.financeComponent != null) financeMapper.mapModelToDTO(model.financeComponent) else null
         )
     }
 }

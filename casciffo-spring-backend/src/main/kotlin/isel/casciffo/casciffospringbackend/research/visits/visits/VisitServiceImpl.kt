@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.research.visits.visits
 
 import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggregate
 import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggregateRepo
+import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.patients.PatientModel
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsRepository
@@ -14,6 +15,7 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KLogger
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,7 +29,8 @@ class VisitServiceImpl(
     @Autowired val visitRepository: VisitRepository,
     @Autowired val visitInvestigatorsRepository: VisitInvestigatorsRepository,
     @Autowired val visitInvestigatorsService: VisitInvestigatorsService,
-    @Autowired val visitsAggregateRepo: ResearchVisitsAggregateRepo
+    @Autowired val visitsAggregateRepo: ResearchVisitsAggregateRepo,
+    @Autowired val visitMapper: Mapper<VisitModel, VisitDTO>
 ) : VisitService {
 
     val logger : KLogger = KotlinLogging.logger {  }
@@ -53,12 +56,14 @@ class VisitServiceImpl(
 
     @Transactional
     override suspend fun concludeVisit(visit: VisitModel): VisitModel {
-        val existingVisit = visitRepository.findById(visit.id!!).awaitSingle()
-        if(existingVisit.concluded!!) {
+        val existingVisit = visitRepository.findById(visit.id!!).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "A visit com id ${visit.id} não existe.")
+        if(existingVisit.concluded == true) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Uma visita concluída não pode ser alterada.")
         }
         visit.concluded = true
-        return visitRepository.save(visit).awaitSingle()
+        visitRepository.save(visit).awaitSingle()
+        return visit
     }
 
     override suspend fun getVisitsForPatient(researchId: Int, participantId: Int): Flow<VisitModel> {
@@ -89,13 +94,12 @@ class VisitServiceImpl(
             researchId = researchId,
             visitType = firstEntry.visitType,
             participantId = firstEntry.participantId,
-            endDate = firstEntry.endDate,
-            startDate = firstEntry.startDate,
             hasAdverseEventAlert = firstEntry.hasAdverseEventAlert,
             hasMarkedAttendance = firstEntry.hasMarkedAttendance,
             observations = firstEntry.observations,
             periodicity = firstEntry.periodicity,
             scheduledDate = firstEntry.scheduledDate,
+            concluded = firstEntry.concluded,
             patient = PatientModel(
                 id = firstEntry.participantId,
                 age = firstEntry.age,
@@ -118,9 +122,27 @@ class VisitServiceImpl(
         )
     }
 
-    override suspend fun scheduleVisits(researchId: Int, patientId: Int, visits: List<VisitModel>): Flow<VisitModel> {
-        return visits.map {
-            createVisit(it)
+    override suspend fun scheduleVisits(researchId: Int, patientId: Int, visits: List<VisitDTO>): Flow<VisitModel> {
+        return visits.flatMap {
+            val visitModel = visitMapper.mapDTOtoModel(it)
+            val mutableList = mutableListOf<VisitModel>()
+            if(it.startDate !== null) {
+                var currDate = it.startDate!!
+                //FIXME REVIEW THIS PERIODICITY IF ITS ALWAYS IN DAYS OR STRING
+                // IF STRING THEN DO A SWITCH CASE AND GET THE CORRECT ADDING FUNCTION VIA LAMBDA TO THE START DATE
+                // i.e LocalDateTime::plusDays() LocalDateTime::plusWeeks() LocalDateTime::plusMonths()
+                val timeStep = it.periodicity!!
+
+                while (currDate.isBefore(it.endDate!!)) {
+                    //SET THE SCHEDULE DATE ACCORDING TO CURRENT ITERATION IN THE START AND END DATE RANGES
+                    visitModel.scheduledDate = currDate
+                    val visit = createVisit(visitModel)
+                    mutableList.add(visit)
+                    //FIXME DO THE STEP HERE
+                    currDate = currDate.plusDays(timeStep.toLong())
+                }
+            }
+            mutableList
         }.asFlow()
     }
 

@@ -17,24 +17,24 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:2.7.0")
-	implementation("org.springframework.boot:spring-boot-starter-webflux:2.7.0")
-	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.6")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.2")
+	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:2.7.4")
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.7")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-	implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+	implementation("io.github.microutils:kotlin-logging-jvm:3.0.0")
 
-	runtimeOnly("io.r2dbc:r2dbc-postgresql:0.8.12.RELEASE")
-	runtimeOnly("org.postgresql:postgresql:42.3.6")
+	runtimeOnly("io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE")
+	runtimeOnly("org.postgresql:postgresql:42.5.0")
 
 	testImplementation("io.r2dbc:r2dbc-spi:1.0.0.RELEASE")
-	testImplementation("com.h2database:h2:2.1.212")
+	testImplementation("com.h2database:h2:2.1.214")
 	testImplementation("io.r2dbc:r2dbc-h2:0.9.1.RELEASE")
-	testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.0")
-	testImplementation("io.projectreactor:reactor-test:3.4.18")
-	testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.2")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:2.7.4")
+	testImplementation("io.projectreactor:reactor-test:3.4.23")
+	testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
 
 	//JWT
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")

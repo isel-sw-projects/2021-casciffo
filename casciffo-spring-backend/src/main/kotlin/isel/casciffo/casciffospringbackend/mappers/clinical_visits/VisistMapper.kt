@@ -16,14 +16,13 @@ class VisistMapper: Mapper<VisitModel, VisitDTO> {
             researchId = dto.researchId,
             visitType = dto.visitType,
             participantId = dto.participantId,
-            endDate = dto.endDate,
-            startDate = dto.startDate,
             hasAdverseEventAlert = dto.hasAdverseEventAlert,
             hasMarkedAttendance = dto.hasMarkedAttendance,
             observations = dto.observations,
             periodicity = dto.periodicity,
             scheduledDate = dto.scheduledDate,
             patient = dto.patient,
+            concluded = dto.concluded,
             visitInvestigators = dto.visitInvestigators?.asFlow()
         )
     }
@@ -35,14 +34,13 @@ class VisistMapper: Mapper<VisitModel, VisitDTO> {
             researchId = model.researchId,
             visitType = model.visitType,
             participantId = model.participantId,
-            endDate = model.endDate,
-            startDate = model.startDate,
             hasAdverseEventAlert = model.hasAdverseEventAlert,
             hasMarkedAttendance = model.hasMarkedAttendance,
             observations = model.observations,
             periodicity = model.periodicity,
             scheduledDate = model.scheduledDate,
             patient = model.patient,
+            concluded = model.concluded,
             visitInvestigators = model.visitInvestigators?.toList()
         )
     }

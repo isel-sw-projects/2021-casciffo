@@ -9,5 +9,6 @@ interface ParticipantService {
     suspend fun findByProcessId(pid: Long): PatientModel?
     suspend fun searchByProcessIdLike(pId: Long): Flow<PatientModel>
     suspend fun save(patient: PatientModel) : PatientModel
-    suspend fun getPatientDetails(researchId: Int, patientId: Int): PatientModel
+    suspend fun getPatientDetails(researchId: Int, patientProcessNum: Long): PatientModel
+    suspend fun randomizeTreatmentBranches(patients: List<ResearchPatients>): Flow<ResearchPatients>
 }
