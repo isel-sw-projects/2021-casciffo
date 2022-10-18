@@ -141,7 +141,6 @@ function parseUrlHash(hash: string): KeyValuePair<string, string>[] {
         const pair = p.split(KEY_VALUE_DELIMENTER)
         return {key: pair[0], value: pair[1]}
     })
-    console.log(res)
     return res
 }
 

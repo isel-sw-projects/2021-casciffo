@@ -8,7 +8,7 @@ import {CreateProposal} from '../proposal-form-view/CreateProposal'
 import {Proposals} from '../proposals-view/Proposals';
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import ProposalService from "../../services/ProposalService";
-import {ProposalDetails} from "../proposal-details-view/ProposalDetails";
+import {ProposalDetailsPage} from "../proposal-details-view/ProposalDetailsPage";
 import RequiresAuth from "../login-view/RequiresAuth";
 import {Dashboard} from "./Dashboard";
 import {Login} from "../login-view/Login";
@@ -85,7 +85,7 @@ function CreateRoutes() {
                 />)}
             />
             <Route path={"/propostas/:proposalId"}
-                   element={RequiresAuth(<ProposalDetails proposalService={new ProposalAggregateService()}/>)}
+                   element={RequiresAuth(<ProposalDetailsPage proposalService={new ProposalAggregateService()}/>)}
             />
 
             <Route path={"/ensaios"}

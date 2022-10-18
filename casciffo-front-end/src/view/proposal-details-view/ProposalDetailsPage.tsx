@@ -1,4 +1,4 @@
-import {Navigate, useNavigate, useParams} from "react-router-dom";
+import {Navigate, useLocation, useNavigate, useParams} from "react-router-dom";
 import {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {
@@ -20,7 +20,7 @@ import {MyUtil} from "../../common/MyUtil";
 import {ProposalCommentsTabContent} from "./ProposalCommentsTabContent";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import { ProtocolTabContent } from "./ProtocolTabContent";
-import {CommentTypes, ResearchTypes, TOKEN_KEY} from "../../common/Constants";
+import {CommentTypes, ResearchTypes, TAB_PARAMETER, TOKEN_KEY} from "../../common/Constants";
 import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
 import {ProposalTimelineTabContent} from "./ProposalTimelineTabContent";
 import {PartnershipsTabContent} from "./PartnershipsTabContent";
@@ -40,18 +40,25 @@ type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
 }
 
-export function ProposalDetails(props: ProposalDetailsProps) {
+const TabNames = {
+    proposal: "proposal",
+    proposal_cf: "proposal_cf",
+    contacts: "contacts",
+    observations: "observations",
+    partnerships: "partnerships",
+    protocol: "protocol",
+    chronology: "chronology",
+}
+
+export function ProposalDetailsPage(props: ProposalDetailsProps) {
     const {proposalId} = useParams()
+    const {hash} = useLocation()
     const navigate = useNavigate()
     const {userToken} = useUserAuthContext()
     if (proposalId === undefined || userToken == null) {
         navigate("/propostas")
         //show error and move backwards using navigate
     }
-
-    useEffect(() => {
-        document.title = MyUtil.PROPOSAL_DETAIL_TITLE
-    })
 
     const handler = useErrorHandler()
 
@@ -74,36 +81,26 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         therapeuticAreaId: 0,
         type: ""
     })
-
     const [states, setStates] = useState<StateModel[]>()
     const [isStatesReady, setIsStatesReady] = useState(false)
-
-
-    // const ProposalStateView = React.memo(ProposalStateView, (prevProps, nextProps) => {
-    //     console.log('prevProps:' + prevProps + '\nnextProps:' + nextProps + '\n\n')
-    //     return JSON.stringify(prevProps) === JSON.stringify(nextProps)
-    // })
-
-    const advanceState = useCallback((currentId: string, currStateName: string, nextStateId:string) => {
-        props.proposalService
-            .advanceState(proposalId!, nextStateId)
-            .then(setProposal)
-            .catch(handler)
-    }, [handler, proposalId, props.proposalService])
-
     const [isDataReady, setDataReady] = useState(false)
     const [isError, setIsError] = useState(false)
     const [selectedTab, setSelectedTab] = useState("proposal")
 
-    const handleFetchError = useCallback((reason: any) => {
-        log(reason)
-        setIsError(true)
-    }, [])
-
-    const log = (value: any) => {
-        console.log(value);
-        return value
-    }
+    useEffect(() => {
+        document.title = MyUtil.PROPOSAL_DETAIL_TITLE
+    })
+    
+    useEffect(() => {
+        const params = MyUtil.parseUrlHash(hash).find(p => p.key === TAB_PARAMETER)
+        const tabParam = ( params && params.value ) || TabNames.proposal
+        
+        setSelectedTab(tabParam)
+    })
+    // const ProposalStateView = React.memo(ProposalStateView, (prevProps, nextProps) => {
+    //     console.log('prevProps:' + prevProps + '\nnextProps:' + nextProps + '\n\n')
+    //     return JSON.stringify(prevProps) === JSON.stringify(nextProps)
+    // })
 
     useEffect(() => {
         const removeSuperUserFromRoles = (list: StateModel[]) =>
@@ -133,7 +130,24 @@ export function ProposalDetails(props: ProposalDetailsProps) {
             .then(() => setDataReady(true))
         // .catch(handleFetchError)
     }, [proposalId, props.proposalService])
+    
+    
+    const advanceState = useCallback((currentId: string, currStateName: string, nextStateId:string) => {
+        props.proposalService
+            .advanceState(proposalId!, nextStateId)
+            .then(setProposal)
+            .catch(handler)
+    }, [handler, proposalId, props.proposalService])
 
+    const handleFetchError = useCallback((reason: any) => {
+        log(reason)
+        setIsError(true)
+    }, [])
+
+    const log = (value: any) => {
+        console.log(value);
+        return value
+    }
 
     const updateState = (key: keyof ProposalModel, value: unknown) =>
         (
@@ -190,6 +204,14 @@ export function ProposalDetails(props: ProposalDetailsProps) {
         await props.proposalService.saveFinancialContract(proposalId!, proposal.financialComponent!.id!, file)
     }
 
+    const onSelectTab = (tab: string | null) => {
+        const args = [
+            {key: TAB_PARAMETER, value: tab || TabNames.proposal}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
+    }
+
     return (
         <React.Fragment>
             {isError && <Navigate to={"/propostas"}/>}
@@ -197,10 +219,10 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                 <Tabs
                     id="controlled-tab-example"
                     activeKey={selectedTab}
-                    onSelect={tab => setSelectedTab(tab!)}
+                    onSelect={onSelectTab}
                     className="mb-3 justify-content-evenly"
                 >
-                    <Tab eventKey="proposal" title="Proposta">
+                    <Tab eventKey={TabNames.proposal} title="Proposta">
                         {isStatesReady && isDataReady && <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
@@ -235,7 +257,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                         </Tab>
                     }
 
-                    <Tab eventKey="contacts" title="Contactos">
+                    <Tab eventKey={TabNames.contacts} title="Contactos">
                         <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
@@ -251,7 +273,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                             commentType={CommentTypes.CONTACT}
                         />
                     </Tab>
-                    <Tab eventKey="observations" title="Observações">
+                    <Tab eventKey={TabNames.observations} title="Observações">
                         <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
@@ -287,7 +309,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                     }
 
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
-                        <Tab eventKey="protocol" title="Protocolo">
+                        <Tab eventKey={TabNames.protocol} title="Protocolo">
                             <ProtocolTabContent
                                 saveProtocolComment={props.proposalService.saveProtocolComment}
                                 pfcId={proposal.financialComponent?.id}
@@ -299,7 +321,7 @@ export function ProposalDetails(props: ProposalDetailsProps) {
                     }
 
 
-                    <Tab eventKey="chronology" title="Cronologia">
+                    <Tab eventKey={TabNames.chronology} title="Cronologia">
                         <div>
                             <ProposalStateView
                                 isProtocolValidated={proposal.financialComponent?.protocol!.validated!}
