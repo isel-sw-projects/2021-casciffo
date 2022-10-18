@@ -23,7 +23,14 @@ import {StateModel} from "../../../model/state/StateModel";
 import {ResearchScientificActivitiesTab} from "../scientic-activities/ResearchScientificActivitiesTab";
 import {ResearchStates} from "./ResearchStates";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {AddendaViewTab, PatientViewTab, ResearchTypes, TAB_PARAMETER, VisitsViewTab} from "../../../common/Constants";
+import {
+    PATIENT_ID_PARAMETER,
+    ResearchTypes,
+    SCOPE_PARAMETER,
+    TAB_PARAMETER,
+    TabPaneScope,
+    VISIT_ID_PARAMETER
+} from "../../../common/Constants";
 import {ResearchVisitDetailsTab} from "../visits/ResearchVisitDetailsTab";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {MyUtil} from "../../../common/MyUtil";
@@ -45,6 +52,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         throw new MyError("", 400)
     }
     const [selectedTab, setSelectedTab] = useState("research")
+    const [tabPaneScope, setTabPaneScope] = useState<TabPaneScope>(TabPaneScope.OVERVIEW)
     const errorHandler = useErrorHandler()
     // const ResearchDetailsContext = createContext({research: {}, setResearch: (r: ResearchModel): void => {}})
 
@@ -56,9 +64,15 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     const [stateChain, setStateChain] = useState<StateModel[]>([])
     const {hash} = useLocation()
 
+
     useEffect(() => {
-        const params = MyUtil.parseUrlHash(hash).find(pair => pair.key === TAB_PARAMETER)
-        const tab = params && params.value in TAB_NAMES ? params!.value : TAB_NAMES.research
+        const params = MyUtil.parseUrlHash(hash)
+        const tabParam = params.find(pair => pair.key === TAB_PARAMETER)
+        const tab = tabParam && tabParam.value in TAB_NAMES ? tabParam!.value : TAB_NAMES.research
+        const scopeParam = params.find(pair => pair.key === SCOPE_PARAMETER)
+        if(scopeParam != null && scopeParam.value in TabPaneScope) {
+            setTabPaneScope(parseInt(scopeParam.value))
+        }
         setSelectedTab(tab)
     }, [hash])
 
@@ -71,10 +85,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         props.researchService
             .fetchResearch(researchId!)
-            .then(value => {
-                console.log(value)
-                return value
-            })
+            // .then(value => {
+            //     console.log(value)
+            //     return value
+            // })
             .then(setResearch, errorHandler)
     }, [props.researchService, researchId, errorHandler])
 
@@ -109,46 +123,62 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
 
 
-
-    const changeTabAndRenderPatientDetails = () => {
-        //TODO MAYBE MOVE THE NAVIGATE PORTION HERE, BASICALLY ALTER URL HERE
-        setPatientViewTab(PatientViewTab.DETAILS)
-        setSelectedTab(TAB_NAMES.patients)
+    const renderPatientOverviewScreen = () => {
+        const args = [
+            {key: TAB_PARAMETER, value: TAB_NAMES.patients},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
+    }
+    const renderPatientAddScreen = () => {
+        const args = [
+            {key: TAB_PARAMETER, value: TAB_NAMES.patients},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.CREATE.toString()}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
+    }
+    const renderPatientDetailsScreen = (pId: string) => {
+        const args = [
+            {key: TAB_PARAMETER, value: TAB_NAMES.patients},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.DETAILS.toString()},
+            {key: PATIENT_ID_PARAMETER, value: pId}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
     }
 
-    const changeTabAndRenderVisitDetails = () => {
-        setVisitsViewTab(VisitsViewTab.DETAILS)
-        setSelectedTab(TAB_NAMES.visits)
-    }
+    const patientSwitchRender = (tab: TabPaneScope) => {
+        if(selectedTab !== TAB_NAMES.patients) {
+            return <ResearchPatientsTab
+                patients={research.patients ?? []}
+                onChangeScreenToAddPatient={renderPatientAddScreen}
+                onClickToPatientDetails={renderPatientDetailsScreen}
+                treatmentBranches={research.treatmentBranches?.split(';') || []}
+                saveRandomization={saveRandomization}/>
+        }
 
-
-    const [patientViewTab, setPatientViewTab] = useState<PatientViewTab>(PatientViewTab.OVERVIEW)
-
-    const renderPatientOverviewScreen = () => setPatientViewTab(PatientViewTab.OVERVIEW)
-    const renderPatientAddScreen = () => setPatientViewTab(PatientViewTab.CREATE)
-    const renderPatientDetailsScreen = () => setPatientViewTab(PatientViewTab.DETAILS)
-
-    const patientSwitchRender = (tab: PatientViewTab) => {
         switch (tab) {
-            case PatientViewTab.CREATE:
-                return <AddNewPatient
-                    team={research.investigationTeam!}
-                    searchByProcessId={props.researchService.searchPatientsByProcessId}
-                    onRenderOverviewClick={renderPatientOverviewScreen}/>
-            case PatientViewTab.DETAILS:
-                return <PatientDetails
-                    fetchPatient={props.researchService.fetchResearchPatient}
-                    visits={research.visits ?? []}
-                    onRenderOverviewClick={renderPatientOverviewScreen}
-                    renderVisitDetails={changeTabAndRenderVisitDetails}
-                />
-            case PatientViewTab.OVERVIEW:
+            case TabPaneScope.OVERVIEW:
                 return <ResearchPatientsTab
                     patients={research.patients ?? []}
                     onChangeScreenToAddPatient={renderPatientAddScreen}
                     onClickToPatientDetails={renderPatientDetailsScreen}
                     treatmentBranches={research.treatmentBranches?.split(';') || []}
                     saveRandomization={saveRandomization}/>
+            case TabPaneScope.DETAILS:
+                return <PatientDetails
+                    fetchPatient={props.researchService.fetchResearchPatient}
+                    visits={research.visits ?? []}
+                    onRenderOverviewClick={renderPatientOverviewScreen}
+                    renderVisitDetails={renderVisitsDetailsScreen}
+                />
+            case TabPaneScope.CREATE:
+                return <AddNewPatient
+                    team={research.investigationTeam!}
+                    searchByProcessId={props.researchService.searchPatientsByProcessId}
+                    onRenderOverviewClick={renderPatientOverviewScreen}/>
             default:
                 throw new MyError("Illegal patient tab screen", 400)
         }
@@ -164,42 +194,76 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
             .then(addVisitToList)
     },[props.researchService, researchId])
 
-    const [visitsViewTab, setVisitsViewTab] = useState<VisitsViewTab>(VisitsViewTab.OVERVIEW)
 
-    const renderVisitsOverviewScreen = () => setVisitsViewTab(VisitsViewTab.OVERVIEW)
-    const renderVisitsDetailsScreen = () => setVisitsViewTab(VisitsViewTab.DETAILS)
+    const renderVisitsOverviewScreen = () => {
+        const args = [
+            {key: TAB_PARAMETER, value: TAB_NAMES.visits},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
+    }
+
+    const renderVisitsDetailsScreen = (vId: string) => {
+        const args = [
+            {key: VISIT_ID_PARAMETER, value: vId},
+            {key: TAB_PARAMETER, value: TAB_NAMES.visits},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.DETAILS.toString()}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
+    }
 
 
-    const visitSwitchRender = (tab: VisitsViewTab) => {
+    const visitSwitchRender = (tab: TabPaneScope) => {
+        if(selectedTab !== TAB_NAMES.visits)
+            return <ResearchVisitsTab visits={research.visits || []}
+                                      onAddVisit={addNewVisit}
+                                      renderDetails={renderVisitsDetailsScreen}/>
+
         switch (tab) {
-            case VisitsViewTab.OVERVIEW:
+            case TabPaneScope.OVERVIEW:
                 return <ResearchVisitsTab visits={research.visits || []}
                                           onAddVisit={addNewVisit}
                                           renderDetails={renderVisitsDetailsScreen}
                 />
-            case VisitsViewTab.DETAILS:
+            case TabPaneScope.DETAILS:
                 return <ResearchVisitDetailsTab service={props.researchService}
                                                 onRenderOverviewClick={renderVisitsOverviewScreen}
-                                                onRenderPatientDetails={changeTabAndRenderPatientDetails}
+                                                onRenderPatientDetails={renderPatientDetailsScreen}
                 />
             default:
                 throw new MyError("Illegal visits tab screen", 400)
         }
     }
 
-    const [addendaViewTab, setAddendaViewTab] = useState<AddendaViewTab>(AddendaViewTab.OVERVIEW)
 
-    const renderAddendaOverviewScreen = () => setAddendaViewTab(AddendaViewTab.OVERVIEW)
-    const renderAddendaDetailsScreen = () => setAddendaViewTab(AddendaViewTab.DETAILS)
+    const renderAddendaOverviewScreen = () => {
+        //TODO ?
+    }
+    const renderAddendaDetailsScreen = () => {
+        const args = [
+            {key: TAB_PARAMETER, value: TAB_NAMES.addenda},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
+    }
 
-    const addendaSwitchRender = (tab: AddendaViewTab) => {
+    const addendaSwitchRender = (tab: TabPaneScope) => {
+        if(selectedTab !== TAB_NAMES.addenda)
+            return <ResearchAddendaTab
+                    addendas={research.addendas ?? []}
+                    renderDetails={renderAddendaDetailsScreen}
+                />
+
         switch (tab) {
-            case AddendaViewTab.OVERVIEW:
+            case TabPaneScope.OVERVIEW:
                 return <ResearchAddendaTab
                             addendas={research.addendas ?? []}
                             renderDetails={renderAddendaDetailsScreen}
                 />
-            // case AddendaViewTab.DETAILS:
+            // case TabPaneScope.DETAILS:
             //     return <ResearchAddendaDetails service={props.researchService}
             //                                     onRenderOverviewClick={renderAddendaOverviewScreen}
             //     />
@@ -210,8 +274,12 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
     const navigate = useNavigate()
     const selectTab = (tab:string | null) => {
-        console.log("NAVIGATING TO " + tab)
-        navigate(`#${TAB_PARAMETER}=${tab}`)
+        const args = [
+            {key: TAB_PARAMETER, value: tab || TAB_NAMES.research},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
         // setSelectedTab(tab!);
         // if(tab === 'patients' && patientViewTab !== PatientViewTab.OVERVIEW) {
         //      renderPatientOverviewScreen()
@@ -270,7 +338,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
                     </Tab>
                     <Tab eventKey={TAB_NAMES.addenda} title={"Adendas"}>
-                        {addendaSwitchRender(addendaViewTab)}
+                        {addendaSwitchRender(tabPaneScope)}
                     </Tab>
                     <Tab eventKey={TAB_NAMES.activities} title={"Atividades científicas"}>
                         <ResearchStates
@@ -291,7 +359,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             createdDate={research.startDate ?? ""}
                             canceledReason={research.canceledReason}
                         />
-                        {visitSwitchRender(visitsViewTab)}
+                        {visitSwitchRender(tabPaneScope)}
 
                     </Tab>
                     <Tab eventKey={TAB_NAMES.patients} title={"Pacientes"}>
@@ -302,7 +370,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             createdDate={research.startDate ?? ""}
                             canceledReason={research.canceledById}
                         />
-                        {patientSwitchRender(patientViewTab)}
+                        {patientSwitchRender(tabPaneScope)}
 
                     </Tab>
                     {

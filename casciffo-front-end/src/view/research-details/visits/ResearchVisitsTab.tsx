@@ -11,7 +11,7 @@ import {MyTable} from "../../components/MyTable";
 type VisitProps = {
     visits: ResearchVisitModel[]
     onAddVisit: (visit: ResearchVisitModel) => void
-    renderDetails: () => void
+    renderDetails: (vId: string) => void
 }
 
 export function ResearchVisitsTab(props: VisitProps) {
@@ -49,9 +49,9 @@ export function ResearchVisitsTab(props: VisitProps) {
                 accessorFn: row => row.id,
                 id: 'id',
                 cell: info => <div>
-                    {info.getValue() as string}
+                    {`${info.getValue()}` }
                     <br/>
-                    <Link to={`#vId=${info.getValue()}`} onClick={props.renderDetails}>Ver Detalhes</Link>
+                    <Button variant={`link`} onClick={() => props.renderDetails(`${info.getValue()}`)}>Ver Detalhes</Button>
                 </div>,
                 header: () => <span>Id</span>,
                 footer: props => props.column.id,

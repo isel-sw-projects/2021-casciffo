@@ -18,7 +18,7 @@ import {
     Stack
 } from "react-bootstrap";
 import {MyUtil} from "../../../common/MyUtil";
-import {PeriodicityTypes, VisitTypes} from "../../../common/Constants";
+import {PeriodicityTypes, VISIT_ID_PARAMETER, VisitTypes} from "../../../common/Constants";
 import {BiCheckCircle} from "react-icons/bi";
 import {FormInputHelper} from "../../components/FormInputHelper";
 import {CgDanger} from "react-icons/cg";
@@ -28,7 +28,7 @@ import {CgDanger} from "react-icons/cg";
 type VisitDetailsProps = {
     service: ResearchAggregateService
     onRenderOverviewClick: () => void
-    onRenderPatientDetails: () => void
+    onRenderPatientDetails: (s: string) => void
 }
 
 function MyDateComponent(props: { date: string, title: string }) {
@@ -89,13 +89,12 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
 
     useEffect(() => {
         console.log(`VISIT DETAILS READING HASH ${hash}`)
-        const regExp = new RegExp(/(vId=[0-9]*)/, "gm")
-        if (!regExp.test(hash)) {
-            errorHandler(new MyError("Página da visita não existe", 404))
-        }
         try {
-            const params = hash.substring(1).split("&")
-            const vId = params.find(p => p.matchAll(regExp))!.split("=")[1]
+            const params = MyUtil.parseUrlHash(hash).find(params => params.key === VISIT_ID_PARAMETER)
+            if (!params) {
+                errorHandler(new MyError("Página da visita não existe", 404))
+            }
+            const vId = params!.value
             setVisitId(vId)
 
             props.service
@@ -123,11 +122,8 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
     const updateVisit = (e: any) => setVisit(prevState => ({...prevState, [e.target.name]: e.target.value}))
     const toggleAdverseEvent = () => setVisit(prevState => ({...prevState, hasAdverseEventAlert: !prevState.hasAdverseEventAlert}))
 
-    const navigate = useNavigate()
-
     const changeParamsAndRenderPatientDetails = () => {
-       navigate(`#pId=${visit.patient!.processId!}`, {replace:true})
-        props.onRenderPatientDetails()
+        props.onRenderPatientDetails(visit.patient!.processId!)
     }
 
     return <React.Fragment>

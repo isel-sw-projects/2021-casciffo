@@ -28,9 +28,9 @@ export function ResearchPatientsTab(props: RPT_Props) {
                 accessorFn: row => row.processId,
                 id: 'processId',
                 cell: info => <div>
-                    <span>{info.getValue() as string}</span>
+                    <span>{`${info.getValue()}`}</span>
                     <br/>
-                    <Link to={`#pId=${info.getValue()}`} onClick={() => props.onClickToPatientDetails(info.getValue() as string)}>Ver Detalhes</Link>
+                    <Button variant={"link"} onClick={() => props.onClickToPatientDetails(`${info.getValue()}`)}>Ver Detalhes</Button>
                 </div>,
                 header: () => <span>Nº Processo</span>,
                 footer: props => props.column.id,

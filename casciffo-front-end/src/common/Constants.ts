@@ -48,16 +48,8 @@ export const StateFlowTypes = {
     TERMINAL: "TERMINAL"
 }
 
-export enum PatientViewTab {
+export enum TabPaneScope {
     OVERVIEW, DETAILS, CREATE
-}
-
-export enum VisitsViewTab {
-    OVERVIEW, DETAILS
-}
-
-export enum AddendaViewTab {
-    OVERVIEW, DETAILS
 }
 
 export const VisitTypes = {
@@ -86,3 +78,7 @@ export const TOKEN_KEY = "token"
 export const KEY_VALUE_DELIMENTER = "="
 export const PARAM_DELIMENTER = "&"
 export const TAB_PARAMETER = "t"
+export const SCOPE_PARAMETER = "s"
+export const PATIENT_ID_PARAMETER = "pId"
+export const VISIT_ID_PARAMETER = "vId"
+export const ADDENDA_ID_PARAMETER = "aId"

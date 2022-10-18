@@ -7,13 +7,13 @@ import {MyUtil} from "../../../common/MyUtil";
 import {useErrorHandler} from "react-error-boundary";
 import {MyError} from "../../error-view/MyError";
 import {ColumnDef} from "@tanstack/react-table";
-import {VisitTypes} from "../../../common/Constants";
+import {PATIENT_ID_PARAMETER, VisitTypes} from "../../../common/Constants";
 import {MyTable} from "../../components/MyTable";
 
 type Props = {
     fetchPatient: (researchId: string, patientId: string) => Promise<PatientModel>
     visits: ResearchVisitModel[]
-    renderVisitDetails: () => void
+    renderVisitDetails: (vId: string) => void
     onRenderOverviewClick: () => void
 }
 
@@ -31,22 +31,20 @@ export function PatientDetails(props: Props) {
 
     useEffect(() => {
         console.log(`PATIENT DETAILS READING HASH ${hash}`)
-        const regExp = new RegExp(/(pId=[0-9]*)/, "gm")
-        if (!regExp.test(hash)) {
-            errorHandler(new MyError("Página do paciente não existe", 404))
-        }
-        try {
-            const params = hash.substring(1).split("&")
-            const pId = params.find(p => p.matchAll(regExp))!.split("=")[1]
-            setPatientProcessNum(pId)
 
-            props.fetchPatient(researchId!, pId)
-                .then(setPatient)
-                .then(_ => setDataReady(true))
-                .catch(errorHandler)
-        } catch (e: unknown) {
-            errorHandler(e)
+        const params = MyUtil.parseUrlHash(hash).find(params => params.key === PATIENT_ID_PARAMETER)
+        if(params == null) {
+            errorHandler(new MyError("Página do paciente não existe", 404))
+            return
         }
+        const pId = params.value
+        setPatientProcessNum(pId)
+
+        props.fetchPatient(researchId!, pId)
+            .then(setPatient)
+            .then(_ => setDataReady(true))
+            .catch(errorHandler)
+
     }, [errorHandler, hash, props, researchId])
 
     const columns = React.useMemo<ColumnDef<ResearchVisitModel>[]>(
@@ -57,7 +55,7 @@ export function PatientDetails(props: Props) {
                 cell: info => <div>
                     {info.getValue() as string}
                     <br/>
-                    <Link to={`#vId=${info.getValue()}`} onClick={props.renderVisitDetails}>Ver Detalhes</Link>
+                    <Button variant={"link"} onClick={() => props.renderVisitDetails(`${info.getValue()}`)}>Ver Detalhes</Button>
                 </div>,
                 header: () => <span>Id</span>,
                 footer: props => props.column.id,

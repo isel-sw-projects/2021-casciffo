@@ -145,6 +145,10 @@ function parseUrlHash(hash: string): KeyValuePair<string, string>[] {
     return res
 }
 
+function formatUrlHash(args: KeyValuePair<string, string>[]): string {
+    return `#` + args.map(kp => `${kp.key}${KEY_VALUE_DELIMENTER}${kp.value}`).join(PARAM_DELIMENTER)
+}
+
 
 function checkAndRaiseError(rsp: Response): Response {
     if(!rsp.ok) {
@@ -244,6 +248,7 @@ const clearUserToken = () => {
 const apiTitle = (title: string) => `CASCIFFO | ${title}`
 
 export const MyUtil = {
+    formatUrlHash,
     parseUrlHash,
     formatDate,
     proposalStates: Object.values(STATES).filter(s => s.code > STATES.SUBMETIDO.code && s.code <= STATES.VALIDADO.code),
