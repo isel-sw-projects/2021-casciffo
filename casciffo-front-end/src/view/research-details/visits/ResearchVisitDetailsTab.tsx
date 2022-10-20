@@ -72,7 +72,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
     const [visit, setVisit] = useState<ResearchVisitModel>({
         id: "",
         researchId: researchId,
-        participantId: "",
+        researchPatientId: "",
         visitType: "",
         scheduledDate: "",
         startDate: "",
@@ -81,7 +81,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
         observations: "",
         hasAdverseEventAlert: false,
         hasMarkedAttendance: false,
-        patient: {},
+        researchPatient: {},
         visitInvestigators: [],
         concluded: false
     })
@@ -123,7 +123,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
     const toggleAdverseEvent = () => setVisit(prevState => ({...prevState, hasAdverseEventAlert: !prevState.hasAdverseEventAlert}))
 
     const changeParamsAndRenderPatientDetails = () => {
-        props.onRenderPatientDetails(visit.patient!.processId!)
+        props.onRenderPatientDetails(visit.researchPatient!.patient!.processId!)
     }
 
     return <React.Fragment>
@@ -132,6 +132,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
                 <Breadcrumb.Item className={"font-bold"} onClick={props.onRenderOverviewClick}>Visitas</Breadcrumb.Item>
                 <Breadcrumb.Item className={"font-bold"} active>Detalhes da visita {visitId}</Breadcrumb.Item>
             </Breadcrumb>
+            {visit.concluded && <small className={"text-danger"}>Esta visita já não pode ser alterada</small>}
         </Container>
 
         {dataReady &&
@@ -157,12 +158,12 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
                         <Col>
                             <fieldset className={"border border-2 p-3"}>
                                 <legend className={"float-none w-auto p-2"}>Dados do paciente</legend>
-                                <FormInputHelper inline label={"Nome"} value={visit.patient!.fullName}/>
-                                <FormInputHelper inline label={"Idade"} value={visit.patient!.age}/>
-                                <FormInputHelper inline label={"Género"} value={visit.patient!.gender}/>
-                                <FormInputHelper inline label={"Braço de tratamento"} value={visit.patient!.treatmentBranch}/>
+                                <FormInputHelper inline label={"Nome"} value={visit.researchPatient!.patient!.fullName}/>
+                                <FormInputHelper inline label={"Idade"} value={visit.researchPatient!.patient!.age}/>
+                                <FormInputHelper inline label={"Género"} value={visit.researchPatient!.patient!.gender}/>
+                                <FormInputHelper inline label={"Braço de tratamento"} value={visit.researchPatient!.treatmentBranch}/>
                                 <Button variant={"link"} onClick={changeParamsAndRenderPatientDetails}>
-                                    Processo Nº {visit.patient!.processId}
+                                    Processo Nº {visit.researchPatient!.patient!.processId}
                                 </Button>
                             </fieldset>
                         </Col>
@@ -212,7 +213,6 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
                                     : <h5 className={"font-bold"}><CgDanger size={100}/> Marcar evento adverso</h5>
                                 }
                             </Button>
-                                {visit.concluded && <small className={"text-danger"}>Esta visita já não pode ser alterada</small>}
                         </Col>
                     </Row>
 

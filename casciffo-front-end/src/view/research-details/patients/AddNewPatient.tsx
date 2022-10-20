@@ -31,7 +31,7 @@ type Props = {
 
 export function AddNewPatient(props: Props) {
     const freshPatient =
-        (): PatientVisitsAggregate => ({patient:{fullName: "", processId: "", age: "", gender: "", treatmentBranch: ""}, scheduledVisits: [{},{},{},{},{}]})
+        (): PatientVisitsAggregate => ({patient:{fullName: "", processId: "", age: "", gender: "", id: ""}, scheduledVisits: [{},{},{},{},{}]})
 
     const [patientToAdd, setPatientToAdd] = useState<PatientVisitsAggregate>(freshPatient())
 
@@ -111,16 +111,6 @@ export function AddNewPatient(props: Props) {
                         name={"idade"}
                         placeholder={"Idade"}
                         value={patientToAdd.patient.age}
-                        onChange={updateUserToAdd}
-                    />
-                </Form.FloatingLabel>
-
-                <Form.FloatingLabel className={"m-2 m-md-2 font-bold"} label={<span>Braço de tratamento</span>}>
-                    <Form.Control
-                        type={"text"}
-                        name={"treatmentBranch"}
-                        placeholder={"Braço de tratamento"}
-                        value={patientToAdd.patient.treatmentBranch || ""}
                         onChange={updateUserToAdd}
                     />
                 </Form.FloatingLabel>

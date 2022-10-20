@@ -13,10 +13,13 @@ data class ResearchVisitsAggregate(
     var gender: String? = null,
     var age: Int? = null,
 
+    var treatmentBranch: String? = null,
+    var joinDate: LocalDateTime? = null,
+
     //visit
     var visitId: Int? = null,
     var researchId: Int? = null,
-    var participantId: Int? = null,
+    var researchPatientId: Int? = null,
     var visitType: VisitType? = null,
     var scheduledDate: LocalDateTime? = null,
     var startDate: LocalDateTime? = null,

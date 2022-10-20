@@ -34,7 +34,7 @@ export interface ResearchModel {
     addendas?: ResearchAddenda[]
     stateTransitions?: StateTransitionModel[]
     dossiers?: DossierModel[]
-    patients?: PatientModel[]
+    patients?: ResearchPatientModel[]
     scientificActivities?: ScientificActivityModel[]
     investigationTeam?: TeamInvestigatorModel[]
     financeComponent?: ResearchFinance
@@ -84,7 +84,7 @@ export interface DossierModel {
 export interface ResearchVisitModel {
     id?: string
     researchId?: string
-    participantId?: string
+    researchPatientId?: string
     concluded?: boolean;
     visitType?: string
     scheduledDate?: string
@@ -94,7 +94,7 @@ export interface ResearchVisitModel {
     observations?: string
     hasAdverseEventAlert?: boolean
     hasMarkedAttendance?: boolean
-    patient?: PatientModel
+    researchPatient?: ResearchPatientModel
     visitInvestigators?: VisitInvestigator[]
 }
 
@@ -111,9 +111,16 @@ export interface PatientModel {
     fullName?: string
     gender?: string
     age?: string
+}
+
+export interface ResearchPatientModel {
+    id?: string
+    patientId?: string,
+    researchId?: string,
     joinDate?: string
     lastVisitDate?: string
-    treatmentBranch?: string
+    treatmentBranch?: string,
+    patient?: PatientModel
 }
 
 export interface PatientVisitsAggregate {

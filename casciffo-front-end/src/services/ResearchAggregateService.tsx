@@ -4,7 +4,7 @@ import {
     DossierModel,
     PatientModel,
     PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance,
-    ResearchModel, ResearchModelAnswer,
+    ResearchModel, ResearchModelAnswer, ResearchPatientModel,
     ResearchVisitModel, ScientificActivityModel
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
@@ -59,7 +59,7 @@ export class ResearchAggregateService {
         return httpGet(url)
     }
 
-    fetchResearchPatient(researchId: string, patientId: string): Promise<PatientModel> {
+    fetchResearchPatient(researchId: string, patientId: string): Promise<ResearchPatientModel> {
         const url = ApiUrls.researchPatientDetailUrl(researchId, patientId)
         return httpGet(url)
     }
@@ -69,7 +69,7 @@ export class ResearchAggregateService {
         return httpPost(url, activity)
     }
 
-    saveRandomization(researchId: string, patients: PatientModel[]): Promise<PatientModel[]> {
+    saveRandomization(researchId: string, patients: PatientModel[]): Promise<ResearchPatientModel[]> {
         const url = ApiUrls.researchPatientsRandomize(researchId)
         return httpPut(url, patients)
     }

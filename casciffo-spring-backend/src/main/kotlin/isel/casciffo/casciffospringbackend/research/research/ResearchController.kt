@@ -6,11 +6,9 @@ import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.comments.AddendaComment
-import isel.casciffo.casciffospringbackend.research.patients.ResearchPatients
+import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVisitsDTO
-import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVisitsModel
-import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
@@ -78,9 +76,9 @@ class ResearchController(
     @PutMapping(RESEARCH_PATIENTS_RANDOMIZE)
     suspend fun randomizeTreatmentBranches(
         @PathVariable researchId: Int,
-        @RequestBody patients: List<ResearchPatients>
-    ): ResponseEntity<Flow<ResearchPatients>> {
-        val res = researchService.randomizeTreatmentBranches(patients)
+        @RequestBody patients: List<ResearchPatient>
+    ): ResponseEntity<Flow<ResearchPatient>> {
+        val res = researchService.randomizeTreatmentBranches(researchId, patients)
         return ResponseEntity.ok(res)
     }
 

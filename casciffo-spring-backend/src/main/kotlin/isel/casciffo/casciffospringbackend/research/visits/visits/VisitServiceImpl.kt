@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggre
 import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggregateRepo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.patients.PatientModel
+import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsRepository
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsService
@@ -38,7 +39,7 @@ class VisitServiceImpl(
     @Transactional
     override suspend fun createVisit(visit: VisitModel): VisitModel {
         if(visit.visitInvestigators == null) throw IllegalArgumentException("A visit must have assigned investigators!!!")
-        if(visit.participantId == null) throw IllegalArgumentException("Participant Id must not be null!!!")
+        if(visit.researchPatientId == null) throw IllegalArgumentException("Participant Id must not be null!!!")
 
         val createdVisit = visitRepository.save(visit).awaitSingle()
         val visitInvestigators =
@@ -93,19 +94,23 @@ class VisitServiceImpl(
             id = visitId,
             researchId = researchId,
             visitType = firstEntry.visitType,
-            participantId = firstEntry.participantId,
+            researchPatientId = firstEntry.researchPatientId,
             hasAdverseEventAlert = firstEntry.hasAdverseEventAlert,
             hasMarkedAttendance = firstEntry.hasMarkedAttendance,
             observations = firstEntry.observations,
             periodicity = firstEntry.periodicity,
             scheduledDate = firstEntry.scheduledDate,
             concluded = firstEntry.concluded,
-            patient = PatientModel(
-                id = firstEntry.participantId,
-                age = firstEntry.age,
-                gender = firstEntry.gender,
-                fullName = firstEntry.fullName,
-                processId = firstEntry.processId
+            researchPatient = ResearchPatient(
+                id = firstEntry.researchPatientId,
+                treatmentBranch = firstEntry.treatmentBranch,
+                joinDate = firstEntry.joinDate,
+                patient = PatientModel(
+                    age = firstEntry.age,
+                    gender = firstEntry.gender,
+                    fullName = firstEntry.fullName,
+                    processId = firstEntry.processId
+                )
             ),
             visitInvestigators = aggregateValues.map { aggregateRow ->
                 VisitInvestigators(

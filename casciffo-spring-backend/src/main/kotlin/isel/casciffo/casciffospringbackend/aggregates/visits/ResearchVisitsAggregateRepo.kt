@@ -10,11 +10,13 @@ interface ResearchVisitsAggregateRepo: ReactiveCrudRepository<ResearchVisitsAggr
 
     @Query(
         "SELECT cv.* " +
+                ", rp.treatment_branch" +
                 ", p.* " +
                 ", vai.id as visit_investigator_id, vai.investigator_id " +
                 ", ua.user_name as investigator_name, ua.user_email as investigator_email " +
         "FROM clinical_visit cv " +
-        "JOIN participant p on cv.participant_id = p.id " +
+        "JOIN research_participants rp on cv.research_patient_id = rp.id " +
+        "JOIN participant p on rp.participant_id = p.id " +
         "JOIN visit_assigned_investigators vai on cv.visit_id = vai.visit_id " +
         "JOIN user_account ua on ua.user_id = vai.investigator_id " +
         "WHERE cv.research_id=:researchId"
@@ -23,11 +25,13 @@ interface ResearchVisitsAggregateRepo: ReactiveCrudRepository<ResearchVisitsAggr
 
     @Query(
         "SELECT cv.* " +
+                ", rp.treatment_branch, rp.join_date " +
                 ", p.* " +
                 ", vai.id as visit_investigator_id, vai.investigator_id " +
                 ", ua.user_name as investigator_name, ua.user_email as investigator_email " +
         "FROM clinical_visit cv " +
-        "JOIN participant p on cv.participant_id = p.id " +
+        "JOIN research_participants rp on cv.research_patient_id = rp.id " +
+        "JOIN participant p on rp.participant_id = p.id " +
         "JOIN visit_assigned_investigators vai on cv.visit_id = vai.visit_id " +
         "JOIN user_account ua on ua.user_id = vai.investigator_id " +
         "WHERE cv.visit_id=:visitId AND cv.research_id=:researchId"
@@ -36,11 +40,13 @@ interface ResearchVisitsAggregateRepo: ReactiveCrudRepository<ResearchVisitsAggr
 
     @Query(
         "SELECT cv.* " +
+                ", rp.treatment_branch, rp.join_date " +
                 ", p.* " +
                 ", vai.id as visit_investigator_id, vai.investigator_id " +
                 ", ua.user_name as investigator_name, ua.user_email as investigator_email " +
         "FROM clinical_visit cv " +
-        "JOIN participant p on cv.participant_id = p.id " +
+        "JOIN research_participants rp on cv.research_patient_id = rp.id " +
+        "JOIN participant p on rp.participant_id = p.id " +
         "JOIN visit_assigned_investigators vai on cv.visit_id = vai.visit_id " +
         "JOIN user_account ua on ua.user_id = vai.investigator_id " +
         "WHERE cv.research_id=:researchId AND p.process_id=:patientProcessId"

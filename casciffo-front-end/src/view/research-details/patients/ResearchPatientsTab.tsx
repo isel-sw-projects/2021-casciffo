@@ -1,20 +1,19 @@
 import {Button, Col, Container, ListGroup, ListGroupItem, Row} from "react-bootstrap";
 import React, {useCallback, useEffect, useState} from "react";
 import {ColumnDef} from "@tanstack/react-table";
-import {PatientModel} from "../../../model/research/ResearchModel";
+import {ResearchPatientModel} from "../../../model/research/ResearchModel";
 import {MyTable} from "../../components/MyTable";
-import {Link} from "react-router-dom";
 
 type RPT_Props = {
-    patients: PatientModel[]
+    patients: ResearchPatientModel[]
     treatmentBranches: string[]
     onChangeScreenToAddPatient: () => void
     onClickToPatientDetails: (patientId: string) => void
-    saveRandomization: (patients: PatientModel[]) => void
+    saveRandomization: (patients: ResearchPatientModel[]) => void
 }
 
 export function ResearchPatientsTab(props: RPT_Props) {
-    const [patients, setPatients] = useState<PatientModel[]>([])
+    const [patients, setPatients] = useState<ResearchPatientModel[]>([])
 
     useEffect(() => {
         // console.log(props.patients)
@@ -22,13 +21,13 @@ export function ResearchPatientsTab(props: RPT_Props) {
     }, [props.patients])
     
 
-    const columns = React.useMemo<ColumnDef<PatientModel>[]>(
+    const columns = React.useMemo<ColumnDef<ResearchPatientModel>[]>(
         () => [
             {
-                accessorFn: row => row.processId,
+                accessorFn: row => row.patient!.processId,
                 id: 'processId',
-                cell: info => <div>
-                    <span>{`${info.getValue()}`}</span>
+                cell: info => <div className={"text-start"}>
+                    <span className={"ms-3 ms-md-3"}>{`${info.getValue()}`}</span>
                     <br/>
                     <Button variant={"link"} onClick={() => props.onClickToPatientDetails(`${info.getValue()}`)}>Ver Detalhes</Button>
                 </div>,
@@ -36,21 +35,21 @@ export function ResearchPatientsTab(props: RPT_Props) {
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.fullName,
+                accessorFn: row => row.patient!.fullName,
                 id: 'fullName',
                 cell: info => info.getValue(),
                 header: () => <span>Nome</span>,
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.age,
+                accessorFn: row => row.patient!.age,
                 id: 'age',
                 cell: info => info.getValue(),
                 header: () => <span>Idade</span>,
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.gender,
+                accessorFn: row => row.patient!.gender,
                 id: 'gender',
                 header: () => <span>Género</span>,
                 cell: info => info.getValue(),

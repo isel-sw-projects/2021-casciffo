@@ -15,6 +15,9 @@ export function GenericError(props: ErrorProps) {
     }
 
     // const navigate = useNavigate()
+    // const goBack = () => {
+    //     navigate(-1) # changes doesn't cause rerender KEKW
+    // }
 
     return (
         <div id="error">
@@ -24,9 +27,9 @@ export function GenericError(props: ErrorProps) {
                         {props.imgSrc && <img className="img-error" src={props.imgSrc} alt={props.alt}/>}
                         <h1 className="error-title">{props.title}</h1>
                         <p className="fs-5 text-gray-600">{props.reason}</p>
-                        <Stack direction={"horizontal"} className={"text-center align-contents-center"}>
+                        <Stack direction={"horizontal"} className={"text-center align-contents-center"} gap={3}>
                             <a href={"/"} className="btn btn-lg btn-outline-primary m-3">Ir para Dashboard</a>
-                            {/*<a href={"/"} className="btn btn-lg btn-outline-primary m-3">Voltar ao ecrã anterior</a>*/}
+                            {/*<a className="btn btn-lg btn-outline-primary m-3" onClick={goBack}>Voltar ao ecrã anterior</a>*/}
                             {props.requiresAuth &&
                                 <a href={"/login"} className="btn btn-lg btn-outline-primary m-3">Login</a>
                             }

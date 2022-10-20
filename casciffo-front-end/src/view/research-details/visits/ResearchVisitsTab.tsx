@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {MyUtil} from "../../../common/MyUtil";
-import {ResearchAggregateModel, ResearchVisitModel} from "../../../model/research/ResearchModel";
-import {ResearchTypes, VisitChrono, VisitTypes} from "../../../common/Constants";
+import {ResearchVisitModel} from "../../../model/research/ResearchModel";
+import {VisitChrono, VisitTypes} from "../../../common/Constants";
 import {ColumnDef} from "@tanstack/react-table";
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {Button, Col, Container, Form, FormGroup, Row, Stack} from "react-bootstrap";
 import {SearchComponent} from "../../components/SearchComponent";
 import {MyTable} from "../../components/MyTable";
@@ -72,7 +72,7 @@ export function ResearchVisitsTab(props: VisitProps) {
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.patient?.fullName,
+                accessorFn: row => row.researchPatient?.patient?.fullName,
                 id: 'patientFullName',
                 header: () => <span>Paciente</span>,
                 cell: info => info.getValue(),
@@ -106,7 +106,7 @@ export function ResearchVisitsTab(props: VisitProps) {
                 cell: info => info.getValue(),
                 footer: props => props.column.id,
             }
-        ],[props.renderDetails])
+        ],[props])
 
 
 

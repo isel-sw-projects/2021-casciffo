@@ -21,10 +21,7 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
         processId: "",
         fullName: "",
         gender: "",
-        age: "",
-        joinDate: "",
-        lastVisitDate: "",
-        treatmentBranch: ""
+        age: ""
     })
     const [selectedPatient, setSelectedPatient] = useState<PatientModel>(newPatient())
     const resetSelectedPatient = () => setSelectedPatient(newPatient())
@@ -81,10 +78,7 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
             processId: "",
             fullName: "",
             gender: "",
-            age: "",
-            joinDate: "",
-            lastVisitDate: "",
-            treatmentBranch: ""
+            age: ""
         })
         props.requestPatients(query)
             .then((patients) => {

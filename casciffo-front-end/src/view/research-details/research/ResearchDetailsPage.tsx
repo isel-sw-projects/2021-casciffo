@@ -3,7 +3,7 @@ import {MyError} from "../../error-view/MyError";
 import {
     DossierModel,
     PatientModel,
-    ResearchModel,
+    ResearchModel, ResearchPatientModel,
     ResearchVisitModel,
     ScientificActivityModel
 } from "../../../model/research/ResearchModel";
@@ -85,10 +85,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         props.researchService
             .fetchResearch(researchId!)
-            // .then(value => {
-            //     console.log(value)
-            //     return value
-            // })
+            .then(value => {
+                console.log(value)
+                return value
+            })
             .then(setResearch, errorHandler)
     }, [props.researchService, researchId, errorHandler])
 
@@ -116,7 +116,8 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         }
     }, [errorHandler, props.researchService])
 
-    const saveRandomization = useCallback((patients: PatientModel[]) => {
+    const saveRandomization = useCallback((patients: ResearchPatientModel[]) => {
+        console.log(patients)
         props.researchService.saveRandomization(researchId, patients)
             .then(value => setResearch(prevState => ({...prevState, patients: value})))
     }, [props.researchService, researchId])

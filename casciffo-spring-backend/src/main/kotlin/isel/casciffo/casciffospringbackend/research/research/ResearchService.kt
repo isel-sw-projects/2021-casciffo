@@ -4,11 +4,9 @@ import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregate
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.comments.AddendaComment
-import isel.casciffo.casciffospringbackend.research.patients.ResearchPatients
+import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVisitsDTO
-import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVisitsModel
-import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
 import kotlinx.coroutines.flow.Flow
 
@@ -25,5 +23,5 @@ interface ResearchService {
     suspend fun getAddenda(researchId: Int, addendaId: Int): Addenda
     suspend fun cancelResearch(researchId: Int, reason: String, userId: Int): Boolean
     suspend fun completeResearch(researchId: Int): Boolean
-    suspend fun randomizeTreatmentBranches(patients: List<ResearchPatients>): Flow<ResearchPatients>
+    suspend fun randomizeTreatmentBranches(researchId: Int, patients: List<ResearchPatient>): Flow<ResearchPatient>
 }

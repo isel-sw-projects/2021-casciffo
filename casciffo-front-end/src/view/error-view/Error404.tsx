@@ -1,6 +1,6 @@
 import {GenericError} from "./GenericError";
 
-export function Error401(props: {reason: string | undefined}) {
+export function Error404(props: {reason: string | undefined}) {
     return (
         <GenericError
             title={"Bad request"}

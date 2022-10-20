@@ -17,6 +17,7 @@ type TableProps = {
     colgroup?: JSX.Element[],
     withCheckbox?: boolean
     getCheckedRows?: (data: any[]) => void
+    loading?: boolean
 }
 
 export function MyTable(props: TableProps) {
@@ -79,25 +80,28 @@ export function MyTable(props: TableProps) {
                 ))}
                 </thead>
                 <tbody>
-                {table
-                    .getRowModel()
-                    .rows.slice(0, 10)
-                    .map(row => {
-                        return (
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map(cell => {
-                                    return (
-                                        <td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </td>
-                                    )
-                                })}
-                            </tr>
-                        )
-                    })}
+                {props.loading
+                    ? <tr key={"empty"}>A carregar dados...</tr>
+                    : table
+                        .getRowModel()
+                        .rows.slice(0, 10)
+                        .map(row => {
+                            return (
+                                <tr key={row.id}>
+                                    {row.getVisibleCells().map(cell => {
+                                        return (
+                                            <td key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        })
+                }
                 </tbody>
             </RBTable>
         </React.Fragment>

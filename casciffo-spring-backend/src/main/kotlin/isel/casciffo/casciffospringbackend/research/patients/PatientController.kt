@@ -20,8 +20,9 @@ class PatientController(
     suspend fun getPatientDetails(
         @PathVariable researchId: Int,
         @PathVariable patientProcessNum: Long
-    ): ResponseEntity<PatientModel> {
-        return ResponseEntity.ok(service.getPatientDetails(researchId, patientProcessNum))
+    ): ResponseEntity<ResearchPatient> {
+        val patient = service.getPatientDetails(researchId, patientProcessNum)
+        return ResponseEntity.ok(patient)
     }
 
     @GetMapping(SEARCH_PATIENTS)

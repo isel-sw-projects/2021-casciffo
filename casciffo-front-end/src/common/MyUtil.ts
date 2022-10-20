@@ -4,7 +4,6 @@ import {KeyValuePair, UserToken} from "./Types";
 import axios, {AxiosRequestConfig, AxiosRequestHeaders} from "axios";
 import FileSaver from "file-saver";
 import {MyError} from "../view/error-view/MyError";
-import {filterFns} from "@tanstack/react-table";
 
 function padToNDigits(num: number, n: number = 2) {
     return num.toString().padStart(n, '0');
@@ -137,11 +136,10 @@ const HEADER_AUTHORIZATION = (token: string): [string,string] => ['Authorization
 
 function parseUrlHash(hash: string): KeyValuePair<string, string>[] {
     const params = hash.substring(1).split(PARAM_DELIMENTER)
-    const res = params.map(p => {
+    return params.map(p => {
         const pair = p.split(KEY_VALUE_DELIMENTER)
         return {key: pair[0], value: pair[1]}
     })
-    return res
 }
 
 function formatUrlHash(args: KeyValuePair<string, string>[]): string {

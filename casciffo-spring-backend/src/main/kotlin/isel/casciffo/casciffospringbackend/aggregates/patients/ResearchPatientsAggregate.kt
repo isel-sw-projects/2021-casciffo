@@ -16,7 +16,7 @@ data class ResearchPatientsAggregate(
     var researchPatientId: Int? = null,
 
     //patient info
-    var processId: Int? = null,
+    var processId: Long? = null,
     var fullName: String? = null,
     var gender: String? = null,
     var age: Int? = null,

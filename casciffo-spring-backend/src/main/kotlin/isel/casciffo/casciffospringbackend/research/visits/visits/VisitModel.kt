@@ -1,7 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.visits.visits
 
-import isel.casciffo.casciffospringbackend.research.patients.PatientModel
 import isel.casciffo.casciffospringbackend.common.VisitType
+import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Value
@@ -17,7 +17,7 @@ data class VisitModel (
     @Column("visit_id")
     var id: Int? = null,
     var researchId: Int? = null,
-    var participantId: Int? = null,
+    var researchPatientId: Int? = null,
     var visitType: VisitType? = null,
     var scheduledDate: LocalDateTime? = null,
     var periodicity: String? = null,
@@ -28,7 +28,7 @@ data class VisitModel (
 
     @Transient
     @Value("null")
-    var patient: PatientModel? = null,
+    var researchPatient: ResearchPatient? = null,
 
     @Transient
     @Value("null")

@@ -10,10 +10,9 @@ import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaService
 import isel.casciffo.casciffospringbackend.research.addenda.comments.AddendaComment
 import isel.casciffo.casciffospringbackend.research.dossier.DossierService
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinance
 import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinanceService
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
-import isel.casciffo.casciffospringbackend.research.patients.ResearchPatients
+import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivitiesService
 import isel.casciffo.casciffospringbackend.research.visits.visits.*
@@ -22,10 +21,10 @@ import isel.casciffo.casciffospringbackend.states.state.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
-import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -47,6 +46,8 @@ class ResearchServiceImpl(
     @Autowired val investigationTeamService: InvestigationTeamService,
     @Autowired val visitService: VisitService
 ): ResearchService {
+
+    private val logger = KotlinLogging.logger {  }
 
     override suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchAggregate> {
         return aggregateRepo.findAllByType(type).asFlow()
@@ -138,8 +139,8 @@ class ResearchServiceImpl(
         return true
     }
 
-    override suspend fun randomizeTreatmentBranches(patients: List<ResearchPatients>): Flow<ResearchPatients> {
-        return participantService.randomizeTreatmentBranches(patients)
+    override suspend fun randomizeTreatmentBranches(researchId: Int, patients: List<ResearchPatient>): Flow<ResearchPatient> {
+        return participantService.updateResearchPatients(researchId, patients)
     }
 
     private suspend fun createTransition(researchId: Int, stateId: Int, nextStateId: Int) {

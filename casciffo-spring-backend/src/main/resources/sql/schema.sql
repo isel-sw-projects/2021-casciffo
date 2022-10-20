@@ -334,7 +334,8 @@ CREATE TABLE IF NOT EXISTS research_participants (
     treatment_branch VARCHAR,
     last_visit_date TIMESTAMP,
     CONSTRAINT fk_rp_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
-    CONSTRAINT fk_rp_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
+    CONSTRAINT fk_rp_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id),
+    CONSTRAINT unique_rp UNIQUE (participant_id, research_id)
 );
 
 
@@ -345,7 +346,7 @@ CREATE TABLE IF NOT EXISTS research_participants (
 CREATE TABLE IF NOT EXISTS clinical_visit (
     visit_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     research_id INT,
-    participant_id INT,
+    research_patient_id INT,
     visit_type VARCHAR NOT NULL,
     scheduled_date TIMESTAMP NOT NULL,
     start_date TIMESTAMP,
@@ -357,7 +358,7 @@ CREATE TABLE IF NOT EXISTS clinical_visit (
     concluded BOOLEAN DEFAULT FALSE,
     CONSTRAINT fk_cv_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id) ON DELETE CASCADE,
-    CONSTRAINT fk_cv_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id)
+    CONSTRAINT fk_cv_participant_id FOREIGN KEY(research_patient_id) REFERENCES research_participants(id)
 );
 
 

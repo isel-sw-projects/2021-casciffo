@@ -1,4 +1,9 @@
-import {PatientModel, ResearchTeamFinanceEntries, ResearchVisitModel} from "../../../model/research/ResearchModel";
+import {
+    PatientModel,
+    ResearchPatientModel,
+    ResearchTeamFinanceEntries,
+    ResearchVisitModel
+} from "../../../model/research/ResearchModel";
 import {Breadcrumb, Button, Container, Form} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {FormInputHelper} from "../../components/FormInputHelper";
@@ -11,7 +16,7 @@ import {PATIENT_ID_PARAMETER, VisitTypes} from "../../../common/Constants";
 import {MyTable} from "../../components/MyTable";
 
 type Props = {
-    fetchPatient: (researchId: string, patientId: string) => Promise<PatientModel>
+    fetchPatient: (researchId: string, patientId: string) => Promise<ResearchPatientModel>
     visits: ResearchVisitModel[]
     renderVisitDetails: (vId: string) => void
     onRenderOverviewClick: () => void
@@ -19,10 +24,9 @@ type Props = {
 
 export function PatientDetails(props: Props) {
     const {researchId} = useParams()
-    const {hash} = useLocation()
     const errorHandler = useErrorHandler()
     const [patientProcessNum, setPatientProcessNum] = useState("")
-    const [patient, setPatient] = useState<PatientModel>({})
+    const [patient, setPatient] = useState<ResearchPatientModel>({})
     const [dataReady, setDataReady] = useState(false)
 
     useEffect(() => {
@@ -30,6 +34,7 @@ export function PatientDetails(props: Props) {
     }, [researchId, patientProcessNum])
 
     useEffect(() => {
+        const hash = window.location.hash
         console.log(`PATIENT DETAILS READING HASH ${hash}`)
 
         const params = MyUtil.parseUrlHash(hash).find(params => params.key === PATIENT_ID_PARAMETER)
@@ -41,11 +46,15 @@ export function PatientDetails(props: Props) {
         setPatientProcessNum(pId)
 
         props.fetchPatient(researchId!, pId)
+            .then(value => {
+                console.log(value)
+                return value
+            })
             .then(setPatient)
             .then(_ => setDataReady(true))
             .catch(errorHandler)
 
-    }, [errorHandler, hash, props, researchId])
+    }, [errorHandler, props, researchId])
 
     const columns = React.useMemo<ColumnDef<ResearchVisitModel>[]>(
         () => [
@@ -95,7 +104,7 @@ export function PatientDetails(props: Props) {
                 cell: info => info.getValue(),
                 footer: props => props.column.id,
             }
-        ],[props.renderVisitDetails])
+        ],[props])
 
     return <React.Fragment>
         <Container className={"border-top border-2 border-secondary"}>
@@ -106,19 +115,25 @@ export function PatientDetails(props: Props) {
         </Container>
 
         <Container className={"flex border-start border-2 border-secondary justify-content-start mb-4"}>
-            <Form style={{width:"40%"}}>
-              <FormInputHelper label={"Nº Processo"} value={patient.processId}/>
-              <FormInputHelper label={"Nome"} value={patient.fullName}/>
-              <FormInputHelper label={"Idade"} value={patient.age}/>
-              <FormInputHelper label={"Género"} value={patient.gender}/>
-              <FormInputHelper label={"Braço de tratamento"} value={patient.treatmentBranch}/>
-              <FormInputHelper label={"Data de entrada"} value={patient.joinDate ? MyUtil.formatDate(patient.joinDate, true) : "???"}/>
-              <FormInputHelper label={"Última visita"} value={patient.lastVisitDate ? MyUtil.formatDate(patient.lastVisitDate, true) : "Ainda não realizou nenhuma visita"}/>
-            </Form>
+            {
+                dataReady 
+                    ? <Form style={{width:"40%"}}>
+                          <FormInputHelper label={"Nº Processo"} value={patient.patient!.processId}/>
+                          <FormInputHelper label={"Nome"} value={patient.patient!.fullName}/>
+                          <FormInputHelper label={"Idade"} value={patient.patient!.age}/>
+                          <FormInputHelper label={"Género"} value={patient.patient!.gender}/>
+                          <FormInputHelper label={"Braço de tratamento"} value={patient.treatmentBranch}/>
+                          <FormInputHelper label={"Data de entrada"} value={patient.joinDate ? MyUtil.formatDate(patient.joinDate, true) : "???"}/>
+                          <FormInputHelper label={"Última visita"} value={patient.lastVisitDate ? MyUtil.formatDate(patient.lastVisitDate, true) : "Ainda não realizou nenhuma visita"}/>
+                        </Form>
+                    : <span className={"text-info"}>A carregar dados...</span>
+            }
         </Container>
 
         <Container className={"flex border-start border-2 border-secondary justify-content-evenly"}>
-            <MyTable data={props.visits.filter(v => v.patient!.processId === patient.processId)} columns={columns}/>
+            { dataReady &&
+                <MyTable data={props.visits.filter(v => v.researchPatient!.patient!.processId === patient.patient!.processId)} columns={columns}/>
+            }
         </Container>
     </React.Fragment>
 }
