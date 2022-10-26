@@ -7,8 +7,8 @@ import isel.casciffo.casciffospringbackend.mappers.addenda.AddendaMapper
 import isel.casciffo.casciffospringbackend.mappers.research_finance.ResesearchFinanceMapper
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaDTO
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinance
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinanceDTO
+import isel.casciffo.casciffospringbackend.research.finance.overview.ResearchFinance
+import isel.casciffo.casciffospringbackend.research.finance.overview.ResearchFinanceDTO
 import isel.casciffo.casciffospringbackend.research.research.ResearchDTO
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO

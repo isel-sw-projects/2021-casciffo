@@ -4,7 +4,7 @@ import {
     ResearchTeamFinanceEntries,
     ResearchVisitModel
 } from "../../../model/research/ResearchModel";
-import {Breadcrumb, Button, Container, Form} from "react-bootstrap";
+import {Breadcrumb, Button, Col, Container, Form} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {FormInputHelper} from "../../components/FormInputHelper";
 import {Link, useLocation, useParams} from "react-router-dom";
@@ -14,6 +14,7 @@ import {MyError} from "../../error-view/MyError";
 import {ColumnDef} from "@tanstack/react-table";
 import {PATIENT_ID_PARAMETER, VisitTypes} from "../../../common/Constants";
 import {MyTable} from "../../components/MyTable";
+import { Row } from "react-bootstrap";
 
 type Props = {
     fetchPatient: (researchId: string, patientId: string) => Promise<ResearchPatientModel>
@@ -114,23 +115,37 @@ export function PatientDetails(props: Props) {
             </Breadcrumb>
         </Container>
 
-        <Container className={"flex border-start border-2 border-secondary justify-content-start mb-4"}>
+        <Container className={"flex border-bottom border-2 border-secondary justify-content-start mb-4"}>
             {
-                dataReady 
-                    ? <Form style={{width:"40%"}}>
-                          <FormInputHelper label={"Nº Processo"} value={patient.patient!.processId}/>
-                          <FormInputHelper label={"Nome"} value={patient.patient!.fullName}/>
-                          <FormInputHelper label={"Idade"} value={patient.patient!.age}/>
-                          <FormInputHelper label={"Género"} value={patient.patient!.gender}/>
-                          <FormInputHelper label={"Braço de tratamento"} value={patient.treatmentBranch}/>
-                          <FormInputHelper label={"Data de entrada"} value={patient.joinDate ? MyUtil.formatDate(patient.joinDate, true) : "???"}/>
-                          <FormInputHelper label={"Última visita"} value={patient.lastVisitDate ? MyUtil.formatDate(patient.lastVisitDate, true) : "Ainda não realizou nenhuma visita"}/>
-                        </Form>
+                dataReady
+                    ? <Form>
+                        <Row>
+                            <FormInputHelper label={"Nº Processo"} value={patient.patient!.processId}/>
+                            <FormInputHelper label={"Nome"} value={patient.patient!.fullName}/>
+                            <FormInputHelper label={"Idade"} value={patient.patient!.age}/>
+                        </Row>
+                        <Row>
+                            <FormInputHelper label={"Género"} value={patient.patient!.gender}/>
+                            <FormInputHelper label={"Braço de tratamento"} value={patient.treatmentBranch}/>
+                            <FormInputHelper label={"Data de entrada"}
+                                             value={patient.joinDate
+                                                 ? MyUtil.formatDate(patient.joinDate, true)
+                                                 : "N/A"}/>
+                        </Row>
+                    <Row>
+                            <FormInputHelper label={"Última visita"}
+                                             value={patient.lastVisitDate
+                                                 ? MyUtil.formatDate(patient.lastVisitDate, true)
+                                                 : "Sem histórico de visitas."}/>
+                        <Col/>
+                        <Col/>
+                    </Row>
+                    </Form>
                     : <span className={"text-info"}>A carregar dados...</span>
             }
         </Container>
 
-        <Container className={"flex border-start border-2 border-secondary justify-content-evenly"}>
+        <Container className={"flex justify-content-evenly"}>
             { dataReady &&
                 <MyTable data={props.visits.filter(v => v.researchPatient!.patient!.processId === patient.patient!.processId)} columns={columns}/>
             }

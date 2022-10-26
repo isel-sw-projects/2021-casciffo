@@ -1,7 +1,7 @@
-package isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview
+package isel.casciffo.casciffospringbackend.research.finance.overview
 
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.monetary_flow.ResearchMonetaryFlow
-import isel.casciffo.casciffospringbackend.research.finance.team.ResearchTeamMonetaryFlow
+import isel.casciffo.casciffospringbackend.research.finance.research_monetary_flow.ResearchMonetaryFlow
+import isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow.ResearchTeamMonetaryFlow
 
 
 data class ResearchFinanceDTO(

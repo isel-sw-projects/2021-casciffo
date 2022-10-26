@@ -71,6 +71,9 @@ const RESEARCH_FINANCE_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/finance
 const PATIENTS_LIKE_URL = (processId: string) => `${BASE_URL}/patients/search?q=${processId}`
 const RANDOMIZE_PATIENTS = (researchId: string) => `${PATIENTS_RESEARCH_URL(researchId)}/randomize`
 
+const researchFinanceEntryUrl = (researchId: string) => `${RESEARCH_FINANCE_URL(researchId)}/research-entry`
+const researchFinanceTeamEntryUrl = (researchId: string)  => `${RESEARCH_FINANCE_URL(researchId)}/team-entry`
+
 const ApiUrls = {
     baseUrl: BASE_URL,
     proposalsUrl: PROPOSALS_URL,
@@ -115,7 +118,9 @@ const ApiUrls = {
     // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID
     patientsLikeUrl: PATIENTS_LIKE_URL,
     researchPatientsRandomize: RANDOMIZE_PATIENTS,
-    researchFinanceUrl: RESEARCH_FINANCE_URL
+    researchFinanceUrl: RESEARCH_FINANCE_URL,
+    researchFinanceEntryUrl,
+    researchFinanceTeamEntryUrl
 }
 
 export default ApiUrls

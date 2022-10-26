@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.aggregates.research_finance
 import isel.casciffo.casciffospringbackend.common.TypeOfMonetaryFlow
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class ResearchTeamFinanceEntryAggregate(
@@ -12,7 +13,7 @@ data class ResearchTeamFinanceEntryAggregate(
     @Column("trial_financial_component_id")
     var financialComponentId: Int? = null,
 
-    var transactionDate: LocalDateTime? = null,
+    var transactionDate: LocalDate? = null,
     var typeOfFlow: TypeOfMonetaryFlow? = null,
     var responsibleForPayment: String? = null,
     var amount: Float? = null,

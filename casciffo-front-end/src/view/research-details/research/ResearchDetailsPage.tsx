@@ -2,8 +2,8 @@ import {MyError} from "../../error-view/MyError";
 
 import {
     DossierModel,
-    PatientModel,
-    ResearchModel, ResearchPatientModel,
+    PatientModel, ResearchFinance, ResearchFinanceEntries,
+    ResearchModel, ResearchPatientModel, ResearchTeamFinanceEntries,
     ResearchVisitModel,
     ScientificActivityModel
 } from "../../../model/research/ResearchModel";
@@ -120,9 +120,91 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         console.log(patients)
         props.researchService.saveRandomization(researchId, patients)
             .then(value => setResearch(prevState => ({...prevState, patients: value})))
-    }, [props.researchService, researchId])
+            .catch(errorHandler)
+    }, [errorHandler, props.researchService, researchId])
+
+    const updateResearchFinance = useCallback((rf: ResearchFinance) => {
+        props.researchService.updateResearchFinance(researchId, rf)
+            .then(value => {
+                console.log(value)
+                return value
+            })
+            .then(value => setResearch(prevState => ({...prevState, financeComponent: value})))
+            .catch(errorHandler)
+    }, [errorHandler, props.researchService, researchId])
 
 
+    const addNewVisit = useCallback((visit: ResearchVisitModel) => {
+        const addVisitToList = (v: ResearchVisitModel) => {
+            setResearch(prevState => ({...prevState, visits: [...prevState.visits || [], v]}))
+        }
+
+        props.researchService
+            .scheduleVisit(researchId, visit)
+            .then(addVisitToList)
+    },[props.researchService, researchId])
+
+    const onSaveScientificActivity = useCallback((activity: ScientificActivityModel) => {
+        props.researchService.newScientificActivityEntry(researchId!, activity)
+            .then(value => setResearch(prevState => ({...prevState, scientificActivities: [value, ...prevState.scientificActivities || []]})))
+            .catch(errorHandler)
+    }, [errorHandler, props.researchService, researchId])
+
+    const onCompleteResearch = useCallback(() =>
+        props.researchService
+            .completeResearch(researchId!)
+            .then((answer) => {
+                if(answer.success) {
+                    setResearch(answer.research!)
+                } else {
+                    alert("Failure to complete.")
+                }
+            })
+            .catch(errorHandler)
+        , [errorHandler, props.researchService, researchId])
+
+    const onCancelResearch = useCallback((reason: string) =>
+        props.researchService
+            .cancelResearch(researchId!, reason, userId)
+            .then((answer) => {
+                if(answer.success) {
+                    setResearch(answer.research!)
+                } else {
+                    alert("Failure to cancel.")
+                }
+            })
+            .catch(errorHandler)
+    ,[errorHandler, props.researchService, researchId, userId])
+
+
+    const saveResearchFinanceEntry = (entry: ResearchFinanceEntries) => {
+        entry.rfcId = research.financeComponent!.id
+        props.researchService
+            .saveNewFinanceEntry(researchId!, entry)
+            .then(entry => {
+                setResearch(prevState => ({
+                    ...prevState,
+                    financeComponent: {
+                        ...prevState.financeComponent,
+                        monetaryFlow: [entry, ...prevState.financeComponent!.monetaryFlow || []]
+                    }
+                }))
+            })
+    }
+    const saveTeamFinanceEntry = (entry: ResearchTeamFinanceEntries) => {
+        entry.rfcId = research.financeComponent!.id
+        props.researchService
+            .saveNewTeamFinanceEntry(researchId!, entry)
+            .then(entry => {
+                setResearch(prevState => ({
+                    ...prevState,
+                    financeComponent: {
+                        ...prevState.financeComponent,
+                        teamFinanceFlow: [entry, ...prevState.financeComponent!.teamFinanceFlow || []]
+                    }
+                }))
+            })
+    }
 
     const renderPatientOverviewScreen = () => {
         const args = [
@@ -185,15 +267,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         }
     }
 
-    const addNewVisit = useCallback((visit: ResearchVisitModel) => {
-        const addVisitToList = (v: ResearchVisitModel) => {
-            setResearch(prevState => ({...prevState, visits: [...prevState.visits || [], v]}))
-        }
-
-        props.researchService
-            .scheduleVisit(researchId, visit)
-            .then(addVisitToList)
-    },[props.researchService, researchId])
 
 
     const renderVisitsOverviewScreen = () => {
@@ -286,38 +359,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         //      renderPatientOverviewScreen()
         // }
     }
-    
-    const onSaveScientificActivity = useCallback((activity: ScientificActivityModel) => {
-        props.researchService.newScientificActivityEntry(researchId!, activity)
-            .then(value => setResearch(prevState => ({...prevState, scientificActivities: [value, ...prevState.scientificActivities || []]})))
-            .catch(errorHandler)
-    }, [errorHandler, props.researchService, researchId])
 
-    const onCompleteResearch = useCallback(() =>
-        props.researchService
-            .completeResearch(researchId!)
-            .then((answer) => {
-                if(answer.success) {
-                    setResearch(answer.research!)
-                } else {
-                    alert("Failure to complete.")
-                }
-            })
-            .catch(errorHandler)
-        , [errorHandler, props.researchService, researchId])
-
-    const onCancelResearch = useCallback((reason: string) =>
-        props.researchService
-            .cancelResearch(researchId!, reason, userId)
-            .then((answer) => {
-                if(answer.success) {
-                    setResearch(answer.research!)
-                } else {
-                    alert("Failure to cancel.")
-                }
-            })
-            .catch(errorHandler)
-    ,[errorHandler, props.researchService, researchId, userId])
 
     return (
         // <ResearchDetailsContext.Provider value={re}>
@@ -387,9 +429,13 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             {research.financeComponent &&
                                 <ResearchFinanceTab
                                     numOfPatients={research.patients?.length ?? 0}
-                                    onUpdateResearch={updateResearch}
+                                    onUpdateResearch={updateResearchFinance}
+                                    researchTeam={research.investigationTeam || []}
                                     researchFinance={research.financeComponent}
-                                    researchService={props.researchService}/>
+                                    researchService={props.researchService}
+                                    onNewTeamEntry={saveTeamFinanceEntry}
+                                    onNewFinanceEntry={saveResearchFinanceEntry}
+                                />
                             }
                         </Tab>
                     }

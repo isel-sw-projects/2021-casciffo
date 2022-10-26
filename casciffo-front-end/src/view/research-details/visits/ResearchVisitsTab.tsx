@@ -24,7 +24,7 @@ export function ResearchVisitsTab(props: VisitProps) {
 
     const [visits, setVisits] = useState<ResearchVisitModel[]>([])
     const [query, setQuery] = useState("")
-    const [searchProperty, setSearchProperty] = useState<keyof ResearchVisitModel>("visitType")
+    const [searchProperty, setSearchProperty] = useState<string>("id")
     const [showVisitHistory, setShowVisitHistory] = useState<string>("ALL")
 
 
@@ -116,10 +116,18 @@ export function ResearchVisitsTab(props: VisitProps) {
             "HISTORY": (visit: ResearchVisitModel) => MyUtil.cmpWithToday(visit.scheduledDate) < 0,
             "TO_HAPPEN": (visit: ResearchVisitModel) => MyUtil.cmpWithToday(visit.scheduledDate) >= 0
         }
+        const match = (test: string) => (new RegExp(`${query}.*`,"gi")).test(test)
+
+        const filters = {
+            id: (visit: ResearchVisitModel) => match(visit.id!),
+            observations: (visit: ResearchVisitModel) => match(visit.observations!),
+            investigators: (visit: ResearchVisitModel) => match(visit.visitInvestigators!.join(", ")),
+            patients: (visit: ResearchVisitModel) => match(visit.researchPatient!.patient!.fullName!),
+        }
 
         return visits
             .filter(filterMap[showVisitHistory as keyof typeof filterMap])
-            .filter(v => (new RegExp(`${query}.*`,"gi")).test(`${v[searchProperty]}`))
+            .filter(filters[searchProperty as keyof typeof filters])
     }, [visits, showVisitHistory, query, searchProperty])
 
     const handleSearchSubmit = (query: string) => setQuery(query)
@@ -158,10 +166,11 @@ export function ResearchVisitsTab(props: VisitProps) {
                         <Stack direction={"vertical"} gap={2} style={{position: "relative"}}>
                             <span className={"bold"}>Procurar por</span>
                             <FormGroup>
-                                <Form.Select defaultValue={"sigla"} onChange={(e) => setSearchProperty(e.target.value as keyof ResearchVisitModel)}>
-                                    <option value={"id"}>Identificador</option>
-                                    <option value={"visitInvestigators"}>Investigadores</option>
-                                    <option value={"observations"}>Patologia</option>
+                                <Form.Select defaultValue={"id"} onChange={(e) => setSearchProperty(e.target.value)}>
+                                    <option value={"id"}>Id</option>
+                                    <option value={"patients"}>Pacientes</option>
+                                    <option value={"investigators"}>Investigadores</option>
+                                    <option value={"observations"}>Observações</option>
                                 </Form.Select>
                             </FormGroup>
                         </Stack>

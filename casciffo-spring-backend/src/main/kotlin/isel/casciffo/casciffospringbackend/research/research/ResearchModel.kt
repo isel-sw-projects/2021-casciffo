@@ -5,7 +5,7 @@ import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamM
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.dossier.Dossier
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinance
+import isel.casciffo.casciffospringbackend.research.finance.overview.ResearchFinance
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel

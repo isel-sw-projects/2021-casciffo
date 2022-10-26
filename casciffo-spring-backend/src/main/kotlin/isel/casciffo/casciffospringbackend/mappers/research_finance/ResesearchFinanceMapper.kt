@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.mappers.research_finance
 
 import isel.casciffo.casciffospringbackend.mappers.Mapper
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinance
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinanceDTO
+import isel.casciffo.casciffospringbackend.research.finance.overview.ResearchFinance
+import isel.casciffo.casciffospringbackend.research.finance.overview.ResearchFinanceDTO
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingleOrNull

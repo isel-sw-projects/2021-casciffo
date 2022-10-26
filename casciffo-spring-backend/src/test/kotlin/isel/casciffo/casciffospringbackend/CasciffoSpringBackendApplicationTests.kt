@@ -18,6 +18,9 @@ import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.files.FileInfoRepository
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
+import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
+import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
+import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialService
@@ -39,6 +42,7 @@ import isel.casciffo.casciffospringbackend.users.user.UserModel
 import isel.casciffo.casciffospringbackend.users.user.UserRepository
 import isel.casciffo.casciffospringbackend.users.user.UserService
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -50,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDate
 import kotlin.io.path.Path
@@ -80,7 +85,10 @@ class CasciffoSpringBackendApplicationTests(
     @Autowired val timelineEventRepository: TimelineEventRepository,
     @Autowired val aggregateRepo: ProposalAggregateRepo,
     @Autowired val userRolesRepo: UserRolesRepo,
-    @Autowired val fileInfoRepository: FileInfoRepository
+    @Autowired val fileInfoRepository: FileInfoRepository,
+    @Autowired val pathologyRepository: PathologyRepository,
+    @Autowired val serviceTypeRepository: ServiceTypeRepository,
+    @Autowired val therapeuticAreaRepository: TherapeuticAreaRepository
 ) {
 
     val logger = KotlinLogging.logger { }
@@ -99,9 +107,31 @@ class CasciffoSpringBackendApplicationTests(
             logger.info {fileInfo}
         }
 
-
-
     }
+
+//    suspend fun Test123() {
+//
+//        val proposal = ProposalModel()
+//
+//        proposal.serviceType = serviceTypeRepository.findById(proposal.serviceTypeId!!).awaitSingle()
+//        proposal.pathology = pathologyRepository.findById(proposal.pathologyId!!).awaitSingle()
+//        proposal.therapeuticArea = therapeuticAreaRepository.findById(proposal.therapeuticAreaId!!).awaitSingle()
+//        proposal.principalInvestigator = userRepo.findById(proposal.principalInvestigatorId!!).awaitSingle()
+//        proposal.investigationTeam = investigationTeamRepository.findInvestigationTeamByProposalId(proposal.id!!).asFlow()
+//        proposal.comments = proposalCommentsRepository.findByProposalId(proposal.id!!).asFlow()
+//    }
+
+//    fun test123() {
+//        val proposal = ProposalModel()
+//
+//        Mono.just(proposal)
+//            .flatMap {
+//                serviceTypeRepository.findById(proposal.id!!)
+//            }
+//            .flatMap {
+//
+//            }
+//    }
 
     @Test
     fun genKeys() {

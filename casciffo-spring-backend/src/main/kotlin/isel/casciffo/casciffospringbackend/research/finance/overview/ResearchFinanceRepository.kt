@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview
+package isel.casciffo.casciffospringbackend.research.finance.overview
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository

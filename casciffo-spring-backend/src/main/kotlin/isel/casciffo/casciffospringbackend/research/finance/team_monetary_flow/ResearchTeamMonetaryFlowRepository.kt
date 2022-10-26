@@ -1,6 +1,5 @@
-package isel.casciffo.casciffospringbackend.research.finance.team
+package isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow
 
-import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
@@ -8,6 +7,6 @@ import reactor.core.publisher.Flux
 @Repository
 interface ResearchTeamMonetaryFlowRepository: ReactiveCrudRepository<ResearchTeamMonetaryFlow, Int> {
 
-    fun findByFinancialComponentId(rfcId: Int): Flux<ResearchTeamMonetaryFlow>
+    fun findByRfcId(rfcId: Int): Flux<ResearchTeamMonetaryFlow>
 
 }

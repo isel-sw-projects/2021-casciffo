@@ -1,26 +1,33 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {Button, Container, TabPane, Tabs} from "react-bootstrap";
-import {ResearchTeamFinanceTab} from "./ResearchTeamFinanceTab";
-import {ResearchGeneralFinanceTab} from "./ResearchGeneralFinanceTab";
+import {Button, Col, Container, Row, TabPane, Tabs} from "react-bootstrap";
+import {ResearchTeamFinanceEntriesTab} from "./ResearchTeamFinanceEntriesTab";
+import {ResearchFinanceEntriesTab} from "./ResearchFinanceEntriesTab";
 import {ResearchAggregateService} from "../../../services/ResearchAggregateService";
-import {ResearchFinance} from "../../../model/research/ResearchModel";
+import {
+    ResearchFinance,
+    ResearchFinanceEntries,
+    ResearchTeamFinanceEntries
+} from "../../../model/research/ResearchModel";
 import {FormInputHelper} from "../../components/FormInputHelper";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {Roles} from "../../../model/role/Roles";
-import {useErrorHandler} from "react-error-boundary";
 import {useParams} from "react-router-dom";
+import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
 
 type ResearchFinanceProps = {
     researchService: ResearchAggregateService
     onUpdateResearch: (rf: ResearchFinance) => void
     researchFinance: ResearchFinance
+    researchTeam: TeamInvestigatorModel[]
     numOfPatients: number
+    onNewTeamEntry: (entry: ResearchTeamFinanceEntries) => void
+    onNewFinanceEntry: (entry: ResearchFinanceEntries) => void
 }
 
 export function ResearchFinanceTab(props: ResearchFinanceProps) {
     const {researchId} = useParams()
 
-    const [selectedFinanceTab, setSelectedFinanceTab] = useState("")
+    const [selectedFinanceTab, setSelectedFinanceTab] = useState("research-finance")
     const selectTab = (tab:string | null) => {
         setSelectedFinanceTab(tab!)
     }
@@ -53,62 +60,77 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
         setResearchFinance(prevState => ({...prevState, [key]: value}))
     }
     
-    const errorHandler = useErrorHandler()
-    
-    const saveResearchFinance = useCallback((rf: ResearchFinance) => {
+    const saveResearchFinance = (rf: ResearchFinance) => {
         setIsEditing(false)
-        props.researchService
-            .saveResearchFinance(researchId!, rf)
-            .then(value => {
-                setResearchFinance(value)
-                setPrevResearchFinance(value)
-            })
-            .catch(errorHandler)
-    }, [errorHandler, props.researchService, researchId])
+        props.onUpdateResearch(rf)
+    }
     
     const cancelChanges = () => {
         setIsEditing(false)
         setResearchFinance(prevResearchFinance)
     }
 
+    const updateGeneralFinance = (entry: ResearchFinanceEntries) => {
+        props.onNewFinanceEntry(entry)
+    }
+
+    const updateTeamFinance = (entry: ResearchTeamFinanceEntries) => {
+        props.onNewTeamEntry(entry)
+    }
+
     return <React.Fragment>
         <Container className={"border-top border-2 border-secondary"}>
 
-            <Container>
+            <Container className={"mt-3 mt-md-3 mb-3 mb-md-3"}>
                 { canShowEdit && (
                     isEditing
                         ? <>
-                            <Button variant={"outline-primary"} onClick={() => saveResearchFinance(researchFinance)}>Guardar Alterações</Button>
-                            <Button variant={"outline-danger"} onClick={cancelChanges}>Cancelar</Button>
+                        <Row>
+                            <Col>
+                                <Button className={"me-2 me-md-2 ms-2 ms-md-2"} variant={"outline-primary"} onClick={() => saveResearchFinance(researchFinance)}>Guardar Alterações</Button>
+                            </Col>
+                            <Col/>
+                            <Col>
+                                <Button className={"me-2 me-md-2 ms-2 ms-md-2"} variant={"outline-danger"} onClick={cancelChanges}>Cancelar</Button>
+                            </Col>
+                            <Col/>
+                            <Col/>
+                        </Row>
                         </>
                         : <Button variant={"outline-primary"} onClick={toggleEditing}>Editar</Button>
                     )
                 }
             </Container>
-            <Container className={"flex float-start mb-3 "} style={{width:"50%"}}>
-                <FormInputHelper label={"Saldo"}
-                                 name={"balance"}
-                                 value={researchFinance.balance}
-                                 inline
-                                 editing={isEditing}
-                                 onChange={updateResearchFinance}
-                />
-                <FormInputHelper label={"Valor por paciente"}
-                                 name={"valuePerParticipant"}
-                                 value={researchFinance.valuePerParticipant}
-                                 inline
-                                 editing={isEditing}
-                                 onChange={updateResearchFinance}
-                />
-                <FormInputHelper label={"Encargo por paciente"}
-                                 name={"roleValuePerParticipant"}
-                                 value={researchFinance.roleValuePerParticipant}
-                                 inline
-                                 editing={isEditing}
-                                 onChange={updateResearchFinance}
-                />
+            <Container className={"flex float-start mb-3"}>
+                <Row>
+                    <Col className={"me-3"}>
+                        <FormInputHelper label={"Saldo"}
+                                         name={"balance"}
+                                         value={researchFinance.balance}
+                                         inline
+                                         editing={isEditing}
+                                         onChange={updateResearchFinance}
+                        />
+                        <FormInputHelper label={"Valor por paciente"}
+                                         name={"valuePerParticipant"}
+                                         value={researchFinance.valuePerParticipant}
+                                         inline
+                                         editing={isEditing}
+                                         onChange={updateResearchFinance}
+                        />
+                    </Col>
+                    <Col className={"ms-3"}>
+                        <FormInputHelper label={"Encargo por paciente"}
+                                         name={"roleValuePerParticipant"}
+                                         value={researchFinance.roleValuePerParticipant}
+                                         inline
+                                         editing={isEditing}
+                                         onChange={updateResearchFinance}
+                        />
 
-                <FormInputHelper label={"Nº de pacientes"} value={numOfPatients} inline/>
+                        <FormInputHelper label={"Nº de pacientes"} value={numOfPatients} inline/>
+                    </Col>
+                </Row>
             </Container>
 
             <Tabs
@@ -119,13 +141,18 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
                 className="mb-3 mt-3 justify-content-evenly">
 
                 <TabPane title={"Ensaio"} eventKey={"research-finance"}>
-                    <ResearchGeneralFinanceTab
-                        entries={researchFinance.researchFinanceEntries || []}/>
+                    <ResearchFinanceEntriesTab
+                        entries={researchFinance.monetaryFlow || []}
+                        onNewEntry={updateGeneralFinance}
+                    />
                 </TabPane>
 
                 <TabPane title={"Equipa"} eventKey={"team-finance"}>
-                    <ResearchTeamFinanceTab
-                        entries={researchFinance.teamFinance || []}/>
+                    <ResearchTeamFinanceEntriesTab
+                        entries={researchFinance.teamFinanceFlow || []}
+                        onNewEntry={updateTeamFinance}
+                        team={props.researchTeam}
+                    />
                 </TabPane>
             </Tabs>
         </Container>

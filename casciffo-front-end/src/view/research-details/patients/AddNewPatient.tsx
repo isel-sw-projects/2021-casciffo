@@ -65,7 +65,9 @@ export function AddNewPatient(props: Props) {
         <Form className={"m-2 m-md-2"} onSubmit={submitPatientData}>
             <fieldset className={"border border-secondary p-3"} style={{width:"40%"}}>
                 <legend className={"float-none w-auto p-2"}>Dados do paciente</legend>
-                <AsyncAutoCompletePatientSearch requestPatients={props.searchByProcessId} setPatient={onSelectPatient}/>
+                <div className={"m-2 m-md-2"}>
+                    <AsyncAutoCompletePatientSearch requestPatients={props.searchByProcessId} setPatient={onSelectPatient}/>
+                </div>
 
                 <Form.FloatingLabel className={"m-2 m-md-2 font-bold"}
                                     label={<span>Nº Processo <span style={{color: "red"}}>*</span></span>}>

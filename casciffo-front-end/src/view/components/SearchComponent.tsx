@@ -24,7 +24,7 @@ export function SearchComponent(props: SearchProps) {
                     type="search"
                     placeholder="Pesquisar"
                     value={query}
-                    onChange={e => setQuery(e.target.value)}
+                    onChange={e => {setQuery(e.target.value); handleSearch()}}
                     onKeyUp={handlePressEnter}
                 />
                 <Button variant="outline-success" type={"button"} onClick={handleSearch}>

@@ -10,7 +10,7 @@ import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaService
 import isel.casciffo.casciffospringbackend.research.addenda.comments.AddendaComment
 import isel.casciffo.casciffospringbackend.research.dossier.DossierService
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview.ResearchFinanceService
+import isel.casciffo.casciffospringbackend.research.finance.overview.ResearchFinanceService
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
@@ -174,7 +174,6 @@ class ResearchServiceImpl(
         if(researchModel.type === ResearchType.CLINICAL_TRIAL) {
             researchModel.financeComponent = researchFinanceService.getFinanceComponentByResearchId(researchModel.id!!)
         }
-
         return researchModel
     }
 }

@@ -3,8 +3,8 @@ import {httpGet, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
 import {
     DossierModel,
     PatientModel,
-    PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance,
-    ResearchModel, ResearchModelAnswer, ResearchPatientModel,
+    PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance, ResearchFinanceEntries,
+    ResearchModel, ResearchModelAnswer, ResearchPatientModel, ResearchTeamFinanceEntries,
     ResearchVisitModel, ScientificActivityModel
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
@@ -84,7 +84,7 @@ export class ResearchAggregateService {
         return httpPost(url, {reason: reason, userId: userId})
     }
 
-    saveResearchFinance(researchId: string, rf: ResearchFinance): Promise<ResearchFinance> {
+    updateResearchFinance(researchId: string, rf: ResearchFinance): Promise<ResearchFinance> {
         const url = ApiUrls.researchFinanceUrl(researchId)
         return httpPut(url, rf)
     }
@@ -97,5 +97,15 @@ export class ResearchAggregateService {
     addPatientAndVisitsToResearch(researchId: string, aggregate: PatientVisitsAggregate): Promise<PatientVisitsAggregate> {
         const url = ApiUrls.researchVisitsUrl(researchId)
         return httpPost(url, aggregate)
+    }
+
+    saveNewFinanceEntry(researchId: string, entry: ResearchFinanceEntries): Promise<ResearchFinanceEntries> {
+        const url = ApiUrls.researchFinanceEntryUrl(researchId)
+        return httpPut(url, entry)
+    }
+
+    saveNewTeamFinanceEntry(researchId: string, entry: ResearchTeamFinanceEntries): Promise<ResearchTeamFinanceEntries> {
+        const url = ApiUrls.researchFinanceTeamEntryUrl(researchId)
+        return httpPut(url, entry)
     }
 }

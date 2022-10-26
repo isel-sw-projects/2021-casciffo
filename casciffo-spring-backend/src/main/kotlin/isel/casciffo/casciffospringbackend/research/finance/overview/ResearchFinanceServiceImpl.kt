@@ -1,12 +1,13 @@
-package isel.casciffo.casciffospringbackend.research.finance.clinical_trial.overview
+package isel.casciffo.casciffospringbackend.research.finance.overview
 
 import isel.casciffo.casciffospringbackend.aggregates.research_finance.ResearchTeamFinanceEntryAggregate
 import isel.casciffo.casciffospringbackend.aggregates.research_finance.ResearchTeamFinanceEntryAggregateRepo
+import isel.casciffo.casciffospringbackend.common.TypeOfMonetaryFlow
 import isel.casciffo.casciffospringbackend.mappers.Mapper
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.monetary_flow.ResearchMonetaryFlow
-import isel.casciffo.casciffospringbackend.research.finance.clinical_trial.monetary_flow.ResearchMonetaryFlowRepository
-import isel.casciffo.casciffospringbackend.research.finance.team.ResearchTeamMonetaryFlow
-import isel.casciffo.casciffospringbackend.research.finance.team.ResearchTeamMonetaryFlowRepository
+import isel.casciffo.casciffospringbackend.research.finance.research_monetary_flow.ResearchMonetaryFlow
+import isel.casciffo.casciffospringbackend.research.finance.research_monetary_flow.ResearchMonetaryFlowRepository
+import isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow.ResearchTeamMonetaryFlow
+import isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow.ResearchTeamMonetaryFlowRepository
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -31,7 +32,7 @@ class ResearchFinanceServiceImpl(
         val rf = researchFinanceRepository.findByResearchId(researchId).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No finance component for research with id $researchId.")
 
-        rf.monetaryFlow = researchMonetaryFlowRepository.findByResearchFinancialComponentId(rf.id!!).asFlow()
+        rf.monetaryFlow = researchMonetaryFlowRepository.findByRfcId(rf.id!!).asFlow()
         rf.teamFinanceFlow = researchTeamMonetaryFlowAggregate
             .findAllByFinancialComponentId(rf.id!!)
             .asFlow()
@@ -40,8 +41,8 @@ class ResearchFinanceServiceImpl(
         return rf
     }
 
-    override suspend fun updateFinanceComponent(researchId: Int, researchFinance: ResearchFinance): ResearchFinance {
-        validateResearchId(researchId)
+    override suspend fun updateFinanceComponent(researchId: Int, researchFinance: ResearchFinance, isValidated: Boolean): ResearchFinance {
+        if(!isValidated) validateResearchId(researchId)
 
         return researchFinanceRepository.save(researchFinance).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $researchFinance.")
@@ -50,37 +51,37 @@ class ResearchFinanceServiceImpl(
     override suspend fun saveMonetaryTeamFlowEntry(
         researchId: Int,
         entry: ResearchTeamMonetaryFlow
-    ): ResearchFinance {
-        validateAndUpdateRFC(researchId, entry.amount!!)
+    ): ResearchTeamMonetaryFlow {
+        //TODO REVER COMO ESTE PROCESSO ACONTECE
+        validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
 
-        researchTeamMonetaryFlowRepository.save(entry).awaitSingleOrNull()
+        return researchTeamMonetaryFlowRepository.save(entry).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $entry")
-
-        return getFinanceComponentByResearchId(researchId)
     }
 
     private suspend fun validateAndUpdateRFC(
         researchId: Int,
-        balanceChange: Float
+        balanceChange: Float,
+        typeOfMonetaryFlow: TypeOfMonetaryFlow
     ) {
         val rfc = validateResearchId(researchId)
-        rfc.balance = rfc.balance!!.minus(balanceChange)
+        rfc.balance =
+            if (typeOfMonetaryFlow === TypeOfMonetaryFlow.ENTRADA) rfc.balance!!.plus(balanceChange)
+            else rfc.balance!!.minus(balanceChange)
         if(rfc.balance!! < 0) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantidade irá levar o balanço a negativo!")
         }
-        updateFinanceComponent(researchId, rfc)
+        updateFinanceComponent(researchId, rfc, true)
     }
 
     override suspend fun saveMonetaryResearchFlowEntry(
         researchId: Int,
         entry: ResearchMonetaryFlow
-    ): ResearchFinance {
-        validateAndUpdateRFC(researchId, entry.amount!!)
+    ): ResearchMonetaryFlow {
+        validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
 
-        researchMonetaryFlowRepository.save(entry).awaitSingleOrNull()
+        return researchMonetaryFlowRepository.save(entry).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $entry")
-
-        return getFinanceComponentByResearchId(researchId)
     }
 
     suspend fun validateResearchId(researchId: Int): ResearchFinance {
