@@ -293,13 +293,18 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         if(selectedTab !== TAB_NAMES.visits)
             return <ResearchVisitsTab visits={research.visits || []}
                                       onAddVisit={addNewVisit}
-                                      renderDetails={renderVisitsDetailsScreen}/>
+                                      renderDetails={renderVisitsDetailsScreen}
+                                      researchTeam={research.investigationTeam || []}
+                                      searchPatientsByProcessId={props.researchService.searchPatientsByProcessId}
+            />
 
         switch (tab) {
             case TabPaneScope.OVERVIEW:
                 return <ResearchVisitsTab visits={research.visits || []}
                                           onAddVisit={addNewVisit}
                                           renderDetails={renderVisitsDetailsScreen}
+                                          researchTeam={research.investigationTeam || []}
+                                          searchPatientsByProcessId={props.researchService.searchPatientsByProcessId}
                 />
             case TabPaneScope.DETAILS:
                 return <ResearchVisitDetailsTab service={props.researchService}
@@ -391,7 +396,9 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             createdDate={research.startDate ?? ""}
                             canceledReason={research.canceledReason}
                         />
-                        <ResearchScientificActivitiesTab onSaveActivity={onSaveScientificActivity} scientificActivities={research.visits || []}/>
+                        <ResearchScientificActivitiesTab
+                            onSaveActivity={onSaveScientificActivity}
+                            scientificActivities={research.scientificActivities || []}/>
 
                     </Tab>
                     <Tab eventKey={TAB_NAMES.visits} title={"Visitas"}>

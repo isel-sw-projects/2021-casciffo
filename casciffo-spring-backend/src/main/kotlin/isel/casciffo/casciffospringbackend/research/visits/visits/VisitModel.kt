@@ -1,5 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.visits.visits
 
+import ch.qos.logback.core.rolling.helper.PeriodicityType
+import isel.casciffo.casciffospringbackend.common.VisitPeriodicity
 import isel.casciffo.casciffospringbackend.common.VisitType
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
@@ -20,7 +22,8 @@ data class VisitModel (
     var researchPatientId: Int? = null,
     var visitType: VisitType? = null,
     var scheduledDate: LocalDateTime? = null,
-    var periodicity: String? = null,
+    var periodicity: VisitPeriodicity? = null,
+    var customPeriodicity: Int? = null,
     var observations: String? = null,
     var hasAdverseEventAlert: Boolean? = null,
     var hasMarkedAttendance: Boolean? = null,

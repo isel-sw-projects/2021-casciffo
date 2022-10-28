@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.aggregates.visits
 
+import isel.casciffo.casciffospringbackend.common.VisitPeriodicity
 import isel.casciffo.casciffospringbackend.common.VisitType
 import java.time.LocalDateTime
 
@@ -24,7 +25,8 @@ data class ResearchVisitsAggregate(
     var scheduledDate: LocalDateTime? = null,
     var startDate: LocalDateTime? = null,
     var endDate: LocalDateTime? = null,
-    var periodicity: String? = null,
+    var periodicity: VisitPeriodicity? = null,
+    var customPeriodicity: Int? = null,
     var observations: String? = null,
     var hasAdverseEventAlert: Boolean? = null,
     var hasMarkedAttendance: Boolean? = null,

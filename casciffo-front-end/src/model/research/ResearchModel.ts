@@ -91,6 +91,7 @@ export interface ResearchVisitModel {
     startDate?: string
     endDate?: string
     periodicity?: string
+    customPeriodicity?: number
     observations?: string
     hasAdverseEventAlert?: boolean
     hasMarkedAttendance?: boolean

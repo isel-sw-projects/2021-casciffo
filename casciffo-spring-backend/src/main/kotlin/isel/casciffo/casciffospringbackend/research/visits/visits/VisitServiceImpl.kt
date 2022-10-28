@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.research.visits.visits
 
 import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggregate
 import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggregateRepo
+import isel.casciffo.casciffospringbackend.common.VisitPeriodicity
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.patients.PatientModel
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.time.LocalDateTime
 
 @Service
 class VisitServiceImpl(
@@ -131,21 +133,36 @@ class VisitServiceImpl(
         return visits.flatMap {
             val visitModel = visitMapper.mapDTOtoModel(it)
             val mutableList = mutableListOf<VisitModel>()
-            if(it.startDate !== null) {
+            if(it.periodicity !== VisitPeriodicity.NONE) {
+                if (it.startDate == null || it.endDate == null || it.startDate!!.isEqual(it.endDate)) {
+                    throw ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Parameter start date and end date are incorrect!" +
+                        "\nStart date must always be greater than end date!"
+                    )
+                }
                 var currDate = it.startDate!!
-                //FIXME REVIEW THIS PERIODICITY IF ITS ALWAYS IN DAYS OR STRING
-                // IF STRING THEN DO A SWITCH CASE AND GET THE CORRECT ADDING FUNCTION VIA LAMBDA TO THE START DATE
-                // i.e LocalDateTime::plusDays() LocalDateTime::plusWeeks() LocalDateTime::plusMonths()
-                val timeStep = it.periodicity!!
+                val timeStep : (date: LocalDateTime) -> LocalDateTime =
+                    when (it.periodicity) {
+                        VisitPeriodicity.DAILY -> {date -> date.plusDays(1)}
+                        VisitPeriodicity.WEEKLY -> {date -> date.plusWeeks(1)}
+                        VisitPeriodicity.MONTHLY -> {date -> date.plusMonths(1)}
+                        VisitPeriodicity.CUSTOM -> {date -> date.plusDays(it.customPeriodicity!!.toLong())}
+                    else ->
+                        throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Periocity of visit isn't what's expected! Current value: ${it.periodicity}")
+                }
 
                 while (currDate.isBefore(it.endDate!!)) {
-                    //SET THE SCHEDULE DATE ACCORDING TO CURRENT ITERATION IN THE START AND END DATE RANGES
+                    //id must be set to null for creation and not update
+                    visitModel.id = null
+                    //each iteration is a new visit, where only the scheduled date needs to be updated
                     visitModel.scheduledDate = currDate
                     val visit = createVisit(visitModel)
                     mutableList.add(visit)
-                    //FIXME DO THE STEP HERE
-                    currDate = currDate.plusDays(timeStep.toLong())
+                    currDate = timeStep(currDate)
                 }
+            } else {
+                val visit = createVisit(visitModel)
+                mutableList.add(visit)
             }
             mutableList
         }.asFlow()

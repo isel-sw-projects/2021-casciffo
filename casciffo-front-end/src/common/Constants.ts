@@ -69,7 +69,7 @@ export const VisitChrono = {
     TO_HAPPEN: {id: "TO_HAPPEN", name: "Visitas agendadas"},
 }
 
-export const PeriodicityTypes = {
+export const VisitPeriodicity = {
     DAILY: {id: "DAILY", name : "Diário"},
     WEEKLY: {id: "WEEKLY", name : "Semanal"},
     MONTHLY: {id: "MONTHLY", name : "Mensal"},

@@ -20,7 +20,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import "../../../assets/css/accordion-collapse.css";
 import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
 import UserModel from "../../../model/user/UserModel";
-import {VisitTypes} from "../../../common/Constants";
+import {VisitChrono, VisitPeriodicity, VisitTypes} from "../../../common/Constants";
 import {AsyncAutoCompletePatientSearch} from "./AsyncAutoCompletePatientSearch";
 
 type Props = {
@@ -159,6 +159,7 @@ function VisitAccordion(props: VisitAccordionProps) {
         startDate: "",
         endDate: "",
         periodicity: "",
+        customPeriodicity: 1,
         visitInvestigators: []
     })
 
@@ -197,6 +198,10 @@ function VisitAccordion(props: VisitAccordionProps) {
             alert("Uma visita tem obrigatóriamente de ter pelo menos um investigador associado.")
             return
         }
+        if(visit.periodicity === VisitPeriodicity.CUSTOM.id && visit.customPeriodicity! <= 0) {
+            alert("Tem de inserir uma periodicidade maior que zero!")
+            return
+        }
 
         setDataSaved(true)
         setIsSavingData(true)
@@ -216,7 +221,9 @@ function VisitAccordion(props: VisitAccordionProps) {
                 <b>{`${props.title}${(dataSaved && " - Dados guardados") || ""}`}</b>
             </Accordion.Header>
             <Accordion.Body className={"p-2"}>
-                <Form key={`visit-form-${props.title}`} className={"m-2 m-md-2"} onSubmit={handleSaveVisit}>
+                <Form key={`visit-form-${props.title}`}
+                      className={"m-2 m-md-2"}
+                      onSubmit={handleSaveVisit}>
                     <Row>
                         <Col>
                             <FormGroup className={"m-2 m-md-2"}>
@@ -245,23 +252,33 @@ function VisitAccordion(props: VisitAccordionProps) {
                                 />
                             </FormGroup>
                             { showPeriodic &&
-                                //todo CHECK THIS
                                 <FormGroup className={"m- 2 m-md-2"}>
                                     <Form.Label className={"font-bold"}>Tipo de periodicidade</Form.Label>
                                     <Form.Select
                                         key={"visit-periodic-selection"}
                                         aria-label="visit periodicity selection"
                                         name={"periodicity"}
-                                        defaultValue={"Daily"}
+                                        defaultValue={VisitPeriodicity.NONE.id}
                                         onChange={updateVisit}
                                     >
-                                        <option value={"DAILY"}>Diária</option>
-                                        <option value={"WEEKLY"}>Semanal</option>
-                                        <option value={"MONTHLY"}>Mensal</option>
-                                        <option value={"CUSTOM"}>Outro</option>
+                                        {
+                                            Object.values(VisitPeriodicity).map(vp =>
+                                                <option key={vp.id} value={vp.id}>{vp.name}</option>
+                                            )
+                                        }
                                     </Form.Select>
+                                    <br/>
                                     {visit.periodicity === "CUSTOM" &&
-                                        <span>Re-agendar a cada <input type={"number"}/> dias.</span>
+                                        <div>
+                                            <span>Re-agendar a cada</span>
+                                            <input className={"ms-2 me-2 ms-md-2 me-md-2"}
+                                                   type={"number"}
+                                                   name={"customPeriodicity"}
+                                                   value={visit.customPeriodicity}
+                                                   onChange={updateVisit}
+                                            />
+                                           <span> dias. </span>
+                                        </div>
                                     }
                                 </FormGroup>
                             }

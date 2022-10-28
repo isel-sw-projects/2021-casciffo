@@ -141,8 +141,8 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
                 <Form
                     style={{width: "40%"}}
                     onSubmit={handleNewEntry}>
-                    <fieldset>
-                        <legend>Nova entrada</legend>
+                    <fieldset className={"border p-3 border-secondary"}>
+                        <legend className={"float-none w-auto p-2"}>Nova entrada</legend>
                             <Form.Group className={"m-2"}>
                                 <br/>
                                 <Form.Select

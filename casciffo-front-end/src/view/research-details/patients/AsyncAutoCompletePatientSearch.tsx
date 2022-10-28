@@ -149,7 +149,6 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
                 promptText="Searching"
                 searchText="A carregar..."
                 renderMenuItemChildren={(option: any) => {
-                    //FIXME THIS GARBAGE RENDERS A TRILLION TIMES WTF BRO
                     return (
                         <div key={option.id} className={"border-bottom"} onClick={() => onSelectedPatient(option)}>
                             <Highlighter search={query}>

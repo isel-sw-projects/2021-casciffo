@@ -308,6 +308,8 @@ CREATE TABLE IF NOT EXISTS scientific_activities (
     country_published VARCHAR,
     has_been_indexed BOOLEAN,
     published_url TEXT,
+    publication_type VARCHAR,
+    study_type VARCHAR,
     CONSTRAINT fk_sa_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id)
         ON DELETE CASCADE
@@ -352,6 +354,7 @@ CREATE TABLE IF NOT EXISTS clinical_visit (
     start_date TIMESTAMP,
     end_date TIMESTAMP,
     periodicity VARCHAR,
+    custom_periodicity INT,
     observations TEXT,
     has_adverse_event_alert BOOLEAN,
     has_marked_attendance BOOLEAN DEFAULT FALSE,

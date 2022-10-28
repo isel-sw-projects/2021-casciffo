@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.visits.visits
 
+import isel.casciffo.casciffospringbackend.common.VisitPeriodicity
 import isel.casciffo.casciffospringbackend.common.VisitType
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
@@ -17,7 +18,8 @@ data class VisitDTO(
     var researchPatient: ResearchPatient? = null,
     var concluded: Boolean? = null,
     var visitInvestigators: List<VisitInvestigators>? = null,
-    var periodicity: String? = null,
+    var periodicity: VisitPeriodicity? = null,
+    var customPeriodicity: Int? = null,
     var startDate: LocalDateTime? = null,
     var endDate: LocalDateTime? = null
 )

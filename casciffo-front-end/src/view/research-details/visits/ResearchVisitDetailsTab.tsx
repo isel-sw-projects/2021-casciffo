@@ -18,7 +18,7 @@ import {
     Stack
 } from "react-bootstrap";
 import {MyUtil} from "../../../common/MyUtil";
-import {PeriodicityTypes, VISIT_ID_PARAMETER, VisitTypes} from "../../../common/Constants";
+import {VisitPeriodicity, VISIT_ID_PARAMETER, VisitTypes} from "../../../common/Constants";
 import {BiCheckCircle} from "react-icons/bi";
 import {FormInputHelper} from "../../components/FormInputHelper";
 import {CgDanger} from "react-icons/cg";
@@ -145,7 +145,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
                                 <FormSelect value={0} disabled>
                                     {/*TODO SE FOR CUSTOM ENTAO MOSTRAR ESSA CONFIGURAÇÃO*/}
                                     <option
-                                        value={0}>{Object.values(PeriodicityTypes).find(p => p.id === visit.periodicity)!.name}</option>
+                                        value={0}>{Object.values(VisitPeriodicity).find(p => p.id === visit.periodicity)!.name}</option>
                                 </FormSelect>
                             </FormGroup>
                         </Col>

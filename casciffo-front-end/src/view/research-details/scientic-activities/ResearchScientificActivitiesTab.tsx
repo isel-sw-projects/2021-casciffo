@@ -3,10 +3,19 @@ import {ColumnDef} from "@tanstack/react-table";
 import {ResearchAggregateModel, ScientificActivityModel} from "../../../model/research/ResearchModel";
 import {Link} from "react-router-dom";
 import {MyTable} from "../../components/MyTable";
-import {Breadcrumb, Button, Container, FloatingLabel, Form, FormControl, FormGroup, Stack} from "react-bootstrap";
-import {FormInputHelper} from "../../components/FormInputHelper";
+import {
+    Breadcrumb,
+    Button,
+    Container,
+    FloatingLabel,
+    Form,
+    FormControl,
+    FormGroup,
+    Stack
+} from "react-bootstrap";
 import {MyUtil} from "../../../common/MyUtil";
 import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
+import {ResearchTypes} from "../../../common/Constants";
 
 type MyProps = {
     onSaveActivity: (activity: ScientificActivityModel) => void
@@ -42,7 +51,7 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
             {
                 accessorFn: row => row.datePublished,
                 id: 'datePublished',
-                cell: info => info.getValue(),
+                cell: info => info.getValue() && MyUtil.formatDate(info.getValue() as string),
                 header: () => <span>Data</span>,
                 footer: props => props.column.id,
             },
@@ -126,10 +135,10 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
         studyType: "",
     })
 
-    const [isNewEntry, setIsNewEntry] = useState(false)
+    const [showEntryForm, setShowEntryForm] = useState(false)
     const [newEntry, setNewEntry] = useState<ScientificActivityModel>(resetEntry())
 
-    const beginEntry = () => setIsNewEntry(true)
+    const beginEntry = () => setShowEntryForm(true)
     const saveEntry = useCallback(() => {
         props.onSaveActivity(newEntry)
         setNewEntry(resetEntry())
@@ -148,22 +157,26 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
         </Container>
         <br/>
         <Container>
-            { isNewEntry &&
-                    <Form className={"m-2 p-2 flex"}>
+            { showEntryForm &&
+                    <Form className={"m-2 p-2 flex"} style={{width:"40%"}} onSubmit={saveEntry}>
                         <fieldset className={"border border-secondary"}>
                             <legend className={"float-none w-auto p-2"}>Nova atividade ciêntífica</legend>
-                            <FloatingLabelHelper
-                                label={"Tipo de estudo"}
-                                name={"studyType"}
-                                value={newEntry.studyType}
-                                onChange={updateNewEntry}
-                            />
-                            <FloatingLabelHelper
-                                label={"Data"}
-                                name={"datePublished"}
-                                value={newEntry.datePublished}
-                                onChange={updateNewEntry}
-                            />
+                            <Form.Group>
+                                <Form.Select
+                                    key={"research-type-id"}
+                                    required
+                                    aria-label="research type selection"
+                                    name={"studyType"}
+                                    className={"font-bold text-center"}
+                                    defaultValue={-1}
+                                    onChange={updateNewEntry}
+                                >
+                                    <option key={"op-invalid"} value={-1} disabled>(Tipo de estudo)</option>
+                                    {Object.values(ResearchTypes).map(t =>
+                                        <option key={`op-${t.id}`} value={t.id}>{t.name}</option>
+                                    )}
+                                </Form.Select>
+                            </Form.Group>
                             <FloatingLabelHelper
                                 label={"Autoria"}
                                 name={"author"}
@@ -208,7 +221,6 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                             <FormGroup className={"m-2"}>
                                 <Stack direction={"horizontal"} gap={2}>
                                     <Form.Check
-                                        style={{width:"15%"}}
                                         key={"switch-index"}
                                         type={"switch"}
                                         name={"hasBeenIndexed"}
@@ -216,22 +228,25 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                                         onChange={(() => setNewEntry(prevState => ({...prevState, hasBeenIndexed: !prevState.hasBeenIndexed})))}
                                         label={<span className={"font-bold"}>Indexação</span>}
                                     />
-                                    <Form.Control style={{width:"15%"}} type={"text"} disabled value={newEntry.hasBeenIndexed ? "Indexada" : "Não indexada"}/>
+                                    <Form.Control type={"text"} disabled value={newEntry.hasBeenIndexed ? "Indexada" : "Não indexada"}/>
                                 </Stack>
                             </FormGroup>
+                        { showEntryForm &&
+                             <div className={"flex-column m-2 m-md-2"}>
+                                <div>
+                                    <Button variant={"outline-primary float-start ms-2 ms-md-2 mb-3 mb-md-3"} type={"submit"}>Submeter</Button>
+                                </div>
+                                <div>
+                                    <Button variant={"outline-danger float-end ms-2 ms-md-2 mb-3 mb-md-3"} onClick={() => {setShowEntryForm(false); resetEntry()}}>Cancelar</Button>
+                                </div>
+                            </div>
+                        }
                         </fieldset>
                     </Form>
             }
-            { isNewEntry
-                ? <div className={"flex-column m-2 m-md-2"}>
-                    <div>
-                        <Button variant={"outline-primary float-start ms-2 ms-md-2"} onClick={saveEntry}>Submeter</Button>
-                    </div>
-                    <div>
-                        <Button variant={"outline-danger float-end"} onClick={() => {setIsNewEntry(false); resetEntry()}}>Cancelar</Button>
-                    </div>
-                </div>
-                : <Button variant={"outline-primary"} onClick={beginEntry}>Nova entrada</Button>
+            {
+                !showEntryForm &&
+                <Button variant={"outline-primary"} onClick={beginEntry}>Nova entrada</Button>
             }
         </Container>
         <br/>

@@ -45,7 +45,6 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
     useEffect(() => {
         setResearchFinance(props.researchFinance)
         setPrevResearchFinance(props.researchFinance)
-        console.log(props.researchFinance)
     }, [props.researchFinance])
 
     const userToken = useUserAuthContext()

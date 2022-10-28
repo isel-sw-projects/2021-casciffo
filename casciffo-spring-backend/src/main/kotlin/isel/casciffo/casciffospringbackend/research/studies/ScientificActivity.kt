@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.studies
 
+import isel.casciffo.casciffospringbackend.common.ResearchType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -11,6 +12,7 @@ data class ScientificActivity (
     @Column("activity_id")
     var id: Int? = null,
     var researchId: Int? = null,
+    var researchType: ResearchType? = null,
     var datePublished: LocalDate? = null,
     var author: String? = null,
     var paperName: String? = null,
@@ -20,7 +22,6 @@ data class ScientificActivity (
     var countryPublished: String? = null,
     var hasBeenIndexed: Boolean? = null,
     var publishedUrl: String? = null,
-    //TODO ADD THESE TO DB
-    // var publicationType: String? = null,
-    // var studyType: String? = null
+    var publicationType: String? = null,
+    var studyType: String? = null
 )
