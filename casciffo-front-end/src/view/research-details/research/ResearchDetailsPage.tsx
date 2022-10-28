@@ -295,7 +295,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                                       onAddVisit={addNewVisit}
                                       renderDetails={renderVisitsDetailsScreen}
                                       researchTeam={research.investigationTeam || []}
-                                      searchPatientsByProcessId={props.researchService.searchPatientsByProcessId}
+                                      patients={research.patients || []}
             />
 
         switch (tab) {
@@ -304,7 +304,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                                           onAddVisit={addNewVisit}
                                           renderDetails={renderVisitsDetailsScreen}
                                           researchTeam={research.investigationTeam || []}
-                                          searchPatientsByProcessId={props.researchService.searchPatientsByProcessId}
+                                          patients={research.patients || []}
                 />
             case TabPaneScope.DETAILS:
                 return <ResearchVisitDetailsTab service={props.researchService}

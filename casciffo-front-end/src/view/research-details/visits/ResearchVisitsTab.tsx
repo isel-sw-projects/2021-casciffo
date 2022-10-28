@@ -14,13 +14,13 @@ import {SearchComponent} from "../../components/SearchComponent";
 import {MyTable} from "../../components/MyTable";
 import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
 import UserModel from "../../../model/user/UserModel";
-import {AsyncAutoCompletePatientSearch} from "../patients/AsyncAutoCompletePatientSearch";
+import Select, {SingleValue} from "react-select";
 
 type VisitProps = {
     visits: ResearchVisitModel[]
     onAddVisit: (visit: ResearchVisitModel) => void
     renderDetails: (vId: string) => void
-    searchPatientsByProcessId: (pId: string) => Promise<PatientModel[]>
+    patients: ResearchPatientModel[]
     researchTeam: TeamInvestigatorModel[]
 }
 
@@ -142,58 +142,12 @@ export function ResearchVisitsTab(props: VisitProps) {
 
     const handleSearchSubmit = (query: string) => setQuery(query)
 
-    const freshVisit = (): ResearchVisitModel => ({
-        id: "",
-        researchId: "",
-        researchPatientId: "",
-        concluded: false,
-        visitType: "",
-        scheduledDate: "",
-        startDate: "",
-        endDate: "",
-        periodicity: "",
-        observations: "",
-        hasAdverseEventAlert: false,
-        hasMarkedAttendance: false,
-        researchPatient: {},
-        visitInvestigators: []
-    })
-
-    const [newEntry, setNewEntry] = useState<ResearchVisitModel>(freshVisit())
     const [showEntryForm, setShowEntryForm] = useState<boolean>(false)
-
     const toggleShowEntryForm = () => setShowEntryForm(prevState => !prevState)
-
-    const resetEntry = () => {
-        setShowEntryForm(false)
-        setNewEntry(freshVisit())
-    }
-
-    const handleNewEntry = () => {
+    const handleNewEntry = (newEntry: ResearchVisitModel) => {
         props.onAddVisit(newEntry)
-        resetEntry()
     }
 
-    const addInvestigatorToVisitEntry = (newInvestigator: UserModel) => {
-        const ni: VisitInvestigator = {
-            investigator: newInvestigator,
-            investigatorId: newInvestigator.userId
-        }
-        setNewEntry(prevState => {
-            const team = [ni, ...prevState.visitInvestigators ?? []]
-
-            return {...prevState, visitInvestigators: team}
-        })
-    }
-
-    const updateEntry = (e: any) => {
-        const key = e.target.name as keyof ResearchVisitModel
-        const value = e.target.value
-        setNewEntry(prevState => ({
-            ...prevState,
-            [key]: value
-        }))
-    }
 
     return (
         <React.Fragment>
@@ -241,10 +195,7 @@ export function ResearchVisitsTab(props: VisitProps) {
                     <Col/>
                     <Col/>
                     <Col>
-                        {
-                            !showEntryForm &&
-                            <Button variant={"outline-primary"} onClick={toggleShowEntryForm}>Nova entrada</Button>
-                        }
+
                     </Col>
                 </Row>
 
@@ -252,16 +203,20 @@ export function ResearchVisitsTab(props: VisitProps) {
                 <br/>
 
                 <Row>
+                    {
+                        !showEntryForm &&
+                        <Container>
+                            <Button variant={"outline-primary"} onClick={toggleShowEntryForm}>Nova entrada</Button>
+                        </Container>
+                    }
                     {showEntryForm &&
                         <VisitFormComponent
                             team={props.researchTeam}
-                            updateVisit={updateEntry}
-                            visit={newEntry}
-                            addInvestigatorToVisit={addInvestigatorToVisitEntry}
                             onSave={handleNewEntry}
-                            onCancel={resetEntry}
-                            searchByProcessId={props.searchPatientsByProcessId}
-                        />}
+                            onCancel={toggleShowEntryForm}
+                            patients={props.patients}
+                        />
+                    }
                 </Row>
                 <br/>
                 <br/>
@@ -292,16 +247,13 @@ export function ResearchVisitsTab(props: VisitProps) {
 
 function VisitFormComponent(
     props: {
-        visit: ResearchVisitModel,
-        searchByProcessId: (pId: string) => Promise<PatientModel[]>,
-        updateVisit: (e: any) => void,
+        patients: ResearchPatientModel[]
         team: TeamInvestigatorModel[],
-        addInvestigatorToVisit: (newInvestigator: UserModel) => void,
         onCancel: () => void,
-        onSave: (e: FormEvent<HTMLFormElement>) => void
+        onSave: (visit: ResearchVisitModel) => void
     }) {
 
-    const [visit, setVisit] = useState<ResearchVisitModel>({
+    const freshVisit = (): ResearchVisitModel => ({
         id: "",
         researchId: "",
         researchPatientId: "",
@@ -310,20 +262,19 @@ function VisitFormComponent(
         startDate: "",
         endDate: "",
         periodicity: "",
+        observations: "",
+        researchPatient: {
+            patient: {
+                gender: "",
+                age: "",
+                fullName: "",
+                processId: ""
+            }
+        },
         visitInvestigators: []
     })
 
-    const [patient, setPatient] = useState<PatientModel>({
-        id: "",
-        processId: "",
-        fullName: "",
-        gender: "",
-        age: "",
-    })
-
-    useEffect(() => {
-        setVisit(props.visit)
-    }, [props.visit])
+    const [visit, setVisit] = useState<ResearchVisitModel>(freshVisit())
 
     const [showPeriodic, setPeriodic] = useState(false)
     const toggleShowPeriodic = () => setPeriodic(prevState => !prevState)
@@ -332,50 +283,109 @@ function VisitFormComponent(
         return visit.visitInvestigators!.every(vi => vi.investigatorId !== investigator.memberId)
     }
 
-    const onSelectPatient = (patient: PatientModel) => setPatient(patient)
+    const onSelectPatient = (data: SingleValue<{value: string, label: string}>) => {
+        setSelectedPatient(data)
+        const researchPatient = props.patients.find(p => p.id === data!.value)!
+        setVisit(prevState => ({
+            ...prevState,
+            researchPatient: researchPatient,
+            researchPatientId: researchPatient.id
+        }))
+    }
+
+    const [filteredPatients, setFilteredPatients] = useState<{value: string, label: string}[]>([])
+    useEffect(() => {
+        setFilteredPatients(props.patients.map(p => ({
+            label: `${p.patient!.fullName}\n${p.patient!.processId}`,
+            value: p.id!
+        })))
+    }, [props.patients])
+
+    const [selectedPatient, setSelectedPatient] = useState<SingleValue<{value: string, label: string}>>({
+        value: "",
+        label: ""
+    })
+
+
+    const resetEntry = () => {
+        setVisit(freshVisit())
+    }
+
+    const addInvestigatorToVisit = (newInvestigator: UserModel) => {
+        const ni: VisitInvestigator = {
+            investigator: newInvestigator,
+            investigatorId: newInvestigator.userId
+        }
+        setVisit(prevState => {
+            const team = [ni, ...prevState.visitInvestigators ?? []]
+            return {...prevState, visitInvestigators: team}
+        })
+    }
+
+    const updateVisit = (e: any) => {
+        const key = e.target.name as keyof ResearchVisitModel
+        const value = e.target.value
+        setVisit(prevState => ({
+            ...prevState,
+            [key]: value
+        }))
+    }
+
+    const handleNewVisit = (e: any) => {
+        e.stopPropagation()
+        e.preventDefault()
+        props.onSave(visit)
+        resetEntry()
+    }
 
     return (
         <Form key={`visit-form`}
               className={"m-2 m-md-2"}
-              onSubmit={props.onSave}>
+              onSubmit={handleNewVisit}>
             <fieldset className={"border p-3 border-secondary"}>
                 <legend className={"float-none w-auto p-2"}>Nova visita</legend>
-                <Row>
+                <Row className={"mb-3"}>
                     <Col>
                         <div className={"m-2 m-md-2"}>
-                            {/*TODO CHANGE SEARCH BY ID TO JUST SEND A FILTERED LIST OF THE PARTICIPANTS BASED ON THE QUERY*/}
-                            <AsyncAutoCompletePatientSearch requestPatients={props.searchByProcessId} setPatient={onSelectPatient}/>
-                        </div>
+                            <Form.Label className={"font-bold"}>Paciente</Form.Label>
+                            <Select
+                                placeholder={"-Escolher paciente-"}
+                                onChange={onSelectPatient}
+                                options={filteredPatients}
+                                value={selectedPatient}
+                                isSearchable
+                            />
+                         </div>
                     </Col>
                     <Col>
                         <Form.Group className={"m-2 m-md-2"}>
-                            <Form.Label className={"text-bold"}>Género</Form.Label>
+                            <Form.Label className={"font-bold"}>Nº Processo</Form.Label>
                             <Form.Control
                                 disabled
-                                value={patient.gender}
+                                value={visit.researchPatient!.patient!.processId}
                             />
                         </Form.Group>
                     </Col>
                     <Col>
                         <Form.Group className={"m-2 m-md-2"}>
-                            <Form.Label className={"text-bold"}>Género</Form.Label>
+                            <Form.Label className={"font-bold"}>Idade</Form.Label>
                             <Form.Control
                                 disabled
-                                value={patient.gender}
+                                value={visit.researchPatient!.patient!.age}
                             />
                         </Form.Group>
                     </Col>
                     <Col>
                         <Form.Group className={"m-2 m-md-2"}>
-                            <Form.Label className={"text-bold"}>Género</Form.Label>
+                            <Form.Label className={"font-bold"}>Género</Form.Label>
                             <Form.Control
                                 disabled
-                                value={patient.gender}
+                                value={visit.researchPatient!.patient!.gender}
                             />
                         </Form.Group>
                     </Col>
                 </Row>
-                <Row>
+                <Row className={"mb-3 mt-3"}>
                     <Col>
                         <FormGroup className={"m-2 m-md-2"}>
                             <Form.Label className={"font-bold"}>Tipo de visita <span
@@ -386,7 +396,7 @@ function VisitFormComponent(
                                 aria-label="state selection"
                                 name={"visitType"}
                                 defaultValue={"Screening"}
-                                onChange={props.updateVisit}
+                                onChange={updateVisit}
                             >
                                 {Object.values(VisitTypes).map(vt =>
                                     <option key={vt.id} value={vt.id}>{vt.name}</option>
@@ -411,7 +421,7 @@ function VisitFormComponent(
                                     aria-label="visit periodicity selection"
                                     name={"periodicity"}
                                     defaultValue={VisitPeriodicity.NONE.id}
-                                    onChange={props.updateVisit}
+                                    onChange={updateVisit}
                                 >
                                     {
                                         Object.values(VisitPeriodicity).map(vp =>
@@ -427,7 +437,7 @@ function VisitFormComponent(
                                                type={"number"}
                                                name={"customPeriodicity"}
                                                value={visit.customPeriodicity}
-                                               onChange={props.updateVisit}
+                                               onChange={updateVisit}
                                         />
                                         <span> dias. </span>
                                     </div>
@@ -447,7 +457,7 @@ function VisitFormComponent(
                                         ?.filter(filterInvestigatorsNotChosen)
                                         ?.map((t, i) =>
                                             <Dropdown.Item key={i}
-                                                           onClick={() => props.addInvestigatorToVisit(t.member!)}>
+                                                           onClick={() => addInvestigatorToVisit(t.member!)}>
                                                 {t.member!.name}
                                                 <br/>
                                                 <small>
@@ -487,7 +497,7 @@ function VisitFormComponent(
                                 required
                                 name={"scheduledDate"}
                                 value={visit.scheduledDate}
-                                onChange={props.updateVisit}
+                                onChange={updateVisit}
                             />
                         </FormGroup>
 
@@ -501,7 +511,7 @@ function VisitFormComponent(
                                     required
                                     name={"endDate"}
                                     value={visit.endDate}
-                                    onChange={props.updateVisit}
+                                    onChange={updateVisit}
                                 />
                             </FormGroup>
                         }
