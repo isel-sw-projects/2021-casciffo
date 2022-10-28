@@ -232,14 +232,10 @@ export function ResearchVisitsTab(props: VisitProps) {
                 {/*    </CSVLink>*/}
                 {/*</Container>*/}
 
-
-
                 <MyTable
                     data={filterData()}
                     columns={columns}
                 />
-
-
             </Container>
         </React.Fragment>
     )

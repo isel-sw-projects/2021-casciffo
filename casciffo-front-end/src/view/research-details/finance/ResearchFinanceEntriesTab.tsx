@@ -32,7 +32,7 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.typeOfMonetaryFlow,
+                accessorFn: row => Object.values(TypeOfMonetaryFlows).find(tf => tf.id === row.typeOfMonetaryFlow)!.name,
                 id: 'typeOfFlow',
                 header: () => <span>Tipo de movimento</span>,
                 cell: info => info.getValue(),

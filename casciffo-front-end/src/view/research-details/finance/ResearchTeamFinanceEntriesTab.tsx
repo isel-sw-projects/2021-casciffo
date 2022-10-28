@@ -33,7 +33,7 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.typeOfMonetaryFlow,
+                accessorFn: row => Object.values(TypeOfMonetaryFlows).find(tf => tf.id === row.typeOfMonetaryFlow)!.name,
                 id: 'typeOfFlow',
                 header: () => <span>Tipo de movimento</span>,
                 cell: info => info.getValue(),
@@ -90,7 +90,7 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
     }
 
     const freshEntry = (): ResearchTeamFinanceEntries => ({
-        typeOfMonetaryFlow: "",
+        typeOfMonetaryFlow: TypeOfMonetaryFlows.DEBIT.id,
         transactionDate: "",
         responsibleForPayment: "",
         amount: "",
@@ -172,22 +172,12 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
                                 />
                             </Stack>
                         </Form.Group>
-                        <Form.Group className={"m-2"}>
-                            <Form.Select
-                                className={"text-center"}
-                                key={"type-of-monetary-flow"}
+                            <FloatingLabelHelper
                                 required
-                                aria-label="Seleção de tipo de movimento."
-                                name={"typeOfMonetaryFlow"}
-                                defaultValue={-1}
-                                onChange={updateNewEntry}
-                            >
-                                <option value={-1} disabled>(Tipo de transação)</option>
-                                {
-                                    Object.values(TypeOfMonetaryFlows).map((tf) => <option key={tf.id} value={tf.id}>{tf.name}</option>)
-                                }
-                            </Form.Select>
-                        </Form.Group>
+                                label={"Responsável"}
+                                name={"responsibleForPayment"}
+                                value={newEntry.responsibleForPayment}
+                                onChange={updateNewEntry}/>
                             <FloatingLabelHelper
                                 required
                                 label={"Partição (%)"}
@@ -208,12 +198,6 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
                                 name={"amount"}
                                 type={"number"}
                                 value={newEntry.amount}
-                                onChange={updateNewEntry}/>
-                            <FloatingLabelHelper
-                                required
-                                label={"Responsável"}
-                                name={"responsibleForPayment"}
-                                value={newEntry.responsibleForPayment}
                                 onChange={updateNewEntry}/>
                             <Button variant={"outline-danger float-start m-2"} onClick={resetEntry}>Cancelar</Button>
                             <Button variant={"outline-success float-end m-2"} type={"submit"}>Adicionar</Button>

@@ -63,7 +63,6 @@ class ResearchController(
         return mapper.mapModelToDTO(model)
     }
 
-
     @PostMapping(RESEARCH_VISIT_URL)
     suspend fun addPatientAndScheduleVisits(
         @PathVariable researchId: Int,

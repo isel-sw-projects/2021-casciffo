@@ -40,8 +40,8 @@ export function ResearchDetailsTab(props: RDT_Props) {
 
     useEffect(() => {
         if(props.stateChain?.length === 0 || props.research.id == null) return
-
-        setIsStateTerminal(props.stateChain.some(sc => sc.id === props.research.id && sc.stateFlowType === StateFlowTypes.TERMINAL))
+        const isTerminalState = props.research.canceledReason != null || props.stateChain.some(sc => sc.id === props.research.stateId && sc.stateFlowType === StateFlowTypes.TERMINAL)
+        setIsStateTerminal(isTerminalState)
     }, [props.research, props.stateChain])
 
     useEffect(() => {

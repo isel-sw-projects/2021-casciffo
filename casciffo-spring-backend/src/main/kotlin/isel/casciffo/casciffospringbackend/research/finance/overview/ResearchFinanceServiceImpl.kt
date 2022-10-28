@@ -66,7 +66,7 @@ class ResearchFinanceServiceImpl(
     ) {
         val rfc = validateResearchId(researchId)
         rfc.balance =
-            if (typeOfMonetaryFlow === TypeOfMonetaryFlow.ENTRADA) rfc.balance!!.plus(balanceChange)
+            if (typeOfMonetaryFlow === TypeOfMonetaryFlow.CREDIT) rfc.balance!!.plus(balanceChange)
             else rfc.balance!!.minus(balanceChange)
         if(rfc.balance!! < 0) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantidade irá levar o balanço a negativo!")

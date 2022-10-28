@@ -49,8 +49,8 @@ export const StateFlowTypes = {
 }
 
 export const TypeOfMonetaryFlows = {
-    ENTRADA: {name: "Entrada", id: "ENTRADA"},
-    SAIDA: {name: "Saída", id:"SAIDA"}
+    CREDIT: {name: "Crédito", id: "CREDIT"},
+    DEBIT: {name: "Débito", id:"DEBIT"}
 }
 
 export enum TabPaneScope {
