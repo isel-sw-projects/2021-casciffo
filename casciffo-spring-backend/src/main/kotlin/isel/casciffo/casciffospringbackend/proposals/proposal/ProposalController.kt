@@ -4,9 +4,7 @@ import isel.casciffo.casciffospringbackend.common.FILE_NAME_HEADER
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
-import isel.casciffo.casciffospringbackend.roles.Roles
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
-import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -97,25 +95,17 @@ class ProposalController(
         return ResponseEntity.ok(stats)
     }
 
-    @PutMapping(PROPOSAL_TRANSITION_SUPERUSER_URL)
-    suspend fun superuserTransitionProposalState(
-        @PathVariable proposalId: Int,
-        @RequestParam nextStateId: Int
-    ): ProposalDTO {
-        return transitionState(proposalId, nextStateId, Roles.SUPERUSER)
-    }
-
     @PutMapping(PROPOSAL_TRANSITION_URL)
-    suspend fun transitionProposalStateV2(
+    suspend fun transitionProposalState(
         @PathVariable proposalId: Int,
         @RequestParam nextStateId: Int,
         request: ServerHttpRequest
     ): ProposalDTO {
-        return transitionStateV2(proposalId, nextStateId, request)
+        return transitionState(proposalId, nextStateId, request)
     }
 
-    private suspend fun transitionStateV2(proposalId: Int, nextStateId: Int, request: ServerHttpRequest): ProposalDTO {
-        val res = service.transitionStateV2(proposalId, nextStateId, request)
+    private suspend fun transitionState(proposalId: Int, nextStateId: Int, request: ServerHttpRequest): ProposalDTO {
+        val res = service.transitionState(proposalId, nextStateId, request)
         val dto = mapper.mapModelToDTO(res)
         return getProposal(dto.id!!)
     }
@@ -152,56 +142,6 @@ class ProposalController(
                 Files.newInputStream(path)
             }))
     }
-
-    @PutMapping(PROPOSAL_TRANSITION_UIC_URL)
-    suspend fun uicTransitionProposalState(
-        @PathVariable proposalId: Int,
-        @RequestParam nextStateId: Int
-    ): ProposalDTO {
-        return transitionState(proposalId, nextStateId, Roles.UIC)
-    }
-
-    @PutMapping(PROPOSAL_FINANCE_VALIDATION_URL)
-    suspend fun financeTransitionProposalState(
-        @PathVariable proposalId: Int,
-        @PathVariable pfcId: Int,
-        @RequestBody validationComment: ValidationComment
-    ): ResponseEntity<ProposalValidationDTO> {
-        val res = service.validatePfc(proposalId, pfcId, validationComment)
-        val prop = if(res.proposal == null) null else mapper.mapModelToDTO(res.proposal)
-        val dto = ProposalValidationDTO(prop,res.validation)
-        return ResponseEntity.ok(dto)
-    }
-
-    @PutMapping(PROPOSAL_JURIDICAL_VALIDATION_URL)
-    suspend fun juridicalTransitionProposalState(
-        @PathVariable proposalId: Int,
-        @PathVariable pfcId: Int,
-        @RequestBody validationComment: ValidationComment
-    ): ResponseEntity<ProposalValidationDTO> {
-        val res = service.validatePfc(proposalId, pfcId, validationComment)
-        val prop = if(res.proposal == null) null else mapper.mapModelToDTO(res.proposal)
-        val dto = ProposalValidationDTO(prop,res.validation)
-        return ResponseEntity.ok(dto)
-    }
-
-    @PutMapping(PROPOSAL_TRANSITION_CA_URL)
-    suspend fun caTransitionProposalState(
-        @PathVariable proposalId: Int,
-        @RequestParam nextStateId: Int
-    ): ProposalDTO {
-        return transitionState(proposalId, nextStateId, Roles.CA)
-    }
-
-    private suspend fun transitionState(
-        proposalId: Int,
-        nextStateId: Int,
-        role: Roles
-    ): ProposalDTO {
-        val res = service.transitionState(proposalId, nextStateId, role)
-        return mapper.mapModelToDTO(res)
-    }
-
 
     @DeleteMapping(PROPOSAL_URL)
     suspend fun deleteProposal(@PathVariable proposalId: Int): ProposalDTO {

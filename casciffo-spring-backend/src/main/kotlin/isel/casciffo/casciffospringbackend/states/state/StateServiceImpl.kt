@@ -39,12 +39,13 @@ class StateServiceImpl(
     }
 
     override suspend fun findInitialStateByType(type: StateType): State =
-        stateRepository.findInitialStateByType(type).awaitSingleOrNull() ?: throw InvalidStateException("Requested state doesn't exist.")
+        stateRepository.findInitialStateByType(type).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Requested state doesn't exist.")
 
 
     override suspend fun findById(stateId: Int): State =
-        //todo throw 400 if state is bad
-        stateRepository.findById(stateId).awaitSingleOrNull() ?: throw InvalidStateException("Requested state doesn't exist.")
+        stateRepository.findById(stateId).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Requested state doesn't exist.")
 
     override suspend fun verifyNextStateValid(originStateId: Int, nextStateId: Int, type: StateType, role: Roles)  {
         val nextState = stateAggregateRepo
@@ -53,11 +54,11 @@ class StateServiceImpl(
             .awaitSingleOrNull()
 
         if(nextState.isNullOrEmpty() || nextState.any { it.nextStateId == null }) {
-            throw InvalidStateTransitionException("State transition isn't valid.")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "State transition isn't valid.")
         }
 
         if(nextState.none { it.roleName != role.name}) {
-            throw InvalidStateTransitionException("You don't have the permissions to do this transition.")
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "You don't have the permissions to do this transition.")
         }
     }
     override suspend fun verifyNextStateValidV2(originStateId: Int, nextStateId: Int, type: StateType, roles: List<String>)  {
@@ -67,7 +68,7 @@ class StateServiceImpl(
             .awaitSingleOrNull()
 
         if(nextState.isNullOrEmpty() || nextState.any { it.nextStateId == null }) {
-            throw InvalidStateTransitionException("State transition isn't valid.")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "State transition isn't valid.")
         }
 
         if(roles.contains(Roles.SUPERUSER.name)) return

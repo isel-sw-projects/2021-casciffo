@@ -189,7 +189,7 @@ class ProposalServiceImpl(
     }
 
     @Transactional
-    override suspend fun transitionStateV2(
+    override suspend fun transitionState(
         proposalId: Int,
         nextStateId: Int,
         request: ServerHttpRequest
@@ -200,11 +200,11 @@ class ProposalServiceImpl(
         val user = userService.findUserByEmail(userEmail)!!
         val userRoles = user.roles!!.map { it.roleName!! }.collectList().awaitSingle()
         val prop = getProposalById(proposalId, false)
-        return handleStateTransitionV2(prop, nextStateId, userRoles)
+        return handleStateTransition(prop, nextStateId, userRoles)
     }
 
 
-    suspend fun handleStateTransitionV2(
+    suspend fun handleStateTransition(
         proposal: ProposalModel,
         nextStateId: Int,
         role: List<String>
@@ -229,60 +229,7 @@ class ProposalServiceImpl(
         }
         if (stateService.isTerminalState(nextStateId, stateType)) {
             if (isClinicalTrial) {
-                val fullyValidated = validationsRepository.isPfcFullyValidated(proposal.id!!).awaitSingle()
-                if (!fullyValidated)
-                    throw ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Financial component must be fully validated before advancing."
-                    )
-            }
-            createResearch(proposal)
-        }
-
-        if(proposal.timelineEvents != null) {
-            updateTimelineEvent(proposal.timelineEvents!!, nextState.name!!)
-        }
-
-        stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
-
-        proposal.stateId = nextState.id
-        proposal.state = nextState
-        return proposalRepository.save(proposal).awaitSingle()
-    }
-
-    @Transactional
-    override suspend fun transitionState(proposalId: Int, nextStateId: Int, role: Roles): ProposalModel {
-        val prop = getProposalById(proposalId, false)
-        return handleStateTransition(prop, nextStateId, role)
-    }
-
-    suspend fun handleStateTransition(
-        proposal: ProposalModel,
-        nextStateId: Int,
-        role: Roles
-    ): ProposalModel {
-
-        val currState = stateService.findById(proposal.stateId!!)
-
-        //TODO change to ResponseEntity and handle exception in ControllerAdvice
-        val nextState = stateService.findById(nextStateId)
-
-        val isClinicalTrial = proposal.type === ResearchType.CLINICAL_TRIAL
-        val stateType = if(isClinicalTrial) StateType.FINANCE_PROPOSAL
-        else StateType.STUDY_PROPOSAL
-
-        stateService.verifyNextStateValid(currState.id!!, nextStateId, stateType, role)
-        if(isClinicalTrial && currState.name === States.VALIDACAO_CF.name) {
-            //TODO MERGE VALIDATIONS INTO STATES
-            val check = validationsRepository.isPfcValidatedByProposalId(proposal.id!!).awaitSingle()
-            if(!check) {
-                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot advance state without the required validations!")
-            }
-        }
-
-        if (stateService.isTerminalState(nextStateId, stateType)) {
-            if (isClinicalTrial) {
-                val fullyValidated = validationsRepository.isPfcFullyValidated(proposal.id!!).awaitSingle()
+                val fullyValidated = validationsRepository.isPfcFullyValidated(proposal.financialComponent!!.id!!).awaitSingle()
                 if (!fullyValidated)
                     throw ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -315,11 +262,11 @@ class ProposalServiceImpl(
         validationComment.comment = c
         val res = proposalFinancialService.validate(pfcId, validationComment)
         val isNowValidated = validationsRepository.isPfcValidatedByPfcId(pfcId).awaitSingle()
+        val proposal: ProposalModel = getProposalById(proposalId, false)
         if(isNowValidated) {
             val nextState = stateService.getNextProposalState(proposalId, StateType.FINANCE_PROPOSAL)
-            transitionState(proposalId, nextState.id!!, Roles.SUPERUSER)
+            handleStateTransition(proposal, nextState.id!!, listOf(Roles.SUPERUSER.name))
         }
-        val proposal: ProposalModel = getProposalById(proposalId, true)
         return ProposalValidationModel(proposal, res)
     }
 

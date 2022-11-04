@@ -2,34 +2,39 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../assets/css/main/app.css";
 import "../../assets/css/shared/iconly.css";
-import {Container, Nav, Navbar, Stack} from 'react-bootstrap';
-import {BrowserRouter as Router, Link, Route, Routes, useLocation} from "react-router-dom";
-import {CreateProposal} from '../proposal-form-view/CreateProposal'
-import {Proposals} from '../proposals-view/Proposals';
-import ProposalAggregateService from "../../services/ProposalAggregateService";
-import ProposalService from "../../services/ProposalService";
-import {ProposalDetailsPage} from "../proposal-details-view/ProposalDetailsPage";
-import RequiresAuth from "../login-view/RequiresAuth";
-import {Dashboard} from "./Dashboard";
-import {Login} from "../login-view/Login";
-import {UserService} from "../../services/UserService";
-import {Research} from "../researches-view/Research";
-import {ResearchAggregateService} from "../../services/ResearchAggregateService";
-import {Logout} from "../login-view/Logout";
+import {Button, Col, Container, Nav, Navbar, Row, Stack} from 'react-bootstrap';
+import {BrowserRouter, Link, Route, Routes, useLocation, useNavigate} from "react-router-dom";
 import {useUserAuthContext} from '../context/UserAuthContext';
-import {ErrorBoundary} from "react-error-boundary";
-import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 import {Roles} from "../../model/role/Roles";
-import {FaUser}   from "react-icons/fa";
-import {Users} from "../users-view/Users";
-import {ResearchDetailsPage} from "../research-details/research/ResearchDetailsPage";
+import {FaUser} from "react-icons/fa";
+import {GiExitDoor} from "react-icons/gi";
+import {BsDoorOpen} from "react-icons/bs";
 import {StatisticsService} from "../../services/StatisticsService";
+import ProposalAggregateService from "../../services/ProposalAggregateService";
+import {UserService} from "../../services/UserService";
+import {ErrorBoundary} from "react-error-boundary";
+import {Dashboard} from "./Dashboard";
+import {ResearchDetailsPage} from "../research-details/research/ResearchDetailsPage";
+import {Login} from "../login-view/Login";
+import {Research} from "../researches-view/Research";
+import {Users} from "../users-view/Users";
+import {Proposals} from "../proposals-view/Proposals";
+import ProposalService from "../../services/ProposalService";
+import RequiresAuth from "../login-view/RequiresAuth";
+import {ProposalDetailsPage} from "../proposal-details-view/ProposalDetailsPage";
+import {ResearchAggregateService} from "../../services/ResearchAggregateService";
+import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
+import {Logout} from "../login-view/Logout";
+import {CreateProposal} from "../proposal-form-view/CreateProposal";
 
 function NavigationBar() {
 
     const {userToken, setUserToken} = useUserAuthContext()
-
-    const logout = () => setUserToken(null)
+    const navigate = useNavigate()
+    const logout = () => {
+        setUserToken(null)
+        navigate('/logout')
+    }
     return (
         //FIXME BACKGROUND ON MOBILE IS TRANSPARENT FOR GOD KNOWS WHAT REASON
         <Navbar collapseOnSelect className={"ml-auto flex-fill"} bg="primary" variant="dark" expand="lg">
@@ -39,13 +44,6 @@ function NavigationBar() {
                 <Nav className="me-auto">
                     <Nav.Item>
                         <Nav.Link eventKey="1" as={Link} to={"/"}>Dashboard</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        {userToken != null ?
-                            <Nav.Link eventKey="2" as={Link} to={"/logout"} onClick={logout}>Logout</Nav.Link>
-                            :
-                            <Nav.Link eventKey="3" as={Link} to={"/login"}>Login</Nav.Link>
-                        }
                     </Nav.Item>
                     <Nav.Item>
                         <Nav.Link eventKey="4" as={Link} to={"/propostas"}>Propostas</Nav.Link>
@@ -59,13 +57,46 @@ function NavigationBar() {
                             <Nav.Link eventKey="6" as={Link} to={"/users"}>Utilizadores</Nav.Link>
                         </Nav.Item>
                     }
+                    {/*<Nav.Item className={"float-end"}>*/}
+                    {/*    {userToken != null ?*/}
+                    {/*        <Nav.Link eventKey="2" as={Link} to={"/logout"} onClick={logout}>Logout</Nav.Link>*/}
+                    {/*        :*/}
+                    {/*        <Nav.Link eventKey="3" as={Link} to={"/login"}>Login</Nav.Link>*/}
+                    {/*    }*/}
+                    {/*</Nav.Item>*/}
                 </Nav>
             </Navbar.Collapse>
-            <div className={"flex-column"}>
-                <Stack direction={"vertical"} className={"flex-column"}>
-                    <FaUser className={"float-end"} color={"#f3ffff"} style={{position: "relative", left: 30}}/>
-                    {userToken && <span className={"float-start"} style={{color:"#f3ffff"}}>Olá {userToken.userName}!</span>}
-                </Stack>
+            <div>
+                <Row>
+                    <Col>
+                        <div className={"text-center"}>
+                            {userToken != null &&
+                                <FaUser size={20} color={"#f3ffff"} />
+                            }
+                        </div>
+                    </Col>
+                    <Col>
+                        <div className={"text-center"}>
+                            {userToken != null ?
+                                <GiExitDoor size={20} color={"#f3ffff"} />
+                                :
+                                <BsDoorOpen size={20} color={"#f3ffff"} />
+                            }
+                        </div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        {userToken && <span className={"float-start mt-2 mt-md-2"} style={{color:"#f3ffff"}}>Olá {userToken.userName}!</span>}
+                    </Col>
+                    <Col>
+                       {userToken != null ?
+                           <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={logout}>Logout</Button>
+                           :
+                           <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={() => navigate("/login")}>Login</Button>
+                       }
+                    </Col>
+                </Row>
             </div>
         </Navbar>
     );
@@ -139,13 +170,13 @@ function DisplayPath() {
 
 function App() {
     return (
-        <Router basename={"/"} key={"router"}>
+        <BrowserRouter basename={"/"} key={"router"}>
             <ErrorBoundary FallbackComponent={GlobalErrorBoundary}>
                 <NavigationBar/>
                 <DisplayPath/>
                 <CreateRoutes/>
             </ErrorBoundary>
-        </Router>
+        </BrowserRouter>
     )
 }
 

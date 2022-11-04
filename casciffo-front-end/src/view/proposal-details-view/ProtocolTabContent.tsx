@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react"
 import {Button, Stack, Table} from "react-bootstrap"
 import {useParams} from "react-router-dom";
-import {ProtocolAggregateDTO, ProtocolModel} from "../../model/proposal/finance/ProtocolModel";
+import {ProtocolModel} from "../../model/proposal/finance/ProtocolModel";
 import {MyUtil} from "../../common/MyUtil";
 import {ValidityComment} from "../../model/proposal/finance/ValidationModels";
 import {BiCheckboxChecked, BiCheckboxMinus} from "react-icons/bi";
@@ -10,7 +10,7 @@ import {CommentTypes} from "../../common/Constants";
 import {ValidationComment} from "./ValidationComment";
 
 type PPT_Props = {
-    saveProtocolComment: (proposalId: string,pfcId: string,comment: ValidityComment) => Promise<ProtocolAggregateDTO>
+    saveProtocolComment: (pfcId: string, comment: ValidityComment) => void
     comments: ProposalCommentsModel[]
     setNewComment: (comment: ProposalCommentsModel) =>  void
     protocol?: ProtocolModel
@@ -21,7 +21,6 @@ type PPT_Props = {
 export function ProtocolTabContent(props: PPT_Props) {
 
     const headers = ["Publicado em", "Autor", "Observação", "Validado"]
-    const {proposalId} = useParams()
 
     const [protocol, setProtocol] = useState<ProtocolModel>()
 
@@ -59,32 +58,18 @@ export function ProtocolTabContent(props: PPT_Props) {
             )
         })
     }
-    
-    //TODO clean up ugly code, shouldn't need any promise, just send the entire thing
-    // and in back-end return the proposal with modified protocol && comments or just set them in in the proposalDetails
-    const saveComment = useCallback((c: ValidityComment) => {
-        props.saveProtocolComment(proposalId!, props.pfcId!, c)
-            .then(data => {
-                setProtocol(data.protocol!)
-                return data
-            })
-            .then(data => {
-                props.setNewComment(data.comment!)
-            })
-            .then(() => alert('Comment created!'))
-            .then(() => setDisplayForm(false))
-    },[props, proposalId])
-
     const submitForm = (c: ValidityComment) => {
-        saveComment(c)
+        props.saveProtocolComment(props.pfcId!, c)
+        setDisplayForm(false)
     }
 
     const showCommentForm = () => setDisplayForm(true)
 
     return (
         <React.Fragment>
-            <label>Entidades de competência de avaliação</label>
+            <label className={"font-bold"}>Entidades de competência de avaliação</label>
 
+            <span><h5>CEIC</h5> <BiCheckboxChecked style={{color: "green"}} size={40}/> </span>
                 <Stack direction={"horizontal"}>
                     <Button
                         className={"float-start m-3"}

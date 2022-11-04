@@ -96,7 +96,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         const tabParam = ( params && params.value ) || TabNames.proposal
         
         setSelectedTab(tabParam)
-    })
+    }, [hash])
     // const ProposalStateView = React.memo(ProposalStateView, (prevProps, nextProps) => {
     //     console.log('prevProps:' + prevProps + '\nnextProps:' + nextProps + '\n\n')
     //     return JSON.stringify(prevProps) === JSON.stringify(nextProps)
@@ -139,6 +139,21 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
             .catch(handler)
     }, [handler, proposalId, props.proposalService])
 
+    const updateProtocol = (pfcId: string, validationComment: ValidityComment) => {
+        props.proposalService
+            .saveProtocolComment(proposalId!, pfcId, validationComment)
+            .then(protocolAggregate => {
+                setProposal(prevState => ({
+                    ...prevState,
+                    financialComponent: {
+                        ...prevState.financialComponent,
+                        protocol: protocolAggregate.protocol
+                    },
+                    comments: [...prevState.comments || [], protocolAggregate.comment!]
+                }))
+            })
+    }
+
     const handleFetchError = useCallback((reason: any) => {
         log(reason)
         setIsError(true)
@@ -180,6 +195,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         props.proposalService.saveTimelineEvent(proposalId!, event)
             .then(value => setProposal(updateState("timelineEvents", [...proposal.timelineEvents!, value])))
     }
+
     const handleUpdateEvent = (e: TimelineEventModel) => {
         props.proposalService.updateTimelineEvent(proposalId!, e.id!, true)
             .then(event => {
@@ -192,7 +208,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     const onSubmitValidation = (c: ValidationCommentDTO, validationType: string) => {
         props.proposalService.validate(proposalId!, proposal.financialComponent!.id!, validationType, c)
             .then(value => {
-                const prev = proposal
+                // const prev = proposal
                 setProposal(prevState => ({...prevState, ...value.proposal!}))
             })
     }
@@ -312,7 +328,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
                         <Tab eventKey={TabNames.protocol} title="Protocolo">
                             <ProtocolTabContent
-                                saveProtocolComment={props.proposalService.saveProtocolComment}
+                                saveProtocolComment={updateProtocol}
                                 pfcId={proposal.financialComponent?.id}
                                 comments={proposal.comments?.filter(value => value.commentType === CommentTypes.PROTOCOL.id) || []}
                                 setNewComment={(c) => setProposal(updateState("comments", [...proposal.comments!, c]))}

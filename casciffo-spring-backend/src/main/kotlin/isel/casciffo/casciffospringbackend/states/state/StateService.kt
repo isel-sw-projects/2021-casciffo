@@ -16,7 +16,7 @@ interface StateService {
     suspend fun findInitialStateByType(type: StateType): State
 
     /**
-     * @throws IllegalStateException In case of invalid next state or insufficient role permissions
+     * @throws ResponseStatusException In case of invalid next state or insufficient role permissions
      */
     suspend fun verifyNextStateValid(originStateId: Int, nextStateId: Int, type: StateType, role: Roles)
     suspend fun verifyNextStateValidV2(originStateId: Int, nextStateId: Int, type: StateType, roles: List<String>)

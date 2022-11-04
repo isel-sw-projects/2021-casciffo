@@ -52,7 +52,7 @@ interface StateRepository : ReactiveCrudRepository<State, Int> {
         "SELECT s.* " +
         "FROM states s " +
         "JOIN next_possible_states nps ON s.state_id = nps.origin_state_id " +
-        "WHERE nps.state_flow_type='INITAL' AND nps.state_type=:type"
+        "WHERE nps.state_flow_type='INITIAL' AND nps.state_type=:type"
     )
     fun findInitialStateByType(type: StateType): Mono<State>
 }

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {MyUtil} from "../../common/MyUtil";
-import {Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Row} from "react-bootstrap";
 import {ProposalStats, ResearchStats, StatisticsService} from "../../services/StatisticsService";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
@@ -11,6 +11,8 @@ import {TimelineEventModel} from "../../model/TimelineEventModel";
 import {ResearchTypes, TypeOfMonetaryFlows} from "../../common/Constants";
 import {MyTable} from "../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
+import {useNavigate} from "react-router-dom";
+import {STATES} from "../../model/state/STATES";
 
 
 type DashboardProps = {
@@ -39,7 +41,7 @@ export function Dashboard(props: DashboardProps) {
     const [latestProposals, setLatestProposals] = useState<ProposalModel[]>([])
     const [latestResearch, setLatestResearch] = useState<ResearchAggregateModel[]>([])
     const [nearestEvents, setNearestEvents] = useState<TimelineEventModel[]>([])
-
+    const navigate = useNavigate()
     const errorHandler = useErrorHandler()
 
     useEffect(() => {
@@ -85,7 +87,7 @@ export function Dashboard(props: DashboardProps) {
                 const trials = value.find(s => s.researchType === ResearchTypes.CLINICAL_TRIAL.id)
                 const studies = value.find(s => s.researchType === ResearchTypes.OBSVERTIONAL_STUDY.id)
                 if(trials) setResearchTrialStats({...trials, hasData: trials.totalCount !== 0})
-                if(studies) setResearchTrialStats({...studies, hasData: studies.totalCount !== 0})
+                if(studies) setResearchStudyStats({...studies, hasData: studies.totalCount !== 0})
             })
             .catch(errorHandler)
     }, [errorHandler, props.statisticsService])
@@ -202,7 +204,7 @@ export function Dashboard(props: DashboardProps) {
                 accessorFn: row => row.id,
                 id: 'id',
                 header: () => <span>Id</span>,
-                cell: info => info.getValue(),
+                cell: info => <Button variant={"link"} onClick={() => navigate(`propostas/${info.getValue()}`)}>{`${info.getValue()}`}</Button>,
                 footer: props => props.column.id,
             },
             {
@@ -212,7 +214,27 @@ export function Dashboard(props: DashboardProps) {
                 cell: info => info.getValue(),
                 footer: props => props.column.id,
             },
-        ], [])
+            {
+                accessorFn: row => row.serviceType!.name,
+                id: 'serviceTypename',
+                header: () => <span>Serviço</span>,
+                cell: info => info.getValue(),
+                footer: props => props.column.id,
+            },
+            {
+                accessorFn: row => row.state!.name,
+                id: 'stateName',
+                header: () => <span>Estado</span>,
+                cell: info => STATES[info.getValue() as keyof typeof STATES].name,
+                footer: props => props.column.id,
+            },
+            {
+                accessorFn: row => MyUtil.formatDate(row.lastModified!),
+                id: 'lastModified',
+                cell: info => info.getValue(),
+                header: () => <span>Atualizado a</span>,
+                footer: props => props.column.id,}
+        ], [navigate])
 
     const researchColumns = React.useMemo<ColumnDef<ResearchAggregateModel>[]>(
         () => [
@@ -220,7 +242,7 @@ export function Dashboard(props: DashboardProps) {
                 accessorFn: row => row.id,
                 id: 'id',
                 header: () => <span>Id</span>,
-                cell: info => info.getValue(),
+                cell: info => <Button variant={"link"} onClick={() => navigate(`ensaios/${info.getValue()}`)}>{`${info.getValue()}`}</Button>,
                 footer: props => props.column.id,
             },
             {
@@ -251,7 +273,9 @@ export function Dashboard(props: DashboardProps) {
                 cell: info => info.getValue(),
                 footer: props => props.column.id,
             },
-        ], [])
+        ], [navigate])
+
+
 
     const eventColumns = React.useMemo<ColumnDef<TimelineEventModel>[]>(
         () => [
@@ -276,7 +300,14 @@ export function Dashboard(props: DashboardProps) {
                 header: () => <span>Data limite</span>,
                 footer: props => props.column.id,
             },
-        ], [])
+            {
+                accessorFn: row => row.proposalId,
+                id: 'proposalId',
+                cell: info => <Button variant={"link"} onClick={() => navigate(`/propostas/${info.getValue()}#t=chronology`)}>Ver proposta</Button>,
+                header: () => <span>Ir para proposta</span>,
+                footer: props => props.column.id,
+            }
+        ], [navigate])
 
     return <React.Fragment>
         <Container>
@@ -344,14 +375,14 @@ export function Dashboard(props: DashboardProps) {
                 <Col>
                     <Container className={"text-center"}>
                         <h5>Últimos 5 ensaios atualizados.</h5>
-                        <MyTable data={latestResearch} columns={researchColumns}/>
                     </Container>
+                        <MyTable data={latestResearch} columns={researchColumns}/>
                 </Col>
                 <Col>
                     <Container className={"text-center"}>
                         <h5>Últimas 5 propostas atualizadas.</h5>
-                        <MyTable data={latestProposals} columns={proposalColumns}/>
                     </Container>
+                        <MyTable data={latestProposals} columns={proposalColumns}/>
                 </Col>
             </Row>
         </Container>

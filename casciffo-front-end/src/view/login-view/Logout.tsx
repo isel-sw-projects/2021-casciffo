@@ -7,6 +7,8 @@ export function Logout() {
 
     const [toRedirect, setToRedirect] = useState(false)
 
+
+
     return (
         (toRedirect && <Navigate to={"/login"} replace={true}/>) ||
         <Container className={"justify-content-evenly flex-column align-content-center mt-5"} style={{width:"400px"}}>

@@ -10,6 +10,7 @@ import {ValidationCommentDTO, ValidityComment} from "../model/proposal/finance/V
 import {StateModel} from "../model/state/StateModel";
 import {httpGet} from "../common/MyUtil";
 import {UserService} from "./UserService";
+import {ProtocolAggregateDTO} from "../model/proposal/finance/ProtocolModel";
 
 export default class ProposalAggregateService {
     private proposalService = new ProposalService()
@@ -72,7 +73,7 @@ export default class ProposalAggregateService {
         return this.proposalService.fetchProtocol(proposalId, pfcId)
     }
 
-    saveProtocolComment(proposalId: string, pfcId: string, comment: ValidityComment) {
+    saveProtocolComment(proposalId: string, pfcId: string, comment: ValidityComment): Promise<ProtocolAggregateDTO> {
         return this.proposalService.saveProtocolComment(proposalId, pfcId, comment)
     }
 

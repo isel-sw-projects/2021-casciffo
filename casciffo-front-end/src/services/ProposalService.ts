@@ -10,6 +10,7 @@ import {
 } from "../model/proposal/finance/ValidationModels";
 import {httpGet, httpGetFile, httpPost, httpPostFormFile, httpPut} from "../common/MyUtil";
 import {StateModel} from "../model/state/StateModel";
+import {log} from "util";
 
 
 class ProposalService {

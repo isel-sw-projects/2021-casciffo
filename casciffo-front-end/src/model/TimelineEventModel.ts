@@ -9,5 +9,6 @@ export interface TimelineEventModel {
     daysOverDue?: number,
     isOverDue?: boolean
     stateName?: string,
+    stateId?: string,
     isAssociatedToState?: boolean
 }

@@ -71,6 +71,10 @@ export function ProposalStateView(props: StateProps) {
         if(!currentState.nextInChain || currentState.nextInChain.length < 1) {
             throw new MyError("Não existe estado próximo possível!", 400)
         }
+        if(currentState.nextInChain[0].name === STATES.VALIDADO.id && (props.isProtocolValidated != null && !props.isProtocolValidated)) {
+            alert("O Protocolo tem de estar validado para avançar!")
+            return
+        }
         props.onAdvanceClick(currentState.id!, currentState.name!, currentState.nextInChain[0].id!)
     }
 
@@ -130,7 +134,7 @@ export function ProposalStateView(props: StateProps) {
     }
 
     function getDeadlineDateForState(state: StateWithDisplayName) {
-        const event = timelineEvents.find(e => (e.stateName === state.name))
+        const event = timelineEvents.find(e => (e.stateId === state.id))
         if (event === undefined) {
             return "Limite: ---"
         }

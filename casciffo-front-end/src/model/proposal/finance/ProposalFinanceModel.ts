@@ -16,7 +16,7 @@ export interface ProposalFinanceModel {
     promoterId?: string,
     promoter?: PromoterModel,
     partnerships?: Array<PartnershipModel>,
-    hasPartnerships: boolean,
+    hasPartnerships?: boolean,
     protocol?: ProtocolModel,
     validations?: ValidationModel[],
     file?: unknown
