@@ -17,6 +17,7 @@ class ResearchAggregateMapper: Mapper<ResearchModel, ResearchAggregate> {
         return if(dto == null) ResearchModel()
         else ResearchModel(
             id = dto.id,
+            lastModified = dto.lastModified,
             proposalId = dto.proposalId,
             stateId = dto.stateId,
             eudra_ct = dto.eudra_ct,

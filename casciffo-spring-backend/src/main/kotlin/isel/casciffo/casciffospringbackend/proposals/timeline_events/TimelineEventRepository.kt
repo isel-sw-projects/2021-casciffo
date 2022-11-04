@@ -13,4 +13,12 @@ interface TimelineEventRepository : ReactiveCrudRepository<TimelineEventModel, I
             "where p.proposal_id=:proposalId")
     fun findTimelineEventsByProposalId(proposalId: Int) : Flux<TimelineEventModel>
     fun findAllByDeadlineDateBeforeAndCompletedDateIsNull(dateAfter: LocalDate = LocalDate.now()): Flux<TimelineEventModel>
+
+    @Query(
+        "SELECT tle.* " +
+        "FROM timeline_event tle " +
+        "WHERE tle.deadline_date >= :startDate AND tle.deadline_date <= :endDate " +
+        "OR completed_date >= :startDate AND tle.completed_date <= :endDate"
+    )
+    fun findAllWithin(startDate: LocalDate, endDate: LocalDate): Flux<TimelineEventModel>
 }

@@ -102,10 +102,11 @@ class UserServiceImpl(
         val currentRoles = user.roles?.collectList()?.awaitFirstOrNull()
         val rolesToAdd =
             if (!currentRoles.isNullOrEmpty())
-                roles.filter { r -> currentRoles.none { cr -> r != cr.roleId!! } }
+                roles.filter { r -> !currentRoles.any { cr -> r == cr.roleId!! } }
             else
                 roles
 
+        if(rolesToAdd.isEmpty()) return user
 
         userRolesRepo
             .saveAll(rolesToAdd.map { UserRoles(userId = userId, roleId = it) })

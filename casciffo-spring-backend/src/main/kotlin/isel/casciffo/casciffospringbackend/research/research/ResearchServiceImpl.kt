@@ -19,6 +19,8 @@ import isel.casciffo.casciffospringbackend.research.visits.visits.*
 import isel.casciffo.casciffospringbackend.states.state.StateService
 import isel.casciffo.casciffospringbackend.states.state.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
+import isel.casciffo.casciffospringbackend.statistics.ResearchStats
+import isel.casciffo.casciffospringbackend.statistics.ResearchStatsRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
@@ -44,13 +46,18 @@ class ResearchServiceImpl(
     @Autowired val aggregateMapper: Mapper<ResearchModel, ResearchAggregate>,
     @Autowired val dossierService: DossierService,
     @Autowired val investigationTeamService: InvestigationTeamService,
-    @Autowired val visitService: VisitService
+    @Autowired val visitService: VisitService,
+    @Autowired val researchStatsRepo: ResearchStatsRepo
 ): ResearchService {
 
     private val logger = KotlinLogging.logger {  }
 
     override suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchAggregate> {
         return aggregateRepo.findAllByType(type).asFlow()
+    }
+
+    override suspend fun getLatestModifiedResearch(n: Int): Flow<ResearchAggregate> {
+        return aggregateRepo.findLatestModifiedResearch(n).asFlow()
     }
 
     override suspend fun getResearch(researchId: Int, loadDetails: Boolean): ResearchModel {
@@ -141,6 +148,10 @@ class ResearchServiceImpl(
 
     override suspend fun randomizeTreatmentBranches(researchId: Int, patients: List<ResearchPatient>): Flow<ResearchPatient> {
         return participantService.updateResearchPatients(researchId, patients)
+    }
+
+    override suspend fun getResearchStats(): Flow<ResearchStats> {
+        return researchStatsRepo.findResearchStats().asFlow()
     }
 
     private suspend fun createTransition(researchId: Int, stateId: Int, nextStateId: Int) {

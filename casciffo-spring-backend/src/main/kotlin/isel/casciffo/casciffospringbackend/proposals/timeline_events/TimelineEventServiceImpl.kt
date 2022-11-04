@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.timeline_events
 
 
+import isel.casciffo.casciffospringbackend.common.TimeType
 import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import java.time.LocalDate
+import java.time.YearMonth
+import java.time.temporal.WeekFields
+import java.util.*
 
 @Service
 class TimelineEventServiceImpl(
@@ -48,5 +52,34 @@ class TimelineEventServiceImpl(
                     it
                 }
         return timelineEventRepository.saveAll(events)
+    }
+
+    override suspend fun findClosestEventsBy(t: TimeType): Flow<TimelineEventModel> {
+        val startDate: LocalDate
+        val endDate: LocalDate
+        val today = LocalDate.now()
+        when (t) {
+            TimeType.DAY -> {
+                startDate = today
+                endDate = today
+            }
+
+            TimeType.WEEK -> {
+                startDate = today.with(WeekFields.of(Locale("pt")).dayOfWeek(), 1L)
+                endDate = today.with(WeekFields.of(Locale("pt")).dayOfWeek(), 7L)
+            }
+
+            TimeType.MONTH -> {
+                val yearMonth = YearMonth.from(today)
+                startDate = yearMonth.atDay(1)
+                endDate = yearMonth.atEndOfMonth()
+            }
+
+            TimeType.YEAR -> {
+                startDate = LocalDate.of(today.year, 1, 1)
+                endDate = LocalDate.of(today.year, 12, 31)
+            }
+        }
+        return timelineEventRepository.findAllWithin(startDate, endDate).asFlow()
     }
 }

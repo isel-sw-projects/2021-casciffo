@@ -2,10 +2,8 @@ import React, {useEffect, useState} from "react";
 import {ResearchFinanceEntries, ResearchTeamFinanceEntries} from "../../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
 import {MyTable} from "../../components/MyTable";
-import {Button, Col, Container, Form, FormGroup, FormSelect, Row, Stack} from "react-bootstrap";
+import {Button, Col, Container, Form, Stack} from "react-bootstrap";
 import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
-import UserModel from "../../../model/user/UserModel";
-import {Investigator} from "../../../common/Types";
 import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
 import {TypeOfMonetaryFlows} from "../../../common/Constants";
 

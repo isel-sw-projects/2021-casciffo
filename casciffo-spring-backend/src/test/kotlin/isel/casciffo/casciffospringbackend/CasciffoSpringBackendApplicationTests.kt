@@ -42,7 +42,7 @@ import isel.casciffo.casciffospringbackend.users.user.UserModel
 import isel.casciffo.casciffospringbackend.users.user.UserRepository
 import isel.casciffo.casciffospringbackend.users.user.UserService
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -54,7 +54,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
 import java.time.LocalDate
 import kotlin.io.path.Path
@@ -70,6 +69,7 @@ class CasciffoSpringBackendApplicationTests(
     @Autowired val userService: UserService,
     @Autowired val proposalService: ProposalService,
     @Autowired val proposalRepository: ProposalRepository,
+    @Autowired val proposalAggregateRepo: ProposalAggregateRepo,
     @Autowired val investigationTeamRepository: InvestigationTeamRepository,
     @Autowired val proposalFinancialRepository: ProposalFinancialRepository,
     @Autowired val proposalFinancialService: ProposalFinancialService,
@@ -107,6 +107,33 @@ class CasciffoSpringBackendApplicationTests(
             logger.info {fileInfo}
         }
 
+    }
+
+//    @Test
+//    fun testProposalPagination() {
+//        val proposals = proposalAggregateRepo.findAllByTypeSorting(
+//            type = ResearchType.CLINICAL_TRIAL,
+//            order = "p.created_date DESC",
+//            n = 1,
+//            p = 0
+//        )
+//        StepVerifier.create(proposals)
+//            .expectSubscription()
+//            .thenConsumeWhile {
+//                println(it)
+//                true
+//            }
+//            .expectComplete()
+//            .verifyThenAssertThat()
+//    }
+
+    @Test
+    fun getProposalStats() {
+        runBlocking {
+            val stats = proposalService.getProposalStats().toList()
+            assert(stats.isNotEmpty())
+            assert(stats.size == ResearchType.values().size)
+        }
     }
 
 //    suspend fun Test123() {

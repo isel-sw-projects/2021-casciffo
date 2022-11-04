@@ -8,6 +8,7 @@ import {ProposalCommentsModel} from "../proposal/ProposalCommentsModel";
 
 export interface ResearchModel {
     id?: string
+    lastModified?: string
     eudra_ct?: string
     sampleSize?: string
     duration?: string
@@ -47,6 +48,7 @@ export interface ResearchAggregateModel {
     id?: string
     eudra_ct?: string
     sampleSize?: string
+    lastModified?: string
     duration?: string
     cro?: string
     startDate?: string

@@ -128,6 +128,7 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.PUT, PROPOSAL_PROTOCOL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.POST, PROPOSAL_FINANCIAL_FILE_UPLOAD_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.GET, PROPOSAL_FINANCIAL_FILE_DOWNLOAD_URL).authenticated()
+            .pathMatchers(HttpMethod.GET, NEAREST_EVENTS_URL).authenticated()
     }
 
     private fun commentsRoutesAuth(http: ServerHttpSecurity) {
@@ -153,5 +154,4 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_RESEARCH_ENTRY).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_TEAM_ENTRY).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
     }
-
 }

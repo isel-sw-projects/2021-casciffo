@@ -31,6 +31,7 @@ class ResearchMapper(
         if(dto == null) return ResearchModel()
         return ResearchModel(
             id = dto.id,
+            lastModified = dto.lastModified,
             cro = dto.cro,
             duration = dto.duration,
             industry = dto.industry,
@@ -70,6 +71,7 @@ class ResearchMapper(
         if(model == null) return ResearchDTO()
         return ResearchDTO(
             id = model.id,
+            lastModified = model.lastModified,
             cro = model.cro,
             duration = model.duration,
             industry = model.industry,

@@ -8,7 +8,6 @@ import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
-import isel.casciffo.casciffospringbackend.files.FileInfoRepository
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
@@ -24,6 +23,8 @@ import isel.casciffo.casciffospringbackend.security.JwtSupport
 import isel.casciffo.casciffospringbackend.states.state.StateService
 import isel.casciffo.casciffospringbackend.states.state.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
+import isel.casciffo.casciffospringbackend.statistics.ProposalStats
+import isel.casciffo.casciffospringbackend.statistics.ProposalStatsRepo
 import isel.casciffo.casciffospringbackend.users.user.UserService
 import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import isel.casciffo.casciffospringbackend.validations.ValidationsRepository
@@ -60,12 +61,12 @@ class ProposalServiceImpl(
     @Autowired val researchService: ResearchService,
     @Autowired val partnershipService: PartnershipService,
     @Autowired val validationsRepository: ValidationsRepository,
-    @Autowired val fileInfoRepository: FileInfoRepository,
     @Autowired val jwtSupport: JwtSupport,
-    @Autowired val userService: UserService
+    @Autowired val userService: UserService,
+    @Autowired val proposalStats: ProposalStatsRepo
 ) : ProposalService {
 
-    override suspend fun getAllProposals(type: ResearchType): Flow<ProposalModel> {
+    override suspend fun getAllProposals(type: ResearchType, pageRequest: PageRequest?): Flow<ProposalModel> {
         return proposalAggregateRepo.findAllByType(type).asFlow().map(proposalAggregateMapper::mapDTOtoModel)
     }
 
@@ -170,6 +171,23 @@ class ProposalServiceImpl(
         return prop
     }
 
+    /**
+     * Returns global stats for proposals grouped by researchType.
+     */
+    override suspend fun getProposalStats(): Flow<ProposalStats> {
+        return proposalStats.findProposalStats().asFlow()
+    }
+
+    /**
+     * @param n Number of elements to retrieve.
+     * @return [n] Proposals sorted by last_modified descending.
+     */
+    override suspend fun getLatestModifiedProposals(n: Int): Flow<ProposalModel> {
+        val trialProposals = proposalAggregateRepo.findLastModifiedProposals(n, ResearchType.CLINICAL_TRIAL)
+        val studyProposals = proposalAggregateRepo.findLastModifiedProposals(n, ResearchType.OBSERVATIONAL_STUDY)
+        return Flux.merge(trialProposals, studyProposals).asFlow().map { proposalAggregateMapper.mapDTOtoModel(it) }
+    }
+
     @Transactional
     override suspend fun transitionStateV2(
         proposalId: Int,
@@ -184,6 +202,7 @@ class ProposalServiceImpl(
         val prop = getProposalById(proposalId, false)
         return handleStateTransitionV2(prop, nextStateId, userRoles)
     }
+
 
     suspend fun handleStateTransitionV2(
         proposal: ProposalModel,

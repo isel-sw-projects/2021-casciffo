@@ -12,10 +12,12 @@ import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class ResearchDTO(
     var id: Int? = null,
     var proposalId: Int? = null,
+    var lastModified: LocalDateTime? = null,
     var stateId: Int? = null,
     var eudra_ct: String? = null,
     var sampleSize: Int? = null,

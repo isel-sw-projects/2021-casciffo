@@ -8,10 +8,12 @@ import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVisitsDTO
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
+import isel.casciffo.casciffospringbackend.statistics.ResearchStats
 import kotlinx.coroutines.flow.Flow
 
 interface ResearchService {
     suspend fun createResearch(researchModel: ResearchModel, withFinance: Boolean = false) : ResearchModel
+    suspend fun getLatestModifiedResearch(n: Int): Flow<ResearchAggregate>
     suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchAggregate>
     suspend fun getResearch(researchId: Int, loadDetails: Boolean = true): ResearchModel
     suspend fun updateResearch(researchModel: ResearchModel) : ResearchModel
@@ -24,4 +26,5 @@ interface ResearchService {
     suspend fun cancelResearch(researchId: Int, reason: String, userId: Int): Boolean
     suspend fun completeResearch(researchId: Int): Boolean
     suspend fun randomizeTreatmentBranches(researchId: Int, patients: List<ResearchPatient>): Flow<ResearchPatient>
+    suspend fun getResearchStats(): Flow<ResearchStats>
 }

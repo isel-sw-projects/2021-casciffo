@@ -4550,10 +4550,26 @@
         "@types/node": "*"
       }
     },
+    "node_modules/@types/source-list-map": {
+      "version": "0.1.2",
+      "resolved": "https://registry.npmjs.org/@types/source-list-map/-/source-list-map-0.1.2.tgz",
+      "integrity": "sha512-K5K+yml8LTo9bWJI/rECfIPrGgxdpeNbj+d53lwN4QjW1MCwlkhUms+gtdzigTeUyBr09+u8BwOIY3MXvHdcsA==",
+      "dev": true,
+      "optional": true,
+      "peer": true
+    },
     "node_modules/@types/stack-utils": {
       "version": "2.0.1",
       "resolved": "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.1.tgz",
       "integrity": "sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw=="
+    },
+    "node_modules/@types/tapable": {
+      "version": "1.0.8",
+      "resolved": "https://registry.npmjs.org/@types/tapable/-/tapable-1.0.8.tgz",
+      "integrity": "sha512-ipixuVrh2OdNmauvtT51o3d8z12p6LtFW9in7U79der/kwejjdNchQC5UMn5u/KxNoM7VHHOs/l8KS8uHxhODQ==",
+      "dev": true,
+      "optional": true,
+      "peer": true
     },
     "node_modules/@types/testing-library__jest-dom": {
       "version": "5.14.5",
@@ -4569,10 +4585,61 @@
       "integrity": "sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==",
       "dev": true
     },
+    "node_modules/@types/uglify-js": {
+      "version": "3.17.1",
+      "resolved": "https://registry.npmjs.org/@types/uglify-js/-/uglify-js-3.17.1.tgz",
+      "integrity": "sha512-GkewRA4i5oXacU/n4MA9+bLgt5/L3F1mKrYvFGm7r2ouLXhRKjuWwo9XHNnbx6WF3vlGW21S3fCvgqxvxXXc5g==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "dependencies": {
+        "source-map": "^0.6.1"
+      }
+    },
     "node_modules/@types/warning": {
       "version": "3.0.0",
       "resolved": "https://registry.npmjs.org/@types/warning/-/warning-3.0.0.tgz",
       "integrity": "sha512-t/Tvs5qR47OLOr+4E9ckN8AmP2Tf16gWq+/qA4iUGS/OOyHVO8wv2vjJuX8SNOUTJyWb+2t7wJm6cXILFnOROA=="
+    },
+    "node_modules/@types/webpack": {
+      "version": "4.41.33",
+      "resolved": "https://registry.npmjs.org/@types/webpack/-/webpack-4.41.33.tgz",
+      "integrity": "sha512-PPajH64Ft2vWevkerISMtnZ8rTs4YmRbs+23c402J0INmxDKCrhZNvwZYtzx96gY2wAtXdrK1BS2fiC8MlLr3g==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "dependencies": {
+        "@types/node": "*",
+        "@types/tapable": "^1",
+        "@types/uglify-js": "*",
+        "@types/webpack-sources": "*",
+        "anymatch": "^3.0.0",
+        "source-map": "^0.6.0"
+      }
+    },
+    "node_modules/@types/webpack-sources": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/@types/webpack-sources/-/webpack-sources-3.2.0.tgz",
+      "integrity": "sha512-Ft7YH3lEVRQ6ls8k4Ff1oB4jN6oy/XmU6tQISKdhfh+1mR+viZFphS6WL0IrtDOzvefmJg5a0s7ZQoRXwqTEFg==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "dependencies": {
+        "@types/node": "*",
+        "@types/source-list-map": "*",
+        "source-map": "^0.7.3"
+      }
+    },
+    "node_modules/@types/webpack-sources/node_modules/source-map": {
+      "version": "0.7.4",
+      "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.7.4.tgz",
+      "integrity": "sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "engines": {
+        "node": ">= 8"
+      }
     },
     "node_modules/@types/ws": {
       "version": "8.5.3",
@@ -18654,6 +18721,19 @@
         }
       }
     },
+    "node_modules/webpack-hot-middleware": {
+      "version": "2.25.2",
+      "resolved": "https://registry.npmjs.org/webpack-hot-middleware/-/webpack-hot-middleware-2.25.2.tgz",
+      "integrity": "sha512-CVgm3NAQyfdIonRvXisRwPTUYuSbyZ6BY7782tMeUzWOO7RmVI2NaBYuCp41qyD4gYCkJyTneAJdK69A13B0+A==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "dependencies": {
+        "ansi-html-community": "0.0.8",
+        "html-entities": "^2.1.0",
+        "strip-ansi": "^6.0.0"
+      }
+    },
     "node_modules/webpack-manifest-plugin": {
       "version": "4.1.1",
       "resolved": "https://registry.npmjs.org/webpack-manifest-plugin/-/webpack-manifest-plugin-4.1.1.tgz",
@@ -22753,10 +22833,26 @@
         "@types/node": "*"
       }
     },
+    "@types/source-list-map": {
+      "version": "0.1.2",
+      "resolved": "https://registry.npmjs.org/@types/source-list-map/-/source-list-map-0.1.2.tgz",
+      "integrity": "sha512-K5K+yml8LTo9bWJI/rECfIPrGgxdpeNbj+d53lwN4QjW1MCwlkhUms+gtdzigTeUyBr09+u8BwOIY3MXvHdcsA==",
+      "dev": true,
+      "optional": true,
+      "peer": true
+    },
     "@types/stack-utils": {
       "version": "2.0.1",
       "resolved": "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.1.tgz",
       "integrity": "sha512-Hl219/BT5fLAaz6NDkSuhzasy49dwQS/DSdu4MdggFB8zcXv7vflBI3xp7FEmkmdDkBUI2bPUNeMttp2knYdxw=="
+    },
+    "@types/tapable": {
+      "version": "1.0.8",
+      "resolved": "https://registry.npmjs.org/@types/tapable/-/tapable-1.0.8.tgz",
+      "integrity": "sha512-ipixuVrh2OdNmauvtT51o3d8z12p6LtFW9in7U79der/kwejjdNchQC5UMn5u/KxNoM7VHHOs/l8KS8uHxhODQ==",
+      "dev": true,
+      "optional": true,
+      "peer": true
     },
     "@types/testing-library__jest-dom": {
       "version": "5.14.5",
@@ -22772,10 +22868,60 @@
       "integrity": "sha512-F5DIZ36YVLE+PN+Zwws4kJogq47hNgX3Nx6WyDJ3kcplxyke3XIzB8uK5n/Lpm1HBsbGzd6nmGehL8cPekP+Tg==",
       "dev": true
     },
+    "@types/uglify-js": {
+      "version": "3.17.1",
+      "resolved": "https://registry.npmjs.org/@types/uglify-js/-/uglify-js-3.17.1.tgz",
+      "integrity": "sha512-GkewRA4i5oXacU/n4MA9+bLgt5/L3F1mKrYvFGm7r2ouLXhRKjuWwo9XHNnbx6WF3vlGW21S3fCvgqxvxXXc5g==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "requires": {
+        "source-map": "^0.6.1"
+      }
+    },
     "@types/warning": {
       "version": "3.0.0",
       "resolved": "https://registry.npmjs.org/@types/warning/-/warning-3.0.0.tgz",
       "integrity": "sha512-t/Tvs5qR47OLOr+4E9ckN8AmP2Tf16gWq+/qA4iUGS/OOyHVO8wv2vjJuX8SNOUTJyWb+2t7wJm6cXILFnOROA=="
+    },
+    "@types/webpack": {
+      "version": "4.41.33",
+      "resolved": "https://registry.npmjs.org/@types/webpack/-/webpack-4.41.33.tgz",
+      "integrity": "sha512-PPajH64Ft2vWevkerISMtnZ8rTs4YmRbs+23c402J0INmxDKCrhZNvwZYtzx96gY2wAtXdrK1BS2fiC8MlLr3g==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "requires": {
+        "@types/node": "*",
+        "@types/tapable": "^1",
+        "@types/uglify-js": "*",
+        "@types/webpack-sources": "*",
+        "anymatch": "^3.0.0",
+        "source-map": "^0.6.0"
+      }
+    },
+    "@types/webpack-sources": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/@types/webpack-sources/-/webpack-sources-3.2.0.tgz",
+      "integrity": "sha512-Ft7YH3lEVRQ6ls8k4Ff1oB4jN6oy/XmU6tQISKdhfh+1mR+viZFphS6WL0IrtDOzvefmJg5a0s7ZQoRXwqTEFg==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "requires": {
+        "@types/node": "*",
+        "@types/source-list-map": "*",
+        "source-map": "^0.7.3"
+      },
+      "dependencies": {
+        "source-map": {
+          "version": "0.7.4",
+          "resolved": "https://registry.npmjs.org/source-map/-/source-map-0.7.4.tgz",
+          "integrity": "sha512-l3BikUxvPOcn5E74dZiq5BGsTb5yEwhaTSzccU6t4sDOH8NWJCstKO5QT2CvtFoK6F0saL7p9xHAqHOlCPJygA==",
+          "dev": true,
+          "optional": true,
+          "peer": true
+        }
+      }
     },
     "@types/ws": {
       "version": "8.5.3",
@@ -33047,6 +33193,19 @@
           "dev": true,
           "requires": {}
         }
+      }
+    },
+    "webpack-hot-middleware": {
+      "version": "2.25.2",
+      "resolved": "https://registry.npmjs.org/webpack-hot-middleware/-/webpack-hot-middleware-2.25.2.tgz",
+      "integrity": "sha512-CVgm3NAQyfdIonRvXisRwPTUYuSbyZ6BY7782tMeUzWOO7RmVI2NaBYuCp41qyD4gYCkJyTneAJdK69A13B0+A==",
+      "dev": true,
+      "optional": true,
+      "peer": true,
+      "requires": {
+        "ansi-html-community": "0.0.8",
+        "html-entities": "^2.1.0",
+        "strip-ansi": "^6.0.0"
       }
     },
     "webpack-manifest-plugin": {

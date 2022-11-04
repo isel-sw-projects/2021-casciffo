@@ -5,6 +5,7 @@ import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.roles.Roles
+import isel.casciffo.casciffospringbackend.statistics.ProposalStats
 import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,8 @@ import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.InputStreamResource
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.ContentDisposition
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -31,10 +34,37 @@ class ProposalController(
     @Autowired val mapper: Mapper<ProposalModel, ProposalDTO>
     ) {
 
+    /**
+     * Fetches all proposals.
+     * @param type The research type.
+     * @param p The page to fetch. Default is 1.
+     * @param n The number of elements to fetch. Default is 20.
+     * @param s The sorting attributed. Uses createdDate by default
+     * @param so The sort order; true for ASC, false for DESC, false by default.
+     * @return Returns all proposals of type [type]. Limited by [n]
+     */
     @GetMapping(PROPOSALS_URL)
-    suspend fun getAllProposals(@RequestParam type: ResearchType): Flow<ProposalDTO> {
-        return service.getAllProposals(type).map(mapper::mapModelToDTO)
+    suspend fun getAllProposals(
+        @RequestParam type: ResearchType,
+        @RequestParam(required = false, defaultValue = "1") p: Int,
+        @RequestParam(required = false, defaultValue = "20") n: Int,
+        @RequestParam(required = false, defaultValue = "created_date") s: String,
+        @RequestParam(required = false, defaultValue = "false") so: Boolean
+    ): Flow<ProposalDTO> {
+        val page = PageRequest.of(p, n, if(so) Sort.by(s).descending() else Sort.by(s).ascending())
+        //TODO add total count
+        return service.getAllProposals(type, page).map(mapper::mapModelToDTO)
     }
+
+
+    @GetMapping(PROPOSALS_LASTEST_MODIFIED_URL)
+    suspend fun getLatestModifiedProposals(
+        @RequestParam(required = false, defaultValue = "5") n: Int
+    ): Flow<ProposalDTO> {
+        val proposals = service.getLatestModifiedProposals(n)
+        return proposals.map(mapper::mapModelToDTO)
+    }
+
 
     @GetMapping(PROPOSAL_URL)
     suspend fun getProposal(@PathVariable proposalId: Int) : ProposalDTO {
@@ -61,6 +91,12 @@ class ProposalController(
         return mapper.mapModelToDTO(res)
     }
 
+    @GetMapping(PROPOSAL_GENERAL_STATS_URL)
+    suspend fun getProposalStats(): ResponseEntity<Flow<ProposalStats>> {
+        val stats = service.getProposalStats()
+        return ResponseEntity.ok(stats)
+    }
+
     @PutMapping(PROPOSAL_TRANSITION_SUPERUSER_URL)
     suspend fun superuserTransitionProposalState(
         @PathVariable proposalId: Int,
@@ -75,7 +111,6 @@ class ProposalController(
         @RequestParam nextStateId: Int,
         request: ServerHttpRequest
     ): ProposalDTO {
-
         return transitionStateV2(proposalId, nextStateId, request)
     }
 

@@ -19,6 +19,7 @@ import org.springframework.data.annotation.Transient
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Table("clinical_research")
 data class ResearchModel (
@@ -26,6 +27,7 @@ data class ResearchModel (
     @Column("research_id")
     var id: Int? = null,
     var proposalId: Int? = null,
+    var lastModified: LocalDateTime? = null,
     @Column("research_state_id")
     var stateId: Int? = null,
     var eudra_ct: String? = null,

@@ -5,7 +5,6 @@ import {Button, Container, Dropdown, Form, FormControl} from "react-bootstrap";
 import {MyTable} from "../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
 import {UserRoleModel} from "../../model/role/UserRoleModel";
-import {PromoterTypes} from "../../common/Constants";
 import {Roles} from "../../model/role/Roles";
 
 type UsersProps = {
@@ -17,14 +16,12 @@ type RoleWithDisplayName = {
     roleName: string,
     roleDisplayName: string
 }
-
+//TODO ADD DELETE ROLE FUNCTION
 export function Users(props: UsersProps) {
     const [users, setUsers] = useState<UserModel[]>([])
     const [newUser, setNewUser] = useState<UserModel>({email: "", name: ""})
     const [showForm, setShowForm] = useState(false)
     const [roles, setRoles] = useState<RoleWithDisplayName[]>([])
-
-   
 
     const mapWithDisplayName = useCallback((roles: UserRoleModel[]) => {
         const toRoleWithDisplayName = (role: UserRoleModel): RoleWithDisplayName => ({

@@ -23,6 +23,7 @@ import {Roles} from "../../model/role/Roles";
 import {FaUser}   from "react-icons/fa";
 import {Users} from "../users-view/Users";
 import {ResearchDetailsPage} from "../research-details/research/ResearchDetailsPage";
+import {StatisticsService} from "../../services/StatisticsService";
 
 function NavigationBar() {
 
@@ -74,7 +75,7 @@ function CreateRoutes() {
 
     return (
         <Routes>
-            <Route path={"/"} element={<Dashboard/>}/>
+            <Route path={"/"} element={<Dashboard statisticsService={new StatisticsService()}/>}/>
             <Route path={"/login"} element={<Login UserService={new UserService()}/>}/>
             <Route path={"/logout"} element={<Logout/>}/>
             <Route path={"/propostas"}

@@ -27,7 +27,7 @@ type ChronoItemType = {
 export function ProposalTimelineTabContent(props: TimelineProps) {
     const [query, setQuery] = useState("")
     const [selectedEventType, setSelectedEventType] = useState(EventTypes.ALL.id)
-    const [showForm, setShowForm] = useState(true)
+    const [showForm, setShowForm] = useState(false)
     const [timelineEvents, setTimelineEvents] = useState<TimelineEventModel[]>([])
     const [hasEvents, setHasEvents] = useState(false)
     const headers = ["Título", "Data completo", "Data limite", "Descrição", "Completar"]

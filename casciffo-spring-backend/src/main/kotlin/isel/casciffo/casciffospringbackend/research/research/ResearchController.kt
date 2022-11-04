@@ -10,6 +10,7 @@ import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVisitsDTO
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
+import isel.casciffo.casciffospringbackend.statistics.ResearchStats
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -21,6 +22,12 @@ class ResearchController(
     @Autowired val researchService: ResearchService,
     @Autowired val mapper: Mapper<ResearchModel, ResearchDTO>
 ) {
+
+
+    @GetMapping(RESEARCH_LASTEST_MODIFIED_URL)
+    suspend fun getLatestModifiedResearch(@RequestParam(required = false, defaultValue = "5") n: Int): Flow<ResearchAggregate> {
+        return researchService.getLatestModifiedResearch(n)
+    }
 
     @GetMapping(RESEARCH_URL)
     suspend fun getAllResearch(@RequestParam type: ResearchType) : Flow<ResearchAggregate> {
@@ -113,6 +120,12 @@ class ResearchController(
     ) : ScientificActivity {
         study.researchId = researchId
         return researchService.createStudy(study)
+    }
+
+    @GetMapping(RESEARCH_GENERAL_STATS_URL)
+    suspend fun getResearchStats(): ResponseEntity<Flow<ResearchStats>> {
+        val stats = researchService.getResearchStats()
+        return ResponseEntity.ok(stats)
     }
 }
 

@@ -1,5 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.timeline_events
 
+import isel.casciffo.casciffospringbackend.common.TimeType
+import isel.casciffo.casciffospringbackend.endpoints.NEAREST_EVENTS_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_COMPLETE_EVENTS_URL
 import isel.casciffo.casciffospringbackend.endpoints.PROPOSAL_EVENTS_URL
 import kotlinx.coroutines.flow.Flow
@@ -10,6 +12,11 @@ import org.springframework.web.bind.annotation.*
 class TimelineEventController(
     @Autowired val service: TimelineEventService
 ) {
+
+    @GetMapping(NEAREST_EVENTS_URL)
+    suspend fun getClosestEventsBy(@RequestParam t: TimeType): Flow<TimelineEventModel> {
+        return service.findClosestEventsBy(t)
+    }
 
     @GetMapping(PROPOSAL_EVENTS_URL)
     suspend fun getEventsByProposalId(

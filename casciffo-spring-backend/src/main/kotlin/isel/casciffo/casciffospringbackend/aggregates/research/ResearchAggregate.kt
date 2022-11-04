@@ -4,11 +4,13 @@ import isel.casciffo.casciffospringbackend.common.ResearchType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class ResearchAggregate(
     @Id
     @Column("research_id")
     var id: Int? = null,
+    var lastModified: LocalDateTime? = null,
     var eudra_ct: String? = null,
     var sampleSize: Int? = null,
     var duration: Int? = null,

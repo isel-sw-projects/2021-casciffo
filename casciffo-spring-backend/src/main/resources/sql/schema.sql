@@ -257,6 +257,7 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     research_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_id INT NOT NULL,
     research_state_id INT NOT NULL,
+    last_modified TIMESTAMP DEFAULT NOW(),
     eudra_ct VARCHAR,
     sample_size INT,
     duration INT,
@@ -486,6 +487,10 @@ $$ language 'plpgsql';
 
 DROP TRIGGER IF EXISTS t_update_last_modified ON proposal;
 CREATE TRIGGER t_update_last_modified BEFORE UPDATE ON proposal
+    FOR EACH ROW EXECUTE FUNCTION f_update_last_modified_column();
+
+DROP TRIGGER IF EXISTS t_update_last_modified ON clinical_research;
+CREATE TRIGGER t_update_last_modified BEFORE UPDATE ON clinical_research
     FOR EACH ROW EXECUTE FUNCTION f_update_last_modified_column();
 
 

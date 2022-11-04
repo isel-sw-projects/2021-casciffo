@@ -34,6 +34,9 @@ const PROPOSALS_TIMELINE_EVENT_COMPLETE_URL =
 const PROPOSAL_CF_UPLOAD = (pId: string, pfcId: string) => `${DETAIL_PROPOSAL_URL(pId)}/pfc/${pfcId}/upload`
 const PROPOSAL_CF_DOWNLOAD = (pId: string, pfcId: string) => `${DETAIL_PROPOSAL_URL(pId)}/pfc/${pfcId}/download`
 
+const PROPOSAL_STATS_URL = () => `${PROPOSALS_URL}/stats`
+const PROPOSAL_LAST_MODIFIED_URL = () => `${PROPOSALS_URL}/last_modified`
+
 /******************** PROPOSAL COMMENTS ***********************/
 const COMMENTS_URL = (pId: string) => `${DETAIL_PROPOSAL_URL(pId)}/comments`
 const COMMENTS_BY_TYPE_URL = (pId: string, type: string) => `${COMMENTS_URL(pId)}?t=${type}`
@@ -45,6 +48,8 @@ const PROPOSAL_VALIDATION_URL =
 const PROPOSAL_PROTOCOL_BASE = (pId: string, pfcId: string) => `${DETAIL_PROPOSAL_URL(pId)}/pfc/${pfcId}`
 const PROPOSAL_PROTOCOL = (pId: string, pfcId: string) => `${PROPOSAL_PROTOCOL_BASE(pId, pfcId)}/protocol`
 
+/************************** EVENTS **************************/
+const NEAREST_EVENTS_URL = (t: string) =>  `${BASE_URL}/events?t=${t}`
 
 /************************** CONSTANTS **************************/
 const CONSTANTS_URL = `${BASE_URL}/constants`
@@ -73,6 +78,9 @@ const RANDOMIZE_PATIENTS = (researchId: string) => `${PATIENTS_RESEARCH_URL(rese
 
 const researchFinanceEntryUrl = (researchId: string) => `${RESEARCH_FINANCE_URL(researchId)}/research-entry`
 const researchFinanceTeamEntryUrl = (researchId: string)  => `${RESEARCH_FINANCE_URL(researchId)}/team-entry`
+
+const RESEARCH_STATS_URL = () => `${RESEARCH_URL}/stats`
+const RESEARCH_LAST_MODIFIED_URL = () => `${RESEARCH_URL}/last_modified`
 
 const ApiUrls = {
     baseUrl: BASE_URL,
@@ -111,8 +119,10 @@ const ApiUrls = {
     proposalsProtocol: PROPOSAL_PROTOCOL,
     proposalDownloadCF: PROPOSAL_CF_DOWNLOAD,
     proposalUploadCF: PROPOSAL_CF_UPLOAD,
-    statesChainUrl: STATES_CHAIN_URL,
+    proposalStatsUrl: PROPOSAL_STATS_URL,
     proposalValidationUrl: PROPOSAL_VALIDATION_URL,
+    proposalLatestModifiedUrl: PROPOSAL_LAST_MODIFIED_URL,
+    statesChainUrl: STATES_CHAIN_URL,
     userRolesUrl: USER_ROLES,
     usersCreateUrl: USERS_CREATE_URL,
     // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID
@@ -120,7 +130,10 @@ const ApiUrls = {
     researchPatientsRandomize: RANDOMIZE_PATIENTS,
     researchFinanceUrl: RESEARCH_FINANCE_URL,
     researchFinanceEntryUrl,
-    researchFinanceTeamEntryUrl
+    researchFinanceTeamEntryUrl,
+    researchStatsUrl: RESEARCH_STATS_URL,
+    researchLatestModifiedUrl: RESEARCH_LAST_MODIFIED_URL,
+    nearestEventsUrl: NEAREST_EVENTS_URL
 }
 
 export default ApiUrls
