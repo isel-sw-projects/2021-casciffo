@@ -1,13 +1,15 @@
-import React, {useState} from "react";
-import {TimelineEventModel} from "../../model/TimelineEventModel";
+import React, {useEffect, useState} from "react";
+import {TimelineEventModel} from "../../../model/TimelineEventModel";
 import {Button, Col, Form, FormGroup, Row, Stack} from "react-bootstrap";
-import {EventTypes} from "../../common/Constants";
-import {STATES} from "../../model/state/STATES";
-import {MyUtil} from "../../common/MyUtil";
+import {EventTypes} from "../../../common/Constants";
+import {STATES} from "../../../model/state/STATES";
+import {MyUtil} from "../../../common/MyUtil";
 import {useParams} from "react-router-dom";
+import {StateModel} from "../../../model/state/StateModel";
 
 
 type TimelineProps = {
+    possibleStates: StateModel[]
     onEventAdded: (event: TimelineEventModel) => void
 }
 
@@ -23,8 +25,15 @@ export function TimelineEventForm(props: TimelineProps) {
         id: "",
         isOverDue: false,
         proposalId: proposalId!,
-        isAssociatedToState: false
+        isAssociatedToState: false,
+        stateId: ""
     })
+
+    const [possibleStates, setPossibleStates] = useState<StateModel[]>([])
+
+    useEffect(() => {
+        setPossibleStates(props.possibleStates)
+    }, [props.possibleStates])
 
     const [dateAsString, setDateAsString] = useState("")
 
@@ -57,7 +66,7 @@ export function TimelineEventForm(props: TimelineProps) {
             eventType: "",
             isAssociatedToState: false,
             isOverDue: false,
-            stateName: "",
+            stateId: "",
         })
     }
 
@@ -68,16 +77,29 @@ export function TimelineEventForm(props: TimelineProps) {
 
     function showStateSelection() {
         return (
+            // <Form.Select
+            //     key={"state-associated-selection"}
+            //     required
+            //     aria-label="state selection"
+            //     name={"stateId"}
+            //     defaultValue={STATES.VALIDADO.id}
+            //     onChange={handleSelectedState}
+            // >
+            //     {MyUtil.proposalStates
+            //         .map((rt) => <option key={rt.id} value={rt.id}>{rt.name}</option>)
+            //     }
+            // </Form.Select>
             <Form.Select
                 key={"state-associated-selection"}
                 required
                 aria-label="state selection"
-                name={"stateName"}
-                defaultValue={STATES.VALIDADO.id}
+                name={"stateId"}
+                defaultValue={-1}
                 onChange={handleSelectedState}
             >
-                {MyUtil.proposalStates
-                    .map((rt) => <option key={rt.id} value={rt.id}>{rt.name}</option>)
+                <option value={-1} disabled>-Selecionar estado-</option>
+                {props.possibleStates
+                    .map((s) => <option key={s.id} value={s.id}>{STATES[s.name as keyof typeof STATES].name}</option>)
                 }
             </Form.Select>
         )

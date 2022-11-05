@@ -1,13 +1,13 @@
 import React, {useCallback, useEffect, useState} from "react"
-import {Button, Stack, Table} from "react-bootstrap"
+import {Button, Container, Stack, Table} from "react-bootstrap"
 import {useParams} from "react-router-dom";
-import {ProtocolModel} from "../../model/proposal/finance/ProtocolModel";
-import {MyUtil} from "../../common/MyUtil";
-import {ValidityComment} from "../../model/proposal/finance/ValidationModels";
+import {ProtocolModel} from "../../../model/proposal/finance/ProtocolModel";
+import {MyUtil} from "../../../common/MyUtil";
+import {ValidityComment} from "../../../model/proposal/finance/ValidationModels";
 import {BiCheckboxChecked, BiCheckboxMinus} from "react-icons/bi";
-import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
-import {CommentTypes} from "../../common/Constants";
-import {ValidationComment} from "./ValidationComment";
+import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
+import {CommentTypes} from "../../../common/Constants";
+import {ValidationComment} from "../comments/ValidationComment";
 
 type PPT_Props = {
     saveProtocolComment: (pfcId: string, comment: ValidityComment) => void
@@ -69,7 +69,19 @@ export function ProtocolTabContent(props: PPT_Props) {
         <React.Fragment>
             <label className={"font-bold"}>Entidades de competência de avaliação</label>
 
-            <span><h5>CEIC</h5> <BiCheckboxChecked style={{color: "green"}} size={40}/> </span>
+            <Container>
+                <Stack direction={"horizontal"} gap={4}>
+                    <h5>CEIC</h5>
+                    <span className={"font-bold"}>
+                        {protocol?.validatedDate == null ? "Ainda não validado"
+                            : <>
+                                {`Validado a ${MyUtil.formatDate(protocol.validatedDate)}`}
+                            <BiCheckboxChecked style={{color: "green", position: "relative", top: -5}} size={40}/>
+                            </>
+                        }
+                    </span>
+                </Stack>
+            </Container>
                 <Stack direction={"horizontal"}>
                     <Button
                         className={"float-start m-3"}

@@ -11,6 +11,7 @@ import {
 import {httpGet, httpGetFile, httpPost, httpPostFormFile, httpPut} from "../common/MyUtil";
 import {StateModel} from "../model/state/StateModel";
 import {log} from "util";
+import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
 
 
 class ProposalService {
@@ -122,7 +123,7 @@ class ProposalService {
         return httpPut(url, validationComment)
     }
 
-    uploadFinancialContract(pId: string, pfcId: string, file: File): Promise<void> {
+    uploadFinancialContract(pId: string, pfcId: string, file: File): Promise<FileInfo> {
         const url = ApiUrls.proposalUploadCF(pId, pfcId)
         return httpPostFormFile(url, file)
     }

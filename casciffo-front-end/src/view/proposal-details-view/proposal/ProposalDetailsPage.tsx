@@ -1,6 +1,6 @@
 import {Navigate, useLocation, useNavigate, useParams} from "react-router-dom";
 import {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
-import {ProposalModel} from "../../model/proposal/ProposalModel";
+import {ProposalModel} from "../../../model/proposal/ProposalModel";
 import {
     Button,
     ButtonGroup,
@@ -14,27 +14,27 @@ import {
     Tabs,
     ToggleButton
 } from "react-bootstrap";
-import {StateService} from "../../services/StateService";
-import {STATES} from "../../model/state/STATES";
-import {MyUtil} from "../../common/MyUtil";
-import {ProposalCommentsTabContent} from "./ProposalCommentsTabContent";
-import ProposalAggregateService from "../../services/ProposalAggregateService";
-import { ProtocolTabContent } from "./ProtocolTabContent";
-import {CommentTypes, ResearchTypes, TAB_PARAMETER, TOKEN_KEY} from "../../common/Constants";
-import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
-import {ProposalTimelineTabContent} from "./ProposalTimelineTabContent";
-import {PartnershipsTabContent} from "./PartnershipsTabContent";
-import {TimelineEventModel} from "../../model/TimelineEventModel";
+import {StateService} from "../../../services/StateService";
+import {STATES} from "../../../model/state/STATES";
+import {MyUtil} from "../../../common/MyUtil";
+import {ProposalCommentsTabContent} from "../comments/ProposalCommentsTabContent";
+import ProposalAggregateService from "../../../services/ProposalAggregateService";
+import { ProtocolTabContent } from "../protocol/ProtocolTabContent";
+import {CommentTypes, ResearchTypes, TAB_PARAMETER, TOKEN_KEY} from "../../../common/Constants";
+import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
+import {ProposalTimelineTabContent} from "../chronology/ProposalTimelineTabContent";
+import {PartnershipsTabContent} from "../partnerships/PartnershipsTabContent";
+import {TimelineEventModel} from "../../../model/TimelineEventModel";
 import React from "react";
-import {ProposalStateView} from "./ProposalStates";
-import {StateModel} from "../../model/state/StateModel";
-import {UserToken} from "../../common/Types";
-import {ProposalFinancialContractTab} from "./ProposalFinancialContractTab";
-import {ValidationCommentDTO, ValidityComment} from "../../model/proposal/finance/ValidationModels";
-import {Roles} from "../../model/role/Roles";
-import {useUserAuthContext} from "../context/UserAuthContext";
-import {ProposalDetailsTab} from "./ProposalDetailsTab";
+import {ProposalStateView} from "../states/ProposalStates";
+import {StateModel} from "../../../model/state/StateModel";
+import {UserToken} from "../../../common/Types";
+import {ProposalFinancialContractTab} from "../financial-contract/ProposalFinancialContractTab";
+import {ValidationCommentDTO, ValidityComment} from "../../../model/proposal/finance/ValidationModels";
+import {Roles} from "../../../model/role/Roles";
+import {useUserAuthContext} from "../../context/UserAuthContext";
 import {useErrorHandler} from "react-error-boundary";
+import {ProposalDetailsTab} from "./ProposalDetailsTab";
 
 type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
@@ -125,6 +125,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         }
 
         props.proposalService.fetchProposalById(proposalId!)
+            .then(log)
             .then(setProposalAndGetItsType)
             .then(fetchStates)
             .then(() => setDataReady(true))
@@ -218,7 +219,15 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     }
 
     const uploadCf = async (file: File) => {
-        await props.proposalService.saveFinancialContract(proposalId!, proposal.financialComponent!.id!, file)
+        await props.proposalService
+            .saveFinancialContract(proposalId!, proposal.financialComponent!.id!, file)
+            .then(log)
+            .then(fileInfo => setProposal(prevState => ({
+                ...prevState,
+                financialComponent: {
+                    ...prevState.financialComponent,
+                    financialContract: fileInfo
+                }})))
     }
 
     const onSelectTab = (tab: string | null) => {
@@ -350,6 +359,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 states={states || []}
                             />
                             <ProposalTimelineTabContent
+                                possibleStates={states || []}
                                 service={props.proposalService}
                                 timelineEvents={proposal.timelineEvents || []}
                                 setNewTimeLineEvent={handleNewEvent}

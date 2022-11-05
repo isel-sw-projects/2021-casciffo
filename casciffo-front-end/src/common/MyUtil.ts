@@ -4,6 +4,7 @@ import {KeyValuePair, UserToken} from "./Types";
 import axios, {AxiosRequestConfig, AxiosRequestHeaders} from "axios";
 import FileSaver from "file-saver";
 import {MyError} from "../view/error-view/MyError";
+import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
 
 function padToNDigits(num: number, n: number = 2) {
     return num.toString().padStart(n, '0');
@@ -200,7 +201,7 @@ export function httpPut<T>(url: string, body: unknown = null): Promise<T> {
     return _httpFetch(url, 'PUT', [HEADER_CONTENT_TYPE], body)
 }
 
-export function httpPostFormFile(url: string, file: File): Promise<void> {
+export function httpPostFormFile(url: string, file: File): Promise<FileInfo> {
     const token = localStorage.getItem(TOKEN_KEY)
     const headers: AxiosRequestHeaders = {'Content-type': 'multipart/form-data'}
     if(token != null) {

@@ -1,16 +1,18 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {TimelineEventModel} from "../../model/TimelineEventModel";
-import {SearchComponent} from "../components/SearchComponent";
+import {TimelineEventModel} from "../../../model/TimelineEventModel";
+import {SearchComponent} from "../../components/SearchComponent";
 import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
-import {EventTypes, ResearchTypes} from "../../common/Constants";
+import {EventTypes, ResearchTypes} from "../../../common/Constants";
 import {TimelineEventForm} from "./TimelineEventForm";
 import {Chrono} from "react-chrono";
-import {MyUtil} from "../../common/MyUtil";
-import ProposalAggregateService from "../../services/ProposalAggregateService";
+import {MyUtil} from "../../../common/MyUtil";
+import ProposalAggregateService from "../../../services/ProposalAggregateService";
 import {useParams} from "react-router-dom";
 import {BiCheck, BiCheckboxMinus} from "react-icons/bi";
+import {StateModel} from "../../../model/state/StateModel";
 
 type TimelineProps = {
+    possibleStates: StateModel[]
     timelineEvents: Array<TimelineEventModel>,
     setNewTimeLineEvent: (t: TimelineEventModel) => void,
     service: ProposalAggregateService
@@ -224,7 +226,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                 <Container className={"content"}>
                     <Button onClick={handleShowFormChange}>{showForm ? "Cancelar" : "Adicionar evento à cronologia"}</Button>
                 </Container>
-                {showForm && <TimelineEventForm onEventAdded={handleEventSubmit}/>}
+                {showForm && <TimelineEventForm onEventAdded={handleEventSubmit} possibleStates={props.possibleStates}/>}
             </Container>
             <br/>
             <Container className={"justify-content-evenly mb-4 float-start p-0"} style={{width:"50%"}}>

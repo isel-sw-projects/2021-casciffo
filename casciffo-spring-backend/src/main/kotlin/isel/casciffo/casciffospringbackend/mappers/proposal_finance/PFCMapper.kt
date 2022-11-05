@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.mappers.proposal_finance
 
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponentDTO
@@ -25,7 +26,12 @@ class PFCMapper(
             promoter = dto.promoter,
             protocol = protocolMapper.mapDTOtoModel(dto.protocol),
             validations = dto.validations?.toFlux(),
-            hasPartnerships = dto.hasPartnerships
+            hasPartnerships = dto.hasPartnerships,
+            financialContract = if (dto.financialContract != null) FileInfo(
+                id = dto.financialContract!!.id,
+                fileSize = dto.financialContract!!.fileSize,
+                fileName = dto.financialContract!!.fileName,
+            ) else null
         )
     }
 
@@ -40,7 +46,12 @@ class PFCMapper(
             promoter = model.promoter,
             protocol = protocolMapper.mapModelToDTO(model.protocol),
             validations = model.validations?.collectList()?.awaitSingleOrNull(),
-            hasPartnerships = model.hasPartnerships
+            hasPartnerships = model.hasPartnerships,
+            financialContract = if (model.financialContract != null) FileInfo(
+                id = model.financialContract!!.id,
+                fileSize = model.financialContract!!.fileSize,
+                fileName = model.financialContract!!.fileName,
+            ) else null
         )
     }
 }

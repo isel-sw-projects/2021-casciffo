@@ -3,21 +3,27 @@ import {PartnershipModel} from "../../PartnershipModel";
 import {ProtocolModel} from "./ProtocolModel";
 
 interface ValidationModel {
-    id?: string,
-    pfcId?: string,
-    validationType?: string,
-    validated?: boolean,
-    validatedDate?: string,
+    id?: string
+    pfcId?: string
+    validationType?: string
+    validated?: boolean
+    validatedDate?: string
     commentRef?: string
 }
 
+export interface FileInfo {
+    id?: string
+    fileName?: string
+    fileSize?: string
+}
+
 export interface ProposalFinanceModel {
-    id?: string,
-    promoterId?: string,
-    promoter?: PromoterModel,
-    partnerships?: Array<PartnershipModel>,
-    hasPartnerships?: boolean,
-    protocol?: ProtocolModel,
-    validations?: ValidationModel[],
-    file?: unknown
+    id?: string
+    promoterId?: string
+    promoter?: PromoterModel
+    partnerships?: Array<PartnershipModel>
+    hasPartnerships?: boolean
+    protocol?: ProtocolModel
+    validations?: ValidationModel[]
+    financialContract?: FileInfo
 }

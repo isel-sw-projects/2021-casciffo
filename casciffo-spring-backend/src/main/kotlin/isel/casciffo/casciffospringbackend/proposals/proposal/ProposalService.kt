@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
 import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,7 @@ interface ProposalService {
     suspend fun updateProposal(proposal: ProposalModel) : ProposalModel
     suspend fun deleteProposal(proposalId: Int): ProposalModel
     suspend fun validatePfc(proposalId: Int, pfcId: Int, validationComment: ValidationComment): ProposalValidationModel
-    suspend fun uploadCF(proposalId: Int, pfcId: Int, file: FilePart?)
+    suspend fun uploadCF(proposalId: Int, pfcId: Int, file: FilePart?): FileInfo
     suspend fun downloadCF(proposalId: Int, pfcId: Int): Path
     suspend fun transitionState(proposalId: Int, nextStateId: Int, request: ServerHttpRequest): ProposalModel
     suspend fun getProposalStats(): Flow<ProposalStats>

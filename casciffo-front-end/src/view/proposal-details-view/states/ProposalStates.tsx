@@ -1,12 +1,12 @@
 import {Button, ButtonGroup, Container, OverlayTrigger, Stack, ToggleButton, Tooltip} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import {MyUtil} from "../../common/MyUtil";
-import {StateModel} from "../../model/state/StateModel";
-import {TimelineEventModel} from "../../model/TimelineEventModel";
-import {StateTransitionModel} from "../../model/state/StateTransitionModel";
-import {StateFlowTypes} from "../../common/Constants";
-import {STATES} from "../../model/state/STATES";
-import {MyError} from "../error-view/MyError";
+import {MyUtil} from "../../../common/MyUtil";
+import {StateModel} from "../../../model/state/StateModel";
+import {TimelineEventModel} from "../../../model/TimelineEventModel";
+import {StateTransitionModel} from "../../../model/state/StateTransitionModel";
+import {StateFlowTypes} from "../../../common/Constants";
+import {STATES} from "../../../model/state/STATES";
+import {MyError} from "../../error-view/MyError";
 
 type StateProps = {
     onAdvanceClick: (currentId: string, currStateName: string, nextStateId:string) => void

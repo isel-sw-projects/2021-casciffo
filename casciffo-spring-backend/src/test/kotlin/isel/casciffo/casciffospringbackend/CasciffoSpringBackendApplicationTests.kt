@@ -331,8 +331,8 @@ class CasciffoSpringBackendApplicationTests(
     @Test
     fun testResearchRepositoryCreate() {
         val researchModel = ResearchModel(
-            null, 1, 1, "eudra_ct", 10, 20, "cro",
-            LocalDate.now(), null, null, industry = "industry", protocol =  "protocol",
+            id = null, proposalId = 1, stateId =  1, eudra_ct =  "eudra_ct", sampleSize = 20, duration = 10,cro = "cro",
+            startDate = LocalDate.now(), industry = "industry", protocol =  "protocol",
             initiativeBy = "promotor", phase = "1 | 4", type = ResearchType.CLINICAL_TRIAL
         )
         runBlocking {

@@ -1,9 +1,9 @@
 import {Button, Container, Form, FormControl, FormGroup, Table} from "react-bootstrap";
-import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
+import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
 import React, {useEffect, useState} from "react";
-import {CommentTypes} from "../../common/Constants";
-import {MyUtil} from "../../common/MyUtil";
-import {useUserAuthContext} from "../context/UserAuthContext";
+import {CommentTypes} from "../../../common/Constants";
+import {MyUtil} from "../../../common/MyUtil";
+import {useUserAuthContext} from "../../context/UserAuthContext";
 
 type PCT_Props = {
     comments: Array<ProposalCommentsModel>,

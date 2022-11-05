@@ -8,6 +8,7 @@ import isel.casciffo.casciffospringbackend.common.dateDiffInDays
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
@@ -148,10 +149,10 @@ class ProposalServiceImpl(
     }
 
     @Transactional
-    override suspend fun uploadCF(proposalId: Int, pfcId: Int, file: FilePart?) {
+    override suspend fun uploadCF(proposalId: Int, pfcId: Int, file: FilePart?): FileInfo {
         if(file == null)
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "File cannot be null!!")
-        proposalFinancialService.createCF(file, pfcId)
+        return proposalFinancialService.createCF(file, pfcId)
     }
 
     @Transactional
@@ -272,8 +273,9 @@ class ProposalServiceImpl(
 
     private suspend fun createResearch(proposal: ProposalModel) {
         val stateAtivo = stateService.findInitialStateByType(StateType.RESEARCH)
-        val researchModel = ResearchModel(proposalId = proposal.id, stateId = stateAtivo.id, type = proposal.type)
-        researchService.createResearch(researchModel)
+        var researchModel = ResearchModel(proposalId = proposal.id, stateId = stateAtivo.id, type = proposal.type)
+        researchModel = researchService.createResearch(researchModel)
+        proposal.researchId = researchModel.id!!
     }
 
     private fun filterEventsByState(state:String) = {

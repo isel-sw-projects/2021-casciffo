@@ -388,7 +388,7 @@ export function Dashboard(props: DashboardProps) {
         </Container>
 
         <Container>
-            <h5>Eventos esta semana</h5>
+            <h5>Eventos esta semana.</h5>
             <MyTable data={nearestEvents} columns={eventColumns}/>
         </Container>
 

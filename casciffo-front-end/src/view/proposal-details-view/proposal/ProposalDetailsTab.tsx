@@ -1,9 +1,10 @@
-import {ProposalModel} from "../../model/proposal/ProposalModel";
+import {ProposalModel} from "../../../model/proposal/ProposalModel";
 import {Button, Col, Container, Form, ListGroup, Row, Stack} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import {ResearchTypes} from "../../common/Constants";
+import {ResearchTypes} from "../../../common/Constants";
 import {useNavigate} from "react-router-dom";
-import {MyError} from "../error-view/MyError";
+import {MyError} from "../../error-view/MyError";
+import {BiRightArrow} from "react-icons/bi";
 
 type PDT_Props = { dataReady: boolean, proposal: ProposalModel }
 
@@ -152,12 +153,12 @@ export function ProposalDetailsTab(props: PDT_Props) {
                 : <span>A carregar dados...</span>
             }
         </Container>
-        {proposal && proposal.researchId
-            && <Button className={"mt-5 mt-md-5 mb-5 mb-md-5"} onClick={navigateToResearch}
-                       variant={"outline-primary"} style={{borderRadius: "8px", width:"100%"}}>
-                {proposal.type === ResearchTypes.CLINICAL_TRIAL.id
-                    ? "Ir para ensaio clínico"
-                    : "Ir para ensaio observacional"
+        {isDataReady && proposal!.researchId != null
+            && <Button className={"p-3 pe-5 ps-5 mt-5 mt-md-5 mb-5 mb-md-5 float-end"} onClick={navigateToResearch}
+                       variant={"outline-primary"} style={{borderRadius: "8px"}}>
+                {proposal!.type === ResearchTypes.CLINICAL_TRIAL.id
+                    ? <span> Ir para ensaio clínico <BiRightArrow/> </span>
+                    : <span> Ir para ensaio observacional <BiRightArrow/> </span>
                 }
             </Button>
         }

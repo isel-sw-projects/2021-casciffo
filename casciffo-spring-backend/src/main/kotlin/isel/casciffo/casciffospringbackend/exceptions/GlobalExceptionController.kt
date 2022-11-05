@@ -6,16 +6,19 @@ import org.springframework.core.annotation.Order
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.dao.DataAccessResourceFailureException
 import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.nio.charset.StandardCharsets
 
-@ControllerAdvice
-@Order(0)
+@RestControllerAdvice
+//@Order(0)
 class GlobalExceptionController: ErrorWebExceptionHandler {
 
     val logger = KotlinLogging.logger {  }
@@ -27,11 +30,16 @@ class GlobalExceptionController: ErrorWebExceptionHandler {
         println(rsp)
     }
 
+    @ExceptionHandler(ResponseStatusException::class)
+    fun handleResponseStatus(ex: ResponseStatusException, rsp: ServerHttpResponse): ResponseEntity<Any> {
+        return ResponseEntity.status(ex.status).body(ex.message)
+    }
+
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
         logger.error { "Handling error $ex" }
 
-        var body : String?
-        var status : HttpStatus
+        val body : String?
+        val status : HttpStatus
         when (ex) {
             is DataAccessResourceFailureException -> {
 //                handleDbFailedConnection(ex)
@@ -40,6 +48,10 @@ class GlobalExceptionController: ErrorWebExceptionHandler {
                         "\"reason\": \"Db Connection error\"," +
                         "\"status\": 500" +
                         "}"
+            }
+            is ResponseStatusException -> {
+                status = ex.status
+                body = ex.message
             }
             else -> {
                 status = HttpStatus.INTERNAL_SERVER_ERROR

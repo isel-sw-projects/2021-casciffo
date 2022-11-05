@@ -77,7 +77,7 @@ export function CreateProposal(props : CP_Props) {
         }
         if(proposalForm.researchType === ResearchTypes.CLINICAL_TRIAL.id) {
             model.financialComponent = {
-                file: undefined,
+                financialContract: undefined,
                 partnerships: proposalForm.partnerships,
                 hasPartnerships: hasPartnerships,
                 promoter: proposalForm.promoter,

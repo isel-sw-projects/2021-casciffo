@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 class ProtocolController(
-    @Autowired val protocolService: ProtocolService,
-    @Autowired val aggregateMapper: Mapper<ProtocolAggregate, ProtocolDTO>,
-    @Autowired val dtoMapper: Mapper<ProposalProtocol, ProtocolDTO>
+    @Autowired val protocolService: ProtocolService
 ) {
 
     @GetMapping(PROPOSAL_PROTOCOL_URL)

@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.proposals.proposal
 import isel.casciffo.casciffospringbackend.common.FILE_NAME_HEADER
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import org.springframework.core.io.InputStreamResource
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.http.ContentDisposition
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
@@ -115,9 +117,9 @@ class ProposalController(
         @PathVariable proposalId: Int,
         @PathVariable pfcId: Int,
         @RequestPart("file") filePart: Mono<FilePart>
-    ): ResponseEntity<Void> {
-        service.uploadCF(proposalId, pfcId, filePart.awaitSingleOrNull())
-        return ResponseEntity.ok().build()
+    ): ResponseEntity<FileInfo> {
+        val fileInfo = service.uploadCF(proposalId, pfcId, filePart.awaitSingleOrNull())
+        return ResponseEntity.status(HttpStatus.CREATED).body(fileInfo)
     }
 
     //inspired by https://github.com/barlog-m/spring-webflux-file-upload-download-example

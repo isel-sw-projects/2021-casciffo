@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS proposal_files (
     file_id INT,
     CONSTRAINT fk_proposal_id FOREIGN KEY(proposal_id)
         REFERENCES proposal(proposal_id) ON DELETE CASCADE,
-    CONSTRAINT fk_file_id FOREIGN KEY(file_id) REFERENCES files(file_id)
+    CONSTRAINT fk_file_id FOREIGN KEY(file_id) REFERENCES files(file_id) ON DELETE CASCADE
 );
 
 

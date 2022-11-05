@@ -1,16 +1,17 @@
 import React, {useEffect, useState} from "react";
-import {ProposalFinanceModel} from "../../model/proposal/finance/ProposalFinanceModel";
-import {ProposalCommentsModel} from "../../model/proposal/ProposalCommentsModel";
-import {Button, Container, Form} from "react-bootstrap";
-import {DepartmentTypes} from "../../common/Constants";
+import {ProposalFinanceModel} from "../../../model/proposal/finance/ProposalFinanceModel";
+import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
+import {Button, Container, Form, Stack} from "react-bootstrap";
+import {DepartmentTypes} from "../../../common/Constants";
 import {ColumnDef} from "@tanstack/react-table";
-import {ValidationCommentDTO, ValidityComment} from "../../model/proposal/finance/ValidationModels";
-import {MyTable} from "../components/MyTable";
-import {ValidationComment} from "./ValidationComment";
-import {MyUtil} from "../../common/MyUtil";
+import {ValidationCommentDTO, ValidityComment} from "../../../model/proposal/finance/ValidationModels";
+import {MyTable} from "../../components/MyTable";
+import {ValidationComment} from "../comments/ValidationComment";
+import {MyUtil} from "../../../common/MyUtil";
 import {BiCheckboxChecked, BiCheckboxMinus} from "react-icons/bi";
-import {useUserAuthContext} from "../context/UserAuthContext";
-import {Roles} from "../../model/role/Roles";
+import {useUserAuthContext} from "../../context/UserAuthContext";
+import {Roles} from "../../../model/role/Roles";
+import {BsDownload} from "react-icons/bs";
 
 
 type PfcProps = {
@@ -132,11 +133,10 @@ export function ProposalFinancialContractTab(props: PfcProps) {
         depSelected === DepartmentTypes.ALL.id || c.comment!.commentType === depSelected;
 
     const onSubmitValidation = (c: ValidationCommentDTO) => {
-        // console.log(c)
         props.onSubmitValidationComment(c, c.validation!.validationType!)
     }
 
-    const [cfFile, setCfFile] = useState<File>()
+    const [cfFile, setCfFile] = useState<File | null>()
 
     const handleFileInput = (e: any) => {
         if(e.target.files === null) {
@@ -148,7 +148,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
 
         if(file === null) {
             //TODO put a good looking alert here
-            alert("Falha ao carregar ficheiro, por favor tente de novo.")
+            alert("Ocorreu uma falha ao carregar ficheiro, por favor tente de novo.")
             // showErrorMessage("Falha ao carregar ficheiro, por favor tente de novo.");
             return;
         }
@@ -163,6 +163,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
             return
         }
         props.uploadCf(cfFile)
+        setCfFile(null)
         setIsEditing(false)
     }
 
@@ -205,7 +206,15 @@ export function ProposalFinancialContractTab(props: PfcProps) {
                     <Button className={"mt-3"} type={"submit"}>Submeter</Button>
                 </Form>
                 :
-                <Button className={"m-2 m-md-10 p-2 p-md-2"} variant={"outline-primary"} onClick={downloadCf}>Descarregar contrato financeiro</Button>
+                <Button
+                    className={"m-2 m-md-10 p-2 p-md-2"}
+                    variant={"link"}
+                    onClick={downloadCf}>
+                    <Stack direction={"horizontal"} gap={3}>
+                        <BsDownload size={10000}/>
+                        {props.pfc.financialContract!.fileName!.substring(0, props.pfc.financialContract!.fileName!.lastIndexOf('-'))}
+                    </Stack>
+                </Button>
             }
 
             <div className={"border-top border-2 "} style={{display: display}}>

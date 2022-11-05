@@ -1,8 +1,8 @@
 import {useParams} from "react-router-dom";
-import {ValidationCommentDTO} from "../../model/proposal/finance/ValidationModels";
+import {ValidationCommentDTO} from "../../../model/proposal/finance/ValidationModels";
 import React, {FormEvent, useEffect, useState} from "react";
 import {Button, CloseButton, Form} from "react-bootstrap";
-import {useUserAuthContext} from "../context/UserAuthContext";
+import {useUserAuthContext} from "../../context/UserAuthContext";
 
 type ValidationCommentProps = {
     displayForm: boolean,
@@ -58,14 +58,19 @@ export function ValidationComment(props: ValidationCommentProps) {
         setIsValidated(props.isValidated)
     }, [props.isValidated])
 
+    const updateCommentCheck = (e:any) => {
+        const key = e.target.name as keyof ValidationCommentDTO
+        const value = e.target.checked
+
+        setComment(prevState => ({
+            ...prevState,
+            [key]: value
+        }))
+    }
+
     const updateComment = (e: any) => {
         const key = e.target.name as keyof ValidationCommentDTO
-        let value: unknown;
-
-        if (e.target.name === "validated")
-            value = e.target.checked
-        else
-            value = e.target.value
+        const value = e.target.value
 
         setComment(prevState => ({
             ...prevState,
@@ -138,7 +143,7 @@ export function ValidationComment(props: ValidationCommentProps) {
                     type={"checkbox"}
                     name={"newValidation"}
                     checked={comment.newValidation}
-                    onChange={updateComment}
+                    onChange={updateCommentCheck}
                     label={"Revalidar?"}
                     style={{display: isValidated && comment.validation!.validated ? "inherit" : "none"}}
                 />

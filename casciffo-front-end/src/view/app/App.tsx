@@ -21,7 +21,7 @@ import {Users} from "../users-view/Users";
 import {Proposals} from "../proposals-view/Proposals";
 import ProposalService from "../../services/ProposalService";
 import RequiresAuth from "../login-view/RequiresAuth";
-import {ProposalDetailsPage} from "../proposal-details-view/ProposalDetailsPage";
+import {ProposalDetailsPage} from "../proposal-details-view/proposal/ProposalDetailsPage";
 import {ResearchAggregateService} from "../../services/ResearchAggregateService";
 import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 import {Logout} from "../login-view/Logout";

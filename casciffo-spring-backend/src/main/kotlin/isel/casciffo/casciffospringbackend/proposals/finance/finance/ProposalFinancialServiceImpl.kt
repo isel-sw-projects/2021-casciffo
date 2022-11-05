@@ -98,20 +98,29 @@ class ProposalFinancialServiceImpl(
         return loadRelations(component, loadProtocol)
     }
 
-    override suspend fun createCF(file: FilePart, pfcId: Int) {
+    override suspend fun createCF(file: FilePart, pfcId: Int): FileInfo {
         val pfc = proposalFinancialRepository.findById(pfcId).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component $pfcId doesn't exist!!!")
+        val fileIdToDelete = pfc.financialContractId!!
+
+        //create and store new file
         val path = FILES_DIR(file.filename())
         val getFileInfo = { FileInfo(fileName = path.name, filePath = path.pathString, fileSize = path.fileSize())}
-
+        //store file locally
         file.transferTo(path).awaitSingleOrNull()
-        fileInfoRepository.deleteByPFCId(pfcId).awaitSingleOrNull()
+        //save file information in db
         val fileInfo = fileInfoRepository.save(getFileInfo()).awaitSingle()
 
+        //update pfc with new id
         pfc.financialContractId = fileInfo.id
         proposalFinancialRepository.save(pfc).awaitSingle()
 
+        //delete old file
+        fileInfoRepository.deleteById(fileIdToDelete).awaitSingleOrNull()
+
+        logger.info { "File with Id $fileIdToDelete deleted." }
         logger.info { "File created at ${fileInfo.filePath}" }
+        return fileInfo
     }
 
     override suspend fun getCF(pfcId: Int): Path {
