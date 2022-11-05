@@ -9,6 +9,7 @@ import {Roles} from "../../model/role/Roles";
 import {FaUser} from "react-icons/fa";
 // import {GiExitDoor} from "react-icons/gi";
 import {BsDoorOpen} from "react-icons/bs";
+import {GiExitDoor} from "react-icons/gi";
 import {StatisticsService} from "../../services/StatisticsService";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import {UserService} from "../../services/UserService";
@@ -77,8 +78,8 @@ function NavigationBar() {
                     </Col>
                     <Col>
                         <div className={"text-center"}>
-                            {userToken != null ? "Door closed"
-                                // <GiExitDoor size={20} color={"#f3ffff"} />
+                            {userToken != null ?
+                                <GiExitDoor size={20} color={"#f3ffff"} />
                                 :
                                 <BsDoorOpen size={20} color={"#f3ffff"} />
                             }
