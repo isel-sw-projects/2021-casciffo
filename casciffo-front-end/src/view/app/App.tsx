@@ -7,7 +7,7 @@ import {BrowserRouter, Link, Route, Routes, useLocation, useNavigate} from "reac
 import {useUserAuthContext} from '../context/UserAuthContext';
 import {Roles} from "../../model/role/Roles";
 import {FaUser} from "react-icons/fa";
-import {GiExitDoor} from "react-icons/gi";
+// import {GiExitDoor} from "react-icons/gi";
 import {BsDoorOpen} from "react-icons/bs";
 import {StatisticsService} from "../../services/StatisticsService";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
@@ -77,8 +77,8 @@ function NavigationBar() {
                     </Col>
                     <Col>
                         <div className={"text-center"}>
-                            {userToken != null ?
-                                <GiExitDoor size={20} color={"#f3ffff"} />
+                            {userToken != null ? "Door closed"
+                                // <GiExitDoor size={20} color={"#f3ffff"} />
                                 :
                                 <BsDoorOpen size={20} color={"#f3ffff"} />
                             }

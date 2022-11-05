@@ -125,7 +125,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         }
 
         props.proposalService.fetchProposalById(proposalId!)
-            .then(log)
             .then(setProposalAndGetItsType)
             .then(fetchStates)
             .then(() => setDataReady(true))
@@ -221,12 +220,11 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     const uploadCf = async (file: File) => {
         await props.proposalService
             .saveFinancialContract(proposalId!, proposal.financialComponent!.id!, file)
-            .then(log)
-            .then(fileInfo => setProposal(prevState => ({
+            .then(rsp => setProposal(prevState => ({
                 ...prevState,
                 financialComponent: {
                     ...prevState.financialComponent,
-                    financialContract: fileInfo
+                    financialContract: rsp.data
                 }})))
     }
 

@@ -5,6 +5,16 @@ import {TherapeuticAreaModel} from "../model/proposal-constants/TherapeuticAreaM
 import {PromoterModel} from "../model/proposal/finance/PromoterModel";
 import {PartnershipModel} from "../model/PartnershipModel";
 import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
+import {AxiosHeaders} from "axios";
+
+type AxiosResponseBody = {
+    data: any
+    config: any
+    headers: AxiosHeaders
+    request: XMLHttpRequest
+    status: number
+    statusText: string
+}
 
 type Page = {
     pageNum: number,
@@ -72,6 +82,7 @@ type KeyValuePair<K, V> = {
 }
 
 export type {
+    AxiosResponseBody,
     Page, ResearchType, Investigator,
     Constants, Filter, ProposalForm, Promoter,
     UserToken, GeneralError, KeyValuePair

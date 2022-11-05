@@ -8,10 +8,11 @@ import {
     ValidityComment,
     ProposalValidation
 } from "../model/proposal/finance/ValidationModels";
-import {httpGet, httpGetFile, httpPost, httpPostFormFile, httpPut} from "../common/MyUtil";
+import {httpGet, httpGetFile, httpPost, axiosPostFormFile, httpPut} from "../common/MyUtil";
 import {StateModel} from "../model/state/StateModel";
 import {log} from "util";
 import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
+import {AxiosResponseBody} from "../common/Types";
 
 
 class ProposalService {
@@ -123,9 +124,9 @@ class ProposalService {
         return httpPut(url, validationComment)
     }
 
-    uploadFinancialContract(pId: string, pfcId: string, file: File): Promise<FileInfo> {
+    uploadFinancialContract(pId: string, pfcId: string, file: File): Promise<AxiosResponseBody> {
         const url = ApiUrls.proposalUploadCF(pId, pfcId)
-        return httpPostFormFile(url, file)
+        return axiosPostFormFile(url, file)
     }
 
     downloadFinancialContract(pId: string, pfcId: string): Promise<void> {

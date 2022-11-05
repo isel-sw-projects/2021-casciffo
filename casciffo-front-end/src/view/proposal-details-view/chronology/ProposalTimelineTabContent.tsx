@@ -44,7 +44,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
         if(sortedEvents.length > 2) {
             setDateInterval({
                 start: MyUtil.formatDate(sortedEvents[0].deadlineDate!),
-                end: MyUtil.formatDate(sortedEvents[sortedEvents.length - 1].deadlineDate!)
+                end: MyUtil.formatDate(sortedEvents[sortedEvents.length - 1].deadlineDate!),
+                hasBeenSet: true
             })
         }
     }, [proposalId, props.timelineEvents])
@@ -115,6 +116,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     //     if(showForm)
     // }
     const isBetweenDateInterval = (e: TimelineEventModel): boolean => {
+        if(!dateInterval.hasBeenSet) return true
         return (MyUtil.cmp(dateInterval.start, e.deadlineDate) <= 0
             && MyUtil.cmp(dateInterval.end, e.deadlineDate) >= 0)
     }
@@ -122,11 +124,18 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     function mapToChronoItem(): ChronoItemType[] {
 
         function filterEventsByTypeAndDate(e: TimelineEventModel) {
+            console.log(e)
+            console.log("isBetweenDateInterval(e): ",isBetweenDateInterval(e))
+            console.log("filterByEventType(e): ",filterByEventType(e))
             return  isBetweenDateInterval(e) && filterByEventType(e);
         }
 
         return timelineEvents
             .filter(filterEventsByTypeAndDate)
+            .map(value => {
+                console.log(`filtered event ${value}`)
+                return value
+            })
             .map(event => ({
                 title: MyUtil.formatDateWithMonthName(event.deadlineDate!),
                 cardTitle: event.eventName,
@@ -142,15 +151,17 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     type DateInterval = {
         start: string,
         end: string
+        hasBeenSet: boolean
     }
 
-    const [dateInterval, setDateInterval] = useState<DateInterval>({start:"", end:""})
+    const [dateInterval, setDateInterval] = useState<DateInterval>({start:"", end:"", hasBeenSet: false})
 
     function onChangeDateInterval(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const key = e.target.name as keyof DateInterval
         setDateInterval(prevState => ({
             ...prevState,
-            [key]: e.target.value
+            [key]: e.target.value,
+            hasBeenSet: true
         }))
     }
 
@@ -159,59 +170,61 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     return (
         <React.Fragment>
             {hasEvents ?
-                <Row>
-                    <div style={{width: "30%", height:"auto", paddingTop: "4rem"}}>
-                        <Form.Group className={"mb-4"} style={{position:"relative"}}>
-                            <Stack direction={"horizontal"} gap={3}>
-                                <Form.Label>A visualizar</Form.Label>
-                                <Form.Select
-                                    style={{width:"60%"}}
-                                    key={"event-type-id"}
-                                    required
-                                    aria-label="event type selection"
-                                    name={"eventType"}
-                                    defaultValue={EventTypes.ALL.id}
-                                    onChange={handleEventTypeChange}
-                                >
-                                    {Object.values(EventTypes).map((rt) => (
-                                        <option key={rt.id} value={rt.id}>{rt.name}</option>
-                                    ))}
-                                </Form.Select>
+                <Row style={{height:"auto", paddingTop: "4rem"}}>
+                        <Col>
+                            <Form.Group className={"mb-4"} style={{position:"relative"}}>
+                                <Stack direction={"horizontal"} gap={3}>
+                                    <Form.Label>A visualizar</Form.Label>
+                                    <Form.Select
+                                        style={{width:"60%"}}
+                                        key={"event-type-id"}
+                                        required
+                                        aria-label="event type selection"
+                                        name={"eventType"}
+                                        defaultValue={EventTypes.ALL.id}
+                                        onChange={handleEventTypeChange}
+                                    >
+                                        {Object.values(EventTypes).map((rt) => (
+                                            <option key={rt.id} value={rt.id}>{rt.name}</option>
+                                        ))}
+                                    </Form.Select>
+                                </Stack>
+                            </Form.Group>
+                        </Col>
+                        <Col/>
+                        <Col>
+                            <Form.Label className={"capitalize"}>Pesquisa entre datas</Form.Label>
+                            <Stack direction={"horizontal"} gap={4}>
+                                <div style={{width:"40%"}}>
+                                    <Form.Group>
+                                        <Form.Label>De</Form.Label>
+                                        <Form.Control
+                                            required
+                                            type={"date"}
+                                            name={"start"}
+                                            value={dateInterval.start}
+                                            onChange={onChangeDateInterval}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <div style={{width:"40%"}}>
+                                    <Form.Group>
+                                        <Form.Label>Até</Form.Label>
+                                        <Form.Control
+                                            required
+                                            type={"date"}
+                                            name={"end"}
+                                            value={dateInterval.end}
+                                            onChange={onChangeDateInterval}
+                                        />
+                                    </Form.Group>
+                                </div>
                             </Stack>
-                        </Form.Group>
+                        </Col>
 
-                        <Form.Label className={"capitalize"}>Pesquisa entre datas</Form.Label>
-                        <Stack direction={"horizontal"} gap={4}>
-                            <div style={{width:"40%"}}>
-                                <Form.Group>
-                                    <Form.Label>De</Form.Label>
-                                    <Form.Control
-                                        required
-                                        type={"date"}
-                                        name={"start"}
-                                        value={dateInterval.start}
-                                        onChange={onChangeDateInterval}
-                                    />
-                                </Form.Group>
-                            </div>
-                            <div style={{width:"40%"}}>
-                                <Form.Group>
-                                    <Form.Label>Até</Form.Label>
-                                    <Form.Control
-                                        required
-                                        type={"date"}
-                                        name={"end"}
-                                        value={dateInterval.end}
-                                        onChange={onChangeDateInterval}
-                                    />
-                                </Form.Group>
-                            </div>
-                        </Stack>
-                    </div>
-
-                    <div style={{ width: "70%", height: "300px" }}>
+                    <div style={{ height: "300px" }}>
                         <Chrono
-                            disableAutoScrollOnClick cardHeight={100} allowDynamicUpdate cardPositionHorizontal={"TOP"}
+                            disableAutoScrollOnClick cardHeight={80} allowDynamicUpdate cardPositionHorizontal={"TOP"}
                             useReadMore
                             items={mapToChronoItem()}
                             mode={"HORIZONTAL"}

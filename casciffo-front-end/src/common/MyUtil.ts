@@ -201,16 +201,21 @@ export function httpPut<T>(url: string, body: unknown = null): Promise<T> {
     return _httpFetch(url, 'PUT', [HEADER_CONTENT_TYPE], body)
 }
 
-export function httpPostFormFile(url: string, file: File): Promise<FileInfo> {
+export function axiosPostFormFile<T>(url: string, file: File): Promise<T> {
     const token = localStorage.getItem(TOKEN_KEY)
-    const headers: AxiosRequestHeaders = {'Content-type': 'multipart/form-data'}
+    let reqHeaders
     if(token != null) {
         const userToken = JSON.parse(token) as UserToken
-        headers['Authorization'] = `Bearer ${userToken?.token}`
+        reqHeaders = {
+            'Content-Type': 'multipart/form-data',
+            'Authorization' : `Bearer ${userToken?.token}`
+        }
+    } else {
+        reqHeaders = {'Content-Type': 'multipart/form-data'}
     }
     const formData = new FormData()
     formData.append('file', file)
-    return axios.postForm(url, formData, {headers: headers})
+    return axios.postForm(url, formData, {headers: reqHeaders})
 }
 
 export function httpGetFile(url: string): Promise<void> {

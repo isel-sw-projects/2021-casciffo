@@ -157,7 +157,6 @@ export function ProposalFinancialContractTab(props: PfcProps) {
 
     const handleCFSubmission = (e: any) => {
         e.preventDefault()
-        // console.log(e)
         if(cfFile == null) {
             alert("Nenhum ficheiro carregado.")
             return

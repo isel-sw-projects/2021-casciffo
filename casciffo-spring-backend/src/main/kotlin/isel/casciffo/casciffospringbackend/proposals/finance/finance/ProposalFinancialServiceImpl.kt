@@ -24,7 +24,9 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.fileSize
@@ -101,7 +103,11 @@ class ProposalFinancialServiceImpl(
     override suspend fun createCF(file: FilePart, pfcId: Int): FileInfo {
         val pfc = proposalFinancialRepository.findById(pfcId).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component $pfcId doesn't exist!!!")
-        val fileIdToDelete = pfc.financialContractId!!
+        val fileToDelete = fileInfoRepository.findById(pfc.financialContractId!!).awaitSingleOrNull()
+            ?: throw ResponseStatusException(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "Financial component doesn't have an associated file id!"
+            )
 
         //create and store new file
         val path = FILES_DIR(file.filename())
@@ -116,9 +122,15 @@ class ProposalFinancialServiceImpl(
         proposalFinancialRepository.save(pfc).awaitSingle()
 
         //delete old file
-        fileInfoRepository.deleteById(fileIdToDelete).awaitSingleOrNull()
+        fileInfoRepository.deleteById(fileToDelete.id!!).awaitSingleOrNull()
 
-        logger.info { "File with Id $fileIdToDelete deleted." }
+        //FIXME MAYBE ADD A THREADPOOL TO CLEAN UP THE SYSTEM
+        // MAYBE EVEN ANOTHER APP THAT CONNECTS TO A DATABASE THAT STORES THE DELETED FILES AND
+        // RUNS EVERY 30 MIN TO CLEAN UP FILES
+        (Thread({ Files.deleteIfExists(Paths.get(fileToDelete.filePath!!)) })).start()
+
+
+        logger.info { "File ${fileToDelete.fileName} with Id ${fileToDelete.id!!} deleted." }
         logger.info { "File created at ${fileInfo.filePath}" }
         return fileInfo
     }
