@@ -1,6 +1,7 @@
 import {GenericError} from "./GenericError";
 import {useUserAuthContext} from "../context/UserAuthContext";
 import {useEffect, useState} from "react";
+import img from "../../assets/images/samples/error-403.png";
 
 export function Error401(props: {reason: string | undefined}) {
 
@@ -20,7 +21,7 @@ export function Error401(props: {reason: string | undefined}) {
         <GenericError
             title={"Unauthorized"}
             reason={reason}
-            imgSrc={"../../assets/images/samples/error-403.svg"}
+            imgSrc={img}
             alt={"Unauthorized"}
             requiresAuth
         />

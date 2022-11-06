@@ -48,7 +48,6 @@ function NavigationBar(props: {notificationService: NotificationService}) {
         if(userToken == null) return
         const interval = setInterval(() => {
             console.log("Checking for new notifications...")
-            setNotificationCount(prevState => prevState+1)
             props.notificationService
                 .checkForNewNotifications(userToken!.userId!)
                 .then(value => {console.log(`Found ${value} new notifications.`); return value;})
@@ -64,21 +63,22 @@ function NavigationBar(props: {notificationService: NotificationService}) {
             <Navbar.Collapse>
                 <Navbar.Brand as={Link} to={"/"}>Casciffo</Navbar.Brand>
                 <Nav className="me-auto">
-                    <Nav.Item>
-                        <Nav.Link eventKey="1" as={Link} to={"/"}>Dashboard</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        <Nav.Link eventKey="4" as={Link} to={"/propostas"}>Propostas</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                        <Nav.Link eventKey="5" as={Link} to={"/ensaios"}>Ensaios Clínicos</Nav.Link>
-                    </Nav.Item>
-                    {
-                        userToken && userToken.roles.find(r => r === Roles.SUPERUSER.id) &&
+                    { userToken && <>
+                        <Nav.Item>
+                            <Nav.Link eventKey="1" as={Link} to={"/"}>Dashboard</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="4" as={Link} to={"/propostas"}>Propostas</Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item>
+                            <Nav.Link eventKey="5" as={Link} to={"/ensaios"}>Ensaios Clínicos</Nav.Link>
+                        </Nav.Item>
+
+                        {userToken.roles.find(r => r === Roles.SUPERUSER.id) &&
                         <Nav.Item>
                             <Nav.Link eventKey="6" as={Link} to={"/utilizadores"}>Utilizadores</Nav.Link>
                         </Nav.Item>
-                    }
+                    } </>}
                     {/*<Nav.Item className={"float-end"}>*/}
                     {/*    {userToken != null ?*/}
                     {/*        <Nav.Link eventKey="2" as={Link} to={"/logout"} onClick={logout}>Logout</Nav.Link>*/}
@@ -143,7 +143,8 @@ function CreateRoutes() {
 
     return (
         <Routes>
-            <Route path={"/"} element={<Dashboard statisticsService={new StatisticsService()}/>}/>
+            {/*<Route path={"/"} element={<Homepage/>}/>*/}
+            <Route path={"/"} element={RequiresAuth(<Dashboard statisticsService={new StatisticsService()}/>)}/>
             <Route path={"/login"} element={<Login UserService={new UserService()}/>}/>
             <Route path={"/logout"} element={<Logout/>}/>
             <Route path={"/propostas"}

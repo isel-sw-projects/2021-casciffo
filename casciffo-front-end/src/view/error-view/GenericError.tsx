@@ -1,5 +1,5 @@
 import {Link, useNavigate} from "react-router-dom";
-import {Button, Stack} from "react-bootstrap";
+import {Button, Row, Stack} from "react-bootstrap";
 
 type ErrorProps = {
     title: string,
@@ -24,16 +24,20 @@ export function GenericError(props: ErrorProps) {
             <div className="error-page container">
                 <div className="col-md-8 col-12 offset-md-2">
                     <div className="text-center">
-                        {props.imgSrc && <img className="img-error" src={props.imgSrc} alt={props.alt}/>}
-                        <h1 className="error-title">{props.title}</h1>
+                        {props.imgSrc && <img
+                            className="img-error"
+                            src={props.imgSrc}
+                            height={"300"}
+                            width={"500"}
+                            alt={props.alt}/>}
+                        <h1 className="mt-3 error-title">{props.title}</h1>
                         <p className="fs-5 text-gray-600">{props.reason}</p>
-                        <Stack direction={"horizontal"} className={"text-center align-contents-center"} gap={3}>
-                            <a href={"/"} className="btn btn-lg btn-outline-primary m-3">Ir para Dashboard</a>
-                            {/*<a className="btn btn-lg btn-outline-primary m-3" onClick={goBack}>Voltar ao ecrã anterior</a>*/}
-                            {props.requiresAuth &&
-                                <a href={"/login"} className="btn btn-lg btn-outline-primary m-3">Login</a>
-                            }
-                        </Stack>
+                        <a href={"/"} className="btn btn-lg btn-outline-primary m-3 mt-3">Voltar para Início</a>
+                        {/*<a className="btn btn-lg btn-outline-primary m-3" onClick={goBack}>Voltar ao ecrã anterior</a>*/}
+                        {props.requiresAuth &&
+                            <a href={"/login"} className="btn btn-lg btn-outline-primary m-3 mt-3">Login</a>
+                        }
+
                     </div>
                 </div>
             </div>
