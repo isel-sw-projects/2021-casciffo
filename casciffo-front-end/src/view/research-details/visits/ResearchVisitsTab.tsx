@@ -12,7 +12,7 @@ import {useParams} from "react-router-dom";
 import {Button, Col, Container, Dropdown, Form, FormGroup, ListGroup, Row, Stack} from "react-bootstrap";
 import {SearchComponent} from "../../components/SearchComponent";
 import {MyTable} from "../../components/MyTable";
-import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
+import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 import UserModel from "../../../model/user/UserModel";
 import Select, {SingleValue} from "react-select";
 

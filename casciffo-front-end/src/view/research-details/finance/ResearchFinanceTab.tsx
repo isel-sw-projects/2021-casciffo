@@ -12,7 +12,7 @@ import {FormInputHelper} from "../../components/FormInputHelper";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {Roles} from "../../../model/role/Roles";
 import {useParams} from "react-router-dom";
-import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
+import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 
 type ResearchFinanceProps = {
     researchService: ResearchAggregateService

@@ -4,7 +4,7 @@ import {ColumnDef} from "@tanstack/react-table";
 import {MyTable} from "../../components/MyTable";
 import {Button, Col, Container, Form, Stack} from "react-bootstrap";
 import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
-import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
+import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 import {TypeOfMonetaryFlows} from "../../../common/Constants";
 
 type MyProps = {

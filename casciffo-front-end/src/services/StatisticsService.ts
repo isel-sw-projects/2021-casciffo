@@ -1,6 +1,6 @@
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import {ResearchAggregateModel} from "../model/research/ResearchModel";
-import {TimelineEventModel} from "../model/TimelineEventModel";
+import {TimelineEventModel} from "../model/proposal/TimelineEventModel";
 import ApiUrls from "../common/Links";
 import {httpGet} from "../common/MyUtil";
 

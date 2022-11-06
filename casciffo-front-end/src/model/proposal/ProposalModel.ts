@@ -5,10 +5,10 @@ import {PathologyModel} from "../proposal-constants/PathologyModel";
 import UserModel from "../user/UserModel";
 import {ProposalFinanceModel} from "./finance/ProposalFinanceModel";
 import {Investigator} from "../../common/Types";
-import {TeamInvestigatorModel} from "../TeamInvestigatorModel";
+import {TeamInvestigatorModel} from "../user/TeamInvestigatorModel";
 import {StateTransitionModel} from "../state/StateTransitionModel";
 import {ProposalCommentsModel} from "./ProposalCommentsModel";
-import {TimelineEventModel} from "../TimelineEventModel";
+import {TimelineEventModel} from "./TimelineEventModel";
 
 export interface ProposalModel {
     id?: number,

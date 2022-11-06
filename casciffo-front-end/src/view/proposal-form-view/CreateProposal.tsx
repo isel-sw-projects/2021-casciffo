@@ -10,7 +10,7 @@ import {PartnershipsColumn} from "./ParternershipsColumn";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import {ProposalFormColumn} from "./ProposalFormColumn";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
-import {PartnershipModel} from "../../model/PartnershipModel";
+import {PartnershipModel} from "../../model/proposal/finance/PartnershipModel";
 import {useNavigate} from "react-router-dom";
 import {ResearchTypes, TeamRoleTypes} from "../../common/Constants";
 import {MyUtil} from "../../common/MyUtil";
@@ -106,7 +106,6 @@ export function CreateProposal(props : CP_Props) {
     }
 
     return (
-        //TODO ADD FLOATING LABEL TO LOOK COOL
         <div className={"d-flex justify-content-evenly m-3"}>
             <Row>
                 <ProposalFormColumn

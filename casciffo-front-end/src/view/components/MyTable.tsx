@@ -9,7 +9,7 @@ import {
     SortingState,
     useReactTable
 } from "@tanstack/react-table";
-import { Table as RBTable } from "react-bootstrap";
+import {Spinner, Table as RBTable} from "react-bootstrap";
 
 type TableProps = {
     data: any[],
@@ -18,6 +18,7 @@ type TableProps = {
     withCheckbox?: boolean
     getCheckedRows?: (data: any[]) => void
     loading?: boolean
+    emptyDataPlaceholder?: JSX.Element | string
 }
 
 export function MyTable(props: TableProps) {
@@ -81,26 +82,31 @@ export function MyTable(props: TableProps) {
                 </thead>
                 <tbody>
                 {props.loading
-                    ? <tr key={"empty"}>A carregar dados...</tr>
+                    ? <tr key={"empty"}><span><Spinner as={"span"} animation={"border"}/> A carregar dados...</span></tr>
                     : table
                         .getRowModel()
-                        .rows.slice(0, 10)
-                        .map(row => {
-                            return (
-                                <tr key={row.id}>
-                                    {row.getVisibleCells().map(cell => {
-                                        return (
-                                            <td key={cell.id}>
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </td>
-                                        )
-                                    })}
-                                </tr>
-                            )
-                        })
+                        .rows.length === 0
+                        ? <tr key={"no-values"}>{props.emptyDataPlaceholder ?? "Sem dados."}</tr>
+                        : table
+                            .getRowModel()
+                            .rows.slice(0, 10)
+                            .map(row => {
+                                console.log(row)
+                                return (
+                                    <tr key={row.id}>
+                                        {row.getVisibleCells().map(cell => {
+                                            return (
+                                                <td key={cell.id}>
+                                                    {flexRender(
+                                                        cell.column.columnDef.cell,
+                                                        cell.getContext()
+                                                    )}
+                                                </td>
+                                            )
+                                        })}
+                                    </tr>
+                                )
+                            })
                 }
                 </tbody>
             </RBTable>

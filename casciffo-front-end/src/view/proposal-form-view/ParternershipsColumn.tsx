@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Badge, Button, Card, CloseButton, Col, Container, Form} from "react-bootstrap";
-import {PartnershipModel} from "../../model/PartnershipModel";
+import {PartnershipModel} from "../../model/proposal/finance/PartnershipModel";
 
 
 type PsC_Props = {

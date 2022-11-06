@@ -1,7 +1,7 @@
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import ApiUrls from "../common/Links";
 import {PromoterTypes, ResearchTypes, StateChainTypes, TOKEN_KEY} from "../common/Constants";
-import {TimelineEventModel} from "../model/TimelineEventModel";
+import {TimelineEventModel} from "../model/proposal/TimelineEventModel";
 import {ProtocolAggregateDTO, ProtocolModel} from "../model/proposal/finance/ProtocolModel";
 import {
     ValidationCommentDTO,

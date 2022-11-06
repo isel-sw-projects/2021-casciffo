@@ -3,7 +3,7 @@ import {PathologyModel} from "../model/proposal-constants/PathologyModel";
 import {ServiceTypeModel} from "../model/proposal-constants/ServiceTypeModel";
 import {TherapeuticAreaModel} from "../model/proposal-constants/TherapeuticAreaModel";
 import {PromoterModel} from "../model/proposal/finance/PromoterModel";
-import {PartnershipModel} from "../model/PartnershipModel";
+import {PartnershipModel} from "../model/proposal/finance/PartnershipModel";
 import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
 import {AxiosHeaders} from "axios";
 

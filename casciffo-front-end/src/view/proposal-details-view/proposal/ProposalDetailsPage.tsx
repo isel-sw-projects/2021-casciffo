@@ -8,7 +8,7 @@ import {
     Container,
     Form,
     ListGroup,
-    Row,
+    Row, Spinner,
     Stack,
     Tab,
     Tabs,
@@ -24,7 +24,7 @@ import {CommentTypes, ResearchTypes, TAB_PARAMETER, TOKEN_KEY} from "../../../co
 import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
 import {ProposalTimelineTabContent} from "../chronology/ProposalTimelineTabContent";
 import {PartnershipsTabContent} from "../partnerships/PartnershipsTabContent";
-import {TimelineEventModel} from "../../../model/TimelineEventModel";
+import {TimelineEventModel} from "../../../model/proposal/TimelineEventModel";
 import React from "react";
 import {ProposalStateView} from "../states/ProposalStates";
 import {StateModel} from "../../../model/state/StateModel";
@@ -247,15 +247,17 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     className="mb-3 justify-content-evenly"
                 >
                     <Tab eventKey={TabNames.proposal} title="Proposta">
-                        {isStatesReady && isDataReady && <ProposalStateView
-                            isProtocolValidated={proposal.financialComponent?.protocol?.validated}
-                            onAdvanceClick={advanceState}
-                            currentStateId={proposal.stateId!}
-                            timelineEvents={proposal.timelineEvents || []}
-                            stateTransitions={proposal.stateTransitions || []}
-                            submittedDate={proposal.createdDate!}
-                            states={states || []}
-                        />}
+                        {isStatesReady && isDataReady
+                            ? <ProposalStateView
+                                isProtocolValidated={proposal.financialComponent?.protocol?.validated}
+                                onAdvanceClick={advanceState}
+                                currentStateId={proposal.stateId!}
+                                timelineEvents={proposal.timelineEvents || []}
+                                stateTransitions={proposal.stateTransitions || []}
+                                submittedDate={proposal.createdDate!}
+                                states={states || []}/>
+                            : <span><Spinner as={"span"} animation={"border"}/> A carregar estados... </span>
+                        }
 
                         <ProposalDetailsTab dataReady={isDataReady} proposal={proposal}/>
                     </Tab>

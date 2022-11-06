@@ -18,7 +18,7 @@ import {
 } from "react-bootstrap";
 import React, {useCallback, useEffect, useState} from "react";
 import "../../../assets/css/accordion-collapse.css";
-import {TeamInvestigatorModel} from "../../../model/TeamInvestigatorModel";
+import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 import UserModel from "../../../model/user/UserModel";
 import {VisitChrono, VisitPeriodicity, VisitTypes} from "../../../common/Constants";
 import {AsyncAutoCompletePatientSearch} from "./AsyncAutoCompletePatientSearch";

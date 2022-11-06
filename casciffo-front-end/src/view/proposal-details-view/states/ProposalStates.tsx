@@ -2,7 +2,7 @@ import {Button, ButtonGroup, Container, OverlayTrigger, Stack, ToggleButton, Too
 import React, {useEffect, useState} from "react";
 import {MyUtil} from "../../../common/MyUtil";
 import {StateModel} from "../../../model/state/StateModel";
-import {TimelineEventModel} from "../../../model/TimelineEventModel";
+import {TimelineEventModel} from "../../../model/proposal/TimelineEventModel";
 import {StateTransitionModel} from "../../../model/state/StateTransitionModel";
 import {StateFlowTypes} from "../../../common/Constants";
 import {STATES} from "../../../model/state/STATES";
@@ -182,7 +182,6 @@ export function ProposalStateView(props: StateProps) {
                     </OverlayTrigger>
                 }<br/>
                 <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
-                {/*TODO change back-end to include transition type flow [INITIAL, PROGRESS, TERMINAL] in transitions*/}
                 <Button className={"float-end mb-2"} variant={"outline-secondary"} onClick={advanceState}
                 disabled={props.stateTransitions?.some(s => s.newState!.name === 'VALIDADO'/*s.newState!.stateFlowType === "TERMINAL"*/)}>
                     Progredir estado

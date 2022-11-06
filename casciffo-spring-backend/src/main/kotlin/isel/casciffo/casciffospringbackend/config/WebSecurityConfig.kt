@@ -97,6 +97,8 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.POST, REGISTER_USER_SEPARATE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY)
             .pathMatchers(USER_DETAIL_URL, USER_SEARCH_URL).authenticated()
             .pathMatchers(HttpMethod.PUT, USER_ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.GET, USER_NOTIFICATIONS_URL).authenticated()
+            .pathMatchers(HttpMethod.GET, USER_NOTIFICATIONS_CHECK_URL).authenticated()
     }
 
     private fun rolesRoutesAuth(http: ServerHttpSecurity) {
@@ -120,9 +122,6 @@ class WebSecurityConfig {
             .pathMatchers("$PROPOSALS_URL/**").authenticated()
             .pathMatchers(HttpMethod.POST, PROPOSALS_URL, PROPOSAL_EVENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.PATCH, PROPOSALS_URL, PROPOSAL_EVENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
-            .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_CA_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, CA_AUTHORITY)
-            .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_SUPERUSER_URL).hasAnyAuthority(SUPERUSER_AUTHORITY)
-            .pathMatchers(HttpMethod.PUT, PROPOSAL_TRANSITION_UIC_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_FINANCE_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, FINANCE_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_JURIDICAL_VALIDATION_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, JURIDICAL_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, PROPOSAL_PROTOCOL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)

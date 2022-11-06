@@ -7,7 +7,7 @@ import { Doughnut } from 'react-chartjs-2';
 import {useErrorHandler} from "react-error-boundary";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {ResearchAggregateModel, ResearchFinanceEntries, ResearchModel} from "../../model/research/ResearchModel";
-import {TimelineEventModel} from "../../model/TimelineEventModel";
+import {TimelineEventModel} from "../../model/proposal/TimelineEventModel";
 import {ResearchTypes, TypeOfMonetaryFlows} from "../../common/Constants";
 import {MyTable} from "../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
@@ -382,7 +382,7 @@ export function Dashboard(props: DashboardProps) {
                     <Container className={"text-center"}>
                         <h5>Últimas 5 propostas atualizadas.</h5>
                     </Container>
-                        <MyTable data={latestProposals} columns={proposalColumns}/>
+                        <MyTable data={latestProposals.sort((a,b) => MyUtil.cmp(b.lastModified, a.lastModified))} columns={proposalColumns}/>
                 </Col>
             </Row>
         </Container>

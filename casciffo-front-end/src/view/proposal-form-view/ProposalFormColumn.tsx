@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {Constants, Investigator, ProposalForm} from "../../common/Types";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import {PromoterModel} from "../../model/proposal/finance/PromoterModel";
-import {PartnershipModel} from "../../model/PartnershipModel";
+import {PartnershipModel} from "../../model/proposal/finance/PartnershipModel";
 import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
 import {PromoterTypes, ResearchTypes} from "../../common/Constants";
 

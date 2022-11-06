@@ -13,6 +13,11 @@ const USERS_BY_ROLE_AND_NAME =
 
 const USERS_BY_NAME_URL = (name: string) => `${USERS_URL}/search?name=${name}`
 
+/************************** USER NOTIFICATIONS **************************/
+
+const USER_NOTIFICATIONS_URL = (userId: string) => `${USERS_URL}/${userId}/notifications`
+const USER_NOTIFICATIONS_CHECK_URL = (userId: string) => `${USERS_URL}/${userId}/notifications/check`
+
 /************************** ROLE **************************/
 const ROLES_URL = `${BASE_URL}/roles`
 const USER_ROLES = (userId: string) => `${USERS_URL}/${userId}/roles`
@@ -133,7 +138,9 @@ const ApiUrls = {
     researchFinanceTeamEntryUrl,
     researchStatsUrl: RESEARCH_STATS_URL,
     researchLatestModifiedUrl: RESEARCH_LAST_MODIFIED_URL,
-    nearestEventsUrl: NEAREST_EVENTS_URL
+    nearestEventsUrl: NEAREST_EVENTS_URL,
+    userNotifications: USER_NOTIFICATIONS_URL,
+    userNotificationsCheck: USER_NOTIFICATIONS_CHECK_URL
 }
 
 export default ApiUrls

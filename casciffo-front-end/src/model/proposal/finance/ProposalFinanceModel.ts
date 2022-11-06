@@ -1,5 +1,5 @@
 import {PromoterModel} from "./PromoterModel";
-import {PartnershipModel} from "../../PartnershipModel";
+import {PartnershipModel} from "./PartnershipModel";
 import {ProtocolModel} from "./ProtocolModel";
 
 interface ValidationModel {

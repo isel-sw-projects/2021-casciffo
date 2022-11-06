@@ -29,6 +29,12 @@ const val USER_SEARCH_URL = "$USERS_URL/search"
 const val REGISTER_USER_SEPARATE_URL = "$USERS_URL/create"
 
 
+/*********************************** NOTIFICATIONS *****************************************/
+/***************************************************************************************/
+
+const val USER_NOTIFICATIONS_URL = "$USERS_URL/{userId}/notifications"
+const val USER_NOTIFICATIONS_CHECK_URL = "$USERS_URL/{userId}/notifications/check"
+
 /*********************************** CONSTANTS *****************************************/
 /***************************************************************************************/
 
@@ -57,12 +63,7 @@ const val PROPOSAL_URL = "$PROPOSALS_URL/{proposalId}"
 const val PROPOSAL_COMMENTS_URL = "$PROPOSAL_URL/comments"
 const val PROPOSAL_COMMENTS_DETAIL_URL = "$PROPOSAL_COMMENTS_URL/{cId}"
 
-//TODO remove below endpoints the new and working transitionStateV2 works wonders
-//role-based endpoints to advance certains parts of the state of a proposal
 const val PROPOSAL_TRANSITION_URL = "$PROPOSAL_URL/state"
-const val PROPOSAL_TRANSITION_SUPERUSER_URL = "$PROPOSAL_TRANSITION_URL/superuser"
-const val PROPOSAL_TRANSITION_CA_URL = "$PROPOSAL_TRANSITION_URL/ca"
-const val PROPOSAL_TRANSITION_UIC_URL = "$PROPOSAL_TRANSITION_URL/uic"
 
 const val PROPOSAL_VALIDATION_URL = "$PROPOSAL_URL/validate"
 const val PROPOSAL_FINANCE_VALIDATION_URL = "$PROPOSAL_VALIDATION_URL/{pfcId}/finance_dep"

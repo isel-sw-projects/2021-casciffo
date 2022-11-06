@@ -1,5 +1,5 @@
 import {ProposalModel} from "../../../model/proposal/ProposalModel";
-import {Button, Col, Container, Form, ListGroup, Row, Stack} from "react-bootstrap";
+import {Button, Col, Container, Form, ListGroup, Row, Spinner, Stack} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {ResearchTypes} from "../../../common/Constants";
 import {useNavigate} from "react-router-dom";
@@ -150,7 +150,7 @@ export function ProposalDetailsTab(props: PDT_Props) {
                         </ListGroup>
                     </Container>
                 </Stack>
-                : <span>A carregar dados...</span>
+                : <span><Spinner as={"span"} animation={"border"}/>A carregar detalhes...</span>
             }
         </Container>
         {isDataReady && proposal!.researchId != null

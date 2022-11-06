@@ -28,11 +28,12 @@ CREATE TABLE IF NOT EXISTS user_roles (
 
 CREATE TABLE IF NOT EXISTS user_notification (
     notification_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    notified_user INT NOT NULL,
+    user_id INT NOT NULL,
     title VARCHAR NOT NULL,
     description TEXT NOT NULL,
     viewed BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_notified_user FOREIGN KEY(notified_user) REFERENCES user_account(user_id) ON DELETE CASCADE
+    details_link TEXT,
+    CONSTRAINT fk_notified_user FOREIGN KEY(user_id) REFERENCES user_account(user_id) ON DELETE CASCADE
 );
 
 

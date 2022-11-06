@@ -4,8 +4,6 @@ import isel.casciffo.casciffospringbackend.common.VisitPeriodicity
 import isel.casciffo.casciffospringbackend.common.VisitType
 import java.time.LocalDateTime
 
-//TODO needs mapper
-
 data class ResearchVisitsAggregate(
     //patient info
     var patientId: Int? = null,

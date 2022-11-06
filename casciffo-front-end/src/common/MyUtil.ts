@@ -6,9 +6,20 @@ import FileSaver from "file-saver";
 import {MyError} from "../view/error-view/MyError";
 import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
 
+function convertSecondsToMillis(s: number): number {
+    return s * Math.pow(10, 3)
+}
+function convertMinutesToMillis(m: number): number {
+    return m * 6 * Math.pow(10, 4)
+}
+function convertHoursToMillis(h: number): number {
+    return h * 3.6 * Math.pow(10, 6)
+}
+
 function padToNDigits(num: number, n: number = 2) {
     return num.toString().padStart(n, '0');
 }
+
 const isoDatetimeDelimiterIdx = 10
 const isoDateDelim = '-'
 const isoTimeDelim = ':'
@@ -185,8 +196,8 @@ export function httpGet<T>(url: string) : Promise<T> {
     return _httpFetch(url, 'GET')
 }
 
-export function httpDelete<T>(url: string) : Promise<T> {
-    return _httpFetch(url, 'DELETE')
+export function httpDelete<T>(url: string, body: unknown = null) : Promise<T> {
+    return _httpFetch(url, 'DELETE', [HEADER_CONTENT_TYPE], body)
 }
 
 export function httpPost<T>(url: string, body: unknown): Promise<T> {
@@ -251,6 +262,9 @@ const clearUserToken = () => {
 const apiTitle = (title: string) => `CASCIFFO | ${title}`
 
 export const MyUtil = {
+    convertSecondsToMillis,
+    convertMinutesToMillis,
+    convertHoursToMillis,
     formatUrlHash,
     parseUrlHash,
     formatDate,

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {TimelineEventModel} from "../../../model/TimelineEventModel";
+import {TimelineEventModel} from "../../../model/proposal/TimelineEventModel";
 import {SearchComponent} from "../../components/SearchComponent";
 import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import {EventTypes, ResearchTypes} from "../../../common/Constants";

@@ -10,12 +10,14 @@ import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolSe
 import isel.casciffo.casciffospringbackend.validations.Validation
 import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import isel.casciffo.casciffospringbackend.validations.ValidationsRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import kotlinx.coroutines.withContext
 import mu.KLogger
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -127,7 +129,11 @@ class ProposalFinancialServiceImpl(
         //FIXME MAYBE ADD A THREADPOOL TO CLEAN UP THE SYSTEM
         // MAYBE EVEN ANOTHER APP THAT CONNECTS TO A DATABASE THAT STORES THE DELETED FILES AND
         // RUNS EVERY 30 MIN TO CLEAN UP FILES
-        (Thread({ Files.deleteIfExists(Paths.get(fileToDelete.filePath!!)) })).start()
+//        (Thread {
+//            withContext(Dispatchers.IO) {
+//                Files.deleteIfExists(Paths.get(fileToDelete.filePath!!))
+//            }
+//        }).start()
 
 
         logger.info { "File ${fileToDelete.fileName} with Id ${fileToDelete.id!!} deleted." }
@@ -151,7 +157,6 @@ class ProposalFinancialServiceImpl(
 
     override suspend fun validate(pfcId: Int, validationComment: ValidationComment): ValidationComment {
         if(!validationComment.newValidation!!) return validationComment
-        //todo check if validation id will be sent or not
         val validation = validationsRepository.findByPfcIdAndValidationType(pfcId, validationComment.validation!!.validationType!!).awaitSingle()
         validation.validated = true
         validation.validationDate = LocalDateTime.now()

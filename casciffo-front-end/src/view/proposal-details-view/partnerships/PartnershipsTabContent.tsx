@@ -1,4 +1,4 @@
-import {PartnershipModel} from "../../../model/PartnershipModel";
+import {PartnershipModel} from "../../../model/proposal/finance/PartnershipModel";
 import {
     Accordion,
     AccordionButton,

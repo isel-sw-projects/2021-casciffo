@@ -1,4 +1,4 @@
-import UserModel from "./user/UserModel";
+import UserModel from "./UserModel";
 
 export interface TeamInvestigatorModel {
     id?: number,

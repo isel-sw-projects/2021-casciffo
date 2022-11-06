@@ -5,7 +5,7 @@ import {ProposalModel} from "../model/proposal/ProposalModel";
 import UserModel from "../model/user/UserModel";
 import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
 import CommentsService from "./CommentsService";
-import {TimelineEventModel} from "../model/TimelineEventModel";
+import {TimelineEventModel} from "../model/proposal/TimelineEventModel";
 import {ValidationCommentDTO, ValidityComment} from "../model/proposal/finance/ValidationModels";
 import {StateModel} from "../model/state/StateModel";
 import {httpGet} from "../common/MyUtil";

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../assets/css/main/app.css";
 import "../../assets/css/shared/iconly.css";
@@ -7,7 +7,6 @@ import {BrowserRouter, Link, Route, Routes, useLocation, useNavigate} from "reac
 import {useUserAuthContext} from '../context/UserAuthContext';
 import {Roles} from "../../model/role/Roles";
 import {FaUser} from "react-icons/fa";
-// import {GiExitDoor} from "react-icons/gi";
 import {BsDoorOpen} from "react-icons/bs";
 import {GiExitDoor} from "react-icons/gi";
 import {StatisticsService} from "../../services/StatisticsService";
@@ -27,8 +26,14 @@ import {ResearchAggregateService} from "../../services/ResearchAggregateService"
 import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 import {Logout} from "../login-view/Logout";
 import {CreateProposal} from "../proposal-form-view/CreateProposal";
+import {NotificationService} from "../../services/NotificationService";
+import {NotificationsView} from "../notifications/NotificationsView";
+import {MyUtil} from "../../common/MyUtil";
+import {Tooltip, IconButton as MuiIconButton, Badge as MuiBadge}  from "@mui/material";
+import {MdNotificationImportant} from "react-icons/md";
+import {IoMdNotifications} from "react-icons/io";
 
-function NavigationBar() {
+function NavigationBar(props: {notificationService: NotificationService}) {
 
     const {userToken, setUserToken} = useUserAuthContext()
     const navigate = useNavigate()
@@ -36,6 +41,22 @@ function NavigationBar() {
         setUserToken(null)
         navigate('/logout')
     }
+
+    const [notificationCount, setNotificationCount] = useState(0)
+
+    useEffect(() => {
+        if(userToken == null) return
+        const interval = setInterval(() => {
+            console.log("Checking for new notifications...")
+            setNotificationCount(prevState => prevState+1)
+            props.notificationService
+                .checkForNewNotifications(userToken!.userId!)
+                .then(value => {console.log(`Found ${value} new notifications.`); return value;})
+                .then(setNotificationCount)
+        }, MyUtil.convertMinutesToMillis(15))
+        return () => clearInterval(interval)
+    }, [props.notificationService, userToken])
+
     return (
         //FIXME BACKGROUND ON MOBILE IS TRANSPARENT FOR GOD KNOWS WHAT REASON
         <Navbar collapseOnSelect className={"ml-auto flex-fill"} bg="primary" variant="dark" expand="lg">
@@ -55,7 +76,7 @@ function NavigationBar() {
                     {
                         userToken && userToken.roles.find(r => r === Roles.SUPERUSER.id) &&
                         <Nav.Item>
-                            <Nav.Link eventKey="6" as={Link} to={"/users"}>Utilizadores</Nav.Link>
+                            <Nav.Link eventKey="6" as={Link} to={"/utilizadores"}>Utilizadores</Nav.Link>
                         </Nav.Item>
                     }
                     {/*<Nav.Item className={"float-end"}>*/}
@@ -67,28 +88,43 @@ function NavigationBar() {
                     {/*</Nav.Item>*/}
                 </Nav>
             </Navbar.Collapse>
-            <div>
-                <Row>
+            <div style={{width:"20%"}}>
+                <Row className={"text-center"}>
+                    <Col className={"text-center"}>
+                        {userToken != null &&
+                            <Link to={`/utilizadores/${userToken.userId}/notificacoes`}>
+                                <Tooltip title={"Notificações"}>
+                                        <MuiBadge style={{top:10}} badgeContent={notificationCount} color={"warning"}>
+                                            {notificationCount === 0
+                                                ? <IoMdNotifications color={"#ffffff"} size={25}/>
+                                                : <MdNotificationImportant color={"#ffffff"} size={25}/>
+                                            }
+                                        </MuiBadge>
+                                </Tooltip>
+                            </Link>
+                        }
+                    </Col>
                     <Col>
-                        <div className={"text-center"}>
+                        <div >
                             {userToken != null &&
                                 <FaUser size={20} color={"#f3ffff"} />
                             }
                         </div>
                     </Col>
                     <Col>
-                        <div className={"text-center"}>
                             {userToken != null ?
                                 <GiExitDoor size={20} color={"#f3ffff"} />
                                 :
                                 <BsDoorOpen size={20} color={"#f3ffff"} />
                             }
-                        </div>
                     </Col>
                 </Row>
-                <Row>
+                <Row className={"text-center"}>
+                    <Col/>
                     <Col>
-                        {userToken && <span className={"float-start mt-2 mt-md-2"} style={{color:"#f3ffff"}}>Olá {userToken.userName}!</span>}
+                        <p className={"mt-2 mt-md-2 text-capitalize"} style={{color:"#f3ffff", top:5}}>
+                        {userToken && userToken.userName}
+                        </p>
                     </Col>
                     <Col>
                        {userToken != null ?
@@ -129,8 +165,11 @@ function CreateRoutes() {
                 element={RequiresAuth(<ResearchDetailsPage researchService={new ResearchAggregateService()}/>)}
             />
 
-            <Route path={"/users"}
+            <Route path={"/utilizadores"}
                    element={RequiresAuth(<Users service={new UserService()}/>)}/>
+
+            <Route path={"/utilizadores/:userId/notificacoes"}
+                   element={RequiresAuth(<NotificationsView service={new NotificationService()}/>)}/>
             {/*<Route path={"/users/:userId"}*/}
             {/*       element={RequiresAuth(<UserDetails service={new UserService()}/>)}/>*/}
 
@@ -173,7 +212,7 @@ function App() {
     return (
         <BrowserRouter basename={"/"} key={"router"}>
             <ErrorBoundary FallbackComponent={GlobalErrorBoundary}>
-                <NavigationBar/>
+                <NavigationBar notificationService={new NotificationService()}/>
                 <DisplayPath/>
                 <CreateRoutes/>
             </ErrorBoundary>
