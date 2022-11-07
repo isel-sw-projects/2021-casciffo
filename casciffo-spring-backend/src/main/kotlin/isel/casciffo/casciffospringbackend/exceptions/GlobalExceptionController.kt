@@ -1,14 +1,16 @@
 package isel.casciffo.casciffospringbackend.exceptions
 
+import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingle
 import mu.KotlinLogging
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler
-import org.springframework.core.annotation.Order
 import org.springframework.core.io.buffer.DataBuffer
+import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.dao.DataAccessResourceFailureException
 import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
+import org.springframework.http.MediaType
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.http.server.reactive.ServerHttpResponse
-import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.server.ResponseStatusException
@@ -31,8 +33,32 @@ class GlobalExceptionController: ErrorWebExceptionHandler {
     }
 
     @ExceptionHandler(ResponseStatusException::class)
-    fun handleResponseStatus(ex: ResponseStatusException, rsp: ServerHttpResponse): ResponseEntity<Any> {
-        return ResponseEntity.status(ex.status).body(ex.message)
+    suspend fun handleResponseStatus(ex: ResponseStatusException, req: ServerHttpRequest, rsp: ServerHttpResponse): Void {
+
+        //TODO EVENTUALLY ADD REQ BODY TO RESPONSE
+//        val reqBody = req.body
+//            .map { buffer ->
+//                val bytes = ByteArray(buffer.readableByteCount())
+//                buffer.read(bytes)
+//                DataBufferUtils.release(buffer)
+//                String(bytes, StandardCharsets.UTF_8)
+//            }
+//            .collectList()
+//            .awaitSingle()
+
+        val exDTO = GenericExceptionDTO(
+            path = req.path.toString(),
+            uri = req.uri.toString(),
+            reason = ex.reason ?: "Internal Error",
+            status = ex.rawStatusCode
+        )
+
+        rsp.statusCode = ex.status
+        rsp.headers.contentType = MediaType.APPLICATION_JSON
+
+        val bytes: ByteArray = exDTO.toString().toByteArray(StandardCharsets.UTF_8)
+        val buffer: DataBuffer = rsp.bufferFactory().wrap(bytes)
+        return rsp.writeWith(Flux.just(buffer)).awaitSingle()
     }
 
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
