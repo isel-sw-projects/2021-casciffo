@@ -2,9 +2,7 @@ package isel.casciffo.casciffospringbackend.proposals.proposal
 
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregateRepo
-import isel.casciffo.casciffospringbackend.common.ResearchType
-import isel.casciffo.casciffospringbackend.common.StateType
-import isel.casciffo.casciffospringbackend.common.dateDiffInDays
+import isel.casciffo.casciffospringbackend.common.*
 import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionException
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
@@ -26,6 +24,8 @@ import isel.casciffo.casciffospringbackend.states.state.States
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionService
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
 import isel.casciffo.casciffospringbackend.statistics.ProposalStatsRepo
+import isel.casciffo.casciffospringbackend.users.notifications.NotificationModel
+import isel.casciffo.casciffospringbackend.users.notifications.NotificationService
 import isel.casciffo.casciffospringbackend.users.user.UserService
 import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import isel.casciffo.casciffospringbackend.validations.ValidationsRepository
@@ -64,7 +64,8 @@ class ProposalServiceImpl(
     @Autowired val validationsRepository: ValidationsRepository,
     @Autowired val jwtSupport: JwtSupport,
     @Autowired val userService: UserService,
-    @Autowired val proposalStats: ProposalStatsRepo
+    @Autowired val proposalStats: ProposalStatsRepo,
+    @Autowired val notificationService: NotificationService
 ) : ProposalService {
 
     override suspend fun getAllProposals(type: ResearchType, pageRequest: PageRequest?): Flow<ProposalModel> {
@@ -94,8 +95,36 @@ class ProposalServiceImpl(
         val hasFinancialComponent = proposal.type == ResearchType.CLINICAL_TRIAL
         if(hasFinancialComponent) {
             createFinancialComponent(proposal, createdProposal)
+            notifyRoles(proposal)
         }
+        notifyUser(proposal.principalInvestigatorId!!, proposal.id!!, NotificationType.PROPOSAL_SUBMITTED,
+            "Proposta submetida!", "A proposta com sigla ${proposal.sigla} foi submetida com sucesso!")
         return createdProposal
+    }
+
+    private suspend fun notifyUser(userId: Int, proposalId: Int, nType: NotificationType, title: String, desc: String) {
+
+        val notification = NotificationModel(
+            userId = userId,
+            title = title,
+            description = desc,
+            ids = convertToJson(listOf(Pair("proposalId", proposalId))),
+            notificationType = nType,
+            viewed = false
+        )
+        notificationService.createNotification(userId, notification)
+    }
+
+    private suspend fun notifyRoles(proposal: ProposalModel) {
+        notificationService.notifyRoles(
+            listOf(Roles.FINANCE, Roles.JURIDICAL),
+            notification = NotificationModel(
+                title = "Contrato financeiro para revisão.",
+                description = "Proposta com sigla ${proposal.sigla}, espera validação do contrato financeiro.",
+                ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
+                notificationType = NotificationType.PROPOSAL_FINANCE
+            )
+        )
     }
 
     private suspend fun verifyProposalKeyFields(proposal: ProposalModel) {
@@ -213,7 +242,6 @@ class ProposalServiceImpl(
 
         val currState = stateService.findById(proposal.stateId!!)
 
-
         val nextState = stateService.findById(nextStateId)
 
         val isClinicalTrial = proposal.type === ResearchType.CLINICAL_TRIAL
@@ -222,7 +250,6 @@ class ProposalServiceImpl(
 
         stateService.verifyNextStateValidV2(currState.id!!, nextStateId, stateType, role)
         if(isClinicalTrial && currState.name == States.VALIDACAO_CF.name) {
-            //TODO MERGE VALIDATIONS INTO STATES
             val check = validationsRepository.isPfcValidatedByProposalId(proposal.id!!).awaitSingle()
             if(!check) {
                 throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot advance state without the required validations!")
@@ -238,6 +265,15 @@ class ProposalServiceImpl(
                     )
             }
             createResearch(proposal)
+            notifyTeam(proposal.id!!,
+                NotificationModel(
+                    title = if (isClinicalTrial) "Ensaio Clínico criado!" else "Estudo observacional criado!",
+                    description = "O ${if (isClinicalTrial) "ensaio clínico" else "estudo observacional"} foi criado" +
+                            " com sucesso, visita a página para preencheres os detalhes!",
+                    notificationType = NotificationType.RESEARCH_DETAILS,
+                    ids = convertToJson(listOf(Pair("researchId", proposal.researchId!!)))
+                )
+            )
         }
 
         if(proposal.timelineEvents != null) {
@@ -249,6 +285,21 @@ class ProposalServiceImpl(
         proposal.stateId = nextState.id
         proposal.state = nextState
         return proposalRepository.save(proposal).awaitSingle()
+    }
+
+    private suspend fun notifyTeam(pId: Int, notification: NotificationModel) {
+        val notifications = investigationTeamService.findTeamByProposalId(pId)
+            .map {
+                NotificationModel(
+                    userId = it.memberId!!,
+                    title = notification.title,
+                    description = notification.description,
+                    notificationType = notification.notificationType,
+                    ids = notification.ids,
+                    viewed = false
+                )
+            }
+        notificationService.createBulkNotifications(notifications)
     }
 
     @Transactional
@@ -295,18 +346,30 @@ class ProposalServiceImpl(
         return event
     }
 
-    private fun updateTimelineEvent(
+    private suspend fun updateTimelineEvent(
         timelineEvents: Flux<TimelineEventModel>,
         state: String
     ) {
-        timelineEvents
-            .filter(filterEventsByState(state))
-            .map (this::setEventCompleted)
-            .map (this::setOverDueDays)
-            .collectList()
-            .subscribe {
-                timelineEventRepository.saveAll(it).subscribe()
-            }
+        val completedEvents =
+                timelineEvents
+                    .filter(filterEventsByState(state))
+                    .map (this::setEventCompleted)
+                    .map (this::setOverDueDays)
+                    .collectList()
+                    .awaitSingle()
+
+        if(completedEvents.isNotEmpty())
+            timelineEventRepository.saveAll(completedEvents).subscribe()
+
+        completedEvents.forEach {
+            notifyTeam(it.proposalId!!,
+                NotificationModel(
+                    title = "Evento ${it.eventName} foi completo!",
+                    description = "O evento ${it.eventName} foi marcado como completo na data ${it.completedDate}",
+                    notificationType = NotificationType.PROPOSAL_EVENTS,
+                    ids = convertToJson(listOf(Pair("proposalId", it.proposalId!!)))
+                ))
+        }
     }
 
     private suspend fun loadDetails(prop: ProposalModel): ProposalModel {
@@ -323,8 +386,11 @@ class ProposalServiceImpl(
         prop.timelineEvents = timelineEventRepository.findTimelineEventsByProposalId(prop.id!!)
 
         if(prop.type == ResearchType.CLINICAL_TRIAL) {
-            prop.financialComponent!!.partnerships = partnershipService.findAllByProposalFinancialComponentId(prop.financialComponent!!.id!!)
-            prop.financialComponent!!.validations = validationsRepository.findAllByPfcId(prop.financialComponent!!.id!!)
+            prop.financialComponent!!.partnerships = partnershipService
+                .findAllByProposalFinancialComponentId(prop.financialComponent!!.id!!)
+
+            prop.financialComponent!!.validations = validationsRepository
+                .findAllByPfcId(prop.financialComponent!!.id!!)
         }
         return prop
     }

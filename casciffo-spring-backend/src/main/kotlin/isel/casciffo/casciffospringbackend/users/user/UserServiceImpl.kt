@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.users.user
 
 import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregate
 import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregateRepo
+import isel.casciffo.casciffospringbackend.common.NotificationType
 import isel.casciffo.casciffospringbackend.common.QuadTuple
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
@@ -10,6 +11,8 @@ import isel.casciffo.casciffospringbackend.roles.Role
 import isel.casciffo.casciffospringbackend.roles.RoleService
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtSupport
+import isel.casciffo.casciffospringbackend.users.notifications.NotificationModel
+import isel.casciffo.casciffospringbackend.users.notifications.NotificationService
 import isel.casciffo.casciffospringbackend.users.user_roles.UserRoles
 import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import kotlinx.coroutines.flow.Flow
@@ -38,7 +41,8 @@ class UserServiceImpl(
     @Autowired val userRolesAggregateRepo: UserRolesAggregateRepo,
     @Autowired val roleService: RoleService,
     @Autowired private val encoder: PasswordEncoder,
-    @Autowired val jwtSupport: JwtSupport
+    @Autowired val jwtSupport: JwtSupport,
+    @Autowired val notificationService: NotificationService
 ) : UserService {
 
     val logger = KotlinLogging.logger {  }
@@ -115,6 +119,14 @@ class UserServiceImpl(
             }.subscribe()
 
         val updatedRoles = roleService.findByUserId(userId).map { it.roleName!! }.collectList().awaitSingle()
+
+        notificationService.createNotification(userId,
+            NotificationModel(
+                title = "Novos papéis adicionados.",
+                description = "Papéis novos:\n\t " + updatedRoles.joinToString(", ") + ".",
+                notificationType = NotificationType.USER_NEW_ROLES
+            )
+        )
         return getUser(userId, true)!!
 //        BearerTokenWrapper(
 //            token = token.value,
@@ -123,6 +135,8 @@ class UserServiceImpl(
 //            roles = updatedRoles
 //        )
     }
+
+
 
     override suspend fun getAllUsers(): Flow<UserModel?> {
         return mapAggregateToModel(userRolesAggregateRepo.findAllUsersAndRoles())
@@ -155,14 +169,14 @@ class UserServiceImpl(
         )
     }
 
-    override suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel?> {
+    override suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel> {
         return userRepository.findAllByRoleNameIsIn(roles).asFlow()
     }
 
     override suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?> {
         //% is added to make query (SELECT ... WHERE name LIKE abc% AND ...)
         //adding % to the query itself will break the statement and throw runtime db exception
-        return if (roles.isNullOrEmpty())
+        return if (roles.isEmpty())
             userRepository.findAllByNameIsLike(name).asFlow()
         else
             userRepository

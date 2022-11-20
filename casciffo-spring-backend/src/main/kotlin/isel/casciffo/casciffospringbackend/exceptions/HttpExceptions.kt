@@ -36,8 +36,8 @@ class InvalidStateException(s: String) : Exception(s)
 @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "ProtocolId specified doesnt exist.")
 class InvalidProtocolId: Exception()
 
-@ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR, reason = "There was an error in Database.")
-class DataBaseException: Exception()
+@ResponseStatus(code = HttpStatus.NOT_FOUND)
+class DataBaseException(s: String): Exception(s)
 
 @ResponseStatus(code = HttpStatus.NOT_ACCEPTABLE, reason = "")
 class NotFullyValidatedException: Exception()

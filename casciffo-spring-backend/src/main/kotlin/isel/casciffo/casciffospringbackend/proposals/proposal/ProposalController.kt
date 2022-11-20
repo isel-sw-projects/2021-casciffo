@@ -3,6 +3,8 @@ package isel.casciffo.casciffospringbackend.proposals.proposal
 import isel.casciffo.casciffospringbackend.common.FILE_NAME_HEADER
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
+import isel.casciffo.casciffospringbackend.exceptions.DataBaseException
+import isel.casciffo.casciffospringbackend.exceptions.InvalidStateException
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
@@ -103,6 +105,7 @@ class ProposalController(
         @RequestParam nextStateId: Int,
         request: ServerHttpRequest
     ): ProposalDTO {
+//        throw DataBaseException("testing out this reason, received params pId: $proposalId , nsId: $nextStateId")
         return transitionState(proposalId, nextStateId, request)
     }
 

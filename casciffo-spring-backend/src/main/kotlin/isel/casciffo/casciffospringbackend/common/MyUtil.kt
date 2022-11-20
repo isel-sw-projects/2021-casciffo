@@ -55,3 +55,11 @@ const val UIC_AUTHORITY = "${ROLE_AUTH}UIC"
 const val CA_AUTHORITY = "${ROLE_AUTH}CA"
 const val FINANCE_AUTHORITY = "${ROLE_AUTH}FINANCE"
 const val JURIDICAL_AUTHORITY = "${ROLE_AUTH}JURIDICAL"
+
+
+/************************ More Utility functions *******************************/
+/*******************************************************************************/
+
+fun convertToJson(list: List<Pair<String, Int>>): String {
+    return "{" + list.joinToString(separator=",", transform= {pair -> "\"${pair.first}\":${pair.second}"}) + "}"
+}

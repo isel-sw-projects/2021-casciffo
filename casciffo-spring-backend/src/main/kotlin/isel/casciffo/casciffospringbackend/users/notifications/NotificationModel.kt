@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.users.notifications
 
+import isel.casciffo.casciffospringbackend.common.NotificationType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -13,5 +14,6 @@ data class NotificationModel(
     var title: String? = null,
     var description: String? = null,
     var viewed: Boolean? = null,
-    var detailsLink: String? = null
+    var ids: String? = null,
+    var notificationType: NotificationType? = null
 )
