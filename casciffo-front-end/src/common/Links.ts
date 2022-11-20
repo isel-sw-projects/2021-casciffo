@@ -1,4 +1,5 @@
-const BASE_URL = `http://localhost:8080/api/casciffo`
+const BASE_URL = `/api/casciffo`
+// const BASE_URL = `http://localhost:8080/api/casciffo`
 // const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo`
 
 /************************** USER **************************/

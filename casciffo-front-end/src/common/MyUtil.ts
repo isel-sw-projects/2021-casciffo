@@ -288,10 +288,11 @@ export const MyUtil = {
     CREATE_PROPOSAL_TITLE: apiTitle('Criar proposta'),
     PROPOSALS_TITLE:apiTitle( 'Propostas'),
     PROPOSAL_DETAIL_TITLE: apiTitle('Detalhes de proposta'),
-    RESEARCH_TITLE: apiTitle('Ensáios clínicos'),
+    RESEARCH_TITLE: apiTitle('Ensaios clínicos'),
     RESEARCH_DETAIL_TITLE: apiTitle('Detalhes de ensaio'),
     RESEARCH_VISITS_TITLE: (researchId: string) => apiTitle(`Ensaio ${researchId} | Visitas`),
     RESEARCH_VISIT_DETAIL_TITLE: (researchId: string, visitId: string) => apiTitle(`Ensaio ${researchId} | Visita ${visitId}`),
     RESEARCH_PATIENTS_TITLE: (researchId: string) => apiTitle(`Ensaio ${researchId} | Pacientes`),
     RESEARCH_PATIENT_DETAILS_TITLE: (researchId: string, patientId: string) => apiTitle(`Ensaio ${researchId} | Paciente ${patientId}`),
+    NOTIFICATIONS_TITLE: () => apiTitle('Notificações')
 }

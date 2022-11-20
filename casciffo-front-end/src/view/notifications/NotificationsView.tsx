@@ -9,6 +9,7 @@ import {AiOutlineCheckCircle} from "react-icons/ai";
 import {ImNotification} from "react-icons/im";
 import {NOT_AVAILABLE, NotificationType} from "../../common/Constants";
 import {MyHashMap} from "../../common/Types";
+import {MyUtil} from "../../common/MyUtil";
 
 type NotificationProps = {
     service: NotificationService
@@ -20,6 +21,10 @@ type NotificationRow = {
 }
 
 export function NotificationsView(props: NotificationProps) {
+
+    useEffect(() => {
+        document.title = MyUtil.NOTIFICATIONS_TITLE()
+    })
 
     const {userId} = useParams()
 
