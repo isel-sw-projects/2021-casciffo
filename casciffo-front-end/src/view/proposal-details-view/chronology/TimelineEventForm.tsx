@@ -98,7 +98,7 @@ export function TimelineEventForm(props: TimelineProps) {
                 onChange={handleSelectedState}
             >
                 <option value={-1} disabled>-Selecionar estado-</option>
-                {props.possibleStates
+                {possibleStates
                     .map((s) => <option key={s.id} value={s.id}>{STATES[s.name as keyof typeof STATES].name}</option>)
                 }
             </Form.Select>

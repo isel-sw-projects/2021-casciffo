@@ -4,7 +4,6 @@ import {ServiceTypeModel} from "../model/proposal-constants/ServiceTypeModel";
 import {TherapeuticAreaModel} from "../model/proposal-constants/TherapeuticAreaModel";
 import {PromoterModel} from "../model/proposal/finance/PromoterModel";
 import {PartnershipModel} from "../model/proposal/finance/PartnershipModel";
-import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
 import {AxiosHeaders} from "axios";
 
 type AxiosResponseBody = {
@@ -16,16 +15,16 @@ type AxiosResponseBody = {
     statusText: string
 }
 
-type Page = {
-    pageNum: number,
-    elementsLimit: number,
-    searchQuery: string
-}
-
-type ResearchType = {
-    name: string,
-    id: string
-}
+// type Page = {
+//     pageNum: number,
+//     elementsLimit: number,
+//     searchQuery: string
+// }
+//
+// type ResearchType = {
+//     name: string,
+//     id: string
+// }
 
 type Investigator = {
     name: string,
@@ -71,19 +70,23 @@ type UserToken = {
     roles: string[]
 }
 
-type GeneralError = {
-    status: string,
-    message: string
-}
+// type GeneralError = {
+//     status: string,
+//     message: string
+// }
 
 type KeyValuePair<K, V> = {
     key: K,
     value: V
 }
 
+type MyHashMap = {
+    [key: string]: number
+}
+
 export type {
     AxiosResponseBody,
-    Page, ResearchType, Investigator,
+    Investigator,
     Constants, Filter, ProposalForm, Promoter,
-    UserToken, GeneralError, KeyValuePair
+    UserToken, KeyValuePair, MyHashMap
 }

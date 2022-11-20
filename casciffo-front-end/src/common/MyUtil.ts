@@ -1,10 +1,12 @@
 import {STATES} from "../model/state/STATES";
 import {KEY_VALUE_DELIMENTER, PARAM_DELIMENTER, TOKEN_KEY} from "./Constants";
 import {KeyValuePair, UserToken} from "./Types";
-import axios, {AxiosRequestConfig, AxiosRequestHeaders} from "axios";
+import axios, {AxiosRequestConfig} from "axios";
 import FileSaver from "file-saver";
 import {MyError} from "../view/error-view/MyError";
-import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
+
+/******************************** TIME UTILITY FUNCTIONS ******************************** */
+/**************************************************************************************** */
 
 function convertSecondsToMillis(s: number): number {
     return s * Math.pow(10, 3)
@@ -14,10 +16,6 @@ function convertMinutesToMillis(m: number): number {
 }
 function convertHoursToMillis(h: number): number {
     return h * 3.6 * Math.pow(10, 6)
-}
-
-function padToNDigits(num: number, n: number = 2) {
-    return num.toString().padStart(n, '0');
 }
 
 const isoDatetimeDelimiterIdx = 10
@@ -141,6 +139,10 @@ function cmpWithToday(date: string | undefined | null, withHours: boolean = fals
     return cmp(date, new Date().toISOString(), withHours)
 }
 
+
+/****************************************** HTTP UTILITY FUNCTIONS ***********************************/
+/*************************************************************************************************** */
+
 const APPLICATION_CONTENT_TYPE = 'application/json'
 const HEADER_ACCEPT_JSON: [string,string] = ['Accept', APPLICATION_CONTENT_TYPE]
 const HEADER_CONTENT_TYPE: [string,string] = ['Content-Type', APPLICATION_CONTENT_TYPE]
@@ -161,8 +163,7 @@ function formatUrlHash(args: KeyValuePair<string, string>[]): string {
 
 function checkAndRaiseError(rsp: Response): Response {
     if(!rsp.ok) {
-        //TODO RAISE ERROR
-        throw {status: rsp.status, path: rsp.url}
+        throw new MyError(`Error ocorred trying to reach url: ${rsp.url}`, rsp.status)
     }
     return rsp
 }
@@ -247,6 +248,10 @@ export function httpGetFile(url: string): Promise<void> {
                 FileSaver.saveAs(res.data, res.headers['file-name'])
         })
 }
+
+
+/************************************** BROWSER UTILITY FUNCTIONS *******************************/
+/**************************************************************************************************** */
 
 const getUserToken = () => {
     const tokenString = localStorage.getItem(TOKEN_KEY)

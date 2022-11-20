@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS user_notification (
     title VARCHAR NOT NULL,
     description TEXT NOT NULL,
     viewed BOOLEAN DEFAULT FALSE,
-    details_link TEXT,
+    ids TEXT,
+    notification_type VARCHAR,
     CONSTRAINT fk_notified_user FOREIGN KEY(user_id) REFERENCES user_account(user_id) ON DELETE CASCADE
 );
 

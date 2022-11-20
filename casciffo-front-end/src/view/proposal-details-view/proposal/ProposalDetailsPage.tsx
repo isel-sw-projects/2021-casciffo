@@ -1,26 +1,17 @@
-import {Navigate, useLocation, useNavigate, useParams} from "react-router-dom";
-import {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useCallback, useEffect, useState} from "react";
 import {ProposalModel} from "../../../model/proposal/ProposalModel";
 import {
-    Button,
-    ButtonGroup,
-    Col,
     Container,
-    Form,
-    ListGroup,
-    Row, Spinner,
-    Stack,
+    Spinner,
     Tab,
     Tabs,
-    ToggleButton
 } from "react-bootstrap";
-import {StateService} from "../../../services/StateService";
-import {STATES} from "../../../model/state/STATES";
 import {MyUtil} from "../../../common/MyUtil";
 import {ProposalCommentsTabContent} from "../comments/ProposalCommentsTabContent";
 import ProposalAggregateService from "../../../services/ProposalAggregateService";
 import { ProtocolTabContent } from "../protocol/ProtocolTabContent";
-import {CommentTypes, ResearchTypes, TAB_PARAMETER, TOKEN_KEY} from "../../../common/Constants";
+import {CommentTypes, ProposalTabNames, ResearchTypes, TAB_PARAMETER} from "../../../common/Constants";
 import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
 import {ProposalTimelineTabContent} from "../chronology/ProposalTimelineTabContent";
 import {PartnershipsTabContent} from "../partnerships/PartnershipsTabContent";
@@ -28,7 +19,6 @@ import {TimelineEventModel} from "../../../model/proposal/TimelineEventModel";
 import React from "react";
 import {ProposalStateView} from "../states/ProposalStates";
 import {StateModel} from "../../../model/state/StateModel";
-import {UserToken} from "../../../common/Types";
 import {ProposalFinancialContractTab} from "../financial-contract/ProposalFinancialContractTab";
 import {ValidationCommentDTO, ValidityComment} from "../../../model/proposal/finance/ValidationModels";
 import {Roles} from "../../../model/role/Roles";
@@ -40,15 +30,6 @@ type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
 }
 
-const TabNames = {
-    proposal: "proposal",
-    proposal_cf: "proposal_cf",
-    contacts: "contacts",
-    observations: "observations",
-    partnerships: "partnerships",
-    protocol: "protocol",
-    chronology: "chronology",
-}
 
 export function ProposalDetailsPage(props: ProposalDetailsProps) {
     const {proposalId} = useParams()
@@ -84,7 +65,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     const [states, setStates] = useState<StateModel[]>()
     const [isStatesReady, setIsStatesReady] = useState(false)
     const [isDataReady, setDataReady] = useState(false)
-    const [isError, setIsError] = useState(false)
     const [selectedTab, setSelectedTab] = useState("proposal")
 
     useEffect(() => {
@@ -93,7 +73,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     
     useEffect(() => {
         const params = MyUtil.parseUrlHash(hash).find(p => p.key === TAB_PARAMETER)
-        const tabParam = ( params && params.value ) || TabNames.proposal
+        const tabParam = ( params && params.value ) || ProposalTabNames.proposal
         
         setSelectedTab(tabParam)
     }, [hash])
@@ -154,15 +134,15 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
             })
     }
 
-    const handleFetchError = useCallback((reason: any) => {
-        log(reason)
-        setIsError(true)
-    }, [])
+    // const handleFetchError = useCallback((reason: any) => {
+    //     log(reason)
+    //     setIsError(true)
+    // }, [])
 
-    const log = (value: any) => {
-        console.log(value);
-        return value
-    }
+    // const log = (value: any) => {
+    //     console.log(value);
+    //     return value
+    // }
 
     const updateState = (key: keyof ProposalModel, value: unknown) =>
         (
@@ -230,7 +210,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
 
     const onSelectTab = (tab: string | null) => {
         const args = [
-            {key: TAB_PARAMETER, value: tab || TabNames.proposal}
+            {key: TAB_PARAMETER, value: tab || ProposalTabNames.proposal}
         ]
         const path = MyUtil.formatUrlHash(args)
         navigate(path)
@@ -238,7 +218,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
 
     return (
         <React.Fragment>
-            {isError && <Navigate to={"/propostas"}/>}
             <Container>
                 <Tabs
                     id="controlled-tab-example"
@@ -246,7 +225,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     onSelect={onSelectTab}
                     className="mb-3 justify-content-evenly"
                 >
-                    <Tab eventKey={TabNames.proposal} title="Proposta">
+                    <Tab eventKey={ProposalTabNames.proposal} title="Proposta">
                         {isStatesReady && isDataReady
                             ? <ProposalStateView
                                 isProtocolValidated={proposal.financialComponent?.protocol?.validated}
@@ -263,7 +242,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     </Tab>
 
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
-                        <Tab eventKey={TabNames.proposal_cf} title={"Contracto financeiro"}>
+                        <Tab eventKey={ProposalTabNames.proposal_cf} title={"Contracto financeiro"}>
                             {isStatesReady && <ProposalStateView
                                 isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                                 onAdvanceClick={advanceState}
@@ -283,7 +262,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                         </Tab>
                     }
 
-                    <Tab eventKey={TabNames.contacts} title="Contactos">
+                    <Tab eventKey={ProposalTabNames.contacts} title="Contactos">
                         <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
@@ -299,7 +278,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                             commentType={CommentTypes.CONTACT}
                         />
                     </Tab>
-                    <Tab eventKey={TabNames.observations} title="Observações">
+                    <Tab eventKey={ProposalTabNames.observations} title="Observações">
                         <ProposalStateView
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
@@ -335,7 +314,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     }
 
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
-                        <Tab eventKey={TabNames.protocol} title="Protocolo">
+                        <Tab eventKey={ProposalTabNames.protocol} title="Protocolo">
                             <ProtocolTabContent
                                 saveProtocolComment={updateProtocol}
                                 pfcId={proposal.financialComponent?.id}
@@ -347,7 +326,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     }
 
 
-                    <Tab eventKey={TabNames.chronology} title="Cronologia">
+                    <Tab eventKey={ProposalTabNames.chronology} title="Cronologia">
                         <div>
                             <ProposalStateView
                                 isProtocolValidated={proposal.financialComponent?.protocol!.validated!}

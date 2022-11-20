@@ -1,7 +1,6 @@
-import React, {FormEvent, useCallback, useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {MyUtil} from "../../../common/MyUtil";
 import {
-    PatientModel,
     ResearchPatientModel,
     ResearchVisitModel,
     VisitInvestigator

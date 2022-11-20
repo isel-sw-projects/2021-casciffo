@@ -1,5 +1,4 @@
 import React, {useCallback, useState} from "react";
-import {OverlayTrigger, Stack, Tooltip} from "react-bootstrap";
 import {AsyncTypeahead, Highlighter} from "react-bootstrap-typeahead";
 import {PatientModel} from "../../../model/research/ResearchModel";
 
@@ -29,14 +28,14 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
     const handleInputChange = (q: string) => {
         setQuery(q);
         const underMinimum = q.length !== 0 && q.length < 3
-        setShowToolTip(underMinimum)
+        // setShowToolTip(underMinimum)
         if(underMinimum) {
             setIsLoading(false)
         }
         resetSelectedPatient()
     };
 
-    const handlePagination = (e: unknown, shownResults: unknown) => {
+    // const handlePagination = (e: unknown, shownResults: unknown) => {
         // const cachedQuery = requestCache.get(query) || [];
         //
         // // Don't make another request if:
@@ -60,7 +59,7 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
         //     setIsLoading(false);
         //     setOptions(options);
         // });
-    };
+    // };
 
     // `handleInputChange` updates state and triggers a re-render, so
     // use `useCallback` to prevent the debounced search handler from
@@ -99,14 +98,14 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
 
     function onSelectedPatient(patient: PatientModel) {
         setIsLoading(false)
-        setShowToolTip(false)
+        // setShowToolTip(false)
         props.setPatient(patient)
         setSelectedPatient(patient)
     }
 
-    const [showToolTip, setShowToolTip] = useState(false)
+    // const [showToolTip, setShowToolTip] = useState(false)
 
-    const toggleToolTip = () => setShowToolTip(!showToolTip)
+    // const toggleToolTip = () => setShowToolTip(!showToolTip)
 
     return (
         // <OverlayTrigger
@@ -141,7 +140,7 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
                 minLength={1}
                 ignoreDiacritics={true}
                 onInputChange={handleInputChange}
-                onPaginate={handlePagination}
+                // onPaginate={handlePagination}
                 onSearch={handleSearch}
                 options={options}
                 placeholder={"Procurar por paciente"}

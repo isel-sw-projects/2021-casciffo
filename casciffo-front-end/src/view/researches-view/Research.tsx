@@ -1,16 +1,13 @@
 import {ResearchAggregateService} from "../../services/ResearchAggregateService";
 import React, {useCallback, useEffect, useState} from "react";
 import {ResearchTypes} from "../../common/Constants";
-import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {MyUtil} from "../../common/MyUtil";
 import {Link} from "react-router-dom";
-import {Col, Container, FloatingLabel, Form, FormGroup, Row, Stack} from "react-bootstrap";
+import {Col, Container, Form, FormGroup, Row, Stack} from "react-bootstrap";
 import {MyTable} from "../components/MyTable";
-import {ResearchAggregateModel, ResearchModel} from "../../model/research/ResearchModel";
+import {ResearchAggregateModel} from "../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
-import {FormInputHelper} from "../components/FormInputHelper";
 import {SearchComponent} from "../components/SearchComponent";
-import {CSVLink} from "react-csv";
 
 
 export function Research(props: { researchService: ResearchAggregateService }) {

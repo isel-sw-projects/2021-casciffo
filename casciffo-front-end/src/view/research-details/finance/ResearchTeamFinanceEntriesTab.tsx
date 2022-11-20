@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {ResearchFinanceEntries, ResearchTeamFinanceEntries} from "../../../model/research/ResearchModel";
+import {ResearchTeamFinanceEntries} from "../../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
 import {MyTable} from "../../components/MyTable";
-import {Button, Col, Container, Form, Stack} from "react-bootstrap";
+import {Button, Container, Form, Stack} from "react-bootstrap";
 import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
 import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 import {TypeOfMonetaryFlows} from "../../../common/Constants";
@@ -74,9 +74,9 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
             },
             ],[])
 
-    const [query, setQuery] = useState("")
-    //TODO faz sentido poder procurar por membro de equipa / responsavel / datas e tipo de movimento
-    const [searchProperty, setSearchProperty] = useState<string>("")
+    // const [query, setQuery] = useState("")
+    // //TODO faz sentido poder procurar por membro de equipa / responsavel / datas e tipo de movimento
+    // const [searchProperty, setSearchProperty] = useState<string>("")
 
     // const filter = () => entries.filter(e => e.)
 

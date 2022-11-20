@@ -1,11 +1,9 @@
-import React, {HTMLProps, useState} from "react";
+import React, {useState} from "react";
 import {
-    Column,
     ColumnDef,
     flexRender,
     getCoreRowModel,
     getSortedRowModel,
-    Table,
     SortingState,
     useReactTable
 } from "@tanstack/react-table";
@@ -24,20 +22,22 @@ type TableProps = {
 export function MyTable(props: TableProps) {
 
     const [sorting, setSorting] = useState<SortingState>([])
-    const [rowSelection, setRowSelection] = React.useState({})
+    // const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
         data: props.data,
         columns: props.columns,
         state: {
             sorting,
-            rowSelection
+            // rowSelection
         },
         onSortingChange: setSorting,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         debugTable: true,
     })
+
+    const headerSize = table.getHeaderGroups().length
 
     return (
         <React.Fragment>
@@ -82,16 +82,15 @@ export function MyTable(props: TableProps) {
                 </thead>
                 <tbody>
                 {props.loading
-                    ? <tr key={"empty"}><span><Spinner as={"span"} animation={"border"}/> A carregar dados...</span></tr>
+                    ? <tr key={"empty"}><td colSpan={headerSize} ><span><Spinner as={"span"} animation={"border"}/> A carregar dados...</span></td></tr>
                     : table
                         .getRowModel()
                         .rows.length === 0
-                        ? <tr key={"no-values"}>{props.emptyDataPlaceholder ?? "Sem dados."}</tr>
+                        ? <tr key={"no-values"}><td colSpan={headerSize}>{props.emptyDataPlaceholder ?? "Sem dados."}</td></tr>
                         : table
                             .getRowModel()
                             .rows.slice(0, 10)
                             .map(row => {
-                                console.log(row)
                                 return (
                                     <tr key={row.id}>
                                         {row.getVisibleCells().map(cell => {
@@ -114,23 +113,23 @@ export function MyTable(props: TableProps) {
     )
 }
 
-function IndeterminateCheckbox(
-    {indeterminate, className = '', ...rest}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>
-) {
-    const ref = React.useRef<HTMLInputElement>(null!)
-
-    React.useEffect(() => {
-        if (typeof indeterminate === 'boolean') {
-            ref.current.indeterminate = !rest.checked && indeterminate
-        }
-    }, [ref, indeterminate, rest.checked])
-
-    return (
-        <input
-            type="checkbox"
-            ref={ref}
-            className={className + ' cursor-pointer'}
-            {...rest}
-        />
-    )
-}
+// function IndeterminateCheckbox(
+//     {indeterminate, className = '', ...rest}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>
+// ) {
+//     const ref = React.useRef<HTMLInputElement>(null!)
+//
+//     React.useEffect(() => {
+//         if (typeof indeterminate === 'boolean') {
+//             ref.current.indeterminate = !rest.checked && indeterminate
+//         }
+//     }, [ref, indeterminate, rest.checked])
+//
+//     return (
+//         <input
+//             type="checkbox"
+//             ref={ref}
+//             className={className + ' cursor-pointer'}
+//             {...rest}
+//         />
+//     )
+// }

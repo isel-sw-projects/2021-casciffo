@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import './assets/css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
@@ -8,8 +7,6 @@ import App from "./view/app/App";
 
 import { createRoot } from 'react-dom/client';
 import {UserAuthContextProvider} from "./view/context/UserAuthContext";
-import {ErrorBoundary} from "react-error-boundary";
-import {GlobalErrorBoundary} from "./view/error-view/GlobalErrorBoundary";
 const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(

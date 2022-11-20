@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.users.user
 
-import isel.casciffo.casciffospringbackend.roles.Role
+import isel.casciffo.casciffospringbackend.roles.RoleModel
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -24,5 +24,5 @@ data class UserModel(
 
     @Transient
     @Value("null")
-    var roles: Flux<Role>? = null
+    var roles: Flux<RoleModel>? = null
 )

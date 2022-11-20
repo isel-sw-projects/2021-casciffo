@@ -29,7 +29,7 @@ import {CreateProposal} from "../proposal-form-view/CreateProposal";
 import {NotificationService} from "../../services/NotificationService";
 import {NotificationsView} from "../notifications/NotificationsView";
 import {MyUtil} from "../../common/MyUtil";
-import {Tooltip, IconButton as MuiIconButton, Badge as MuiBadge}  from "@mui/material";
+import {Tooltip, Badge as MuiBadge}  from "@mui/material";
 import {MdNotificationImportant} from "react-icons/md";
 import {IoMdNotifications} from "react-icons/io";
 
@@ -52,7 +52,7 @@ function NavigationBar(props: {notificationService: NotificationService}) {
                 .checkForNewNotifications(userToken!.userId!)
                 .then(value => {console.log(`Found ${value} new notifications.`); return value;})
                 .then(setNotificationCount)
-        }, MyUtil.convertMinutesToMillis(15))
+        }, MyUtil.convertMinutesToMillis(1))
         return () => clearInterval(interval)
     }, [props.notificationService, userToken])
 
@@ -143,7 +143,7 @@ function CreateRoutes() {
 
     return (
         <Routes>
-            {/*<Route path={"/"} element={<Homepage/>}/>*/}
+
             <Route path={"/"} element={RequiresAuth(<Dashboard statisticsService={new StatisticsService()}/>)}/>
             <Route path={"/login"} element={<Login UserService={new UserService()}/>}/>
             <Route path={"/logout"} element={<Logout/>}/>
@@ -193,9 +193,10 @@ function DisplayPath() {
         displayName: "Início"
     })
     for (let i = 1; i < pathVariables.length; i++) {
+        const name = pathVariables[i] === "notificacoes" ? "notificações" : pathVariables[i]
         let currPathVariable = {
             link: pathVariables[i - 1].concat("/",pathVariables[i]),
-            displayName: pathVariables[i]
+            displayName: name
         }
         displayPath.push(currPathVariable)
     }

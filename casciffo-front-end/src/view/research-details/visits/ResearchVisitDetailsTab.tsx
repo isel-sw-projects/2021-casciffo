@@ -1,9 +1,9 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {ResearchAggregateService} from "../../../services/ResearchAggregateService";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useParams} from "react-router-dom";
 import {useErrorHandler} from "react-error-boundary";
 import {MyError} from "../../error-view/MyError";
-import {PatientModel, ResearchVisitModel, VisitInvestigator} from "../../../model/research/ResearchModel";
+import {ResearchVisitModel} from "../../../model/research/ResearchModel";
 import {
     Breadcrumb,
     Button,
@@ -12,10 +12,9 @@ import {
     Form,
     FormGroup,
     FormLabel,
-    FormSelect, FormText,
+    FormSelect,
     ListGroup,
-    Row,
-    Stack
+    Row
 } from "react-bootstrap";
 import {MyUtil} from "../../../common/MyUtil";
 import {VisitPeriodicity, VISIT_ID_PARAMETER, VisitTypes} from "../../../common/Constants";

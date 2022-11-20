@@ -12,34 +12,34 @@ import reactor.core.publisher.Mono
 
 @Service
 class RoleServiceImpl(@Autowired private val repository: RoleRepository) : RoleService {
-    override suspend fun createRole(role: Role): Role? {
+    override suspend fun createRole(role: RoleModel): RoleModel? {
         return repository.save(role).awaitSingle()
     }
 
-    override suspend fun getRoles(): Flow<Role> {
+    override suspend fun getRoles(): Flow<RoleModel> {
         return repository.findAll().asFlow()
     }
 
-    override suspend fun findById(id: Int): Role {
+    override suspend fun findById(id: Int): RoleModel {
         return repository.findById(id).awaitSingleOrNull()
             ?: throw NonExistentResourceException("Role with id: $id doesn't exist.")
     }
 
-    override suspend fun deleteRole(roleId: Int): Role {
+    override suspend fun deleteRole(roleId: Int): RoleModel {
         val roleToDelete = findById(roleId)
         repository.deleteById(roleId).subscribe()
         return roleToDelete
     }
 
-    override fun findByUserId(id: Int): Flux<Role> {
+    override fun findByUserId(id: Int): Flux<RoleModel> {
         return repository.findByUserId(id)
     }
 
-    override fun findByIdMono(id: Int): Mono<Role> {
+    override fun findByIdMono(id: Int): Mono<RoleModel> {
         return repository.findById(id)
     }
 
-    override fun findByStateId(id: Int): Flux<Role> {
+    override fun findByStateId(id: Int): Flux<RoleModel> {
         return repository.findByStateId(id)
     }
 }

@@ -1,4 +1,4 @@
-import {Button, Container, Form, FormControl, FormGroup, Table} from "react-bootstrap";
+import {Button, Container, FormControl, Table} from "react-bootstrap";
 import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
 import React, {useEffect, useState} from "react";
 import {CommentTypes} from "../../../common/Constants";

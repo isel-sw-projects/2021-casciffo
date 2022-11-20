@@ -1,6 +1,6 @@
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import ApiUrls from "../common/Links";
-import {PromoterTypes, ResearchTypes, StateChainTypes, TOKEN_KEY} from "../common/Constants";
+import {PromoterTypes, ResearchTypes, StateChainTypes} from "../common/Constants";
 import {TimelineEventModel} from "../model/proposal/TimelineEventModel";
 import {ProtocolAggregateDTO, ProtocolModel} from "../model/proposal/finance/ProtocolModel";
 import {
@@ -10,8 +10,6 @@ import {
 } from "../model/proposal/finance/ValidationModels";
 import {httpGet, httpGetFile, httpPost, axiosPostFormFile, httpPut} from "../common/MyUtil";
 import {StateModel} from "../model/state/StateModel";
-import {log} from "util";
-import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
 import {AxiosResponseBody} from "../common/Types";
 
 

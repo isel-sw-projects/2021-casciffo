@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
+import {Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import ProposalService from "../../services/ProposalService";
 import {SearchComponent} from "../components/SearchComponent";
-import {PaginationComponent} from "../components/PaginationComponent";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {MyUtil} from "../../common/MyUtil";
 import {Link} from "react-router-dom";
@@ -60,7 +59,7 @@ export function Proposals(props: Proposals_Props) {
     const [researchType, setResearchType] = useState<string>(ResearchTypes.CLINICAL_TRIAL.id)
     const [query, setQuery] = useState("")
     //TODO implement sort
-    const [sortBy, setSortBy] = useState<keyof ProposalModel>("id")
+    // const [sortBy, setSortBy] = useState<keyof ProposalModel>("id")
     const [searchProperty, setSearchProperty] = useState<keyof ProposalRowInfo>("sigla")
     const [checkBoxGroupState, setCheckBoxGroupState] = useState({
         totalCheckedItems: 0,

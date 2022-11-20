@@ -1,15 +1,12 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {ColumnDef} from "@tanstack/react-table";
-import {ResearchAggregateModel, ScientificActivityModel} from "../../../model/research/ResearchModel";
-import {Link} from "react-router-dom";
+import {ScientificActivityModel} from "../../../model/research/ResearchModel";
 import {MyTable} from "../../components/MyTable";
 import {
     Breadcrumb,
     Button,
     Container,
-    FloatingLabel,
     Form,
-    FormControl,
     FormGroup,
     Stack
 } from "react-bootstrap";

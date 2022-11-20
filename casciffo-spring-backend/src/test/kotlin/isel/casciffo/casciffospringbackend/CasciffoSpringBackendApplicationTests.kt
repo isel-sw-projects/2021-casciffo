@@ -35,7 +35,7 @@ import isel.casciffo.casciffospringbackend.research.research.ResearchService
 import isel.casciffo.casciffospringbackend.research.patients.PatientModel
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantRepository
 import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
-import isel.casciffo.casciffospringbackend.roles.Role
+import isel.casciffo.casciffospringbackend.roles.RoleModel
 import isel.casciffo.casciffospringbackend.roles.RoleRepository
 import isel.casciffo.casciffospringbackend.states.state.StateRepository
 import isel.casciffo.casciffospringbackend.users.user.UserModel
@@ -209,9 +209,9 @@ class CasciffoSpringBackendApplicationTests(
 
     @Test
     fun whenRolesAndUsersCreated_thenSearchUsersByRoleNames() {
-        val userRole = Role(roleName = "MockRole1")
-        val userRole2 = Role(roleName = "MockRole2")
-        val resRole: Flux<Role> = roleRepository.saveAll(listOf(userRole, userRole2))
+        val userRole = RoleModel(roleName = "MockRole1")
+        val userRole2 = RoleModel(roleName = "MockRole2")
+        val resRole: Flux<RoleModel> = roleRepository.saveAll(listOf(userRole, userRole2))
 
         StepVerifier
             .create(resRole)

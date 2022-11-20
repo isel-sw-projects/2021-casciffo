@@ -1,4 +1,4 @@
-import {Alert, Button, Col, Container, Form, Stack} from "react-bootstrap";
+import {Alert, Button, Col, Container, Form} from "react-bootstrap";
 
 import React, {useEffect, useState} from "react";
 import {Constants, Investigator, ProposalForm} from "../../common/Types";

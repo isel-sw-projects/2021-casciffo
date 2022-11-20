@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useState} from "react";
-import {ResearchAddenda, ResearchAggregateModel} from "../../../model/research/ResearchModel";
+import React, {useEffect, useState} from "react";
+import {ResearchAddenda} from "../../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
 import {Link} from "react-router-dom";
-import {Col, Container, Form, FormGroup, Row, Stack} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import {MyTable} from "../../components/MyTable";
 
 type AddendaProps = {

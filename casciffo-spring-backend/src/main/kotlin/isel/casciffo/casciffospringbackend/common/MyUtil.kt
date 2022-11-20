@@ -61,5 +61,5 @@ const val JURIDICAL_AUTHORITY = "${ROLE_AUTH}JURIDICAL"
 /*******************************************************************************/
 
 fun convertToJson(list: List<Pair<String, Int>>): String {
-    return "{" + list.joinToString(separator=",", transform= {pair -> "\"${pair.first}\":${pair.second}"}) + "}"
+    return "[" + list.joinToString(separator=",", transform= {pair -> "\"${pair.first}\":${pair.second}"}) + "]"
 }

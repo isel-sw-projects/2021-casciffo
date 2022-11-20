@@ -5,15 +5,15 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface RoleService {
-    suspend fun createRole(role: Role): Role?
-    suspend fun getRoles() : Flow<Role>
-    suspend fun findById(id: Int): Role
+    suspend fun createRole(role: RoleModel): RoleModel?
+    suspend fun getRoles() : Flow<RoleModel>
+    suspend fun findById(id: Int): RoleModel
 
-    suspend fun deleteRole(roleId: Int): Role
+    suspend fun deleteRole(roleId: Int): RoleModel
 
-    fun findByUserId(id: Int): Flux<Role>
+    fun findByUserId(id: Int): Flux<RoleModel>
 
-    fun findByIdMono(id: Int): Mono<Role>
+    fun findByIdMono(id: Int): Mono<RoleModel>
 
-    fun findByStateId(id: Int): Flux<Role>
+    fun findByStateId(id: Int): Flux<RoleModel>
 }

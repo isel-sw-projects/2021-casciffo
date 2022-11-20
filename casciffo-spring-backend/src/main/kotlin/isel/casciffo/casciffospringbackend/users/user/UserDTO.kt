@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.users.user
 
-import isel.casciffo.casciffospringbackend.roles.Role
+import isel.casciffo.casciffospringbackend.roles.RoleModel
 
 data class UserDTO (
     var userId : Int? = null,
@@ -11,5 +11,5 @@ data class UserDTO (
 
     var password: String? = null,
 
-    var roles: List<Role>? = null,
+    var roles: List<RoleModel>? = null,
 )

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Row, TabPane, Tabs} from "react-bootstrap";
 import {ResearchTeamFinanceEntriesTab} from "./ResearchTeamFinanceEntriesTab";
 import {ResearchFinanceEntriesTab} from "./ResearchFinanceEntriesTab";
@@ -11,7 +11,6 @@ import {
 import {FormInputHelper} from "../../components/FormInputHelper";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {Roles} from "../../../model/role/Roles";
-import {useParams} from "react-router-dom";
 import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 
 type ResearchFinanceProps = {
@@ -25,7 +24,7 @@ type ResearchFinanceProps = {
 }
 
 export function ResearchFinanceTab(props: ResearchFinanceProps) {
-    const {researchId} = useParams()
+    // const {researchId} = useParams()
 
     const [selectedFinanceTab, setSelectedFinanceTab] = useState("research-finance")
     const selectTab = (tab:string | null) => {

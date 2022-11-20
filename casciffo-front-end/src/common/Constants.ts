@@ -1,3 +1,7 @@
+import {MyHashMap} from "./Types";
+
+export const NOT_AVAILABLE = "N/A"
+
 export const TeamRoleTypes = {
     MEMBER: "MEMBER",
     PRINCIPAL: "PRINCIPAL"
@@ -78,6 +82,59 @@ export const VisitPeriodicity = {
 
 }
 
+export const ProposalTabNames = {
+    proposal: "proposal",
+    proposal_cf: "proposal_cf",
+    contacts: "contacts",
+    observations: "observations",
+    partnerships: "partnerships",
+    protocol: "protocol",
+    chronology: "chronology",
+}
+
+export const ResearchTabNames = {
+    research: "detalhes",
+    addenda: "addenda",
+    activities: "atividades",
+    visits: "visitas",
+    patients: "pacientes",
+    finance: "financiamento"
+}
+
+export const NotificationType = {
+    PROPOSAL_SUBMITTED: {
+        id: "PROPOSAL_SUBMITTED",
+        buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#t=${ProposalTabNames.proposal}`},
+    PROPOSAL_DETAILS: {
+        id: "PROPOSAL_DETAILS",
+        buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#t=${ProposalTabNames.proposal}`},
+    PROPOSAL_FINANCE: {
+        id: "PROPOSAL_FINANCE",
+        buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#t=${ProposalTabNames.proposal_cf}`},
+    PROPOSAL_EVENTS: {
+        id: "PROPOSAL_EVENTS",
+        buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#t=${ProposalTabNames.chronology}`},
+    PROPOSAL_OBSERVATION: {
+        id: "PROPOSAL_OBSERVATION",
+        buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#t=${ProposalTabNames.observations}`},
+    PROPOSAL_CONTACT: {
+        id: "PROPOSAL_CONTACT",
+        buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#t=${ProposalTabNames.contacts}`},
+    RESEARCH_DETAILS: {
+        id: "RESEARCH_DETAILS",
+        buildLink: (ids: MyHashMap): string => `/ensaio/${ids["researchId"]}#${ResearchTabNames.research}`},
+    RESEARCH_ADDENDA: {
+        id: "RESEARCH_ADDENDA",
+        buildLink: (ids: MyHashMap): string =>`/propostas/${ids["proposalId"]}#${ResearchTabNames.addenda}`},
+    RESEARCH_VISIT: {
+        id: "RESEARCH_VISIT",
+        buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#${ResearchTabNames.visits}`},
+    USER_NEW_ROLES: {
+        id: "USER_NEW_ROLES",
+        buildLink: (ids: MyHashMap): string => NOT_AVAILABLE
+    }
+}
+
 export const TOKEN_KEY = "token"
 
 export const KEY_VALUE_DELIMENTER = "="
@@ -86,4 +143,4 @@ export const TAB_PARAMETER = "t"
 export const SCOPE_PARAMETER = "s"
 export const PATIENT_ID_PARAMETER = "pId"
 export const VISIT_ID_PARAMETER = "vId"
-export const ADDENDA_ID_PARAMETER = "aId"
+// export const ADDENDA_ID_PARAMETER = "aId"

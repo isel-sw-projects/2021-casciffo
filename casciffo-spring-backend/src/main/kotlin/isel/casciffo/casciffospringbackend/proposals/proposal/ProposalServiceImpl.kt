@@ -116,9 +116,9 @@ class ProposalServiceImpl(
     }
 
     private suspend fun notifyRoles(proposal: ProposalModel) {
-        notificationService.notifyRoles(
+        userService.notifyRoles(
             listOf(Roles.FINANCE, Roles.JURIDICAL),
-            notification = NotificationModel(
+            notificationModel = NotificationModel(
                 title = "Contrato financeiro para revisão.",
                 description = "Proposta com sigla ${proposal.sigla}, espera validação do contrato financeiro.",
                 ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),

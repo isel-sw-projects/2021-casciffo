@@ -105,7 +105,6 @@ class ProposalController(
         @RequestParam nextStateId: Int,
         request: ServerHttpRequest
     ): ProposalDTO {
-//        throw DataBaseException("testing out this reason, received params pId: $proposalId , nsId: $nextStateId")
         return transitionState(proposalId, nextStateId, request)
     }
 

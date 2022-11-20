@@ -2,7 +2,7 @@ import {MyError} from "../../error-view/MyError";
 
 import {
     DossierModel,
-    PatientModel, ResearchFinance, ResearchFinanceEntries,
+    ResearchFinance, ResearchFinanceEntries,
     ResearchModel, ResearchPatientModel, ResearchTeamFinanceEntries,
     ResearchVisitModel,
     ScientificActivityModel
@@ -24,7 +24,7 @@ import {ResearchScientificActivitiesTab} from "../scientic-activities/ResearchSc
 import {ResearchStates} from "./ResearchStates";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {
-    PATIENT_ID_PARAMETER,
+    PATIENT_ID_PARAMETER, ResearchTabNames,
     ResearchTypes,
     SCOPE_PARAMETER,
     TAB_PARAMETER,
@@ -34,16 +34,6 @@ import {
 import {ResearchVisitDetailsTab} from "../visits/ResearchVisitDetailsTab";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {MyUtil} from "../../../common/MyUtil";
-
-
-const TAB_NAMES = {
-    research: "research",
-    addenda: "addenda",
-    activities: "activities",
-    visits: "visits",
-    patients: "patients",
-    finance: "finance"
-}
 
 export function ResearchDetailsPage(props: { researchService: ResearchAggregateService }) {
     const {researchId} = useParams()
@@ -68,7 +58,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         const params = MyUtil.parseUrlHash(hash)
         const tabParam = params.find(pair => pair.key === TAB_PARAMETER)
-        const tab = tabParam && tabParam.value in TAB_NAMES ? tabParam!.value : TAB_NAMES.research
+        const tab = tabParam && tabParam.value in ResearchTabNames ? tabParam!.value : ResearchTabNames.research
         const scopeParam = params.find(pair => pair.key === SCOPE_PARAMETER)
         if(scopeParam != null && scopeParam.value in TabPaneScope) {
             setTabPaneScope(parseInt(scopeParam.value))
@@ -208,7 +198,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
     const renderPatientOverviewScreen = () => {
         const args = [
-            {key: TAB_PARAMETER, value: TAB_NAMES.patients},
+            {key: TAB_PARAMETER, value: ResearchTabNames.patients},
             {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
         ]
         const path = MyUtil.formatUrlHash(args)
@@ -216,7 +206,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }
     const renderPatientAddScreen = () => {
         const args = [
-            {key: TAB_PARAMETER, value: TAB_NAMES.patients},
+            {key: TAB_PARAMETER, value: ResearchTabNames.patients},
             {key: SCOPE_PARAMETER, value: TabPaneScope.CREATE.toString()}
         ]
         const path = MyUtil.formatUrlHash(args)
@@ -224,7 +214,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }
     const renderPatientDetailsScreen = (pId: string) => {
         const args = [
-            {key: TAB_PARAMETER, value: TAB_NAMES.patients},
+            {key: TAB_PARAMETER, value: ResearchTabNames.patients},
             {key: SCOPE_PARAMETER, value: TabPaneScope.DETAILS.toString()},
             {key: PATIENT_ID_PARAMETER, value: pId}
         ]
@@ -233,7 +223,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }
 
     const patientSwitchRender = (tab: TabPaneScope) => {
-        if(selectedTab !== TAB_NAMES.patients) {
+        if(selectedTab !== ResearchTabNames.patients) {
             return <ResearchPatientsTab
                 patients={research.patients ?? []}
                 onChangeScreenToAddPatient={renderPatientAddScreen}
@@ -271,7 +261,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
     const renderVisitsOverviewScreen = () => {
         const args = [
-            {key: TAB_PARAMETER, value: TAB_NAMES.visits},
+            {key: TAB_PARAMETER, value: ResearchTabNames.visits},
             {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
         ]
         const path = MyUtil.formatUrlHash(args)
@@ -281,7 +271,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     const renderVisitsDetailsScreen = (vId: string) => {
         const args = [
             {key: VISIT_ID_PARAMETER, value: vId},
-            {key: TAB_PARAMETER, value: TAB_NAMES.visits},
+            {key: TAB_PARAMETER, value: ResearchTabNames.visits},
             {key: SCOPE_PARAMETER, value: TabPaneScope.DETAILS.toString()}
         ]
         const path = MyUtil.formatUrlHash(args)
@@ -290,7 +280,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
 
     const visitSwitchRender = (tab: TabPaneScope) => {
-        if(selectedTab !== TAB_NAMES.visits)
+        if(selectedTab !== ResearchTabNames.visits)
             return <ResearchVisitsTab visits={research.visits || []}
                                       onAddVisit={addNewVisit}
                                       renderDetails={renderVisitsDetailsScreen}
@@ -317,12 +307,12 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }
 
 
-    const renderAddendaOverviewScreen = () => {
-        //TODO ?
-    }
+    // const renderAddendaOverviewScreen = () => {
+    //     //TODO ?
+    // }
     const renderAddendaDetailsScreen = () => {
         const args = [
-            {key: TAB_PARAMETER, value: TAB_NAMES.addenda},
+            {key: TAB_PARAMETER, value: ResearchTabNames.addenda},
             {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
         ]
         const path = MyUtil.formatUrlHash(args)
@@ -330,7 +320,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }
 
     const addendaSwitchRender = (tab: TabPaneScope) => {
-        if(selectedTab !== TAB_NAMES.addenda)
+        if(selectedTab !== ResearchTabNames.addenda)
             return <ResearchAddendaTab
                     addendas={research.addendas ?? []}
                     renderDetails={renderAddendaDetailsScreen}
@@ -354,7 +344,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     const navigate = useNavigate()
     const selectTab = (tab:string | null) => {
         const args = [
-            {key: TAB_PARAMETER, value: tab || TAB_NAMES.research},
+            {key: TAB_PARAMETER, value: tab || ResearchTabNames.research},
             {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
         ]
         const path = MyUtil.formatUrlHash(args)
@@ -375,7 +365,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                     onSelect={selectTab}
                     className="mb-3 justify-content-evenly"
                 >
-                    <Tab eventKey={TAB_NAMES.research} title={"Ensaio Clínico"}>
+                    <Tab eventKey={ResearchTabNames.research} title={"Ensaio Clínico"}>
                         <ResearchDetailsTab
                             stateChain={stateChain}
                             research={research}
@@ -385,10 +375,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             onComplete={onCompleteResearch}/>
 
                     </Tab>
-                    <Tab eventKey={TAB_NAMES.addenda} title={"Adendas"}>
+                    <Tab eventKey={ResearchTabNames.addenda} title={"Adendas"}>
                         {addendaSwitchRender(tabPaneScope)}
                     </Tab>
-                    <Tab eventKey={TAB_NAMES.activities} title={"Atividades científicas"}>
+                    <Tab eventKey={ResearchTabNames.activities} title={"Atividades científicas"}>
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
@@ -401,7 +391,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             scientificActivities={research.scientificActivities || []}/>
 
                     </Tab>
-                    <Tab eventKey={TAB_NAMES.visits} title={"Visitas"}>
+                    <Tab eventKey={ResearchTabNames.visits} title={"Visitas"}>
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
@@ -412,7 +402,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                         {visitSwitchRender(tabPaneScope)}
 
                     </Tab>
-                    <Tab eventKey={TAB_NAMES.patients} title={"Pacientes"}>
+                    <Tab eventKey={ResearchTabNames.patients} title={"Pacientes"}>
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
@@ -425,7 +415,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                     </Tab>
                     {
                         research.type === ResearchTypes.CLINICAL_TRIAL.id &&
-                        <Tab eventKey={TAB_NAMES.finance} title={"Financiamento"}>
+                        <Tab eventKey={ResearchTabNames.finance} title={"Financiamento"}>
                             <ResearchStates
                                 states={stateChain}
                                 stateTransitions={research.stateTransitions ?? []}

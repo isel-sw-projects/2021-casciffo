@@ -6,16 +6,16 @@ import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 
 @Repository
-interface RoleRepository : ReactiveCrudRepository<Role, Int>{
+interface RoleRepository : ReactiveCrudRepository<RoleModel, Int>{
     @Query("select r.* from roles r" +
             " join user_roles ur on r.role_id = ur.role_id" +
             " where ur.user_id = :userId")
-    fun findByUserId(userId: Int) : Flux<Role>
+    fun findByUserId(userId: Int) : Flux<RoleModel>
 
     @Query("SELECT r.* " +
             "FROM roles r " +
             "JOIN state_roles sr " +
             "ON r.role_id = sr.role_id " +
             "WHERE sr.state_id = :id")
-    fun findByStateId(id: Int): Flux<Role>
+    fun findByStateId(id: Int): Flux<RoleModel>
 }

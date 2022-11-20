@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import './ProposalForm.css'
 import {
-    Button,
     Row
 } from "react-bootstrap";
 import {InvestigatorTeamColumn} from "./InvestigationTeamColumn";

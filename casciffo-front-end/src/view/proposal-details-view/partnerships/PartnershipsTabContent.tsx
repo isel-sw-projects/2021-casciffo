@@ -1,15 +1,9 @@
 import {PartnershipModel} from "../../../model/proposal/finance/PartnershipModel";
 import {
-    Accordion,
-    AccordionButton,
-    Badge,
     Button,
     Card,
-    CloseButton,
-    Col, Collapse,
+    Collapse,
     Container,
-    Form,
-    Row,
     Stack
 } from "react-bootstrap";
 import React, {useEffect, useState} from "react";

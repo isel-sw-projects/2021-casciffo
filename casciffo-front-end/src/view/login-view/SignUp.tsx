@@ -5,10 +5,3 @@ type SignUpProps = {
     UserService: UserService
 }
 
-export function SignUp(props: SignUpProps) {
-    return (
-        <React.Fragment>
-
-        </React.Fragment>
-    )
-}

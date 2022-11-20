@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {ValidationCommentDTO} from "../../../model/proposal/finance/ValidationModels";
-import React, {FormEvent, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Button, CloseButton, Form} from "react-bootstrap";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 
@@ -68,16 +68,6 @@ export function ValidationComment(props: ValidationCommentProps) {
         }))
     }
 
-    const updateComment = (e: any) => {
-        const key = e.target.name as keyof ValidationCommentDTO
-        const value = e.target.value
-
-        setComment(prevState => ({
-            ...prevState,
-            [key]: value
-        }))
-    }
-
     const updateValid = (e: any) => {
         setComment(prevState => ({
             ...prevState,
@@ -123,7 +113,7 @@ export function ValidationComment(props: ValidationCommentProps) {
                     onChange={updateValidationType}
                 >
                     {types?.length! > 1 && <option key={"default"} value={""} disabled>Tipo de validação</option>}
-                    {types && types.map((rt, i) =>
+                    {types && types.map((rt) =>
                         <option key={rt.id} value={rt.id}>{rt.name}</option>
                     )}
                 </Form.Select>

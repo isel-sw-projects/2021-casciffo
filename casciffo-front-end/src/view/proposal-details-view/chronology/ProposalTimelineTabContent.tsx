@@ -1,14 +1,14 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {TimelineEventModel} from "../../../model/proposal/TimelineEventModel";
 import {SearchComponent} from "../../components/SearchComponent";
 import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
-import {EventTypes, ResearchTypes} from "../../../common/Constants";
+import {EventTypes} from "../../../common/Constants";
 import {TimelineEventForm} from "./TimelineEventForm";
 import {Chrono} from "react-chrono";
 import {MyUtil} from "../../../common/MyUtil";
 import ProposalAggregateService from "../../../services/ProposalAggregateService";
 import {useParams} from "react-router-dom";
-import {BiCheck, BiCheckboxMinus} from "react-icons/bi";
+import {BiCheck} from "react-icons/bi";
 import {StateModel} from "../../../model/state/StateModel";
 
 type TimelineProps = {

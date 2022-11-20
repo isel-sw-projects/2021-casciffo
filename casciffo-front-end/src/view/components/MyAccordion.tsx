@@ -1,5 +1,5 @@
 /**
- * Credits for this file go to
+ * Credits for this file goes to
  * https://codesandbox.io/s/react-bootstrap-collapse-accordion-example-3k5du?fontsize=14&hidenavigation=1&theme=dark&file=/src/components/Accordion.tsx:0-2241
  */
 

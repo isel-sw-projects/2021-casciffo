@@ -1,6 +1,5 @@
-import React, {useCallback, useEffect, useState} from "react"
+import React, {useEffect, useState} from "react"
 import {Button, Container, Stack, Table} from "react-bootstrap"
-import {useParams} from "react-router-dom";
 import {ProtocolModel} from "../../../model/proposal/finance/ProtocolModel";
 import {MyUtil} from "../../../common/MyUtil";
 import {ValidityComment} from "../../../model/proposal/finance/ValidationModels";

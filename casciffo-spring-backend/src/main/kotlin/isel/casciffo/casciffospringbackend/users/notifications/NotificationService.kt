@@ -7,7 +7,6 @@ import reactor.core.publisher.Flux
 interface NotificationService {
 
     suspend fun createBulkNotifications(notifications: Flux<NotificationModel>)
-    suspend fun notifyRoles(roles: List<Roles>, notification: NotificationModel)
     suspend fun fetchNotificationsByUserId(userId: Int): Flow<NotificationModel>
     suspend fun checkNewNotifications(userId: Int): Int
     suspend fun createNotification(userId: Int, notification: NotificationModel): NotificationModel

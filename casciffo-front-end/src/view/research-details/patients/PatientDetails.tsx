@@ -1,13 +1,11 @@
 import {
-    PatientModel,
     ResearchPatientModel,
-    ResearchTeamFinanceEntries,
     ResearchVisitModel
 } from "../../../model/research/ResearchModel";
 import {Breadcrumb, Button, Col, Container, Form} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {FormInputHelper} from "../../components/FormInputHelper";
-import {Link, useLocation, useParams} from "react-router-dom";
+import { useParams} from "react-router-dom";
 import {MyUtil} from "../../../common/MyUtil";
 import {useErrorHandler} from "react-error-boundary";
 import {MyError} from "../../error-view/MyError";

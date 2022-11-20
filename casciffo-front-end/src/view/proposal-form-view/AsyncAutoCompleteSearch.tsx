@@ -1,8 +1,8 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {AsyncTypeahead, Highlighter} from 'react-bootstrap-typeahead';
 
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import {Button, CloseButton, Col, OverlayTrigger, Row, Stack, Tooltip} from "react-bootstrap";
+import {OverlayTrigger, Stack, Tooltip} from "react-bootstrap";
 import UserModel from "../../model/user/UserModel";
 
 type UserInfo = {

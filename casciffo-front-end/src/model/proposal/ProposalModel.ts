@@ -4,7 +4,6 @@ import {TherapeuticAreaModel} from "../proposal-constants/TherapeuticAreaModel";
 import {PathologyModel} from "../proposal-constants/PathologyModel";
 import UserModel from "../user/UserModel";
 import {ProposalFinanceModel} from "./finance/ProposalFinanceModel";
-import {Investigator} from "../../common/Types";
 import {TeamInvestigatorModel} from "../user/TeamInvestigatorModel";
 import {StateTransitionModel} from "../state/StateTransitionModel";
 import {ProposalCommentsModel} from "./ProposalCommentsModel";

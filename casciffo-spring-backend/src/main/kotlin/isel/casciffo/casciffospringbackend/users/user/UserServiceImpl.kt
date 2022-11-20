@@ -7,8 +7,9 @@ import isel.casciffo.casciffospringbackend.common.NotificationType
 import isel.casciffo.casciffospringbackend.common.QuadTuple
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
-import isel.casciffo.casciffospringbackend.roles.Role
+import isel.casciffo.casciffospringbackend.roles.RoleModel
 import isel.casciffo.casciffospringbackend.roles.RoleService
+import isel.casciffo.casciffospringbackend.roles.Roles
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtSupport
 import isel.casciffo.casciffospringbackend.users.notifications.NotificationModel
@@ -18,6 +19,7 @@ import isel.casciffo.casciffospringbackend.users.user_roles.UserRolesRepo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KotlinLogging
@@ -54,7 +56,6 @@ class UserServiceImpl(
         existingUser?.let {
             if(!encoder.matches(userModel.password, it.password)) return@let
 
-
             val roles = if (existingUser.roles == null) null
             else existingUser.roles!!.map {r -> r.roleName!! }.collectList().awaitSingleOrNull()
 
@@ -71,6 +72,22 @@ class UserServiceImpl(
             ?: throw UserNotFoundException()
     }
 
+    override suspend fun notifyRoles(roles: List<Roles>, notificationModel: NotificationModel) {
+        val users = getAllUsersByRoleNames(roles.map { it.name }).asFlux()
+        notificationService.createBulkNotifications(
+            users.map {
+                NotificationModel(
+                    userId = it.userId!!,
+                    title = notificationModel.title,
+                    description = notificationModel.description,
+                    notificationType = notificationModel.notificationType,
+                    ids = notificationModel.ids,
+                    viewed = false
+                )
+            }
+        )
+    }
+
     private fun mapAggregateToModel(stream: Flux<UserRolesAggregate>, requirePassword: Boolean = false): Flux<UserModel> {
         return if(requirePassword)
             stream.groupBy { QuadTuple(it.userId!!, it.userName!!, it.userEmail!!, it.userPassword!!) }
@@ -80,7 +97,7 @@ class UserServiceImpl(
                         name = it.key().second,
                         email = it.key().third,
                         password = it.key().fourth,
-                        roles = it.mapNotNull { role -> if (role.roleId == null ) null else Role(roleId = role.roleId, roleName = role.roleName) })
+                        roles = it.mapNotNull { role -> if (role.roleId == null ) null else RoleModel(roleId = role.roleId, roleName = role.roleName) })
                 }
         else
             stream.groupBy { Triple(it.userId!!, it.userName!!, it.userEmail!!) }
@@ -89,7 +106,7 @@ class UserServiceImpl(
                         userId = it.key().first,
                         name = it.key().second,
                         email = it.key().third,
-                        roles = it.mapNotNull { role -> if (role.roleId == null ) null else Role(roleId = role.roleId, roleName = role.roleName) })
+                        roles = it.mapNotNull { role -> if (role.roleId == null ) null else RoleModel(roleId = role.roleId, roleName = role.roleName) })
                 }
     }
 

@@ -127,13 +127,13 @@ export function ResearchStates(props: ResearchStatesProps) {
             : disabled ? 'outline-dark' : 'outline-primary'
     }
 
-    function getTransitionDate(state: StateWithDisplayName) {
-        const transition = stateTransitions.find(st => st.newStateId === state.id)
-
-        if (transition == null) return ""
-
-        return MyUtil.formatDate(transition!.transitionDate)
-    }
+    // function getTransitionDate(state: StateWithDisplayName) {
+    //     const transition = stateTransitions.find(st => st.newStateId === state.id)
+    //
+    //     if (transition == null) return ""
+    //
+    //     return MyUtil.formatDate(transition!.transitionDate)
+    // }
 
 
     function createRadioButton(

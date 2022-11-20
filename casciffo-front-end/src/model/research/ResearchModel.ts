@@ -3,7 +3,6 @@ import {StateTransitionModel} from "../state/StateTransitionModel";
 import {StateModel} from "../state/StateModel";
 import UserModel from "../user/UserModel";
 import {TeamInvestigatorModel} from "../user/TeamInvestigatorModel";
-import {ProposalCommentsModel} from "../proposal/ProposalCommentsModel";
 
 
 export interface ResearchModel {
