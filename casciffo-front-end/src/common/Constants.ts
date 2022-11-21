@@ -83,13 +83,13 @@ export const VisitPeriodicity = {
 }
 
 export const ProposalTabNames = {
-    proposal: "proposal",
-    proposal_cf: "proposal_cf",
-    contacts: "contacts",
-    observations: "observations",
-    partnerships: "partnerships",
-    protocol: "protocol",
-    chronology: "chronology",
+    proposal: "detalhes",
+    proposal_cf: "contrato",
+    contacts: "contactos",
+    observations: "observacoes",
+    partnerships: "parcerias",
+    protocol: "protocolo",
+    chronology: "cronologia",
 }
 
 export const ResearchTabNames = {

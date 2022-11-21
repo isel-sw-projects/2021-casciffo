@@ -41,7 +41,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     if(researchId == null) {
         throw new MyError("", 400)
     }
-    const [selectedTab, setSelectedTab] = useState("research")
+    const [selectedTab, setSelectedTab] = useState(ResearchTabNames.research)
     const [tabPaneScope, setTabPaneScope] = useState<TabPaneScope>(TabPaneScope.OVERVIEW)
     const errorHandler = useErrorHandler()
     // const ResearchDetailsContext = createContext({research: {}, setResearch: (r: ResearchModel): void => {}})
