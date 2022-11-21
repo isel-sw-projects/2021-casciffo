@@ -328,7 +328,7 @@ export function Dashboard(props: DashboardProps) {
                     <Container className={"text-center"}>
                         <h5 className={"font-bold"}>Ensaios clínicos</h5>
                     </Container>
-                    <Doughnut data={researchTrialStatsDonutData}/>
+                    <Doughnut data={researchTrialStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
                     { !researchTrialStats.hasData &&
                         <Container className={"text-center"}>
                             Sem dados para demonstrar.
@@ -339,7 +339,7 @@ export function Dashboard(props: DashboardProps) {
                     <Container className={"text-center"}>
                         <h5 className={"font-bold"}>Ensaios observacionais</h5>
                     </Container>
-                    <Doughnut data={researchStudyStatsDonutData}/>
+                    <Doughnut data={researchStudyStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
                     { !researchStudyStats.hasData &&
                         <Container className={"text-center"}>
                             Sem dados para demonstrar.
@@ -350,7 +350,7 @@ export function Dashboard(props: DashboardProps) {
                     <Container className={"text-center"}>
                         <h5 className={"font-bold"}>Ensaios clínicos</h5>
                     </Container>
-                    <Doughnut data={proposalTrialStatsDonutData}/>
+                    <Doughnut data={proposalTrialStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
                     { !proposalTrialStats.hasData &&
                         <Container className={"text-center"}>
                             Sem dados para demonstrar.
@@ -361,7 +361,7 @@ export function Dashboard(props: DashboardProps) {
                     <Container className={"text-center"}>
                         <h5 className={"font-bold"}>Estudos observacionais</h5>
                     </Container>
-                    <Doughnut data={proposalStudyStatsDonutData}/>
+                    <Doughnut data={proposalStudyStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
                     { !proposalStudyStats.hasData &&
                         <Container className={"text-center"}>
                             Sem dados para demonstrar.
