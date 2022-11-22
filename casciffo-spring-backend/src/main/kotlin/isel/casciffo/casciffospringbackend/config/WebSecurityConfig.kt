@@ -62,6 +62,8 @@ class WebSecurityConfig {
             .accessDeniedHandler(authExceptionHandler)
             .and()
             .authorizeExchange()
+            //for static served files
+            .pathMatchers("/**").permitAll()
             .pathMatchers(HttpMethod.GET, ENDPOINTS_URL).permitAll()
             .and()
             //jwt filter

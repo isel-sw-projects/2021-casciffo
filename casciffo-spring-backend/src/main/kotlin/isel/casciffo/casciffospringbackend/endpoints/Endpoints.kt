@@ -1,18 +1,19 @@
 package isel.casciffo.casciffospringbackend.endpoints
 
-const val ENDPOINTS_URL = "/"
+const val API_URL = "/api/casciffo"
+const val ENDPOINTS_URL = "$API_URL/"
 
 /************************************** ROLES ******************************************/
 /***************************************************************************************/
 
-const val ROLES_URL = "/roles"
+const val ROLES_URL = "$API_URL/roles"
 const val ROLE_DELETE_URL = "$ROLES_URL/{roleId}"
 
 
 /************************************** USERS ******************************************/
 /***************************************************************************************/
 
-const val USERS_URL = "/users"
+const val USERS_URL = "$API_URL/users"
 const val LOGIN_URL = "$USERS_URL/login"
 
 /**
@@ -38,7 +39,7 @@ const val USER_NOTIFICATIONS_CHECK_URL = "$USERS_URL/{userId}/notifications/chec
 /*********************************** CONSTANTS *****************************************/
 /***************************************************************************************/
 
-const val CONSTANTS_URL = "/constants"
+const val CONSTANTS_URL = "$API_URL/constants"
 
 const val SERVICE_TYPE_URL = "$CONSTANTS_URL/service"
 const val THERAPEUTIC_AREA_URL = "$CONSTANTS_URL/therapeutic-area"
@@ -48,13 +49,13 @@ const val PATHOLOGY_URL = "$CONSTANTS_URL/pathology"
 /************************************ STATES *******************************************/
 /***************************************************************************************/
 
-const val STATES_URL = "/states"
+const val STATES_URL = "$API_URL/states"
 const val STATES_CHAIN_TYPE_URL = "$STATES_URL/{chainType}"
 
 /*********************************** PROPOSAL ******************************************/
 /***************************************************************************************/
 
-const val PROPOSALS_URL = "/proposals"
+const val PROPOSALS_URL = "$API_URL/proposals"
 
 const val PROPOSALS_LASTEST_MODIFIED_URL = "$PROPOSALS_URL/last_modified"
 
@@ -82,11 +83,11 @@ const val PROPOSAL_GENERAL_STATS_URL = "$PROPOSALS_URL/stats"
 /*********************************** EVENTS ******************************************/
 /***************************************************************************************/
 
-const val NEAREST_EVENTS_URL = "/events"
+const val NEAREST_EVENTS_URL = "$API_URL/events"
 
 /*********************************** RESEARCH ******************************************/
 /***************************************************************************************/
-const val RESEARCH_URL = "/research"
+const val RESEARCH_URL = "$API_URL/research"
 const val RESEARCH_LASTEST_MODIFIED_URL = "$RESEARCH_URL/last_modified"
 const val RESEARCH_DETAIL_URL = "$RESEARCH_URL/{researchId}"
 const val RESEARCH_COMPLETE_URL = "$RESEARCH_URL/{researchId}/complete"
@@ -102,8 +103,9 @@ const val RESEARCH_PATIENTS_RANDOMIZE = "$RESEARCH_PATIENTS/randomize"
 const val RESEARCH_VISIT_PATIENTS = "$RESEARCH_PATIENTS/{patientId}/visits"
 const val RESEARCH_DOSSIER_URL = "$RESEARCH_DETAIL_URL/dossier"
 const val RESEARCH_PATIENT_DETAILS = "$RESEARCH_PATIENTS/{patientProcessNum}"
-const val SEARCH_PATIENTS = "/patients/search"
 const val RESEARCH_FINANCE = "$RESEARCH_DETAIL_URL/finance"
 const val RESEARCH_FINANCE_TEAM_ENTRY = "$RESEARCH_FINANCE/team-entry"
 const val RESEARCH_FINANCE_RESEARCH_ENTRY = "$RESEARCH_FINANCE/research-entry"
 const val RESEARCH_GENERAL_STATS_URL = "$RESEARCH_URL/stats"
+
+const val SEARCH_PATIENTS = "$API_URL/patients/search"
