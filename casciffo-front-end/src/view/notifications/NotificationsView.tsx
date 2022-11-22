@@ -53,6 +53,7 @@ export function NotificationsView(props: NotificationProps) {
                 const notModified = prevState.filter(n => !n.selected)
                 return [...notModified, ...value.map(n => ({selected: false, notification: n!}))]
             }))
+            .then(() => setCheckedInfo({masterCheck: false, selectedRows: 0}))
     }
 
     const markNotViewed = () => {
@@ -65,6 +66,7 @@ export function NotificationsView(props: NotificationProps) {
                 const notModified = prevState.filter(n => !n.selected)
                 return [...notModified, ...value.map(n => ({selected: false, notification: n!}))]
             }))
+            .then(() => setCheckedInfo({masterCheck: false, selectedRows: 0}))
     }
 
     const deletedSelected = () => {
@@ -74,6 +76,7 @@ export function NotificationsView(props: NotificationProps) {
             .then(() => setNotifications(prevState => {
                 return prevState.filter(row => notificationIdsToDelete.every(nId => row.notification.id !== nId))
             }))
+            .then(() => setCheckedInfo({masterCheck: false, selectedRows: 0}))
     }
 
 

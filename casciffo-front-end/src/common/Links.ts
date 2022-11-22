@@ -1,6 +1,6 @@
-// const BASE_URL = `/api/casciffo` //for single jar bundle
+const BASE_URL = `/api/casciffo` //for single jar bundle
 // const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
-const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
+// const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
 
 /************************** USER **************************/
 const USERS_URL = `${BASE_URL}/users`
@@ -8,9 +8,7 @@ const USER_LOGIN_URL = `${USERS_URL}/login`
 const USER_REGISTER_URL = `${USERS_URL}/register`
 const USERS_CREATE_URL = `${USERS_URL}/create`
 const USERS_BY_ROLE_URL = (roles: string[]) => `${USERS_URL}/search?roles=${roles}`
-const USERS_BY_ROLE_AND_NAME =
-    (name: string, roles: string[]) =>
-        `${USERS_BY_ROLE_URL(roles)}&name=${name}`
+const USERS_BY_ROLE_AND_NAME = (name: string, roles: string[]) => `${USERS_BY_ROLE_URL(roles)}&name=${name}`
 
 const USERS_BY_NAME_URL = (name: string) => `${USERS_URL}/search?name=${name}`
 
