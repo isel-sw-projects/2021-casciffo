@@ -2,7 +2,7 @@
 cd casciffo-front-end
 npm i
 npm run build
-set front-end="%cd%/build"
+set front-end "$pwd/build"
 
 cd ..
 
@@ -10,12 +10,12 @@ cd casciffo-spring-backend
 
 echo "Creating /build folder for static file serving..."
 
-rmdir /s src/main/resources/build
+rm -r src/main/resources/build
 mkdir src/main/resources/build
 
 echo "Copying optimized production build from front-end to /build..."
 
-xcopy /s "%front-end%/*" "src/main/resources/build"
+cp -r "$front-end/*" "src/main/resources/build"
 
 echo "Bundling the app..."
 
