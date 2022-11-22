@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import ProposalService from "../../services/ProposalService";
 import {SearchComponent} from "../components/SearchComponent";
@@ -9,6 +9,7 @@ import {CSVLink} from "react-csv";
 import {ResearchTypes} from "../../common/Constants";
 import {STATES} from "../../model/state/STATES";
 import {useErrorHandler} from "react-error-boundary";
+import {CSVHeader} from "../../common/Types";
 
 type Proposals_Props = {
     service: ProposalService
@@ -33,26 +34,19 @@ type ProposalRow = {
     proposal: ProposalRowInfo
 }
 
-type CSVHeader = {
-    label: string,
-    key: keyof ProposalRowInfo
-}
-
 export function Proposals(props: Proposals_Props) {
 
     useEffect(() => {
         document.title = MyUtil.PROPOSALS_TITLE
     })
 
-    const service = props.service
-
-    const tableHeadersClinicalTrials: CSVHeader[] = [
+    const tableHeadersClinicalTrials: CSVHeader<ProposalRowInfo>[] = [
         {label:"Id", key:"id"}, {label:"Data criada", key: "createdDate"}, {label:"Sigla", key:"sigla"},
         {label:"Estado", key:"state"}, {label:"Patologia", key:"pathology"}, {label:"Serviço", key: "serviceType"},
         {label:"Área terapeutica", key:"therapeuticArea"}, {label: "Investigador Principal", key:"principalInvestigator"},
         {label:"Promotor", key:"promoter"}, {label:"Parcerias", key:"partnerships"}
     ]
-    const tableHeadersClinicalStudies: CSVHeader[] = tableHeadersClinicalTrials.slice(0, -2)
+    const tableHeadersClinicalStudies: CSVHeader<ProposalRowInfo>[] = tableHeadersClinicalTrials.slice(0, -2)
 
     const [proposals, setProposals] = useState<ProposalRow[]>([])
     const [isDataReady, setIsDataReady] = useState(false)
@@ -65,7 +59,19 @@ export function Proposals(props: Proposals_Props) {
         totalCheckedItems: 0,
         masterChecked: false
     })
-    
+
+    //TODO get all proposals for excel
+    // const [totalCount, setTotalCount] = useState({trials: 0, studies: 0})
+    // const allProposalsLinkRef = React.createRef()
+    // useEffect(() => {
+    //     props.service
+    //         .getProposalCount()
+    //         .then(value => console.log(value))
+    // }, [props.service])
+    // const getAllProposals: ProposalModel[] = useCallback(async () => {
+    //     return await props.service.fetchByType(researchType)
+    // }, [props.service, researchType])
+
     const handleError = useErrorHandler()
 
     function updateCheckBoxGroup(value: ProposalModel[]) {
@@ -107,14 +113,14 @@ export function Proposals(props: Proposals_Props) {
             setSearchProperty("sigla")
         }
         setIsDataReady(false)
-        service
+        props.service
             .fetchByType(researchType)
             .then(updateCheckBoxGroup)
             .then(mapToProposalRow)
             .then(resetSearchProperty)
             .then(displayData)
             .catch(handleError)
-    }, [service, researchType, handleError])
+    }, [props.service, researchType, handleError])
 
     function handleSearchSubmit(query: string) {
         setQuery(query)
@@ -151,11 +157,11 @@ export function Proposals(props: Proposals_Props) {
 
     function mapToRowElement(row: ProposalRow): JSX.Element {
         // const proposal = element as ProposalModel
-        const color = {
-            backgroundColor: row.selected ? "#d3fcff" : "inherit"
-        }
+        // const color = {
+        //     backgroundColor: row.selected ? "#d3fcff" : "inherit"
+        // }
         return (
-            <tr key={`row-element-${row.proposal.id}`} id={`row-element-${row.proposal.id}`} style={color}>
+            <tr key={`row-element-${row.proposal.id}`} id={`row-element-${row.proposal.id}`}>{/*style={color}*/}
                 <td><input
                     type={"checkbox"}
                     checked={row.selected}
@@ -191,10 +197,17 @@ export function Proposals(props: Proposals_Props) {
     }
 
 
-    function getHeaders() : CSVHeader[] {
+    function getHeaders() : CSVHeader<ProposalRowInfo>[] {
         return researchType === ResearchTypes.CLINICAL_TRIAL.id? tableHeadersClinicalTrials : tableHeadersClinicalStudies
     }
 
+
+    function filterProposals() {
+        const regExp = new RegExp(`${query}.*`, "gi")
+        return proposals
+            .filter(p => regExp.test(p.proposal[searchProperty]!))
+            .map(mapToRowElement)
+    }
 
     return (
         <React.Fragment>
@@ -266,14 +279,39 @@ export function Proposals(props: Proposals_Props) {
             <br/>
             <br/>
             <Container>
-                <CSVLink
-                    className={"float-end mb-2"}
-                    headers={getHeaders()}
-                    data={proposals.map(p => p.proposal)}
-                    filename={`Propostas-${(new Date()).toLocaleDateString()}`}
-                >
-                    {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel`}
-                </CSVLink>
+                {
+                    checkBoxGroupState.totalCheckedItems === 0
+                        ? <div className={"float-start mb-2"}>
+                            Exportar selecionados (0) para Excel
+                        </div>
+                        : <CSVLink
+                            className={"float-start mb-2"}
+                            headers={getHeaders()}
+                            data={proposals.filter(p => p.selected).map(p => p.proposal)}
+                            filename={`Propostas-${(new Date()).toLocaleDateString()}`}
+                        >
+                            {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel`}
+                        </CSVLink>
+                }
+                {/*{*/}
+                {/*    (*/}
+                {/*        (researchType === ResearchTypes.CLINICAL_TRIAL.id && totalCount.trials > 0)*/}
+                {/*        ||*/}
+                {/*        (researchType === ResearchTypes.OBSVERTIONAL_STUDY.id && totalCount.studies > 0)*/}
+                {/*    )*/}
+                {/*    &&*/}
+                {/*    <div>*/}
+                {/*        <input type="button" value="Export to CSV (Async)" onClick={getAllProposals} />*/}
+                {/*        <CSVLink*/}
+                {/*            className={"float-end mb-2"}*/}
+                {/*            headers={getHeaders()}*/}
+                {/*            data={allData}*/}
+                {/*            filename={`Propostas-${(new Date()).toLocaleDateString()}`}*/}
+                {/*            ref={allProposalsLinkRef}>*/}
+                {/*            {`Exportar todas (${researchType === ResearchTypes.CLINICAL_TRIAL.id ? totalCount.trials : totalCount.studies}) deste tipo`}*/}
+                {/*        </CSVLink>*/}
+                {/*</div>*/}
+                {/*}*/}
             </Container>
             <Container>
                 <Table striped bordered hover size={"sm"} className={"border border-2"}>
@@ -295,10 +333,7 @@ export function Proposals(props: Proposals_Props) {
 
                     {isDataReady ?
                         <>
-                            {proposals
-                                .filter(p => (new RegExp(`${query}.*`,"gi")).test(p.proposal[searchProperty]!))
-                                .map(mapToRowElement)
-                            }
+                            {filterProposals()}
                         </>
                         :
                         <>

@@ -28,6 +28,7 @@ const STATES_CHAIN_URL = (type: string) => `${STATES_URL}/${type}`
 
 /************************** PROPOSAL **************************/
 const PROPOSALS_URL =  `${BASE_URL}/proposals`
+const PROPOSALS_COUNT_URL =  `${PROPOSALS_URL}/count`
 const PROPOSALS_BY_TYPE_URL = (type: string) => `${PROPOSALS_URL}?type=${type}`
 const DETAIL_PROPOSAL_URL = (id: string) => `${PROPOSALS_URL}/${id}`
 const PROPOSAL_TRANSITION_URL = (id: string, nextId: string) => `${DETAIL_PROPOSAL_URL(id)}/state?nextStateId=${nextId}`
@@ -64,6 +65,7 @@ const PATHOLOGIES_URL = `${BASE_URL}/pathologies`
 
 /************************** RESEARCH **************************/
 const RESEARCH_URL = `${BASE_URL}/research`
+const RESEARCH_COUNT_URL =  `${RESEARCH_URL}/count`
 const RESEARCH_BY_TYPE_URL = (type: string) => `${RESEARCH_URL}?type=${type}`
 const DETAIL_RESEARCH_URL = (id: string) => `${RESEARCH_URL}/${id}`
 const COMPLETE_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/complete`
@@ -88,12 +90,10 @@ const RESEARCH_LAST_MODIFIED_URL = () => `${RESEARCH_URL}/last_modified`
 
 const ApiUrls = {
     baseUrl: BASE_URL,
-    proposalsUrl: PROPOSALS_URL,
-    proposalsByTypeUrl: PROPOSALS_BY_TYPE_URL,
-    buildDetailProposalUrl: DETAIL_PROPOSAL_URL,
     commentsUrl: COMMENTS_URL,
     commentsByTypeUrl: COMMENTS_BY_TYPE_URL,
     researchUrl: RESEARCH_URL,
+    researchCountUrl: RESEARCH_COUNT_URL,
     researchDetailUrl: DETAIL_RESEARCH_URL,
     researchCompleteUrl: COMPLETE_RESEARCH_URL,
     researchCancelUrl: CANCEL_RESEARCH_URL,
@@ -105,6 +105,12 @@ const ApiUrls = {
     researchVisitDetailsUrl: VISIT_DETAILS_URL,
     // researchPatientsVisitsUrl: RESEARCH_PATIENT_WITH_VISITS_URL,
     researchPatientDetailUrl: RESEARCH_PATIENT_DETAIL_URL,
+    researchPatientsRandomize: RANDOMIZE_PATIENTS,
+    researchFinanceUrl: RESEARCH_FINANCE_URL,
+    researchFinanceEntryUrl,
+    researchFinanceTeamEntryUrl,
+    researchStatsUrl: RESEARCH_STATS_URL,
+    researchLatestModifiedUrl: RESEARCH_LAST_MODIFIED_URL,
     usersUrl: USERS_URL,
     userLoginUrl: USER_LOGIN_URL,
     userRegisterUrl: USER_REGISTER_URL,
@@ -117,6 +123,10 @@ const ApiUrls = {
     pathologiesUrl: PATHOLOGIES_URL,
     therapeuticAreasUrl: THERAPEUTIC_AREAS_URL,
     usersByRoleAndNameUrl: USERS_BY_ROLE_AND_NAME,
+    proposalsUrl: PROPOSALS_URL,
+    proposalsCountUrl: PROPOSALS_COUNT_URL,
+    proposalsByTypeUrl: PROPOSALS_BY_TYPE_URL,
+    buildDetailProposalUrl: DETAIL_PROPOSAL_URL,
     proposalsTransitionUrl: PROPOSAL_TRANSITION_URL,
     proposalsTimelineEventUrl: PROPOSALS_TIMELINE_EVENT_URL,
     proposalsTimelineEventUpdateUrl: PROPOSALS_TIMELINE_EVENT_COMPLETE_URL,
@@ -131,12 +141,6 @@ const ApiUrls = {
     usersCreateUrl: USERS_CREATE_URL,
     // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID
     patientsLikeUrl: PATIENTS_LIKE_URL,
-    researchPatientsRandomize: RANDOMIZE_PATIENTS,
-    researchFinanceUrl: RESEARCH_FINANCE_URL,
-    researchFinanceEntryUrl,
-    researchFinanceTeamEntryUrl,
-    researchStatsUrl: RESEARCH_STATS_URL,
-    researchLatestModifiedUrl: RESEARCH_LAST_MODIFIED_URL,
     nearestEventsUrl: NEAREST_EVENTS_URL,
     userNotifications: USER_NOTIFICATIONS_URL,
     userNotificationsCheck: USER_NOTIFICATIONS_CHECK_URL

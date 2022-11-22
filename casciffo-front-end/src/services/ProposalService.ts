@@ -10,10 +10,15 @@ import {
 } from "../model/proposal/finance/ValidationModels";
 import {httpGet, httpGetFile, httpPost, axiosPostFormFile, httpPut} from "../common/MyUtil";
 import {StateModel} from "../model/state/StateModel";
-import {AxiosResponseBody} from "../common/Types";
+import {AxiosResponseBody, CountHolder} from "../common/Types";
 
 
 class ProposalService {
+
+    getProposalCount(): Promise<CountHolder> {
+        const url = ApiUrls.proposalsCountUrl
+        return httpGet(url)
+    }
 
     fetchByType(type: string, sort: string = "createdDate"): Promise<Array<ProposalModel>> {
         const url = ApiUrls.proposalsByTypeUrl(type)

@@ -72,6 +72,7 @@ export interface ResearchAggregateModel {
     principalInvestigatorName?: string
     principalInvestigatorEmail?: string
     promoterName?: string
+    hasPartnerships?: boolean
 }
 
 export interface DossierModel {

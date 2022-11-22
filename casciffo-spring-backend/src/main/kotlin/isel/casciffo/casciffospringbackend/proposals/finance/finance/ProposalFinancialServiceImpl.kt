@@ -10,14 +10,12 @@ import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolSe
 import isel.casciffo.casciffospringbackend.validations.Validation
 import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import isel.casciffo.casciffospringbackend.validations.ValidationsRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
-import kotlinx.coroutines.withContext
 import mu.KLogger
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,9 +24,7 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.fileSize
@@ -48,10 +44,16 @@ class ProposalFinancialServiceImpl(
     val logger: KLogger = KotlinLogging.logger { }
 
     @Transactional
-    override suspend fun createProposalFinanceComponent(pfc: ProposalFinancialComponent): ProposalFinancialComponent {
+    override suspend fun createProposalFinanceComponent(
+        pfc: ProposalFinancialComponent
+    ): ProposalFinancialComponent {
+//        val fileInfo = createFile(file)
+//        pfc.financialContractId = fileInfo.id
+
         verifyAndCreatePromoter(pfc)
 
         pfc.id = proposalFinancialRepository.save(pfc).awaitSingle().id
+
 
         if(pfc.partnerships != null) {
             createPartnerships(pfc)
@@ -62,6 +64,16 @@ class ProposalFinancialServiceImpl(
         pfc.protocol = protocolService.createProtocol(pfc.id!!)
 
         return pfc
+    }
+
+    private suspend fun createFile(file: FilePart): FileInfo {
+        val path = FILES_DIR(file.filename())
+        val getFileInfo = { FileInfo(fileName = path.name, filePath = path.pathString, fileSize = path.fileSize()) }
+        //store file locally
+        file.transferTo(path).awaitSingleOrNull()
+        //save file information in db
+        val fileInfo = fileInfoRepository.save(getFileInfo()).awaitSingle()
+        return fileInfo
     }
 
     private suspend fun createValidations(pfc: ProposalFinancialComponent) {
@@ -105,26 +117,22 @@ class ProposalFinancialServiceImpl(
     override suspend fun createCF(file: FilePart, pfcId: Int): FileInfo {
         val pfc = proposalFinancialRepository.findById(pfcId).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component $pfcId doesn't exist!!!")
-        val fileToDelete = fileInfoRepository.findById(pfc.financialContractId!!).awaitSingleOrNull()
-            ?: throw ResponseStatusException(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                "Financial component doesn't have an associated file id!"
-            )
 
-        //create and store new file
-        val path = FILES_DIR(file.filename())
-        val getFileInfo = { FileInfo(fileName = path.name, filePath = path.pathString, fileSize = path.fileSize())}
-        //store file locally
-        file.transferTo(path).awaitSingleOrNull()
-        //save file information in db
-        val fileInfo = fileInfoRepository.save(getFileInfo()).awaitSingle()
+        if(pfc.financialContractId !== null) {
+
+            val fileToDelete = fileInfoRepository.findById(pfc.financialContractId!!).awaitSingleOrNull()
+            if(fileToDelete !== null) {
+                //delete old file
+                fileInfoRepository.deleteById(fileToDelete.id!!).awaitSingleOrNull()
+                logger.info { "File ${fileToDelete.fileName} with Id ${fileToDelete.id!!} deleted." }
+            }
+        }
+        val fileInfo = createFile(file)
 
         //update pfc with new id
         pfc.financialContractId = fileInfo.id
         proposalFinancialRepository.save(pfc).awaitSingle()
 
-        //delete old file
-        fileInfoRepository.deleteById(fileToDelete.id!!).awaitSingleOrNull()
 
         //FIXME MAYBE ADD A THREADPOOL TO CLEAN UP THE SYSTEM
         // MAYBE EVEN ANOTHER APP THAT CONNECTS TO A DATABASE THAT STORES THE DELETED FILES AND
@@ -136,7 +144,6 @@ class ProposalFinancialServiceImpl(
 //        }).start()
 
 
-        logger.info { "File ${fileToDelete.fileName} with Id ${fileToDelete.id!!} deleted." }
         logger.info { "File created at ${fileInfo.filePath}" }
         return fileInfo
     }

@@ -56,6 +56,7 @@ const val STATES_CHAIN_TYPE_URL = "$STATES_URL/{chainType}"
 /***************************************************************************************/
 
 const val PROPOSALS_URL = "$API_URL/proposals"
+const val PROPOSALS_COUNT_URL = "$PROPOSALS_URL/count"
 
 const val PROPOSALS_LASTEST_MODIFIED_URL = "$PROPOSALS_URL/last_modified"
 
@@ -88,6 +89,7 @@ const val NEAREST_EVENTS_URL = "$API_URL/events"
 /*********************************** RESEARCH ******************************************/
 /***************************************************************************************/
 const val RESEARCH_URL = "$API_URL/research"
+const val RESEARCH_COUNT_URL = "$RESEARCH_URL/count"
 const val RESEARCH_LASTEST_MODIFIED_URL = "$RESEARCH_URL/last_modified"
 const val RESEARCH_DETAIL_URL = "$RESEARCH_URL/{researchId}"
 const val RESEARCH_COMPLETE_URL = "$RESEARCH_URL/{researchId}/complete"

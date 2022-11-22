@@ -39,6 +39,7 @@ data class ResearchAggregate(
     var proposalId: Int? = null,
     var sigla: String? = null,
     var promoterName: String? = null,
+    var hasPartnerships: Boolean? = null,
 
     //constants
     var serviceName: String? = null,

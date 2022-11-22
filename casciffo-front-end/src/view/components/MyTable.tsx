@@ -41,7 +41,7 @@ export function MyTable(props: TableProps) {
 
     return (
         <React.Fragment>
-            <RBTable striped bordered hover size={"m-2 m-md-10 p-2 p-md-2 sm mt-3 mb-5"}>
+            <RBTable striped bordered hover size={"m-2 m-md-10 p-2 p-md-2 sm mt-3 mb-5"} className={"border border-2"}>
                 {props.colgroup &&
                     <colgroup>
                         {props.colgroup}

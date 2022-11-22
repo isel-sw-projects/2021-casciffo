@@ -113,7 +113,7 @@ export function NotificationsView(props: NotificationProps) {
                         className={"form-check-input"}
                         id={`row-check-${row.notification.id}`}
                         onChange={selectNotificationRow(row)}/>,
-                    id: 'delete-button',
+                    id: 'checkbox-button',
                     header: () => <input
                         type={"checkbox"}
                         checked={checkedInfo.masterCheck}

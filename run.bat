@@ -7,20 +7,18 @@ call npm i
 echo Creating production build...
 call npm run build
 
-set front-end="%cd%/build"
-
 cd ..
 
 cd casciffo-spring-backend
 
 echo Creating /build folder for static file serving...
 
-rmdir /s src/main/resources/build
-mkdir src/main/resources/build
+rmdir /s src\main\resources\build
+mkdir src\main\resources\build
 
 echo Copying optimized production build from front-end to /build...
 
-xcopy /s "%front-end%" "src/main/resources/build"
+xcopy /s "..\casciffo-front-end\build" "src\main\resources\build"
 
 
 echo Creating environment variables...

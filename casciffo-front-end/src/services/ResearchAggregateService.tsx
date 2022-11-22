@@ -9,8 +9,14 @@ import {
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
 import {StateChainTypes} from "../common/Constants";
+import {CountHolder} from "../common/Types";
 
 export class ResearchAggregateService {
+
+    getResearchCount(): Promise<CountHolder> {
+        const url = ApiUrls.researchCountUrl
+        return httpGet(url)
+    }
 
     getVisitDetails(researchId: string, visitId: string): Promise<ResearchVisitModel> {
         const url = ApiUrls.researchVisitDetailsUrl(researchId, visitId)

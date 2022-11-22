@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
+import isel.casciffo.casciffospringbackend.common.CountHolder
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
@@ -22,4 +23,5 @@ interface ProposalService {
     suspend fun transitionState(proposalId: Int, nextStateId: Int, request: ServerHttpRequest): ProposalModel
     suspend fun getProposalStats(): Flow<ProposalStats>
     suspend fun getLatestModifiedProposals(n: Int): Flow<ProposalModel>
+    suspend fun getProposalCount(): CountHolder
 }

@@ -151,6 +151,7 @@ export function ProposalStateView(props: StateProps) {
             variant={tprops.variant}
             name={`radio-${state.id}`}
             value={state.name!}
+            style={{pointerEvents: "none"}} //disable click ability
             disabled={tprops.disabled}
             active={tprops.active}
         >

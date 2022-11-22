@@ -30,6 +30,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     const [query, setQuery] = useState("")
     const [selectedEventType, setSelectedEventType] = useState(EventTypes.ALL.id)
     const [showForm, setShowForm] = useState(false)
+    const [showTimeline, setShowTimeline] = useState(true)
     const [timelineEvents, setTimelineEvents] = useState<TimelineEventModel[]>([])
     const [hasEvents, setHasEvents] = useState(false)
     const headers = ["Título", "Data completo", "Data limite", "Descrição", "Completar"]
@@ -170,7 +171,8 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     return (
         <React.Fragment>
             {hasEvents ?
-                <Row style={{height:"auto", paddingTop: "4rem"}}>
+                showTimeline ?
+                    <Row style={{height:"auto", paddingTop: "4rem"}}>
                         <Col>
                             <Form.Group className={"mb-4"} style={{position:"relative"}}>
                                 <Stack direction={"horizontal"} gap={3}>
@@ -221,26 +223,30 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
                                 </div>
                             </Stack>
                         </Col>
-
-                    <div style={{ height: "300px" }}>
-                        <Chrono
-                            disableAutoScrollOnClick cardHeight={80} allowDynamicUpdate cardPositionHorizontal={"TOP"}
-                            useReadMore
-                            items={mapToChronoItem()}
-                            mode={"HORIZONTAL"}
-                        />
+                        <div style={{ height: "300px" }}>
+                            <Button variant={"outline-primary"} onClick={() => setShowTimeline(false)}>Fechar cronologia</Button>
+                            <Chrono
+                                disableAutoScrollOnClick cardHeight={80} allowDynamicUpdate cardPositionHorizontal={"TOP"}
+                                useReadMore
+                                items={mapToChronoItem()}
+                                mode={"HORIZONTAL"}
+                            />
+                        </div>
+                        </Row>
+                    : <div className={"mt-3"}>
+                        <Button variant={"primary"} onClick={() => setShowTimeline(true)}>Ver cronologia</Button>
                     </div>
-                </Row>
+
                 : <p>Sem eventos para mostrar</p>
             }
 
 
-            <Container className={"float-start mb-5"} style={{width: "60%"}}>
-                <Container className={"content"}>
-                    <Button onClick={handleShowFormChange}>{showForm ? "Cancelar" : "Adicionar evento à cronologia"}</Button>
-                </Container>
+            <div className={"float-start mb-5 mt-5"} style={{width: "60%"}}>
+                <Button onClick={handleShowFormChange}>{showForm ? "Cancelar" : "Adicionar evento à cronologia"}</Button>
+
+
                 {showForm && <TimelineEventForm onEventAdded={handleEventSubmit} possibleStates={props.possibleStates}/>}
-            </Container>
+            </div>
             <br/>
             <Container className={"justify-content-evenly mb-4 float-start p-0"} style={{width:"50%"}}>
                 <SearchComponent handleSubmit={setQuery}/>

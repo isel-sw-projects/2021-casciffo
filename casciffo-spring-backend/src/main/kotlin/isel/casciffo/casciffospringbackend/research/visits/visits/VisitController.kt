@@ -20,17 +20,6 @@ class VisitController(
         return visitService.getVisitsForResearch(researchId).map { mapper.mapModelToDTO(it) }
     }
 
-//    @PostMapping(RESEARCH_VISIT_URL)
-//    suspend fun scheduleVisits(@RequestParam researchId: Int, @RequestBody visit: Visit) : Visit {
-//        visit.researchId = researchId
-//        try {
-//            return visitService.createVisit(visit)
-//        } catch (e: IllegalArgumentException) {
-//            throw ResponseStatusException(HttpStatus.BAD_REQUEST, e.message, e)
-//        }
-//    }
-
-
     @PostMapping(RESEARCH_VISIT_DETAIL_URL)
     suspend fun concludeVisit(
         @PathVariable researchId: Int,

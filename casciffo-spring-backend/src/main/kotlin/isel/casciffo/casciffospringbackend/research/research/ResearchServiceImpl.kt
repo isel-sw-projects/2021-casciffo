@@ -2,6 +2,7 @@ package isel.casciffo.casciffospringbackend.research.research
 
 import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregate
 import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregateRepo
+import isel.casciffo.casciffospringbackend.common.CountHolder
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.common.StateType
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
@@ -28,6 +29,7 @@ import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -52,7 +54,11 @@ class ResearchServiceImpl(
 
     private val logger = KotlinLogging.logger {  }
 
-    override suspend fun getAllResearchesByType(type: ResearchType): Flow<ResearchAggregate> {
+    override suspend fun getResearchCount(): CountHolder {
+        return researchRepository.countTypes().awaitSingle()
+    }
+
+    override suspend fun getAllResearchesByType(type: ResearchType, pageRequest: PageRequest?): Flow<ResearchAggregate> {
         return aggregateRepo.findAllByType(type).asFlow()
     }
 

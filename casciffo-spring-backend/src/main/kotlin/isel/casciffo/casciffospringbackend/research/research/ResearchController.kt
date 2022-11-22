@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.research
 
 import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregate
+import isel.casciffo.casciffospringbackend.common.CountHolder
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
@@ -13,6 +14,8 @@ import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
 import isel.casciffo.casciffospringbackend.statistics.ResearchStats
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -23,15 +26,39 @@ class ResearchController(
     @Autowired val mapper: Mapper<ResearchModel, ResearchDTO>
 ) {
 
+    @GetMapping(RESEARCH_COUNT_URL)
+    suspend fun getResearchCount(): ResponseEntity<CountHolder> {
+        val counters = researchService.getResearchCount()
+        return ResponseEntity.ok(counters)
+    }
 
     @GetMapping(RESEARCH_LASTEST_MODIFIED_URL)
     suspend fun getLatestModifiedResearch(@RequestParam(required = false, defaultValue = "5") n: Int): Flow<ResearchAggregate> {
         return researchService.getLatestModifiedResearch(n)
     }
 
+    /**
+     * Fetches all research.
+     * @param type The research type.
+     * @param p The page to fetch. Default is 1.
+     * @param n The number of elements to fetch. Default is 20.
+     * @param s The sorting attributed. Uses createdDate by default
+     * @param so The sort order; true for ASC, false for DESC, false by default.
+     * @param ga Get All attribute, when true, all research of [type] will be returned with no pagination.
+     * @return Returns all proposals of type [type]. Limited by [n]
+     */
     @GetMapping(RESEARCH_URL)
-    suspend fun getAllResearch(@RequestParam type: ResearchType) : Flow<ResearchAggregate> {
-        return researchService.getAllResearchesByType(type)
+    suspend fun getAllResearch(
+        @RequestParam type: ResearchType,
+        @RequestParam(required = false, defaultValue = "1") p: Int,
+        @RequestParam(required = false, defaultValue = "20") n: Int,
+        @RequestParam(required = false, defaultValue = "created_date") s: String,
+        @RequestParam(required = false, defaultValue = "false") so: Boolean,
+        @RequestParam(required = false, defaultValue = "false") ga: Boolean
+    ) : Flow<ResearchAggregate> {
+        if(ga) return researchService.getAllResearchesByType(type)
+        val page = PageRequest.of(p, n, if(so) Sort.by(s).descending() else Sort.by(s).ascending())
+        return researchService.getAllResearchesByType(type, page)
     }
 
     @GetMapping(RESEARCH_DETAIL_URL)

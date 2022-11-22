@@ -58,6 +58,7 @@ type Constants = {
     therapeuticAreas: TherapeuticAreaModel[]
 }
 
+
 type Filter = {
     value: string,
     id: string
@@ -82,6 +83,16 @@ type KeyValuePair<K, V> = {
 
 type MyHashMap = {
     [key: string]: number
+}
+
+export type CSVHeader<T> = {
+    label: string,
+    key: keyof T
+}
+
+export type CountHolder = {
+    trials: number,
+    studies: number
 }
 
 export type {

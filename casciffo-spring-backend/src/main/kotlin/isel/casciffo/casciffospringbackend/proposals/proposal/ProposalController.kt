@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
+import isel.casciffo.casciffospringbackend.common.CountHolder
 import isel.casciffo.casciffospringbackend.common.FILE_NAME_HEADER
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
@@ -43,6 +44,7 @@ class ProposalController(
      * @param n The number of elements to fetch. Default is 20.
      * @param s The sorting attributed. Uses createdDate by default
      * @param so The sort order; true for ASC, false for DESC, false by default.
+     * @param ga Get All attribute, when true, all proposals of [type] will be returned with no pagination.
      * @return Returns all proposals of type [type]. Limited by [n]
      */
     @GetMapping(PROPOSALS_URL)
@@ -51,11 +53,18 @@ class ProposalController(
         @RequestParam(required = false, defaultValue = "1") p: Int,
         @RequestParam(required = false, defaultValue = "20") n: Int,
         @RequestParam(required = false, defaultValue = "created_date") s: String,
-        @RequestParam(required = false, defaultValue = "false") so: Boolean
+        @RequestParam(required = false, defaultValue = "false") so: Boolean,
+        @RequestParam(required = false, defaultValue = "false") ga: Boolean
     ): Flow<ProposalDTO> {
-        val page = PageRequest.of(p, n, if(so) Sort.by(s).descending() else Sort.by(s).ascending())
-        //TODO add total count
+        if (ga) return service.getAllProposals(type).map(mapper::mapModelToDTO)
+        val page = PageRequest.of(p, n, if (so) Sort.by(s).descending() else Sort.by(s).ascending())
         return service.getAllProposals(type, page).map(mapper::mapModelToDTO)
+    }
+
+    @GetMapping(PROPOSALS_COUNT_URL)
+    suspend fun getProposalsCount(): ResponseEntity<CountHolder> {
+        val count = service.getProposalCount()
+        return ResponseEntity.ok(count)
     }
 
 
@@ -69,7 +78,7 @@ class ProposalController(
 
 
     @GetMapping(PROPOSAL_URL)
-    suspend fun getProposal(@PathVariable proposalId: Int) : ProposalDTO {
+    suspend fun getProposal(@PathVariable proposalId: Int): ProposalDTO {
         val proposal = service.getProposalById(proposalId)
         return mapper.mapModelToDTO(proposal)
     }
@@ -132,7 +141,7 @@ class ProposalController(
         response: ServerHttpResponse
     ): ResponseEntity<InputStreamResource> {
         val path = service.downloadCF(proposalId, pfcId)
-        val fileName = path.fileName.toString().replaceAfterLast("-","").dropLast(1)
+        val fileName = path.fileName.toString().replaceAfterLast("-", "").dropLast(1)
         return ResponseEntity.ok()
             .headers {
                 //attachment header very important because it tells the browser to commence the download natively

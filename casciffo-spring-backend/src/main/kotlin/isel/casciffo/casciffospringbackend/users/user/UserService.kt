@@ -21,6 +21,11 @@ interface UserService: ReactiveUserDetailsService {
 
     suspend fun findUserByEmail(email: String): UserModel?
 
+    /**
+     * Notifies all users with the roles in [roles].
+     * @param roles Roles to be notified.
+     * @param notificationModel Notification to be sent, it will be duplicated and incoming [NotificationModel]#userId is ignored.
+     */
     suspend fun notifyRoles(roles: List<Roles>, notificationModel: NotificationModel)
 
     suspend fun deleteUser(userId: Int): UserModel

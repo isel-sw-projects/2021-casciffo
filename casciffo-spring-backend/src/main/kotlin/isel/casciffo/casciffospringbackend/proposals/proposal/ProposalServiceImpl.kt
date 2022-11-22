@@ -68,7 +68,12 @@ class ProposalServiceImpl(
     @Autowired val notificationService: NotificationService
 ) : ProposalService {
 
+    override suspend fun getProposalCount(): CountHolder {
+        return proposalRepository.countTypes().awaitSingle()
+    }
+
     override suspend fun getAllProposals(type: ResearchType, pageRequest: PageRequest?): Flow<ProposalModel> {
+        //todo pagination
         return proposalAggregateRepo.findAllByType(type).asFlow().map(proposalAggregateMapper::mapDTOtoModel)
     }
 
@@ -94,8 +99,17 @@ class ProposalServiceImpl(
 
         val hasFinancialComponent = proposal.type == ResearchType.CLINICAL_TRIAL
         if(hasFinancialComponent) {
+//            if(file == null) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Uma proposta de ensaio clínica tem de ter um contracto!")
             createFinancialComponent(proposal, createdProposal)
-            notifyRoles(proposal)
+            userService.notifyRoles(
+                listOf(Roles.FINANCE, Roles.JURIDICAL),
+                notificationModel = NotificationModel(
+                    title = "Contrato financeiro para revisão.",
+                    description = "Proposta com sigla ${proposal.sigla}, espera validação do contrato financeiro.",
+                    ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
+                    notificationType = NotificationType.PROPOSAL_FINANCE
+                )
+            )
         }
         notifyUser(proposal.principalInvestigatorId!!, proposal.id!!, NotificationType.PROPOSAL_SUBMITTED,
             "Proposta submetida!", "A proposta com sigla ${proposal.sigla} foi submetida com sucesso!")
@@ -115,17 +129,7 @@ class ProposalServiceImpl(
         notificationService.createNotification(userId, notification)
     }
 
-    private suspend fun notifyRoles(proposal: ProposalModel) {
-        userService.notifyRoles(
-            listOf(Roles.FINANCE, Roles.JURIDICAL),
-            notificationModel = NotificationModel(
-                title = "Contrato financeiro para revisão.",
-                description = "Proposta com sigla ${proposal.sigla}, espera validação do contrato financeiro.",
-                ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
-                notificationType = NotificationType.PROPOSAL_FINANCE
-            )
-        )
-    }
+
 
     private suspend fun verifyProposalKeyFields(proposal: ProposalModel) {
         if(proposal.pathologyId == null || proposal.serviceTypeId == null
@@ -281,6 +285,19 @@ class ProposalServiceImpl(
         }
 
         stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
+
+        if(nextState.stateFlowType !== StateFlowType.TERMINAL) {
+            val nextStateRoles = nextState.roles!!.map { Roles.valueOf(it) }.collectList().awaitSingle()
+            userService.notifyRoles(nextStateRoles,
+                NotificationModel(
+                    title = "Progresso no estado de Proposta",
+                    description = "Proposta com sigla ${proposal.sigla!!} avançou para o estado ${nextState.name!!}",
+                    notificationType = NotificationType.RESEARCH_DETAILS,
+                    ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
+                    viewed = false
+                )
+            )
+        }
 
         proposal.stateId = nextState.id
         proposal.state = nextState

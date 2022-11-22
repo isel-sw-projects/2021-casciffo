@@ -1,5 +1,6 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
+import isel.casciffo.casciffospringbackend.common.CountHolder
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import org.springframework.data.domain.Pageable
 import org.springframework.data.r2dbc.repository.Query
@@ -17,6 +18,13 @@ interface ProposalRepository : ReactiveSortingRepository<ProposalModel, Int> {
                 "WHERE p.proposal_type = :type"
     )
     fun getCountByType(type: ResearchType): Mono<Int>
+
+    @Query(
+        "SELECT COUNT(*) filter ( where p.proposal_type = 'OBSERVATIONAL_STUDY' ) as studies, " +
+        "COUNT(*) filter ( where p.proposal_type = 'CLINICAL_TRIAL' ) as trials " +
+        "FROM proposal p"
+    )
+    fun countTypes(): Mono<CountHolder>
     fun findByPrincipalInvestigatorId(id: Int): Flux<ProposalModel>
     fun findAllByType(type: ResearchType, pageable: Pageable) : Flux<ProposalModel>
     fun findAllByType(type: ResearchType) : Flux<ProposalModel>

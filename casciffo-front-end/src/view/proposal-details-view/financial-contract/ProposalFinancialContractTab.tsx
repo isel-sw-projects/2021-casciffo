@@ -172,48 +172,67 @@ export function ProposalFinancialContractTab(props: PfcProps) {
 
     return (
         <Container className={"flex-column"}>
-            <Button
-                className={"m-2 m-md-10 p-2 p-md-2"}
-                onClick={() => setIsEditing(true)}
-                variant={"outline-primary"}
-                style={{display: isEditing ? "none" : "inherit"}}
-            >
-                Submeter novo contrato
-            </Button>
 
-            <Button
-                className={"m-2 m-md-10 p-2 p-md-2"}
-                onClick={() => setIsEditing(false)}
-                variant={"outline-danger"}
-                style={{display: isEditing ? "inherit" : "none"}}
-            >
-                Cancelar
-            </Button>
+            {props.pfc.financialContract!.id != null ?
+                <div>
 
-
-            { isEditing ?
-                <Form onSubmit={handleCFSubmission} className={"m-2 m-md-10 p-2 p-md-2"}>
-                    <Form.Group style={{width: "35%"}}>
-                        <Form.Label>Contrato financeiro</Form.Label>
-                        <Form.Control
-                            key={"financial-contract-file"}
-                            type={"file"}
-                            name={"file"}
-                            onInput={handleFileInput}
-                        />
-                    </Form.Group>
-                    <Button className={"mt-3"} type={"submit"}>Submeter</Button>
-                </Form>
-                :
                 <Button
                     className={"m-2 m-md-10 p-2 p-md-2"}
-                    variant={"link"}
-                    onClick={downloadCf}>
-                    <Stack direction={"horizontal"} gap={3}>
-                        <BsDownload size={10000}/>
-                        {props.pfc.financialContract!.fileName!.substring(0, props.pfc.financialContract!.fileName!.lastIndexOf('-'))}
-                    </Stack>
+                    onClick={() => setIsEditing(true)}
+                    variant={"outline-primary"}
+                    style={{display: isEditing ? "none" : "inherit"}}
+                >
+                    Submeter novo contrato
                 </Button>
+
+                <Button
+                    className={"m-2 m-md-10 p-2 p-md-2"}
+                    onClick={() => setIsEditing(false)}
+                    variant={"outline-danger"}
+                    style={{display: isEditing ? "inherit" : "none"}}
+                >
+                    Cancelar
+                </Button>
+                    {isEditing ?
+                        <Form onSubmit={handleCFSubmission} className={"m-2 m-md-10 p-2 p-md-2"}>
+                            <Form.Group style={{width: "35%"}}>
+                                <Form.Label>Contrato financeiro</Form.Label>
+                                <Form.Control
+                                    key={"financial-contract-file"}
+                                    type={"file"}
+                                    name={"file"}
+                                    onInput={handleFileInput}
+                                />
+                            </Form.Group>
+                            <Button className={"mt-3"} type={"submit"}>Submeter</Button>
+                        </Form>
+                        :
+                        <Button
+                            className={"m-2 m-md-10 p-2 p-md-2"}
+                            variant={"link"}
+                            onClick={downloadCf}>
+                            <Stack direction={"horizontal"} gap={3}>
+                                <BsDownload size={10000}/>
+                                {props.pfc.financialContract!.fileName!.substring(0, props.pfc.financialContract!.fileName!.lastIndexOf('-'))}
+                            </Stack>
+                        </Button>
+                    }
+                </div>
+                : <div>
+                    <h5 className={"text-bg-danger"}>Tem de submeter um contracto financeiro!</h5>
+                    <Form onSubmit={handleCFSubmission} className={"m-2 m-md-10 p-2 p-md-2"}>
+                        <Form.Group style={{width: "35%"}}>
+                            <Form.Label>Contrato financeiro</Form.Label>
+                            <Form.Control
+                                key={"financial-contract-file"}
+                                type={"file"}
+                                name={"file"}
+                                onInput={handleFileInput}
+                            />
+                        </Form.Group>
+                        <Button className={"mt-3"} type={"submit"}>Submeter</Button>
+                    </Form>
+                </div>
             }
 
             <div className={"border-top border-2 "} style={{display: display}}>

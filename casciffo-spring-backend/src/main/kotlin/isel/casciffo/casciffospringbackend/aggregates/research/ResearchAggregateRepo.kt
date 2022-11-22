@@ -17,7 +17,8 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "ta.therapeutic_area_name, ta.therapeutic_area_id, " +
                 "pl.pathology_name, pl.pathology_id, " +
                 "pinv.user_id, pinv.user_name, pinv.user_email, " +
-                "pr.promoter_name " +
+                "pr.promoter_name, " +
+                "pfc.has_partnerships " +
                 "FROM clinical_research cr " +
                 "JOIN proposal p on cr.proposal_id = p.proposal_id " +
                 "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
