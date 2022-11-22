@@ -43,7 +43,7 @@ export function CreateProposal(props : CP_Props) {
         promoter: {
             email: "",
             name: "",
-            promoterType: ""
+            promoterType: "NOT_APPLICABLE"
         },
         file: undefined
     })

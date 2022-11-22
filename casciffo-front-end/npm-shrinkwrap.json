@@ -66,8 +66,8 @@
         "react-scripts": "^5.0.1"
       },
       "engines": {
-        "node": "19.x",
-        "npm": "9.x"
+        "node": "18.x",
+        "npm": "8.x"
       }
     },
     "node_modules/@adobe/css-tools": {

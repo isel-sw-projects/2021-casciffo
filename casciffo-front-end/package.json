@@ -90,8 +90,8 @@
     ]
   },
   "engines": {
-    "node": "19.x",
-    "npm": "9.x"
+    "node": "18.x",
+    "npm": "8.x"
   },
   "engineStrict": true
 }
