@@ -1,7 +1,7 @@
 @echo off
 cd casciffo-front-end
-npm i
-npm run build
+call npm i
+call npm run build
 set front-end="%cd%/build"
 
 cd ..
@@ -18,6 +18,8 @@ echo "Copying optimized production build from front-end to /build..."
 xcopy /s "%front-end%/*" "src/main/resources/build"
 
 echo "Bundling the app..."
+
+call env.bat
 
 gradlew build -x test
 

@@ -1,3 +1,4 @@
+#!/bin/bash
 @echo off
 cd casciffo-front-end
 npm i
@@ -19,7 +20,8 @@ cp -r "$front-end/*" "src/main/resources/build"
 
 echo "Bundling the app..."
 
-gradlew build -x test
+source env.sh
+source gradlew build -x test
 
 
 java -jar build/libs/casciffo-spring-backend-1.0.0-SNAPSHOT.jar
