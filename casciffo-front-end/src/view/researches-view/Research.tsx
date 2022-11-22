@@ -1,6 +1,6 @@
 import {ResearchAggregateService} from "../../services/ResearchAggregateService";
 import React, {useCallback, useEffect, useState} from "react";
-import {ResearchTypes} from "../../common/Constants";
+import {ResearchTabNames, ResearchTypes} from "../../common/Constants";
 import {MyUtil} from "../../common/MyUtil";
 import {Link} from "react-router-dom";
 import {Col, Container, Form, FormGroup, Row, Stack} from "react-bootstrap";
@@ -48,7 +48,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                 cell: info => <div>
                     <span>{info.getValue() as string}</span>
                     <br/>
-                    <Link to={`${info.getValue()}#t=research`}>Ver Detalhes</Link>
+                    <Link to={`${info.getValue()}#t=${ResearchTabNames.research}`}>Ver Detalhes</Link>
                 </div>,
                 header: () => <span>Id</span>,
                 footer: props => props.column.id,

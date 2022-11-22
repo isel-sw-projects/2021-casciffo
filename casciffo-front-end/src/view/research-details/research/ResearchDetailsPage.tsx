@@ -58,7 +58,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         const params = MyUtil.parseUrlHash(hash)
         const tabParam = params.find(pair => pair.key === TAB_PARAMETER)
-        const tab = tabParam && tabParam.value in ResearchTabNames ? tabParam!.value : ResearchTabNames.research
+        const tab = tabParam && Object.values(ResearchTabNames).find(t => t === tabParam.value) ? tabParam!.value : ResearchTabNames.research
         const scopeParam = params.find(pair => pair.key === SCOPE_PARAMETER)
         if(scopeParam != null && scopeParam.value in TabPaneScope) {
             setTabPaneScope(parseInt(scopeParam.value))
@@ -75,10 +75,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         props.researchService
             .fetchResearch(researchId!)
-            .then(value => {
-                console.log(value)
-                return value
-            })
             .then(setResearch, errorHandler)
     }, [props.researchService, researchId, errorHandler])
 

@@ -18,4 +18,3 @@ setx SPRING_DATABASE_USERNAME "mmbfsxyutgdryx"
 setx SPRING_DATABASE_PASSWORD "fc8374f857d28c648f8b984a56f5ac2407a7b069eaf631e8e43be82385a0aab1"
 
 :Done
-call heroku config:set GRADLE_TASK="stage"

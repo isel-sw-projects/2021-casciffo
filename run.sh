@@ -1,8 +1,13 @@
 #!/bin/bash
 @echo off
 cd casciffo-front-end
+
+echo "Installing front-end modules..."
 npm i
+
+echo "Creating production build..."
 npm run build
+
 set front-end "$pwd/build"
 
 cd ..
@@ -18,10 +23,12 @@ echo "Copying optimized production build from front-end to /build..."
 
 cp -r "$front-end/*" "src/main/resources/build"
 
-echo "Bundling the app..."
 
+echo "Creating environment variables..."
 source env.sh
-source gradlew build -x test
 
+echo "Bundling the app..."
+source .\gradlew clean build -x test
 
+echo "Launching app!"
 java -jar build/libs/casciffo-spring-backend-1.0.0-SNAPSHOT.jar
