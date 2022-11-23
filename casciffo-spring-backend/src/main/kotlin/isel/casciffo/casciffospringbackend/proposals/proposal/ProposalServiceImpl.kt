@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
+import reactor.kotlin.core.publisher.toFlux
 import java.nio.file.Path
 import java.time.LocalDate
 
@@ -252,7 +253,8 @@ class ProposalServiceImpl(
         val stateType = if(isClinicalTrial) StateType.FINANCE_PROPOSAL
         else StateType.STUDY_PROPOSAL
 
-        stateService.verifyNextStateValidV2(currState.id!!, nextStateId, stateType, role)
+        nextState.roles = stateService.verifyNextStateValid(currState.id!!, nextStateId, stateType, role).toFlux()
+
         if(isClinicalTrial && currState.name == States.VALIDACAO_CF.name) {
             val check = validationsRepository.isPfcValidatedByProposalId(proposal.id!!).awaitSingle()
             if(!check) {
@@ -285,19 +287,19 @@ class ProposalServiceImpl(
         }
 
         stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
-
-        if(nextState.stateFlowType !== StateFlowType.TERMINAL) {
-            val nextStateRoles = nextState.roles!!.map { Roles.valueOf(it) }.collectList().awaitSingle()
-            userService.notifyRoles(nextStateRoles,
-                NotificationModel(
-                    title = "Progresso no estado de Proposta",
-                    description = "Proposta com sigla ${proposal.sigla!!} avançou para o estado ${nextState.name!!}",
-                    notificationType = NotificationType.RESEARCH_DETAILS,
-                    ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
-                    viewed = false
-                )
-            )
-        }
+// TODO
+//        if(nextState.stateFlowType !== StateFlowType.TERMINAL) {
+//            val nextStateRoles = nextState.roles!!.map { Roles.valueOf(it) }.collectList().awaitSingle()
+//            userService.notifyRoles(nextStateRoles,
+//                NotificationModel(
+//                    title = "Progresso no estado de Proposta",
+//                    description = "Proposta com sigla ${proposal.sigla!!} avançou para o estado ${nextState.name!!}",
+//                    notificationType = NotificationType.RESEARCH_DETAILS,
+//                    ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
+//                    viewed = false
+//                )
+//            )
+//        }
 
         proposal.stateId = nextState.id
         proposal.state = nextState
@@ -332,11 +334,22 @@ class ProposalServiceImpl(
         val res = proposalFinancialService.validate(pfcId, validationComment)
         val isNowValidated = validationsRepository.isPfcValidatedByPfcId(pfcId).awaitSingle()
         val proposal: ProposalModel = getProposalById(proposalId, false)
-        if(isNowValidated) {
+        if(isNowValidated && proposal.state!!.name === States.VALIDACAO_CF.name) {
             val nextState = stateService.getNextProposalState(proposalId, StateType.FINANCE_PROPOSAL)
             handleStateTransition(proposal, nextState.id!!, listOf(Roles.SUPERUSER.name))
         }
+        loadSideDetails(proposal)
         return ProposalValidationModel(proposal, res)
+    }
+
+    /**
+     * Load validations, transitions, comments and protocol for proposal
+     */
+    private suspend fun loadSideDetails(proposal: ProposalModel) {
+        proposal.financialComponent = proposalFinancialService.findComponentByProposalId(proposal.id!!, true)
+        val type = if(proposal.type === ResearchType.CLINICAL_TRIAL) StateType.FINANCE_PROPOSAL else StateType.STUDY_PROPOSAL
+        proposal.stateTransitions = stateTransitionService.findAllByRefId(proposal.id!!, type)
+        proposal.comments = commentsService.getComments(proposal.id!!, PageRequest.of(0, 20, Sort.by("date_created")))
     }
 
     private suspend fun createResearch(proposal: ProposalModel) {
@@ -397,7 +410,7 @@ class ProposalServiceImpl(
 
         prop.stateTransitions = stateTransitionService.findAllByRefId(prop.id!!, type)
 
-        val page = PageRequest.of(0, 20, Sort.by("dateCreated"))
+        val page = PageRequest.of(0, 20, Sort.by("date_created"))
         prop.comments = commentsService.getComments(prop.id!!, page)
 
         prop.timelineEvents = timelineEventRepository.findTimelineEventsByProposalId(prop.id!!)

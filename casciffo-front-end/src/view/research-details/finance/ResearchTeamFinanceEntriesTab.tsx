@@ -111,9 +111,9 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
     }
 
     const handleInvestigatorSelect = (e: any) => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
         const selectedInvestigator = props.team.find(t => t.memberId === parseInt(e.target.value))!.member!
-        console.log(selectedInvestigator)
+        // console.log(selectedInvestigator)
         setNewEntry(prevState => ({
             ...prevState,
             investigatorId: selectedInvestigator.userId,

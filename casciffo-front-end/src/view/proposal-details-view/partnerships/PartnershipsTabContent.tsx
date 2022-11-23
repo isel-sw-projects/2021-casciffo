@@ -23,6 +23,7 @@ export function PartnershipsTabContent(props: PTC_Props) {
     const [displayData, setDisplayData] = useState(false)
 
     useEffect(() => {
+        // console.log(props.partnerships)
         setPartnerships(props.partnerships.map(p => ({p: p, open: false})))
         setDisplayData(true)
     }, [props.partnerships])

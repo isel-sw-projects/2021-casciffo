@@ -81,11 +81,11 @@ export function AsyncAutoCompletePatientSearch(props: AutoCompletePatientsProps)
         })
         props.requestPatients(query)
             .then((patients) => {
-                console.log("------------NEW REQUEST MADE-------------")
-                console.log(query)
-                console.log(patients)
-                requestCache.set(query, patients);
-                console.log("------------END OF NEW REQUEST-------------")
+                // console.log("------------NEW REQUEST MADE-------------")
+                // console.log(query)
+                // console.log(patients)
+                // requestCache.set(query, patients);
+                // console.log("------------END OF NEW REQUEST-------------")
 
                 setOptions(patients);
                 setIsLoading(false);

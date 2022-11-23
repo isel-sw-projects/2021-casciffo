@@ -56,7 +56,7 @@ class ProposalService {
             serviceTypeId: 0,
             sigla: "Firefly",
             therapeuticAreaId: 0,
-            type: ResearchTypes.OBSVERTIONAL_STUDY.id,
+            type: ResearchTypes.OBSERVATIONAL_STUDY.id,
             state: {name: "Validação Interna"},
             pathology: {name: "patologia2"},
             serviceType: {name: "serviço2"},
@@ -65,7 +65,7 @@ class ProposalService {
         }
         return new Promise(resolve => { setTimeout(() =>
             resolve(
-                type === ResearchTypes.OBSVERTIONAL_STUDY.id ? [proposal2,{...proposal1, id: 4}] : [proposal1, {...proposal1, id: 3}]
+                type === ResearchTypes.OBSERVATIONAL_STUDY.id ? [proposal2,{...proposal1, id: 4}] : [proposal1, {...proposal1, id: 3}]
             ), 1)
         })
     }

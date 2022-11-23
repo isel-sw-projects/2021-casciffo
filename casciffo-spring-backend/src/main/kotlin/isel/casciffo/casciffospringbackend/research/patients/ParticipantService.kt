@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ParticipantService {
     suspend fun findAllByResearchId(researchId: Int) : Flow<ResearchPatient>
-    suspend fun addParticipantToResearch(participantId: Int, researchId: Int): PatientModel
+    suspend fun addParticipantToResearch(participantId: Int, researchId: Int): ResearchPatient
     suspend fun findByProcessId(pid: Long): PatientModel?
     suspend fun searchByProcessIdLike(pId: Long): Flow<PatientModel>
     suspend fun save(patient: PatientModel) : PatientModel

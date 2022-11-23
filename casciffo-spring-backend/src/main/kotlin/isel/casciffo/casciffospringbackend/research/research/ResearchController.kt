@@ -13,6 +13,7 @@ import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVis
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
 import isel.casciffo.casciffospringbackend.statistics.ResearchStats
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -32,7 +33,7 @@ class ResearchController(
         return ResponseEntity.ok(counters)
     }
 
-    @GetMapping(RESEARCH_LASTEST_MODIFIED_URL)
+    @GetMapping(RESEARCH_LATEST_MODIFIED_URL)
     suspend fun getLatestModifiedResearch(@RequestParam(required = false, defaultValue = "5") n: Int): Flow<ResearchAggregate> {
         return researchService.getLatestModifiedResearch(n)
     }
@@ -95,15 +96,6 @@ class ResearchController(
         val mappedModel = mapper.mapDTOtoModel(researchDTO)
         val model = researchService.createResearch(mappedModel)
         return mapper.mapModelToDTO(model)
-    }
-
-    @PostMapping(RESEARCH_VISIT_URL)
-    suspend fun addPatientAndScheduleVisits(
-        @PathVariable researchId: Int,
-        @RequestBody patientWithVisitsDTO: PatientWithVisitsDTO
-    ): ResponseEntity<Flow<VisitModel>> {
-        val result = researchService.addPatientWithVisits(researchId, patientWithVisitsDTO)
-        return ResponseEntity.status(HttpStatus.CREATED).body(result)
     }
 
     @PutMapping(RESEARCH_PATIENTS_RANDOMIZE)

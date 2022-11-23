@@ -8,7 +8,7 @@ import {Error404} from "./Error404";
 
 
 export function GlobalErrorBoundary(props: {error: any}) {
-    console.log("error props: ",props)
+    // console.log("error props: ",props)
     switch (props.error.status) {
         case 400: return <Error400 reason={props.error.message}/>;
         case 401: return <Error401 reason={props.error.message}/>;

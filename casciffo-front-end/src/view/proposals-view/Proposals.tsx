@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import ProposalService from "../../services/ProposalService";
 import {SearchComponent} from "../components/SearchComponent";

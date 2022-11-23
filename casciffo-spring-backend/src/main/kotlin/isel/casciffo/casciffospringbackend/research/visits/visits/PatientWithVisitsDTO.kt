@@ -4,5 +4,5 @@ import isel.casciffo.casciffospringbackend.research.patients.PatientModel
 
 class PatientWithVisitsDTO (
     var patient: PatientModel? = null,
-    var visits: List<VisitDTO>? = null
+    var scheduledVisits: List<VisitDTO>? = null
 )

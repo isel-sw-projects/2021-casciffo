@@ -4,15 +4,14 @@ import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggre
 import isel.casciffo.casciffospringbackend.aggregates.visits.ResearchVisitsAggregateRepo
 import isel.casciffo.casciffospringbackend.common.VisitPeriodicity
 import isel.casciffo.casciffospringbackend.mappers.Mapper
+import isel.casciffo.casciffospringbackend.research.patients.ParticipantService
 import isel.casciffo.casciffospringbackend.research.patients.PatientModel
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigators
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsRepository
 import isel.casciffo.casciffospringbackend.research.visits.investigators.VisitInvestigatorsService
 import isel.casciffo.casciffospringbackend.users.user.UserModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
@@ -33,28 +32,56 @@ class VisitServiceImpl(
     @Autowired val visitInvestigatorsRepository: VisitInvestigatorsRepository,
     @Autowired val visitInvestigatorsService: VisitInvestigatorsService,
     @Autowired val visitsAggregateRepo: ResearchVisitsAggregateRepo,
-    @Autowired val visitMapper: Mapper<VisitModel, VisitDTO>
+    @Autowired val visitMapper: Mapper<VisitModel, VisitDTO>,
+    @Autowired val participantService: ParticipantService
 ) : VisitService {
 
     val logger : KLogger = KotlinLogging.logger {  }
 
     @Transactional
-    override suspend fun createVisit(visit: VisitModel): VisitModel {
+    override suspend fun createVisit(visit: VisitDTO): VisitModel {
         if(visit.visitInvestigators == null) throw IllegalArgumentException("A visit must have assigned investigators!!!")
         if(visit.researchPatientId == null) throw IllegalArgumentException("Participant Id must not be null!!!")
 
-        val createdVisit = visitRepository.save(visit).awaitSingle()
-        val visitInvestigators =
-            visit
-                .visitInvestigators!!
-                .map {
-                    it.visitId = createdVisit.id!!
-                    it
-                }
-                .asFlux()
+        val model = visitMapper.mapDTOtoModel(visit)
+        val createdVisit = visitRepository.save(model).awaitSingle()
 
-        visitInvestigatorsRepository.saveAll(visitInvestigators).subscribe()
+        createdVisit.visitInvestigators = visitInvestigatorsRepository
+            .saveAll(visit
+                    .visitInvestigators!!
+                    .map {
+                        it.visitId = createdVisit.id!!
+                        it
+                    }
+            )
+            .collectList()
+            .awaitSingle()
+            .asFlow()
+
+        createdVisit.researchPatient = visit.researchPatient
+
         return createdVisit
+    }
+
+    override suspend fun addPatientWithVisits(researchId: Int, patientWithVisitsDTO: PatientWithVisitsDTO): Flow<VisitModel> {
+        //small caveat is if participant doesn't exist needs to be addressed
+
+        if(patientWithVisitsDTO.patient == null)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente não pode vir null!!!")
+
+        val participant = participantService.addParticipantToResearch(patientWithVisitsDTO.patient!!.id!!, researchId)
+        participant.patient = patientWithVisitsDTO.patient
+
+        if(patientWithVisitsDTO.scheduledVisits.isNullOrEmpty())
+            return emptyFlow()
+
+        patientWithVisitsDTO.scheduledVisits!!.forEach {
+            it.researchPatientId = participant.id!!
+            it.researchPatient = participant
+            it.researchId = researchId
+        }
+
+        return scheduleVisits(researchId, patientWithVisitsDTO.scheduledVisits!!)
     }
 
     @Transactional
@@ -83,7 +110,6 @@ class VisitServiceImpl(
                     mapToVisitModel(researchId, visitAggregateInfo.key(), it)
                 }
             }.asFlow()
-//        return visitRepository.findAllByResearchId(researchId).asFlow().map(this::loadAssignedInvestigators)
     }
 
     fun mapToVisitModel(
@@ -129,41 +155,47 @@ class VisitServiceImpl(
         )
     }
 
-    override suspend fun scheduleVisits(researchId: Int, patientId: Int, visits: List<VisitDTO>): Flow<VisitModel> {
+    override suspend fun scheduleVisits(researchId: Int, visits: List<VisitDTO>): Flow<VisitModel> {
         return visits.flatMap {
-            val visitModel = visitMapper.mapDTOtoModel(it)
-            val mutableList = mutableListOf<VisitModel>()
-            if(it.periodicity !== VisitPeriodicity.NONE) {
-                if (it.startDate == null || it.endDate == null || it.startDate!!.isEqual(it.endDate)) {
-                    throw ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "Parameter start date and end date are incorrect!" +
-                        "\nStart date must always be greater than end date!"
-                    )
-                }
-                var currDate = it.startDate!!
-                val timeStep : (date: LocalDateTime) -> LocalDateTime =
-                    when (it.periodicity) {
-                        VisitPeriodicity.DAILY -> {date -> date.plusDays(1)}
-                        VisitPeriodicity.WEEKLY -> {date -> date.plusWeeks(1)}
-                        VisitPeriodicity.MONTHLY -> {date -> date.plusMonths(1)}
-                        VisitPeriodicity.CUSTOM -> {date -> date.plusDays(it.customPeriodicity!!.toLong())}
-                    else ->
-                        throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Periocity of visit isn't what's expected! Current value: ${it.periodicity}")
-                }
+            if(it.visitInvestigators == null || it.visitInvestigators!!.isEmpty())
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Uma visita tem de ter obrigatóriamente pelo menos um investigador associado.")
 
-                while (currDate.isBefore(it.endDate!!)) {
-                    //id must be set to null for creation and not update
-                    visitModel.id = null
-                    //each iteration is a new visit, where only the scheduled date needs to be updated
-                    visitModel.scheduledDate = currDate
-                    val visit = createVisit(visitModel)
-                    mutableList.add(visit)
-                    currDate = timeStep(currDate)
-                }
-            } else {
-                val visit = createVisit(visitModel)
+            if(it.researchPatientId == null)
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Uma visita tem de ter obrigatóriamente um paciente")
+
+            val mutableList = mutableListOf<VisitModel>()
+            if(it.periodicity === VisitPeriodicity.NONE) {
+                val visit = createVisit(it)
                 mutableList.add(visit)
+                return@flatMap mutableList
             }
+            if (it.startDate == null || it.endDate == null || it.startDate!!.isEqual(it.endDate)) {
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Parameter start date and end date are incorrect!" +
+                    "\nStart date must always be greater than end date!"
+                )
+            }
+            var currDate = it.startDate!!
+            val timeStep : (date: LocalDateTime) -> LocalDateTime =
+                when (it.periodicity) {
+                    VisitPeriodicity.DAILY -> {date -> date.plusDays(1)}
+                    VisitPeriodicity.WEEKLY -> {date -> date.plusWeeks(1)}
+                    VisitPeriodicity.MONTHLY -> {date -> date.plusMonths(1)}
+                    VisitPeriodicity.CUSTOM -> {date -> date.plusDays(it.customPeriodicity!!.toLong())}
+                else ->
+                    throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Periodicity of visit isn't what's expected! Current value: ${it.periodicity}")
+            }
+
+            while (currDate.isBefore(it.endDate!!)) {
+                //id must be set to null for creation and not update
+                it.id = null
+                //each iteration is a new visit, where only the scheduled date needs to be updated
+                it.scheduledDate = currDate
+                val visit = createVisit(it)
+                mutableList.add(visit)
+                currDate = timeStep(currDate)
+            }
+
             mutableList
         }.asFlow()
     }

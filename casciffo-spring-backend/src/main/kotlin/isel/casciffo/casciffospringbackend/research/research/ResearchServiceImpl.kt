@@ -23,6 +23,7 @@ import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionSer
 import isel.casciffo.casciffospringbackend.statistics.ResearchStats
 import isel.casciffo.casciffospringbackend.statistics.ResearchStatsRepo
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
@@ -34,6 +35,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import reactor.core.publisher.Flux
 
 @Service
 class ResearchServiceImpl(
@@ -94,20 +96,6 @@ class ResearchServiceImpl(
 
     override suspend fun addParticipant(researchId: Int, participantId: Int) {
         participantService.addParticipantToResearch(researchId = researchId, participantId =  participantId)
-    }
-
-    override suspend fun addPatientWithVisits(researchId: Int, patientWithVisitsDTO: PatientWithVisitsDTO): Flow<VisitModel> {
-
-        //TODO
-        // call patient service to add patient to research
-        // call visit service passing patientId, researchId and the visits array
-        // map ids to visitDTO or return Flow
-
-        //small caveat is if participant doesn't exist needs to be addressed
-
-        participantService.addParticipantToResearch(patientWithVisitsDTO.patient!!.id!!, researchId)
-
-        return visitService.scheduleVisits(researchId, patientWithVisitsDTO.patient!!.id!!, patientWithVisitsDTO.visits!!)
     }
 
     override suspend fun getAddenda(researchId: Int, addendaId: Int): Addenda {

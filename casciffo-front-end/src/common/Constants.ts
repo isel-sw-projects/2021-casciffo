@@ -9,7 +9,7 @@ export const TeamRoleTypes = {
 
 export const ResearchTypes = {
     CLINICAL_TRIAL: {name:"Ensaios Clínicos", id:"CLINICAL_TRIAL", singularName: "Ensaio Clínico"},
-    OBSVERTIONAL_STUDY: {name:"Estudos Observacionais", id:"OBSERVATIONAL_STUDY", singularName: "Ensaio Observacional"}
+    OBSERVATIONAL_STUDY: {name:"Estudos Observacionais", id:"OBSERVATIONAL_STUDY", singularName: "Ensaio Observacional"}
 }
 
 export const PromoterTypes = {

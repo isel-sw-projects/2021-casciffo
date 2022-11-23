@@ -1,7 +1,7 @@
 import {MyError} from "../../error-view/MyError";
 
 import {
-    DossierModel,
+    DossierModel, PatientVisitsAggregate,
     ResearchFinance, ResearchFinanceEntries,
     ResearchModel, ResearchPatientModel, ResearchTeamFinanceEntries,
     ResearchVisitModel,
@@ -103,7 +103,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }, [errorHandler, props.researchService])
 
     const saveRandomization = useCallback((patients: ResearchPatientModel[]) => {
-        console.log(patients)
+        // console.log(patients)
         props.researchService.saveRandomization(researchId, patients)
             .then(value => setResearch(prevState => ({...prevState, patients: value})))
             .catch(errorHandler)
@@ -111,24 +111,39 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
     const updateResearchFinance = useCallback((rf: ResearchFinance) => {
         props.researchService.updateResearchFinance(researchId, rf)
-            .then(value => {
-                console.log(value)
-                return value
-            })
+            // .then(value => {
+            //     console.log(value)
+            //     return value
+            // })
             .then(value => setResearch(prevState => ({...prevState, financeComponent: value})))
             .catch(errorHandler)
     }, [errorHandler, props.researchService, researchId])
 
 
+    const addPatientAndVisits = useCallback((aggregate: PatientVisitsAggregate) => {
+        const addVisitsToList = (v: ResearchVisitModel[]) => {
+            console.log(v)
+            setResearch(prevState => ({...prevState, visits: [...prevState.visits || [], ...v]}))
+        }
+
+        props.researchService
+            .addPatientAndScheduleVisits(researchId, aggregate)
+            // .then(value => {
+            //     console.log(value)
+            //     return value
+            // })
+            .then(addVisitsToList)
+    },[props.researchService, researchId])
+
     const addNewVisit = useCallback((visit: ResearchVisitModel) => {
-        const addVisitToList = (v: ResearchVisitModel) => {
-            setResearch(prevState => ({...prevState, visits: [...prevState.visits || [], v]}))
+        const addVisitsToList = (v: ResearchVisitModel[]) => {
+            setResearch((prevState => ({...prevState, visits: [...prevState.visits || [], ...v]})))
         }
 
         props.researchService
             .scheduleVisit(researchId, visit)
-            .then(addVisitToList)
-    },[props.researchService, researchId])
+            .then(addVisitsToList)
+    }, [props.researchService, researchId])
 
     const onSaveScientificActivity = useCallback((activity: ScientificActivityModel) => {
         props.researchService.newScientificActivityEntry(researchId!, activity)
@@ -247,7 +262,9 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                 return <AddNewPatient
                     team={research.investigationTeam!}
                     searchByProcessId={props.researchService.searchPatientsByProcessId}
-                    onRenderOverviewClick={renderPatientOverviewScreen}/>
+                    onRenderOverviewClick={renderPatientOverviewScreen}
+                    onSavePatientAndVisits={addPatientAndVisits}
+                />
             default:
                 throw new MyError("Illegal patient tab screen", 400)
         }

@@ -18,15 +18,6 @@ export class ResearchAggregateService {
         return httpGet(url)
     }
 
-    getVisitDetails(researchId: string, visitId: string): Promise<ResearchVisitModel> {
-        const url = ApiUrls.researchVisitDetailsUrl(researchId, visitId)
-        return httpGet(url)
-    }
-
-    concludeVisit(researchId: string, visitId: string, visit: ResearchVisitModel): Promise<ResearchVisitModel> {
-        const url = ApiUrls.researchVisitDetailsUrl(researchId, visitId)
-        return httpPost(url, visit)
-    }
 
     fetchByType(researchType: string): Promise<ResearchAggregateModel[]> {
         const url = ApiUrls.researchByTypeUrl(researchType)
@@ -54,8 +45,22 @@ export class ResearchAggregateService {
         return httpPost(url, dossier)
     }
 
+    getVisitDetails(researchId: string, visitId: string): Promise<ResearchVisitModel> {
+        const url = ApiUrls.researchVisitDetailsUrl(researchId, visitId)
+        return httpGet(url)
+    }
 
-    scheduleVisit(researchId: string, visit: ResearchVisitModel): Promise<ResearchVisitModel> {
+    concludeVisit(researchId: string, visitId: string, visit: ResearchVisitModel): Promise<ResearchVisitModel> {
+        const url = ApiUrls.researchVisitDetailsUrl(researchId, visitId)
+        return httpPost(url, visit)
+    }
+
+    addPatientAndScheduleVisits(researchId: string, patientVisitsAggregate: PatientVisitsAggregate): Promise<ResearchVisitModel[]> {
+        const url = ApiUrls.patientWithVisitsUrl(researchId)
+        return httpPost(url, patientVisitsAggregate)
+    }
+
+    scheduleVisit(researchId: string, visit: ResearchVisitModel): Promise<ResearchVisitModel[]> {
         const url = ApiUrls.researchVisitsUrl(researchId)
         return httpPost(url, visit)
     }
@@ -98,11 +103,6 @@ export class ResearchAggregateService {
     addPatientToResearch(researchId: string, patient: PatientModel): Promise<PatientModel> {
         const url = ApiUrls.researchPatientsUrl(researchId)
         return httpPost(url, patient)
-    }
-
-    addPatientAndVisitsToResearch(researchId: string, aggregate: PatientVisitsAggregate): Promise<PatientVisitsAggregate> {
-        const url = ApiUrls.researchVisitsUrl(researchId)
-        return httpPost(url, aggregate)
     }
 
     saveNewFinanceEntry(researchId: string, entry: ResearchFinanceEntries): Promise<ResearchFinanceEntries> {

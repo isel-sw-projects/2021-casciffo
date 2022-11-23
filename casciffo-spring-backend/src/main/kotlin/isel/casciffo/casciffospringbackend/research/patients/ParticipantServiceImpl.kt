@@ -28,14 +28,13 @@ class ParticipantServiceImpl(
     private val logger = KotlinLogging.logger {  }
 
     @Transactional
-    override suspend fun addParticipantToResearch(participantId: Int, researchId: Int): PatientModel {
+    override suspend fun addParticipantToResearch(participantId: Int, researchId: Int): ResearchPatient {
         //todo consider if in case the Id doesnt exist in casciffo db, check in admission db
         val participant = participantRepository.findById(participantId).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The patient Id doesnt exist in the db!!!")
 
         val researchParticipant = ResearchPatient(null, participantId, researchId, LocalDateTime.now())
-        researchParticipantsRepository.save(researchParticipant).awaitSingle()
-        return participant
+        return researchParticipantsRepository.save(researchParticipant).awaitSingle()
     }
 
     override suspend fun findAllByResearchId(researchId: Int): Flow<ResearchPatient> {

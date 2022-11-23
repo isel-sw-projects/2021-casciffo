@@ -34,7 +34,7 @@ export function PatientDetails(props: Props) {
 
     useEffect(() => {
         const hash = window.location.hash
-        console.log(`PATIENT DETAILS READING HASH ${hash}`)
+        // console.log(`PATIENT DETAILS READING HASH ${hash}`)
 
         const params = MyUtil.parseUrlHash(hash).find(params => params.key === PATIENT_ID_PARAMETER)
         if(params == null) {
@@ -45,10 +45,10 @@ export function PatientDetails(props: Props) {
         setPatientProcessNum(pId)
 
         props.fetchPatient(researchId!, pId)
-            .then(value => {
-                console.log(value)
-                return value
-            })
+            // .then(value => {
+            //     console.log(value)
+            //     return value
+            // })
             .then(setPatient)
             .then(_ => setDataReady(true))
             .catch(errorHandler)

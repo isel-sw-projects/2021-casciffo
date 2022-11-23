@@ -10,10 +10,8 @@ import {
     Button,
     Col,
     Container,
-    Dropdown,
     Form,
     FormGroup,
-    ListGroup,
     Row
 } from "react-bootstrap";
 import React, {useCallback, useState} from "react";
@@ -22,11 +20,13 @@ import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 import UserModel from "../../../model/user/UserModel";
 import {VisitPeriodicity, VisitTypes} from "../../../common/Constants";
 import {AsyncAutoCompletePatientSearch} from "./AsyncAutoCompletePatientSearch";
+import {FormListVisitInvestigators} from "../common/FormListVisitInvestigators";
 
 type Props = {
     team: TeamInvestigatorModel[]
     searchByProcessId: (pId: string) => Promise<PatientModel[]>
     onRenderOverviewClick: () => void
+    onSavePatientAndVisits: (patientVisitAggregate: PatientVisitsAggregate) => void
 }
 
 export function AddNewPatient(props: Props) {
@@ -49,6 +49,13 @@ export function AddNewPatient(props: Props) {
     const submitPatientData = (e: any) => {
         e.stopPropagation()
         e.preventDefault()
+
+        const form = {
+            patient: patientToAdd.patient,
+            scheduledVisits: patientToAdd.scheduledVisits.filter(v => v.scheduledDate != null)
+        }
+        props.onSavePatientAndVisits(form)
+        props.onRenderOverviewClick()
     }
 
     const onSelectPatient = useCallback((patientSelected: PatientModel) => {
@@ -154,11 +161,12 @@ type VisitAccordionProps = {
 function VisitAccordion(props: VisitAccordionProps) {
 
     const [visit, setVisit] = useState<ResearchVisitModel>({
-        visitType: "",
+        visitType: VisitTypes.FIRST_VISIT.id,
+        researchId: "",
         scheduledDate: "",
         startDate: "",
         endDate: "",
-        periodicity: "",
+        periodicity: VisitPeriodicity.NONE.id,
         customPeriodicity: 1,
         visitInvestigators: []
     })
@@ -170,9 +178,6 @@ function VisitAccordion(props: VisitAccordionProps) {
     const [showPeriodic, setPeriodic] = useState(false)
     const toggleShowPeriodic = () => setPeriodic(prevState => !prevState)
 
-    const filterInvestigatorsNotChosen = (investigator: TeamInvestigatorModel) => {
-        return visit.visitInvestigators!.every(vi => vi.investigatorId !== investigator.memberId)
-    }
 
     const addInvestigatorToVisit = (newInvestigator: UserModel) => {
         const ni: VisitInvestigator = {
@@ -183,6 +188,14 @@ function VisitAccordion(props: VisitAccordionProps) {
         setVisit(prevState => {
             const team = [ni, ...prevState.visitInvestigators ?? []]
 
+            return {...prevState, visitInvestigators: team}
+        })
+    }
+
+    const removeInvestigatorFromVisit = (userId: string) => {
+
+        setVisit(prevState => {
+            const team = prevState.visitInvestigators!.filter(vi => vi.investigatorId! !== userId!)
             return {...prevState, visitInvestigators: team}
         })
     }
@@ -200,6 +213,10 @@ function VisitAccordion(props: VisitAccordionProps) {
         }
         if(visit.periodicity === VisitPeriodicity.CUSTOM.id && visit.customPeriodicity! <= 0) {
             alert("Tem de inserir uma periodicidade maior que zero!")
+            return
+        }
+        if(visit.visitInvestigators!.length === 0) {
+            alert("Uma visita tem de ter pelo menos um investigador associado!!")
             return
         }
 
@@ -233,7 +250,7 @@ function VisitAccordion(props: VisitAccordionProps) {
                                     required
                                     aria-label="state selection"
                                     name={"visitType"}
-                                    defaultValue={"Screening"}
+                                    defaultValue={VisitTypes.FIRST_VISIT.id}
                                     onChange={updateVisit}
                                 >
                                     {Object.values(VisitTypes).map(vt =>
@@ -284,42 +301,11 @@ function VisitAccordion(props: VisitAccordionProps) {
                             }
                         </Col>
                         <Col>
-                            <Dropdown style={{width:"100%"}}>
-                                <Dropdown.Toggle className={"mb-2"} split variant={"outline-primary"} style={{width:"100%"}}>
-                                    Adicionar Investigador  
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu style={{width:"100%"}}>
-                                    {props.team?.length !== visit.visitInvestigators!.length ?
-                                        props.team
-                                            ?.filter(filterInvestigatorsNotChosen)
-                                            ?.map((t,i) =>
-                                            <Dropdown.Item key={i} onClick={() => addInvestigatorToVisit(t.member!)}>
-                                                {t.member!.name}
-                                                <br/>
-                                                <small>
-                                                    {t.member!.email}
-                                                </small>
-                                            </Dropdown.Item>)
-                                        : <Dropdown.Item key={"empty menu"}>
-                                            <span className={"text-danger"}>Não existem mais investigadores!</span>
-                                        </Dropdown.Item>
-                                    }
-                                </Dropdown.Menu>
-                            </Dropdown>
-
-                            <ListGroup>
-                                <ListGroup.Item className={"border-bottom border-secondary text-center"}>Investigadores associados à visita <span style={{color: "red"}}>*</span></ListGroup.Item>
-
-                                {visit.visitInvestigators!
-                                    .map((inv, idx) =>
-                                <ListGroup.Item key={inv.investigatorId} className={"flex-column"} variant={(idx & 1) === 1 ? "dark" : "light"}>
-                                    {inv.investigator!.name}
-                                    <br/>
-                                    <small>
-                                        {inv.investigator!.email}
-                                    </small>
-                                </ListGroup.Item>)}
-                            </ListGroup>
+                            <FormListVisitInvestigators
+                                visitInvestigators={visit.visitInvestigators!}
+                                addInvestigatorToVisit={addInvestigatorToVisit}
+                                removeInvestigatorFromVisit={removeInvestigatorFromVisit}
+                                possibleInvestigators={props.team}/>
                         </Col>
                         <Col>
                             <FormGroup className={"m-2"}>

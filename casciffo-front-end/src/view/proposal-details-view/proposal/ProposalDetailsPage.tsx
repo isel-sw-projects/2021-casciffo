@@ -189,7 +189,18 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         props.proposalService.validate(proposalId!, proposal.financialComponent!.id!, validationType, c)
             .then(value => {
                 // const prev = proposal
-                setProposal(prevState => ({...prevState, ...value.proposal!}))
+                setProposal(prevState => ({
+                    ...prevState,
+                    state: value.proposal!.state!,
+                    stateId: value.proposal!.stateId!,
+                    stateTransitions: value.proposal!.stateTransitions!,
+                    comments: value.proposal!.comments!,
+                    financialComponent: {
+                        ...prevState.financialComponent,
+                        protocol: value.proposal!.financialComponent!.protocol!,
+                        validations: value.proposal!.financialComponent!.validations!
+                    }
+                }))
             })
     }
 

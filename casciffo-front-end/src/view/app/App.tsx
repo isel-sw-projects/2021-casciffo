@@ -47,10 +47,10 @@ function NavigationBar(props: {notificationService: NotificationService}) {
     useEffect(() => {
         if(userToken == null) return
         const interval = setInterval(() => {
-            console.log("Checking for new notifications...")
+            // console.log("Checking for new notifications...")
             props.notificationService
                 .checkForNewNotifications(userToken!.userId!)
-                .then(value => {console.log(`Found ${value} new notifications.`); return value;})
+                // .then(value => {console.log(`Found ${value} new notifications.`); return value;})
                 .then(setNotificationCount)
         }, MyUtil.convertMinutesToMillis(1))
         return () => clearInterval(interval)

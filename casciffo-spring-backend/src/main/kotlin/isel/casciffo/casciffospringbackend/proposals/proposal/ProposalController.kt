@@ -9,6 +9,7 @@ import isel.casciffo.casciffospringbackend.exceptions.InvalidStateException
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
+import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -154,6 +155,30 @@ class ProposalController(
             .body(InputStreamResource(withContext(Dispatchers.IO) {
                 Files.newInputStream(path)
             }))
+    }
+
+    @PutMapping(PROPOSAL_FINANCE_VALIDATION_URL)
+    suspend fun financeTransitionProposalState(
+        @PathVariable proposalId: Int,
+        @PathVariable pfcId: Int,
+        @RequestBody validationComment: ValidationComment
+    ): ResponseEntity<ProposalValidationDTO> {
+        val res = service.validatePfc(proposalId, pfcId, validationComment)
+        val prop = if(res.proposal == null) null else mapper.mapModelToDTO(res.proposal)
+        val dto = ProposalValidationDTO(prop,res.validation)
+        return ResponseEntity.ok(dto)
+    }
+
+    @PutMapping(PROPOSAL_JURIDICAL_VALIDATION_URL)
+    suspend fun juridicalTransitionProposalState(
+        @PathVariable proposalId: Int,
+        @PathVariable pfcId: Int,
+        @RequestBody validationComment: ValidationComment
+    ): ResponseEntity<ProposalValidationDTO> {
+        val res = service.validatePfc(proposalId, pfcId, validationComment)
+        val prop = if(res.proposal == null) null else mapper.mapModelToDTO(res.proposal)
+        val dto = ProposalValidationDTO(prop,res.validation)
+        return ResponseEntity.ok(dto)
     }
 
     @DeleteMapping(PROPOSAL_URL)

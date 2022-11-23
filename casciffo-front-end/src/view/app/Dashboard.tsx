@@ -70,7 +70,7 @@ export function Dashboard(props: DashboardProps) {
             .getProposalStats()
             .then(value => {
                 const trials = value.find(s => s.researchType === ResearchTypes.CLINICAL_TRIAL.id)
-                const studies = value.find(s => s.researchType === ResearchTypes.OBSVERTIONAL_STUDY.id)
+                const studies = value.find(s => s.researchType === ResearchTypes.OBSERVATIONAL_STUDY.id)
                 if(trials) setProposalTrialStats({...trials, hasData: trials.totalCount !== 0})
 
                 if(studies) {
@@ -85,7 +85,7 @@ export function Dashboard(props: DashboardProps) {
             .getResearchStats()
             .then(value => {
                 const trials = value.find(s => s.researchType === ResearchTypes.CLINICAL_TRIAL.id)
-                const studies = value.find(s => s.researchType === ResearchTypes.OBSVERTIONAL_STUDY.id)
+                const studies = value.find(s => s.researchType === ResearchTypes.OBSERVATIONAL_STUDY.id)
                 if(trials) setResearchTrialStats({...trials, hasData: trials.totalCount !== 0})
                 if(studies) setResearchStudyStats({...studies, hasData: studies.totalCount !== 0})
             })

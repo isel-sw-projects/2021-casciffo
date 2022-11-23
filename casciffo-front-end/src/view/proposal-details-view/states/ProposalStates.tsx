@@ -126,7 +126,13 @@ export function ProposalStateView(props: StateProps) {
     }
 
     function getTransitionDate(state: StateWithDisplayName) {
-        const transition = stateTransitions.find(st => st.newStateId === state.id)
+        let transition;
+
+        if(state.name === STATES.VALIDADO.id) {
+            transition = stateTransitions.find(st => st.newStateId === state.id)
+        } else {
+            transition = stateTransitions.find(st => st.previousStateId === state.id)
+        }
 
         if (transition == null) return "---"
 

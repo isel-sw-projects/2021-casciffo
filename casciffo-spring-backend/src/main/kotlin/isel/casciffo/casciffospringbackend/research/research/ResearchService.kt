@@ -23,7 +23,6 @@ interface ResearchService {
     suspend fun updateResearch(researchModel: ResearchModel) : ResearchModel
     suspend fun createStudy(study: ScientificActivity) : ScientificActivity
     suspend fun addParticipant(researchId: Int, participantId: Int)
-    suspend fun addPatientWithVisits(researchId: Int, patientWithVisitsDTO: PatientWithVisitsDTO): Flow<VisitModel>
     suspend fun createAddenda(addenda: Addenda) : Addenda
     suspend fun createAddendaComment(addendaId: Int, commentBody: AddendaComment): AddendaComment
     suspend fun getAddenda(researchId: Int, addendaId: Int): Addenda

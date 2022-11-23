@@ -1,6 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.visits.visits
 
-import ch.qos.logback.core.rolling.helper.PeriodicityType
+
 import isel.casciffo.casciffospringbackend.common.VisitPeriodicity
 import isel.casciffo.casciffospringbackend.common.VisitType
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
