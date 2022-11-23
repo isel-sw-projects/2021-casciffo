@@ -2,8 +2,10 @@
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/main/resources/build
+**/src/main/**/build/
+**/src/main/resources/build/
+**/src/main/resources/files/
+casciffo-spring-backend/src/main/resources/build/
 !**/src/test/**/build/
 
 ### STS ###

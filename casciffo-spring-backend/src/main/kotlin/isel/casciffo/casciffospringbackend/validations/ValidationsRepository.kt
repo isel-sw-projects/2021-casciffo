@@ -12,14 +12,14 @@ interface ValidationsRepository: ReactiveCrudRepository<Validation, Int> {
     fun findByPfcIdAndValidationType(pfcId: Int, validationType: ValidationType): Mono<Validation>
 
     @Query(
-        "SELECT CASE WHEN COUNT(*) > 0 THEN FALSE ELSE TRUE END " +
+        "SELECT COUNT(*) = 0 as validated " +
         "FROM validations v " +
         "WHERE v.validated = FALSE AND v.pfc_id=:pfcId"
     )
     fun isPfcValidatedByPfcId(pfcId: Int): Mono<Boolean>
 
     @Query(
-        "SELECT CASE WHEN COUNT(*) > 0 THEN FALSE ELSE TRUE END " +
+        "SELECT COUNT(*) = 0 as validated " +
         "FROM validations v " +
         "JOIN proposal_financial_component pfc on pfc.proposal_financial_id = v.pfc_id " +
         "WHERE v.validated = FALSE AND pfc.proposal_id=:proposalId"
@@ -28,7 +28,7 @@ interface ValidationsRepository: ReactiveCrudRepository<Validation, Int> {
 
 
     @Query(
-        "SELECT CASE WHEN COUNT(*) > 0 THEN FALSE ELSE TRUE END " +
+        "SELECT COUNT(*) = 0 as validated " +
         "FROM validations v " +
         "JOIN protocol p on v.pfc_id = p.pfc_id " +
         "WHERE (v.validated = FALSE AND v.pfc_id=:pfcId) " +

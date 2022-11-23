@@ -163,8 +163,6 @@ function formatUrlHash(args: KeyValuePair<string, string>[]): string {
 
 function checkAndRaiseError(rsp: Response): Response {
     if(!rsp.ok) {
-        // const data = await rsp.json()
-        console.log(rsp)
         throw new MyError(
             `Error occurred trying to reach url: ${rsp.url}`, rsp.status)
     }

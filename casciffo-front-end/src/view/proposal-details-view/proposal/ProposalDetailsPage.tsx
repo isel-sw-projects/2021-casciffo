@@ -171,7 +171,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     };
 
     const handleNewEvent = (event: TimelineEventModel) => {
-        //FIXME WHEN ADDING A DEADLINE ASSOCIATED TO STATE SOMETHING WEIRD HAPPENS, IT DOESNT AFFECT THE STATE DEADLINES AT ALL
         props.proposalService.saveTimelineEvent(proposalId!, event)
             .then(value => setProposal(updateState("timelineEvents", [...proposal.timelineEvents!, value])))
     }

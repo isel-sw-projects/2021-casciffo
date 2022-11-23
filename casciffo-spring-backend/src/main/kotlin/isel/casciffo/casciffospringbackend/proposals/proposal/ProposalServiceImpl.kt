@@ -334,7 +334,7 @@ class ProposalServiceImpl(
         val res = proposalFinancialService.validate(pfcId, validationComment)
         val isNowValidated = validationsRepository.isPfcValidatedByPfcId(pfcId).awaitSingle()
         val proposal: ProposalModel = getProposalById(proposalId, false)
-        if(isNowValidated && proposal.state!!.name === States.VALIDACAO_CF.name) {
+        if(isNowValidated && proposal.state!!.name == States.VALIDACAO_CF.name) {
             val nextState = stateService.getNextProposalState(proposalId, StateType.FINANCE_PROPOSAL)
             handleStateTransition(proposal, nextState.id!!, listOf(Roles.SUPERUSER.name))
         }

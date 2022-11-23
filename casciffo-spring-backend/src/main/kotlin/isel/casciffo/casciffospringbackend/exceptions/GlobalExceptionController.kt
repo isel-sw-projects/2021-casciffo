@@ -4,6 +4,7 @@ import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingle
 import mu.KotlinLogging
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler
+import org.springframework.core.annotation.Order
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.dao.DataAccessResourceFailureException
@@ -20,7 +21,6 @@ import reactor.core.publisher.Mono
 import java.nio.charset.StandardCharsets
 
 @RestControllerAdvice
-//@Order(0)
 class GlobalExceptionController {
 
     val logger = KotlinLogging.logger {  }
@@ -60,37 +60,4 @@ class GlobalExceptionController {
         val buffer: DataBuffer = rsp.bufferFactory().wrap(bytes)
         return rsp.writeWith(Flux.just(buffer)).doOnError { logger.error { it } }
     }
-
-//    override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
-//        logger.error { "Handling error $ex" }
-//
-//        val body : String?
-//        val status : HttpStatus
-//        when (ex) {
-//            is DataAccessResourceFailureException -> {
-////                handleDbFailedConnection(ex)
-//                status = HttpStatus.INTERNAL_SERVER_ERROR
-//                body = "{" +
-//                        "\"reason\": \"Db Connection error\"," +
-//                        "\"status\": 500" +
-//                        "}"
-//            }
-//            is ResponseStatusException -> {
-//                status = ex.status
-//                body = ex.message
-//            }
-//            else -> {
-//                status = HttpStatus.INTERNAL_SERVER_ERROR
-//                body = null
-//            }
-//        }
-//
-//        exchange.response.statusCode = status
-//        if(body != null) {
-//            val bytes: ByteArray = body.toByteArray(StandardCharsets.UTF_8)
-//            val buffer: DataBuffer = exchange.response.bufferFactory().wrap(bytes)
-//            return exchange.response.writeWith(Flux.just(buffer))
-//        }
-//        return Mono.empty()
-//    }
 }

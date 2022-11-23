@@ -60,7 +60,8 @@ class StateServiceImpl(
 
         if(roles.contains(Roles.SUPERUSER.name)) return nextState.map { it.roleName!! }
 
-        if(nextState.none { ns -> roles.any{r -> ns.roleName === r} }) {
+        val hasNecessaryRoleToAdvanceState = nextState.any { ns -> roles.any{r -> ns.roleName == r} }
+        if(!hasNecessaryRoleToAdvanceState) {
             throw ResponseStatusException(HttpStatus.FORBIDDEN, "You don't have the permissions to do this transition.")
         }
 
