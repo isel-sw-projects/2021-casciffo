@@ -10,6 +10,7 @@ import isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow.R
 import isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow.ResearchTeamMonetaryFlowRepository
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -26,7 +27,8 @@ class ResearchFinanceServiceImpl(
 ) : ResearchFinanceService {
 
     override suspend fun createResearchFinance(researchId: Int): ResearchFinance {
-        TODO("Not yet implemented")
+        val model = ResearchFinance(researchId = researchId)
+        return researchFinanceRepository.save(model).awaitSingle()
     }
     override suspend fun getFinanceComponentByResearchId(researchId: Int): ResearchFinance {
         val rf = researchFinanceRepository.findByResearchId(researchId).awaitSingleOrNull()

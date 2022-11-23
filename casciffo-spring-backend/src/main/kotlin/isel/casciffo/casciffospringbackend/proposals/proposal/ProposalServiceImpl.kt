@@ -31,6 +31,7 @@ import isel.casciffo.casciffospringbackend.validations.ValidationComment
 import isel.casciffo.casciffospringbackend.validations.ValidationsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
@@ -270,7 +271,7 @@ class ProposalServiceImpl(
                         "Financial component must be fully validated before advancing."
                     )
             }
-            createResearch(proposal)
+            createResearch(proposal, isClinicalTrial)
             notifyTeam(proposal.id!!,
                 NotificationModel(
                     title = if (isClinicalTrial) "Ensaio Clínico criado!" else "Estudo observacional criado!",
@@ -352,10 +353,10 @@ class ProposalServiceImpl(
         proposal.comments = commentsService.getComments(proposal.id!!, PageRequest.of(0, 20, Sort.by("date_created")))
     }
 
-    private suspend fun createResearch(proposal: ProposalModel) {
+    private suspend fun createResearch(proposal: ProposalModel, isClinicalTrial: Boolean) {
         val stateAtivo = stateService.findInitialStateByType(StateType.RESEARCH)
         var researchModel = ResearchModel(proposalId = proposal.id, stateId = stateAtivo.id, type = proposal.type)
-        researchModel = researchService.createResearch(researchModel)
+        researchModel = researchService.createResearch(researchModel, isClinicalTrial)
         proposal.researchId = researchModel.id!!
     }
 

@@ -205,7 +205,7 @@ export function Proposals(props: Proposals_Props) {
     function filterProposals() {
         const regExp = new RegExp(`${query}.*`, "gi")
         return proposals
-            .filter(p => regExp.test(p.proposal[searchProperty]!))
+            .filter(p => query === "" || regExp.test(p.proposal[searchProperty]!))
             .map(mapToRowElement)
     }
 
