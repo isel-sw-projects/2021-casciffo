@@ -10,7 +10,7 @@ export function Error401(props: {reason: string | undefined}) {
     const [reason, setReason] = useState("")
 
     useEffect(() => {
-        const reason = props.reason || userToken !== null
+        const reason = userToken !== null
             ? "Sessão expirada, por favor inicie a sua sessão de novo."
             : "Precisas de realizar login para aceder a este recurso."
         setReason(reason)

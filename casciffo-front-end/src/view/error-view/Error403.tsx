@@ -5,7 +5,7 @@ export function Error403(props: {reason: string | undefined}) {
     return (
         <GenericError
             title={"Forbidden"}
-            reason={props.reason || "Não tens permissões suficientes para aceder a este recurso."}
+            reason={"Não tens permissões suficientes para aceder a este recurso/efetuar esta operação."}
             imgSrc={img}
             alt={"Forbidden"}
             requiresAuth

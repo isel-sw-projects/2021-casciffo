@@ -161,12 +161,15 @@ function formatUrlHash(args: KeyValuePair<string, string>[]): string {
 }
 
 
-// function checkAndRaiseError(rsp: Response): Response {
-//     if(!rsp.ok) {
-//         throw new MyError(`Error occurred trying to reach url: ${rsp.url}\n${rsp}`, rsp.status)
-//     }
-//     return rsp
-// }
+function checkAndRaiseError(rsp: Response): Response {
+    if(!rsp.ok) {
+        // const data = await rsp.json()
+        console.log(rsp)
+        throw new MyError(
+            `Error occurred trying to reach url: ${rsp.url}`, rsp.status)
+    }
+    return rsp
+}
 
 function _httpFetch<T>(
     url: string,
@@ -189,7 +192,7 @@ function _httpFetch<T>(
         opt.body = JSON.stringify(body)
     }
     return fetch(url, opt)
-        // .then(checkAndRaiseError)
+        .then(checkAndRaiseError)
         .then(rsp => rsp.json())
 }
 
