@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {ResearchTeamFinanceEntries} from "../../../model/research/ResearchModel";
+import {ResearchTeamFinanceEntry} from "../../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
 import {MyTable} from "../../components/MyTable";
 import {Button, Container, Form, Stack} from "react-bootstrap";
@@ -9,19 +9,19 @@ import {TypeOfMonetaryFlows} from "../../../common/Constants";
 
 type MyProps = {
     team: TeamInvestigatorModel[]
-    entries: ResearchTeamFinanceEntries[]
-    onNewEntry: (entry: ResearchTeamFinanceEntries) => void
+    entries: ResearchTeamFinanceEntry[]
+    onNewEntry: (entry: ResearchTeamFinanceEntry) => void
 }
 
 export function ResearchTeamFinanceEntriesTab(props: MyProps) {
 
-    const [entries, setEntries] = useState<ResearchTeamFinanceEntries[]>([])
+    const [entries, setEntries] = useState<ResearchTeamFinanceEntry[]>([])
 
     useEffect(() => {
         setEntries(props.entries)
     }, [props.entries])
 
-    const columns = React.useMemo<ColumnDef<ResearchTeamFinanceEntries>[]>(
+    const columns = React.useMemo<ColumnDef<ResearchTeamFinanceEntry>[]>(
         () => [
             {
                 accessorFn: row => row.transactionDate,
@@ -87,7 +87,7 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
         resetEntry()
     }
 
-    const freshEntry = (): ResearchTeamFinanceEntries => ({
+    const freshEntry = (): ResearchTeamFinanceEntry => ({
         typeOfMonetaryFlow: TypeOfMonetaryFlows.DEBIT.id,
         transactionDate: "",
         responsibleForPayment: "",
@@ -102,10 +102,10 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
         toggleEntryForm()
     }
 
-    const [newEntry, setNewEntry] = useState<ResearchTeamFinanceEntries>(freshEntry())
+    const [newEntry, setNewEntry] = useState<ResearchTeamFinanceEntry>(freshEntry())
 
     const updateNewEntry = (e: any) => {
-        const key = e.target.name as keyof ResearchTeamFinanceEntries
+        const key = e.target.name as keyof ResearchTeamFinanceEntry
         const value = e.target.value
         setNewEntry(prevState => ({...prevState, [key]: value}))
     }
@@ -148,10 +148,10 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
                                     className={"text-center"}
                                     required
                                     name={"investigator"}
-                                    defaultValue={-1}
+                                    defaultValue={""}
                                     onChange={handleInvestigatorSelect}
                                 >
-                                    <option key={"op-invalid"} value={-1} disabled><span className={"text-bold"}>(Selecionar membro de equipa)</span></option>
+                                    <option key={"op-invalid"} value={""} disabled><span className={"text-bold"}>(Selecionar membro de equipa)</span></option>
                                     {props.team.map(i =>
                                         <option key={`op-${i.id}`} value={i.memberId}>{i.member!.name}</option>
                                     )}

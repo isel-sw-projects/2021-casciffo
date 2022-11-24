@@ -5,13 +5,14 @@ import java.time.LocalDateTime
 
 
 data class ResearchPatientsAggregate(
+
     var researchId: Int? = null,
 
-    @Column("participant_id")
+    @Column("p_id")
     var patientId: Int? = null,
     var joinDate: LocalDateTime? = null,
 
-    @Column("id")
+    @Column("rp_id")
     var researchPatientId: Int? = null,
 
     //patient info

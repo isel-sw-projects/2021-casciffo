@@ -53,19 +53,27 @@ class ResearchFinanceServiceImpl(
     override suspend fun saveMonetaryTeamFlowEntry(
         researchId: Int,
         entry: ResearchTeamMonetaryFlow
-    ): ResearchTeamMonetaryFlow {
-        //TODO REVER COMO ESTE PROCESSO ACONTECE
-        validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
-
-        return researchTeamMonetaryFlowRepository.save(entry).awaitSingleOrNull()
+    ): ResearchFinanceWithEntryDTO {
+        val rfc = validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
+        val newEntry = researchTeamMonetaryFlowRepository.save(entry).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $entry")
+
+        return ResearchFinanceWithEntryDTO(
+            id = rfc.id,
+            researchId = rfc.researchId,
+            valuePerParticipant = rfc.valuePerParticipant,
+            roleValuePerParticipant = rfc.roleValuePerParticipant,
+            balance = rfc.balance,
+            newMonetaryEntry = null,
+            newTeamFinanceEnty = newEntry
+        )
     }
 
     private suspend fun validateAndUpdateRFC(
         researchId: Int,
         balanceChange: Float,
         typeOfMonetaryFlow: TypeOfMonetaryFlow
-    ) {
+    ): ResearchFinance {
         val rfc = validateResearchId(researchId)
         rfc.balance =
             if (typeOfMonetaryFlow === TypeOfMonetaryFlow.CREDIT) rfc.balance!!.plus(balanceChange)
@@ -73,17 +81,25 @@ class ResearchFinanceServiceImpl(
         if(rfc.balance!! < 0) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Quantidade irá levar o balanço a negativo!")
         }
-        updateFinanceComponent(researchId, rfc, true)
+        return updateFinanceComponent(researchId, rfc, true)
     }
 
     override suspend fun saveMonetaryResearchFlowEntry(
         researchId: Int,
         entry: ResearchMonetaryFlow
-    ): ResearchMonetaryFlow {
-        validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
-
-        return researchMonetaryFlowRepository.save(entry).awaitSingleOrNull()
+    ): ResearchFinanceWithEntryDTO {
+        val rfc = validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
+        val newEntry = researchMonetaryFlowRepository.save(entry).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $entry")
+        return ResearchFinanceWithEntryDTO(
+            id = rfc.id,
+            researchId = rfc.researchId,
+            valuePerParticipant = rfc.valuePerParticipant,
+            roleValuePerParticipant = rfc.roleValuePerParticipant,
+            balance = rfc.balance,
+            newMonetaryEntry = newEntry,
+            newTeamFinanceEnty = null
+        )
     }
 
     suspend fun validateResearchId(researchId: Int): ResearchFinance {

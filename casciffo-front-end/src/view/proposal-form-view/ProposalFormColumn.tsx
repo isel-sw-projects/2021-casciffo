@@ -174,10 +174,10 @@ export function ProposalFormColumn(props: PFC_Props) {
                             required
                             aria-label="Default select example"
                             name={"pathologyId"}
-                            defaultValue={-1}
+                            defaultValue={""}
                             onChange={handleInputChange}
                         >
-                            <option key={"op-invalid"} value={-1} disabled>Patologias</option>
+                            <option key={"op-invalid"} value={""} disabled>-Patologias-</option>
                             {constants.pathologies.map(p =>
                                 <option key={`op-${p.id}`} value={p.id}>{p.name}</option>
                             )}
@@ -191,10 +191,10 @@ export function ProposalFormColumn(props: PFC_Props) {
                             required
                             aria-label="service type selection"
                             name={"serviceTypeId"}
-                            defaultValue={-1}
+                            defaultValue={""}
                             onChange={handleInputChange}
                         >
-                            <option key={"op-invalid"} value={-1} disabled>Serviço</option>
+                            <option key={"op-invalid"} value={""} disabled>-Serviço-</option>
                             {constants.serviceTypes.map(s =>
                                 <option key={`op-${s.id}`} value={s.id}>{s.name}</option>
                             )}
@@ -208,10 +208,10 @@ export function ProposalFormColumn(props: PFC_Props) {
                             required
                             aria-label="therapeutica area selection"
                             name={"therapeuticAreaId"}
-                            defaultValue={-1}
+                            defaultValue={""}
                             onChange={handleInputChange}
                         >
-                            <option key={"op-invalid"} value={-1} disabled>Área terapeuta</option>
+                            <option key={"op-invalid"} value={""} disabled>-Área terapeuta-</option>
                             {constants.therapeuticAreas.map(t =>
                                 <option key={`op-${t.id}`} value={t.id}>{t.name}</option>
                             )}
@@ -278,7 +278,7 @@ export function ProposalFormColumn(props: PFC_Props) {
                                         defaultValue={""}
                                         onChange={handlePromoterTypeChange}
                                     >
-                                        <option key={"op-invalid"} value={""} disabled>Tipo de promotor</option>
+                                        <option key={"op-invalid"} value={""} disabled>-Tipo de promotor-</option>
                                         {Object.values(PromoterTypes).map((p, idx) => (
                                             <option key={`default-radio-${idx}`} value={p.id}>
                                                 {p.name}

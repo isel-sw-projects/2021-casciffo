@@ -179,11 +179,11 @@ export interface ResearchFinance {
     valuePerParticipant?: string
     roleValuePerParticipant?: string
     balance?: string
-    teamFinanceFlow?: ResearchTeamFinanceEntries[]
-    monetaryFlow?: ResearchFinanceEntries[]
+    teamFinanceFlow?: ResearchTeamFinanceEntry[]
+    monetaryFlow?: ResearchFinanceEntry[]
 }
 
-export interface ResearchFinanceEntries {
+export interface ResearchFinanceEntry {
     id?: string
     rfcId?: string
     transactionDate?: string
@@ -192,7 +192,7 @@ export interface ResearchFinanceEntries {
     amount?: string
 }
 
-export interface ResearchTeamFinanceEntries {
+export interface ResearchTeamFinanceEntry {
     id?: string
     rfcId?: string
     typeOfMonetaryFlow?: string
@@ -203,4 +203,14 @@ export interface ResearchTeamFinanceEntries {
     roleAmount?: string
     investigatorId?: string
     investigator?: UserModel
+}
+
+export interface ResearchFinanceNewEntryDTO {
+    id?: string
+    researchId?: string
+    valuePerParticipant?: string
+    roleValuePerParticipant?: string
+    balance?: string
+    newMonetaryEntry?: ResearchFinanceEntry
+    newTeamFinanceEnty?: ResearchTeamFinanceEntry
 }

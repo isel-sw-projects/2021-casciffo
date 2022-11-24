@@ -2,8 +2,8 @@ import {MyError} from "../../error-view/MyError";
 
 import {
     DossierModel, PatientVisitsAggregate,
-    ResearchFinance, ResearchFinanceEntries,
-    ResearchModel, ResearchPatientModel, ResearchTeamFinanceEntries,
+    ResearchFinance, ResearchFinanceEntry,
+    ResearchModel, ResearchPatientModel, ResearchTeamFinanceEntry,
     ResearchVisitModel,
     ScientificActivityModel
 } from "../../../model/research/ResearchModel";
@@ -89,7 +89,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
     const submitDossier = useCallback((researchId: string) => {
         return (d: DossierModel) => {
-            // console.log("calling research service with id: ", researchId, " and data: ", d)
             props.researchService
                 .addDossierToResearch(researchId, d)
                 .then(d => {
@@ -103,7 +102,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }, [errorHandler, props.researchService])
 
     const saveRandomization = useCallback((patients: ResearchPatientModel[]) => {
-        // console.log(patients)
         props.researchService.saveRandomization(researchId, patients)
             .then(value => setResearch(prevState => ({...prevState, patients: value})))
             .catch(errorHandler)
@@ -111,10 +109,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
     const updateResearchFinance = useCallback((rf: ResearchFinance) => {
         props.researchService.updateResearchFinance(researchId, rf)
-            // .then(value => {
-            //     console.log(value)
-            //     return value
-            // })
             .then(value => setResearch(prevState => ({...prevState, financeComponent: value})))
             .catch(errorHandler)
     }, [errorHandler, props.researchService, researchId])
@@ -178,30 +172,32 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     ,[errorHandler, props.researchService, researchId, userId])
 
 
-    const saveResearchFinanceEntry = (entry: ResearchFinanceEntries) => {
+    const saveResearchFinanceEntry = (entry: ResearchFinanceEntry) => {
         entry.rfcId = research.financeComponent!.id
         props.researchService
             .saveNewFinanceEntry(researchId!, entry)
-            .then(entry => {
+            .then(dto => {
                 setResearch(prevState => ({
                     ...prevState,
                     financeComponent: {
-                        ...prevState.financeComponent,
-                        monetaryFlow: [entry, ...prevState.financeComponent!.monetaryFlow || []]
+                        ...dto,
+                        teamFinanceFlow: prevState.financeComponent!.teamFinanceFlow,
+                        monetaryFlow: [dto.newMonetaryEntry!, ...prevState.financeComponent!.monetaryFlow || []]
                     }
                 }))
             })
     }
-    const saveTeamFinanceEntry = (entry: ResearchTeamFinanceEntries) => {
+    const saveTeamFinanceEntry = (entry: ResearchTeamFinanceEntry) => {
         entry.rfcId = research.financeComponent!.id
         props.researchService
             .saveNewTeamFinanceEntry(researchId!, entry)
-            .then(entry => {
+            .then(dto => {
                 setResearch(prevState => ({
                     ...prevState,
                     financeComponent: {
-                        ...prevState.financeComponent,
-                        teamFinanceFlow: [entry, ...prevState.financeComponent!.teamFinanceFlow || []]
+                        ...dto,
+                        teamFinanceFlow: [dto.newTeamFinanceEnty!, ...prevState.financeComponent!.teamFinanceFlow || []],
+                        monetaryFlow: prevState.financeComponent!.monetaryFlow
                     }
                 }))
             })

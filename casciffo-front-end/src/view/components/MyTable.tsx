@@ -37,7 +37,7 @@ export function MyTable(props: TableProps) {
         debugTable: true,
     })
 
-    const headerSize = table.getHeaderGroups().length
+    const headerSize = table.getHeaderGroups()[0].headers.length
 
     return (
         <React.Fragment>

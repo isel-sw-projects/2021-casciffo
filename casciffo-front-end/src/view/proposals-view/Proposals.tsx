@@ -249,7 +249,7 @@ export function Proposals(props: Proposals_Props) {
                                 required
                                 aria-label="Default select example"
                                 name={"search-property"}
-                                defaultValue={-1}
+                                defaultValue={""}
                                 onChange={(event => {
                                     // console.log(event.target.value)
                                     setSearchProperty(event.target.value as keyof ProposalRowInfo)

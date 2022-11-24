@@ -5,8 +5,8 @@ import {ResearchFinanceEntriesTab} from "./ResearchFinanceEntriesTab";
 import {ResearchAggregateService} from "../../../services/ResearchAggregateService";
 import {
     ResearchFinance,
-    ResearchFinanceEntries,
-    ResearchTeamFinanceEntries
+    ResearchFinanceEntry,
+    ResearchTeamFinanceEntry
 } from "../../../model/research/ResearchModel";
 import {FormInputHelper} from "../../components/FormInputHelper";
 import {useUserAuthContext} from "../../context/UserAuthContext";
@@ -19,8 +19,8 @@ type ResearchFinanceProps = {
     researchFinance: ResearchFinance
     researchTeam: TeamInvestigatorModel[]
     numOfPatients: number
-    onNewTeamEntry: (entry: ResearchTeamFinanceEntries) => void
-    onNewFinanceEntry: (entry: ResearchFinanceEntries) => void
+    onNewTeamEntry: (entry: ResearchTeamFinanceEntry) => void
+    onNewFinanceEntry: (entry: ResearchFinanceEntry) => void
 }
 
 export function ResearchFinanceTab(props: ResearchFinanceProps) {
@@ -68,11 +68,11 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
         setResearchFinance(prevResearchFinance)
     }
 
-    const updateGeneralFinance = (entry: ResearchFinanceEntries) => {
+    const updateGeneralFinance = (entry: ResearchFinanceEntry) => {
         props.onNewFinanceEntry(entry)
     }
 
-    const updateTeamFinance = (entry: ResearchTeamFinanceEntries) => {
+    const updateTeamFinance = (entry: ResearchTeamFinanceEntry) => {
         props.onNewTeamEntry(entry)
     }
 

@@ -3,8 +3,8 @@ import {httpGet, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
 import {
     DossierModel,
     PatientModel,
-    PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance, ResearchFinanceEntries,
-    ResearchModel, ResearchModelAnswer, ResearchPatientModel, ResearchTeamFinanceEntries,
+    PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance, ResearchFinanceEntry, ResearchFinanceNewEntryDTO,
+    ResearchModel, ResearchModelAnswer, ResearchPatientModel, ResearchTeamFinanceEntry,
     ResearchVisitModel, ScientificActivityModel
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
@@ -105,12 +105,12 @@ export class ResearchAggregateService {
         return httpPost(url, patient)
     }
 
-    saveNewFinanceEntry(researchId: string, entry: ResearchFinanceEntries): Promise<ResearchFinanceEntries> {
+    saveNewFinanceEntry(researchId: string, entry: ResearchFinanceEntry): Promise<ResearchFinanceNewEntryDTO> {
         const url = ApiUrls.researchFinanceEntryUrl(researchId)
         return httpPut(url, entry)
     }
 
-    saveNewTeamFinanceEntry(researchId: string, entry: ResearchTeamFinanceEntries): Promise<ResearchTeamFinanceEntries> {
+    saveNewTeamFinanceEntry(researchId: string, entry: ResearchTeamFinanceEntry): Promise<ResearchFinanceNewEntryDTO> {
         const url = ApiUrls.researchFinanceTeamEntryUrl(researchId)
         return httpPut(url, entry)
     }

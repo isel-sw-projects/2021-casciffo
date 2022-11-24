@@ -94,10 +94,10 @@ export function TimelineEventForm(props: TimelineProps) {
                 required
                 aria-label="state selection"
                 name={"stateId"}
-                defaultValue={-1}
+                defaultValue={""}
                 onChange={handleSelectedState}
             >
-                <option value={-1} disabled>-Selecionar estado-</option>
+                <option value={""} disabled>-Selecionar estado-</option>
                 {possibleStates
                     .map((s) => <option key={s.id} value={s.id}>{STATES[s.name as keyof typeof STATES].name}</option>)
                 }

@@ -6,8 +6,8 @@ import isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow.R
 interface ResearchFinanceService {
     suspend fun getFinanceComponentByResearchId(researchId: Int): ResearchFinance
     suspend fun updateFinanceComponent(researchId: Int, researchFinance: ResearchFinance, isValidated: Boolean = false): ResearchFinance
-    suspend fun saveMonetaryTeamFlowEntry(researchId: Int, entry: ResearchTeamMonetaryFlow): ResearchTeamMonetaryFlow
-    suspend fun saveMonetaryResearchFlowEntry(researchId: Int, entry: ResearchMonetaryFlow): ResearchMonetaryFlow
+    suspend fun saveMonetaryTeamFlowEntry(researchId: Int, entry: ResearchTeamMonetaryFlow): ResearchFinanceWithEntryDTO
+    suspend fun saveMonetaryResearchFlowEntry(researchId: Int, entry: ResearchMonetaryFlow): ResearchFinanceWithEntryDTO
     suspend fun createResearchFinance(researchId: Int): ResearchFinance
 //    suspend fun findAllMonetaryEntriesByResearchId(researchId: Int): Flow<>
 }

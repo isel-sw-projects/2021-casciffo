@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {ResearchFinanceEntries} from "../../../model/research/ResearchModel";
+import {ResearchFinanceEntry} from "../../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
 import {MyTable} from "../../components/MyTable";
 import {Button, Container, Form, Stack} from "react-bootstrap";
@@ -7,20 +7,20 @@ import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
 import {TypeOfMonetaryFlows} from "../../../common/Constants";
 
 type MyProps = {
-    entries: ResearchFinanceEntries[]
-    onNewEntry: (entry: ResearchFinanceEntries) => void
+    entries: ResearchFinanceEntry[]
+    onNewEntry: (entry: ResearchFinanceEntry) => void
 }
 
 
 export function ResearchFinanceEntriesTab(props: MyProps) {
 
-    const [entries, setEntries] = useState<ResearchFinanceEntries[]>([])
+    const [entries, setEntries] = useState<ResearchFinanceEntry[]>([])
 
     useEffect(() => {
         setEntries(props.entries)
     }, [props.entries])
 
-    const columns = React.useMemo<ColumnDef<ResearchFinanceEntries>[]>(
+    const columns = React.useMemo<ColumnDef<ResearchFinanceEntry>[]>(
         () => [
             {
                 accessorFn: row => row.transactionDate,
@@ -60,7 +60,7 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
 
     const toggleEntryForm = () => setShowEntryForm(prevState => !prevState)
 
-    const freshEntry = (): ResearchFinanceEntries => ({
+    const freshEntry = (): ResearchFinanceEntry => ({
         transactionDate: "",
         typeOfMonetaryFlow: "",
         motive: "",
@@ -72,10 +72,10 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
         setNewEntry(freshEntry())
     }
 
-    const [newEntry, setNewEntry] = useState<ResearchFinanceEntries>(freshEntry())
+    const [newEntry, setNewEntry] = useState<ResearchFinanceEntry>(freshEntry())
 
     const updateNewEntry = (e: any) => {
-        const key = e.target.name as keyof ResearchFinanceEntries
+        const key = e.target.name as keyof ResearchFinanceEntry
         const value = e.target.value
         setNewEntry(prevState => ({...prevState, [key]: value}))
     }
@@ -129,10 +129,10 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
                                 required
                                 aria-label="Seleção de tipo de movimento."
                                 name={"typeOfMonetaryFlow"}
-                                defaultValue={-1}
+                                defaultValue={""}
                                 onChange={updateNewEntry}
                             >
-                                <option value={-1} disabled>(Tipo de transação)</option>
+                                <option value={""} disabled>(Tipo de transação)</option>
                                 {
                                     Object.values(TypeOfMonetaryFlows).map((tf) => <option key={tf.id} value={tf.id}>{tf.name}</option>)
                                 }

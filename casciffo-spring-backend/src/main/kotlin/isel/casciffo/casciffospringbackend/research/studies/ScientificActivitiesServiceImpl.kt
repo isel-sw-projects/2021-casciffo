@@ -1,6 +1,7 @@
 package isel.casciffo.casciffospringbackend.research.studies
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.beans.factory.annotation.Autowired
@@ -8,12 +9,14 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ResponseStatusException
 
+
 @Component
 class ScientificActivitiesServiceImpl(
    @Autowired val repository: ScientificActivitiesRepository
 ): ScientificActivitiesService {
-    override suspend fun findAllByResearchId(researchId: Int): Flow<ScientificActivity> =
-        repository.findAllByResearchId(researchId).asFlow()
+    override suspend fun findAllByResearchId(researchId: Int): Flow<ScientificActivity> {
+        return repository.findAllByResearchId(researchId).asFlow()
+    }
 
     override suspend fun createScientificActivity(scientificActivity: ScientificActivity): ScientificActivity {
         return repository.save(scientificActivity).awaitSingleOrNull()

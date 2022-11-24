@@ -34,7 +34,7 @@ class ResearchFinanceController(
     suspend fun addNewTeamEntry(
         @PathVariable researchId: Int,
         @RequestBody teamEntry: ResearchTeamMonetaryFlow
-    ): ResponseEntity<ResearchTeamMonetaryFlow> {
+    ): ResponseEntity<ResearchFinanceWithEntryDTO> {
         val entry = service.saveMonetaryTeamFlowEntry(researchId, teamEntry)
         return ResponseEntity.ok(entry)
     }
@@ -43,7 +43,7 @@ class ResearchFinanceController(
     suspend fun addNewResearchEntry(
         @PathVariable researchId: Int,
         @RequestBody researchEntry: ResearchMonetaryFlow
-    ): ResponseEntity<ResearchMonetaryFlow> {
+    ): ResponseEntity<ResearchFinanceWithEntryDTO> {
         val entry = service.saveMonetaryResearchFlowEntry(researchId, researchEntry)
         return ResponseEntity.ok(entry)
     }

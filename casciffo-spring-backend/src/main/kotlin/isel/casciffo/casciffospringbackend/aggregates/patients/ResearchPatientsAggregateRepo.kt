@@ -10,7 +10,8 @@ import reactor.core.publisher.Mono
 interface ResearchPatientsAggregateRepo: ReactiveCrudRepository<ResearchPatientsAggregate, Int> {
 
     @Query(
-        "SELECT * " +
+        "SELECT p.id as p_id, p.process_id, p.age, p.full_name, p.gender, " +
+                "rp.id as rp_id, rp.join_date, rp.treatment_branch, rp.research_id " +
         "FROM participant p " +
         "JOIN research_participants rp on p.id = rp.participant_id " +
         "WHERE rp.research_id = :researchId"
@@ -18,7 +19,8 @@ interface ResearchPatientsAggregateRepo: ReactiveCrudRepository<ResearchPatients
     fun findResearchPatientsByResearchId(researchId: Int): Flux<ResearchPatientsAggregate>
 
     @Query(
-        "SELECT * " +
+        "SELECT p.id as p_id, p.process_id, p.age, p.full_name, p.gender, " +
+                "rp.id as rp_id, rp.join_date, rp.treatment_branch, rp.research_id " +
         "FROM participant p " +
         "JOIN research_participants rp on p.id = rp.participant_id " +
         "WHERE rp.research_id = :researchId and p.process_id=:processId"
