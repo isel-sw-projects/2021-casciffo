@@ -79,8 +79,7 @@ export function ResearchDetailsTab(props: RDT_Props) {
             setTreatmentBranches([])
             setCurrentBranch("")
         }
-        //TODO CLEAN UP LOG WHEN DONE
-        // console.log(research)
+
         props.updateResearch(research)
         toggleTreatmentBranchForm()
         setIsEditing(false)
@@ -140,9 +139,10 @@ export function ResearchDetailsTab(props: RDT_Props) {
                 <ResearchStates
                     states={props.stateChain}
                     stateTransitions={research.stateTransitions ?? []}
-                    currentStateId={research.stateId ?? ""}
+                    currentState={research.state}
                     createdDate={research.startDate ?? ""}
                     canceledReason={research.canceledReason}
+                    canceledBy={research.canceledBy}
                 />
             </Col>
             <Col>
@@ -444,7 +444,7 @@ function CancelPopup(
             </Modal.Body>
             <Modal.Footer>
                 <Button className={"flex float-start"} onClick={props.onCloseButtonClick}
-                        variant={"outline-danger"}>Fechar</Button>
+                        variant={"outline-danger"}>Voltar</Button>
                 <Button className={"flex float-end"} onClick={() => props.onSuccessButtonClick(reason)}
                         variant={"outline-success"}>Ok</Button>
             </Modal.Footer>

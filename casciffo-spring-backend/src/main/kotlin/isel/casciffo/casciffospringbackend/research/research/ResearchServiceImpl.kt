@@ -161,8 +161,12 @@ class ResearchServiceImpl(
 
     @Transactional
     override suspend fun updateResearch(researchModel: ResearchModel): ResearchModel {
-        researchRepository.findById(researchModel.id!!).awaitFirstOrNull()
-            ?: throw IllegalArgumentException("Research doesnt exist!!!")
+        val current = getResearch(researchModel.id!!, false)
+
+        val isTerminal = stateService.isTerminalState(current.stateId!!, StateType.RESEARCH)
+
+        if(isTerminal) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Não pode alterar um ensaio completo.")
+
 
         return researchRepository.save(researchModel).awaitFirstOrNull() ?: throw Exception("Idk what happened bro ngl")
     }

@@ -18,7 +18,8 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "pl.pathology_name, pl.pathology_id, " +
                 "pinv.user_id, pinv.user_name, pinv.user_email, " +
                 "pr.promoter_name, " +
-                "pfc.has_partnerships " +
+                "pfc.has_partnerships, " +
+                "canceledBy.user_email as canceled_by_user_email, canceledBy.user_name as canceled_by_user_name " +
                 "FROM clinical_research cr " +
                 "JOIN proposal p on cr.proposal_id = p.proposal_id " +
                 "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
@@ -28,6 +29,7 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "JOIN states state ON cr.research_state_id = state.state_id " +
                 "LEFT JOIN proposal_financial_component pfc ON p.proposal_id = pfc.proposal_id " +
                 "LEFT JOIN promoter pr ON pfc.promoter_id = pr.promoter_id " +
+                "LEFT JOIN user_account canceledBy ON canceledBy.user_id = cr.canceled_by_id " +
                 "WHERE cr.type=:type"
     )
     fun findAllByType(type: ResearchType): Flux<ResearchAggregate>
@@ -39,7 +41,9 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "ta.therapeutic_area_name, ta.therapeutic_area_id, " +
                 "pl.pathology_name, pl.pathology_id, " +
                 "pinv.user_id, pinv.user_name, pinv.user_email, " +
-                "pr.promoter_name " +
+                "pr.promoter_name, " +
+                "pfc.has_partnerships, " +
+                "canceledBy.user_email as canceled_by_user_email, canceledBy.user_name as canceled_by_user_name " +
                 "FROM clinical_research cr " +
                 "JOIN proposal p on cr.proposal_id = p.proposal_id " +
                 "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
@@ -49,6 +53,7 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "JOIN states state ON cr.research_state_id = state.state_id " +
                 "LEFT JOIN proposal_financial_component pfc ON p.proposal_id = pfc.proposal_id " +
                 "LEFT JOIN promoter pr ON pfc.promoter_id = pr.promoter_id " +
+                "LEFT JOIN user_account canceledBy ON canceledBy.user_id = cr.canceled_by_id " +
                 "WHERE cr.research_id=:id"
     )
     fun findAggregateById(researchId: Int): Mono<ResearchAggregate>
@@ -60,7 +65,9 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "ta.therapeutic_area_name, ta.therapeutic_area_id, " +
                 "pl.pathology_name, pl.pathology_id, " +
                 "pinv.user_id, pinv.user_name, pinv.user_email, " +
-                "pr.promoter_name " +
+                "pr.promoter_name, " +
+                "pfc.has_partnerships, " +
+                "canceledBy.user_email as canceled_by_user_email, canceledBy.user_name as canceled_by_user_name " +
                 "FROM clinical_research cr " +
                 "JOIN proposal p on cr.proposal_id = p.proposal_id " +
                 "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
@@ -70,6 +77,7 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "JOIN states state ON cr.research_state_id = state.state_id " +
                 "LEFT JOIN proposal_financial_component pfc ON p.proposal_id = pfc.proposal_id " +
                 "LEFT JOIN promoter pr ON pfc.promoter_id = pr.promoter_id " +
+                "LEFT JOIN user_account canceledBy ON canceledBy.user_id = cr.canceled_by_id " +
                 "ORDER BY cr.last_modified DESC " +
                 "LIMIT :n"
     )

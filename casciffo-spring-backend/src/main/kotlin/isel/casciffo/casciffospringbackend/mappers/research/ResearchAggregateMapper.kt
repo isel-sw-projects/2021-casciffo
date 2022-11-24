@@ -41,6 +41,9 @@ class ResearchAggregateMapper: Mapper<ResearchModel, ResearchAggregate> {
             canceledById = dto.canceledById,
             state = State(id=dto.stateId, name = dto.stateName),
             proposal = mapSimpleProposal(dto),
+            canceledBy = if(dto.canceledById !== null)
+                UserModel(userId = dto.canceledById, name = dto.canceledByUserName, email = dto.canceledByUserEmail)
+                else null,
             patients = null, //left null on purpose
             dossiers = null, //left null on purpose
             scientificActivities = null, //left null on purpose

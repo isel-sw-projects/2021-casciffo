@@ -313,6 +313,7 @@ CREATE TABLE IF NOT EXISTS scientific_activities (
     published_url TEXT,
     publication_type VARCHAR,
     study_type VARCHAR,
+    research_type VARCHAR,
     CONSTRAINT fk_sa_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id)
         ON DELETE CASCADE

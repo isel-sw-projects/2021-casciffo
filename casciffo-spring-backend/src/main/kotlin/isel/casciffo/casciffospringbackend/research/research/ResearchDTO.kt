@@ -11,6 +11,7 @@ import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
 import isel.casciffo.casciffospringbackend.research.visits.visits.VisitDTO
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
+import isel.casciffo.casciffospringbackend.users.user.UserModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -41,6 +42,7 @@ data class ResearchDTO(
     var treatmentBranches: String? = null,
     var canceledReason: String? = null,
     var canceledById: Int? = null,
+    var canceledBy: UserModel? = null,
     var visits: List<VisitDTO>? = null,
     var dossiers: List<Dossier>? = null,
     var patients: List<ResearchPatient>? = null,

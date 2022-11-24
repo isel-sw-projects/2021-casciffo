@@ -91,7 +91,7 @@ export class ResearchAggregateService {
     }
 
     cancelResearch(researchId: string, reason: string, userId: string): Promise<ResearchModelAnswer> {
-        const url = ApiUrls.researchCompleteUrl(researchId)
+        const url = ApiUrls.researchCancelUrl(researchId)
         return httpPost(url, {reason: reason, userId: userId})
     }
 

@@ -75,6 +75,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         props.researchService
             .fetchResearch(researchId!)
+            .then(value => {
+                console.log(value)
+                return value
+            })
             .then(setResearch, errorHandler)
     }, [props.researchService, researchId, errorHandler])
 
@@ -122,10 +126,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
         props.researchService
             .addPatientAndScheduleVisits(researchId, aggregate)
-            // .then(value => {
-            //     console.log(value)
-            //     return value
-            // })
             .then(addVisitsToList)
     },[props.researchService, researchId])
 
@@ -152,7 +152,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                 if(answer.success) {
                     setResearch(answer.research!)
                 } else {
-                    alert("Failure to complete.")
+                    alert("Failure to complete. 😭")
                 }
             })
             .catch(errorHandler)
@@ -165,7 +165,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                 if(answer.success) {
                     setResearch(answer.research!)
                 } else {
-                    alert("Failure to cancel.")
+                    alert("Failure to cancel. 😭")
                 }
             })
             .catch(errorHandler)
@@ -391,9 +391,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
-                            currentStateId={research.stateId ?? ""}
+                            currentState={research.state}
                             createdDate={research.startDate ?? ""}
                             canceledReason={research.canceledReason}
+                            canceledBy={research.canceledBy}
                         />
                         <ResearchScientificActivitiesTab
                             onSaveActivity={onSaveScientificActivity}
@@ -404,9 +405,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
-                            currentStateId={research.stateId ?? ""}
+                            currentState={research.state}
                             createdDate={research.startDate ?? ""}
                             canceledReason={research.canceledReason}
+                            canceledBy={research.canceledBy}
                         />
                         {visitSwitchRender(tabPaneScope)}
 
@@ -415,9 +417,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                         <ResearchStates
                             states={stateChain}
                             stateTransitions={research.stateTransitions ?? []}
-                            currentStateId={research.stateId ?? ""}
+                            currentState={research.state}
                             createdDate={research.startDate ?? ""}
                             canceledReason={research.canceledById}
+                            canceledBy={research.canceledBy}
                         />
                         {patientSwitchRender(tabPaneScope)}
 
@@ -428,9 +431,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             <ResearchStates
                                 states={stateChain}
                                 stateTransitions={research.stateTransitions ?? []}
-                                currentStateId={research.stateId ?? ""}
+                                currentState={research.state}
                                 createdDate={research.startDate ?? ""}
                                 canceledReason={research.canceledReason}
+                                canceledBy={research.canceledBy}
                             />
                             {research.financeComponent &&
                                 <ResearchFinanceTab

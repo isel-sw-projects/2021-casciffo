@@ -35,6 +35,10 @@ data class ResearchAggregate(
     var stateId: Int? = null,
     var stateName: String? = null,
 
+    //canceled by user
+    var canceledByUserName: String? = null,
+    var canceledByUserEmail: String? = null,
+
     //info from proposal
     var proposalId: Int? = null,
     var sigla: String? = null,

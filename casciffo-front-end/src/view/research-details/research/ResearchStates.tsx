@@ -7,14 +7,16 @@ import {STATES} from "../../../model/state/STATES";
 import {StateFlowTypes} from "../../../common/Constants";
 import {StateTransitionModel} from "../../../model/state/StateTransitionModel";
 import {MyUtil} from "../../../common/MyUtil";
+import UserModel from "../../../model/user/UserModel";
 
 
 type ResearchStatesProps = {
     states: StateModel[],
     stateTransitions: StateTransitionModel[],
-    currentStateId: string,
+    currentState: StateModel | undefined ,
     createdDate: string,
     canceledReason?: string,
+    canceledBy?: UserModel | undefined,
 }
 
 type StateWithDisplayName = {
@@ -52,12 +54,11 @@ export function ResearchStates(props: ResearchStatesProps) {
     }, [dataReady])
 
     useEffect(() => {
-        if (stateChain?.length === 0 || props.currentStateId?.length === 0) return
-        const state = stateChain.find(sc => sc.id! === props.currentStateId)!
-        const displayName = STATES[state.name as keyof typeof STATES].name
-        setCurrentState({...state, displayName: displayName})
+        if(!props.currentState) return
+        const displayName = STATES[props.currentState.name as keyof typeof STATES].name
+        setCurrentState({...props.currentState, displayName: displayName})
         setDataReady(prevState => ({...prevState, currentStateReady: true}))
-    }, [stateChain, props.currentStateId])
+    }, [props.currentState])
 
     useEffect(() => {
         const states = props.states
@@ -156,14 +157,16 @@ export function ResearchStates(props: ResearchStatesProps) {
                     <br/>
                     <Form>
                         {
-                            props.canceledReason &&
-                            <Container><span className={"text-danger bold"}>
-                                O ensaio atual foi cancelado pelo seguinte motivo:
+                            props.canceledReason ?
+                            <Container><span className={"text-danger font-bold"}>
+                                {`Cancelado na data ${MyUtil.formatDate(props.stateTransitions![0].transitionDate)}, 
+                                por`} <a href={`mailto:${props.canceledBy!.email}`}>{props.canceledBy!.name}</a> pelo seguinte motivo:
                                 <br/>
                                 {props.canceledReason}
                             </span></Container>
+                                :
+                                mapStates()
                         }
-                        {mapStates()}
                     </Form>
                 </div>
                 :
