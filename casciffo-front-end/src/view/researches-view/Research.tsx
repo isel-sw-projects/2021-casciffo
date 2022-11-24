@@ -280,6 +280,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                                  Exportar selecionados (0) para Excel
                              </div>
                              : <CSVLink
+                                    separator={";"}
                                     className={"float-start mb-2"}
                                     headers={getHeaders()}
                                     data={ensaios.filter(p => p.selected).map(p => ({
