@@ -1,46 +1,19 @@
 #!/bin/bash
 @echo off
-cd casciffo-front-end
-
-echo "Installing front-end modules..."
-npm i
-
-echo "Creating production build..."
-npm run build
-
-set front-end "$pwd/build"
-
-cd ..
-
-cd casciffo-spring-backend
-
-echo "Creating /webapp folder for static file serving..."
-
-rm -r webapp
-mkdir webapp
-
-echo "Copying optimized production build from front-end to /webapp..."
-
-cp -r "$front-end/*" "webapp"
-
-
-echo "Creating environment variables..."
-source env.sh
-
-echo "Bundling the app..."
-source .\gradlew clean build -x test
-ren build/libs/casciffo-spring-backend-1.0.0.jar casciffo-1.0.0.jar
-
 local port=9000
 
 if [ -z "$1" ]
 then 
     port=$1
 else
-    echo "You can set a default port by running run.bat [portNum] 
-     e.g run.bat 9000 
-     The default port is 9000"
+    echo "You can set a default port by running run.bat [portNum]" 
+    echo "e.g ./run.bat 9000"
+    echo "The default port is 9000"
 fi
 
+cd "Bundling the app..."
+./bundle-app.sh
+
+cd casciffo-spring-backend
 echo "Launching the app on port $port!"
 java -jar build/libs/casciffo-1.0.0.jar --port=$port
