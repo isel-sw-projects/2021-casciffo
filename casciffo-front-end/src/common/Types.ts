@@ -52,7 +52,7 @@ type ProposalForm = {
     file?: File
 }
 
-type Constants = {
+type ConstantsModel = {
     pathologies: PathologyModel[]
     serviceTypes: ServiceTypeModel[]
     therapeuticAreas: TherapeuticAreaModel[]
@@ -98,6 +98,6 @@ export type CountHolder = {
 export type {
     AxiosResponseBody,
     Investigator,
-    Constants, Filter, ProposalForm, Promoter,
+    ConstantsModel, Filter, ProposalForm, Promoter,
     UserToken, KeyValuePair, MyHashMap
 }

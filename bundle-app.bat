@@ -15,13 +15,13 @@ cd casciffo-spring-backend
 echo
 echo Creating /build folder for static file serving...
 
-rmdir /s src\main\resources\build
-mkdir src\main\resources\build
+rmdir /s webapp
+mkdir webapp
 
 echo
-echo Copying optimized production build from front-end to /build...
+echo Copying optimized production build from front-end to /webapp...
 
-xcopy /s "..\casciffo-front-end\build" "src\main\resources\build"
+xcopy /s "..\casciffo-front-end\build" "webapp"
 
 
 echo Creating environment variables...
@@ -29,11 +29,8 @@ call env.bat
 
 echo Bundling the app...
 call gradlew clean build -x test
-
-echo
-echo cleaning build files...
-rmdir /s src\main\resources\build
+rename build/libs/casciffo-spring-backend-1.0.0.jar casciffo-1.0.0.jar
 
 echo
 echo Done!
-echo You can run the app with the command java -jar build/libs/casciffo-spring-backend-1.0.0-SNAPSHOT.jar
+echo You can run the app with the command java -jar build/libs/casciffo-1.0.0.jar

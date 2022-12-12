@@ -1,6 +1,5 @@
 import ProposalService from "./ProposalService";
-import {Constants} from "../common/Types";
-import ApiUrls from "../common/Links";
+import {ConstantsModel} from "../common/Types";
 import {ProposalModel} from "../model/proposal/ProposalModel";
 import UserModel from "../model/user/UserModel";
 import {ProposalCommentsModel} from "../model/proposal/ProposalCommentsModel";
@@ -8,22 +7,23 @@ import CommentsService from "./CommentsService";
 import {TimelineEventModel} from "../model/proposal/TimelineEventModel";
 import {ValidationCommentDTO, ValidityComment} from "../model/proposal/finance/ValidationModels";
 import {StateModel} from "../model/state/StateModel";
-import {httpGet} from "../common/MyUtil";
 import {UserService} from "./UserService";
 import {ProtocolAggregateDTO} from "../model/proposal/finance/ProtocolModel";
+import {ConstantsService} from "./ConstantsService";
 
 export default class ProposalAggregateService {
     private proposalService = new ProposalService()
     private commentsService = new CommentsService()
     private userService = new UserService()
 
+    private constantsService = new ConstantsService()
+
     fetchInvestigators(name: string) : Promise<UserModel[]> {
         return this.userService.fetchUsersLike(name, ["UIC", "SUPERUSER"])
     }
 
-    fetchConstants(): Promise<Constants> {
-        const url = ApiUrls.constantsUrl
-        return httpGet(url)
+    fetchConstants(): Promise<ConstantsModel> {
+        return this.constantsService.fetchConstants()
     }
 
     saveProposal(proposal: ProposalModel): Promise<ProposalModel> {
@@ -42,8 +42,8 @@ export default class ProposalAggregateService {
         return this.commentsService.saveProposalComment(comment)
     }
 
-    fetchConstantsMock(): Promise<Constants> {
-        return new Promise<Constants>(resolve => {
+    fetchConstantsMock(): Promise<ConstantsModel> {
+        return new Promise<ConstantsModel>(resolve => {
             setTimeout(() =>
                 resolve({
                     serviceTypes: [{id: 1, name: "service1"}],

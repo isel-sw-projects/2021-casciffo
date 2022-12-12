@@ -1,7 +1,7 @@
 import {Alert, Button, Col, Container, Form} from "react-bootstrap";
 
 import React, {useEffect, useState} from "react";
-import {Constants, Investigator, ProposalForm} from "../../common/Types";
+import {ConstantsModel, Investigator, ProposalForm} from "../../common/Types";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import {PromoterModel} from "../../model/proposal/finance/PromoterModel";
 import {PartnershipModel} from "../../model/proposal/finance/PartnershipModel";
@@ -25,7 +25,7 @@ export function ProposalFormColumn(props: PFC_Props) {
 
     const [errorState, setErrorState] = useState({show: false, message: ""})
 
-    const [constants, setConstants] = useState<Constants>({
+    const [constants, setConstants] = useState<ConstantsModel>({
         serviceTypes: [],
         pathologies: [],
         therapeuticAreas: []

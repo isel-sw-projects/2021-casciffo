@@ -145,12 +145,6 @@ class UserServiceImpl(
             )
         )
         return getUser(userId, true)!!
-//        BearerTokenWrapper(
-//            token = token.value,
-//            userId = userId,
-//            userName = user.name,
-//            roles = updatedRoles
-//        )
     }
 
 
@@ -191,13 +185,13 @@ class UserServiceImpl(
     }
 
     override suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?> {
-        //% is added to make query (SELECT ... WHERE name LIKE abc% AND ...)
-        //adding % to the query itself will break the statement and throw runtime db exception
+        //% is added to make query (SELECT ... WHERE name LIKE %abc% AND ...)
+        //adding % to the query itself (in the repository) will break the statement and throw runtime db exception
         return if (roles.isEmpty())
             userRepository.findAllByNameIsLike(name).asFlow()
         else
             userRepository
-                .findAllByRoleNameIsInAndNameLike(name.plus('%'), roles.map { it.uppercase() })
+                .findAllByRoleNameIsInAndNameLike("%$name%", roles.map { it.uppercase() })
                 .asFlow()
     }
 

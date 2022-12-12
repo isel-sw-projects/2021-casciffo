@@ -85,11 +85,10 @@ interface ProposalAggregateRepo: ReactiveSortingRepository<ProposalAggregate, In
         "JOIN user_account pinv ON p.principal_investigator_id = pinv.user_id " +
         "LEFT JOIN proposal_financial_component pfc ON p.proposal_id = pfc.proposal_id " +
         "LEFT JOIN promoter pr ON pr.promoter_id = pfc.promoter_id " +
-        "WHERE p.proposal_type = :type " +
         "ORDER BY p.last_modified DESC " +
         "LIMIT :n"
     )
-    fun findLastModifiedProposals(n: Int, type: ResearchType): Flux<ProposalAggregate>
+    fun findLastModifiedProposals(n: Int): Flux<ProposalAggregate>
 
     @Query(
         "SELECT CASE WHEN COUNT(id)=4 THEN TRUE ELSE FALSE END " +

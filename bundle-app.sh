@@ -29,18 +29,8 @@ source env.sh
 
 echo "Bundling the app..."
 source .\gradlew clean build -x test
-ren build/libs/casciffo-spring-backend-1.0.0.jar casciffo-1.0.0.jar
+mv build/libs/casciffo-spring-backend-1.0.0.jar build/libs/casciffo-1.0.0.jar
 
-local port=9000
-
-if [ -z "$1" ]
-then 
-    port=$1
-else
-    echo "You can set a default port by running run.bat [portNum] 
-     e.g run.bat 9000 
-     The default port is 9000"
-fi
-
-echo "Launching the app on port $port!"
-java -jar build/libs/casciffo-1.0.0.jar --port=$port
+echo
+echo "Done!"
+echo "You can run the app with the command java -jar build/libs/casciffo-1.0.0.jar"

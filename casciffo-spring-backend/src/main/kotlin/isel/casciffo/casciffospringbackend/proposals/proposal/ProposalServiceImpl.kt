@@ -219,9 +219,10 @@ class ProposalServiceImpl(
      * @return [n] Proposals sorted by last_modified descending.
      */
     override suspend fun getLatestModifiedProposals(n: Int): Flow<ProposalModel> {
-        val trialProposals = proposalAggregateRepo.findLastModifiedProposals(n, ResearchType.CLINICAL_TRIAL)
-        val studyProposals = proposalAggregateRepo.findLastModifiedProposals(n, ResearchType.OBSERVATIONAL_STUDY)
-        return Flux.merge(trialProposals, studyProposals).asFlow().map { proposalAggregateMapper.mapDTOtoModel(it) }
+        val proposals = proposalAggregateRepo.findLastModifiedProposals(n)
+        return proposals
+            .asFlow()
+            .map { proposalAggregateMapper.mapDTOtoModel(it) }
     }
 
     @Transactional

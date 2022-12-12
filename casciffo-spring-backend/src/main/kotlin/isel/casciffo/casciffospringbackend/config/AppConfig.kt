@@ -39,14 +39,9 @@ class ServeStaticContent : WebFilter {
             !exchange.request.uri.path.startsWith("/api")
             && exchange.request.uri.path != "/"
             && !exchange.request.uri.path.startsWith("/static")
-            && !exchange.request.uri.path.startsWith("/favicon.ico")
-            && !exchange.request.uri.path.startsWith("/logo192.png")
-            && !exchange.request.uri.path.startsWith("/logo512.png")
-            && !exchange.request.uri.path.startsWith("/robots.png")
+            && !exchange.request.uri.path.startsWith("/img/")
             && !exchange.request.uri.path.startsWith("/asset-manifest.json")
             && !exchange.request.uri.path.startsWith("/manifest.json")
-            && !exchange.request.uri.path.startsWith("/service-worker.js")
-            && !exchange.request.uri.path.startsWith("/service-worker.js.LICENSE")
         ) {
             chain.filter(exchange.mutate().request(exchange.request.mutate().path("/index.html").build()).build())
         } else chain.filter(exchange)

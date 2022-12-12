@@ -1,7 +1,7 @@
 import React from 'react';
 import './assets/css/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import * as serviceWorkerRegistration from './service-worker/serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import App from "./view/app/App";
 

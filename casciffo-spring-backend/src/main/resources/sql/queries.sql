@@ -1,8 +1,22 @@
-SELECT p.*  
-FROM participant p  
-JOIN research_participants rp on p.id = rp.participant_id  
-WHERE rp.research_id=1 AND p.process_id=123456;
+-- GET VISITS AND THEIR ASSIGNED INVESTIGATORS FOR RESEARCH 1
+SELECT cv.*
+     , rp.treatment_branch
+     , p.*
+     , vai.id as visit_investigator_id, vai.investigator_id
+     , ua.user_name as investigator_name, ua.user_email as investigator_email
+FROM clinical_visit cv
+         JOIN research_participants rp on cv.research_patient_id = rp.id
+         JOIN participant p on rp.participant_id = p.id
+         JOIN visit_assigned_investigators vai on cv.visit_id = vai.visit_id
+         JOIN user_account ua on ua.user_id = vai.investigator_id
+WHERE cv.research_id=1;
 
+
+-- FIND EVENTS BETWEEN THE STATED DATE RANGE
+SELECT tle.*
+FROM timeline_event tle
+WHERE tle.deadline_date >= '2022-10-30' AND tle.deadline_date <= '2022-11-05'
+   OR completed_date >= '2022-10-30' AND tle.completed_date <= '2022-11-05';
 
 -- CHECK IF CANCELED STATE IS TERMINAL
 SELECT *--CASE WHEN COUNT(S) > 0 THEN TRUE ELSE FALSE END
@@ -32,13 +46,13 @@ SELECT cv.*
      , vai.id as visit_investigator_id, vai.investigator_id
      , ua.user_name as investigator_name, ua.user_email as investigator_email
 FROM clinical_visit cv
-         JOIN participant p on cv.participant_id = p.id
+         JOIN participant p on cv.research_patient_id = p.id
          JOIN visit_assigned_investigators vai on cv.visit_id = vai.visit_id
          JOIN user_account ua on ua.user_id = vai.investigator_id
 WHERE cv.research_id=1;
 
 --CHECK PFC VALIDATIONS BASED ON PROPOSAL ID
-SELECT CASE WHEN COUNT(*) > 0 THEN FALSE ELSE TRUE END
+SELECT COUNT(*) = 0 as validaded
 FROM validations v
          JOIN proposal_financial_component pfc on pfc.proposal_financial_id = v.pfc_id
 WHERE v.validated = FALSE AND pfc.proposal_id=3;
@@ -177,7 +191,7 @@ FROM proposal p
          LEFT JOIN proposal_financial_component pfc ON p.proposal_id = pfc.proposal_id
          LEFT JOIN promoter pr ON pr.promoter_id = pfc.promoter_id
          LEFT JOIN protocol prot on pfc.proposal_financial_id = prot.pfc_id
-WHERE p.proposal_type = 'OBSERVATIONAL_STUDY';
+WHERE p.proposal_type = 'CLINICAL_TRIAL';
 
 --GET proposal details in aggregate form
 SELECT p.*,
@@ -203,86 +217,3 @@ FROM states s
          JOIN next_possible_states nps ON s.state_id = nps.next_state_id
          JOIN proposal p ON nps.origin_state_id = p.state_id
 WHERE p.proposal_id=5 AND nps.state_type='FINANCE_PROPOSAL';
-
-
-insert into service (service_name)
-values
-    ('Anatomia Patológica'),
-    ('Anestesiologia'),
-    ('Cardiologia'),
-    ('Gastro'),
-    ('Ginecologia'),
-    ('Infecciologia'),
-    ('Medicina I'),
-    ('Medicina II'),
-    ('Medicina III'),
-    ('Medicina IV'),
-    ('Nefrologia'),
-    ('Neurologia'),
-    ('Oftalmologia'),
-    ('Oncologia'),
-    ('Ortopedia'),
-    ('Patologia Clinica'),
-    ('Pediatria'),
-    ('Pneumologia'),
-    ('UCI'),
-    ('Unidade Dor'),
-    ('Urgência'),
-    ('Urologia'
-    );
-
-insert into therapeutic_area(therapeutic_area_name)
-values
-    ('Alimentação e dietética'),
-    ('Anatomia Patológica'),
-    ('Anestesiologia'),
-    ('Cardiologia'),
-    ('Cirurgia C'),
-    ('Cirurgia A'),
-    ('Departamento de Saúde Mental'),
-    ('Gastroenterologia'),
-    ('Ginecologia'),
-    ('Infecciologia'),
-    ('Medicina I'),
-    ('Medicina II'),
-    ('Medicina III'),
-    ('Medicina IV'),
-    ('Nefrologia'),
-    ('Neurologia'),
-    ('Oftalmologia'),
-    ('Oncologia'),
-    ('ORL'),
-    ('Ortopedia'),
-    ('Pediatria'),
-    ('Pneumologia'),
-    ('Psiquiatria'),
-    ('SMI'),
-    ('UCIENP'),
-    ('UCIP'),
-    ('Unidade Dor'),
-    ('Urgência Geral'),
-    ('Urologia'),
-    ('Ucicre');
-
-insert into pathology(pathology_name)
-values
-    ('Antineoplásicos e Imunomoduladores (L)'),
-    ('Anti-Infecciosos (J)'),
-    ('Sistema Nervoso Central (N)'),
-    ('Sistema Cardio-Vascular (C)'),
-    ('Orgão dos Sentidos (S)'),
-    ('Sangue e Hematopoiéticos (B)'),
-    ('Gastrointestinal e Metabolico (A)'),
-    ('Sistema Musculo Esquelético (M)'),
-    ('Sistema Respiratório (R)'),
-    ('Restantes ATC *'),
-    ('* Sistema Endócrino (H)'),
-    ('* Sistema Genito-Urinário e Hormonas Sexuais (G)'),
-    ('* Dermatológicos (D)'),
-    ('* Vários (V)'),
-    ('*Antiparasitários, Inseticidas e Repelentes (P)'),
-    ('Anti-Alérgicos'),
-    ('Nutrição'),
-    ('Correctivos da volémia e das alterações electrolíticas'),
-    ('Medicamentos usados em afecções Otorrinolaringológicas'),
-    ('Medicamentos usados em afecções Oculares');

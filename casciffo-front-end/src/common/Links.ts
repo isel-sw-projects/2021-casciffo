@@ -1,5 +1,5 @@
-const BASE_URL = `/api/casciffo` //for single jar bundle
-// const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
+// const BASE_URL = `/api/casciffo` //for spring serving
+const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
 // const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
 
 /************************** USER **************************/
@@ -61,6 +61,10 @@ const CONSTANTS_URL = `${BASE_URL}/constants`
 const SERVICE_TYPES_URL = `${BASE_URL}/service-types`
 const THERAPEUTIC_AREAS_URL = `${BASE_URL}/therapeutic-areas`
 const PATHOLOGIES_URL = `${BASE_URL}/pathologies`
+
+const SERVICE_TYPES_DETAILS_URL = (id: string) => `${SERVICE_TYPES_URL}/${id}`
+const PATHOLOGIES_DETAILS_URL = (id: string) => `${THERAPEUTIC_AREAS_URL}/${id}`
+const THERAPEUTIC_AREAS_DETAILS_URL = (id: string) => `${PATHOLOGIES_URL}/${id}`
 
 
 /************************** RESEARCH **************************/
@@ -124,6 +128,9 @@ const ApiUrls = {
     serviceTypesUrl: SERVICE_TYPES_URL,
     pathologiesUrl: PATHOLOGIES_URL,
     therapeuticAreasUrl: THERAPEUTIC_AREAS_URL,
+    serviceTypesDetailsUrl: SERVICE_TYPES_DETAILS_URL,
+    pathologiesDetailsUrl: PATHOLOGIES_DETAILS_URL,
+    therapeuticAreasDetailsUrl: THERAPEUTIC_AREAS_DETAILS_URL,
     usersByRoleAndNameUrl: USERS_BY_ROLE_AND_NAME,
     proposalsUrl: PROPOSALS_URL,
     proposalsCountUrl: PROPOSALS_COUNT_URL,

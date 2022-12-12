@@ -1,18 +1,21 @@
 
 import ApiUrls from "../common/Links";
 import {TherapeuticAreaModel} from "../model/proposal-constants/TherapeuticAreaModel";
-import {httpPost} from "../common/MyUtil";
-import {PathologyModel} from "../model/proposal-constants/PathologyModel";
+import {httpDelete, httpGet, httpPost} from "../common/MyUtil";
 
-// noinspection JSUnusedGlobalSymbols
 export class TherapeuticAreaService {
-    fetchAll() : Promise<Array<TherapeuticAreaModel>> {
-        return fetch(ApiUrls.usersUrl)
-            .then(rsp => rsp.json())
+    fetchAll() : Promise<TherapeuticAreaModel[]> {
+        const url = ApiUrls.therapeuticAreasUrl
+        return httpGet(url)
     }
 
-    save(pathology: TherapeuticAreaModel): Promise<PathologyModel> {
-        const url = ApiUrls.pathologiesUrl
-        return httpPost(url, pathology)
+    save(therapeuticArea: TherapeuticAreaModel): Promise<TherapeuticAreaModel> {
+        const url = ApiUrls.therapeuticAreasUrl
+        return httpPost(url, therapeuticArea)
+    }
+
+    deleteTherapeuticArea(id: string): Promise<void> {
+        const url = ApiUrls.therapeuticAreasDetailsUrl(id)
+        return httpDelete(url)
     }
 }

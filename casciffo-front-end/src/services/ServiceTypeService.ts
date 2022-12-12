@@ -1,16 +1,20 @@
 import ApiUrls from "../common/Links";
 import {ServiceTypeModel} from "../model/proposal-constants/ServiceTypeModel";
-import {httpPost} from "../common/MyUtil";
+import {httpDelete, httpGet, httpPost} from "../common/MyUtil";
 
-// noinspection JSUnusedGlobalSymbols
 export class ServiceTypeService {
-    fetchAll() : Promise<Array<ServiceTypeModel>> {
-        return fetch(ApiUrls.serviceTypesUrl)
-            .then(rsp => rsp.json())
+    fetchAll() : Promise<ServiceTypeModel[]> {
+        const url = ApiUrls.serviceTypesUrl
+        return httpGet(url)
     }
 
     save(serviceType: ServiceTypeModel): Promise<ServiceTypeModel> {
         const url = ApiUrls.serviceTypesUrl
         return httpPost(url, serviceType)
+    }
+
+    deleteService(id: string): Promise<void> {
+        const url= ApiUrls.serviceTypesDetailsUrl(id)
+        return httpDelete(url)
     }
 }

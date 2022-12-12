@@ -325,48 +325,32 @@ export function Dashboard(props: DashboardProps) {
             </Row>
             <Row>
                 <Col>
-                    <Container className={"text-center"}>
-                        <h5 className={"font-bold"}>Ensaios clínicos</h5>
-                    </Container>
-                    <Doughnut data={researchTrialStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
-                    { !researchTrialStats.hasData &&
-                        <Container className={"text-center"}>
-                            Sem dados para demonstrar.
-                        </Container>
-                    }
+                    <MyDonut
+                        label={"Ensaios clínicos"}
+                        hasData={researchTrialStats.hasData}
+                        data={researchTrialStatsDonutData}
+                    />
                 </Col>
                 <Col>
-                    <Container className={"text-center"}>
-                        <h5 className={"font-bold"}>Ensaios observacionais</h5>
-                    </Container>
-                    <Doughnut data={researchStudyStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
-                    { !researchStudyStats.hasData &&
-                        <Container className={"text-center"}>
-                            Sem dados para demonstrar.
-                        </Container>
-                    }
+                    <MyDonut
+                        label={"Ensaios observacionais"}
+                        hasData={researchStudyStats.hasData}
+                        data={researchStudyStatsDonutData}
+                    />
                 </Col>
                 <Col>
-                    <Container className={"text-center"}>
-                        <h5 className={"font-bold"}>Ensaios clínicos</h5>
-                    </Container>
-                    <Doughnut data={proposalTrialStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
-                    { !proposalTrialStats.hasData &&
-                        <Container className={"text-center"}>
-                            Sem dados para demonstrar.
-                        </Container>
-                    }
+                    <MyDonut
+                        label={"Ensaios clínicos"}
+                        hasData={proposalTrialStats.hasData}
+                        data={proposalTrialStatsDonutData}
+                    />
                 </Col>
                 <Col>
-                    <Container className={"text-center"}>
-                        <h5 className={"font-bold"}>Estudos observacionais</h5>
-                    </Container>
-                    <Doughnut data={proposalStudyStatsDonutData} options={{maintainAspectRatio: true, responsive: true}}/>
-                    { !proposalStudyStats.hasData &&
-                        <Container className={"text-center"}>
-                            Sem dados para demonstrar.
-                        </Container>
-                    }
+                    <MyDonut
+                        label={"Estudos Observacionais"}
+                        hasData={proposalStudyStats.hasData}
+                        data={proposalStudyStatsDonutData}
+                    />
                 </Col>
             </Row>
         </Container>
@@ -393,4 +377,24 @@ export function Dashboard(props: DashboardProps) {
         </Container>
 
     </React.Fragment>;
+}
+
+type MyProps = {
+    label: string,
+    hasData: boolean
+    data: any
+}
+
+function MyDonut(props: MyProps) {
+    return <div>
+        <Container className={"text-center"}>
+            <h5 className={"font-bold"}>{props.label}</h5>
+        </Container>
+        <Doughnut data={props.data} options={{maintainAspectRatio: true, responsive: true}}/>
+        { !props.hasData &&
+        <Container className={"text-center"}>
+            Sem dados para demonstrar.
+        </Container>
+        }
+    </div>
 }

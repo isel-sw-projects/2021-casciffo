@@ -60,7 +60,7 @@ function NavigationBar(props: {notificationService: NotificationService}) {
         //FIXME BACKGROUND ON MOBILE IS TRANSPARENT FOR GOD KNOWS WHAT REASON
         <Navbar collapseOnSelect className={"ml-auto flex-fill"} bg="primary" variant="dark" expand="lg">
             <Navbar.Toggle  title={"Menu"}/>
-            <Navbar.Collapse>
+            <Navbar.Collapse style={{backgroundColor: "#435ebe", width: "80%"}}>
                 <Navbar.Brand as={Link} to={"/"}>Casciffo</Navbar.Brand>
                 <Nav className="me-auto">
                     { userToken && <>
@@ -79,16 +79,9 @@ function NavigationBar(props: {notificationService: NotificationService}) {
                             <Nav.Link eventKey="6" as={Link} to={"/utilizadores"}>Utilizadores</Nav.Link>
                         </Nav.Item>
                     } </>}
-                    {/*<Nav.Item className={"float-end"}>*/}
-                    {/*    {userToken != null ?*/}
-                    {/*        <Nav.Link eventKey="2" as={Link} to={"/logout"} onClick={logout}>Logout</Nav.Link>*/}
-                    {/*        :*/}
-                    {/*        <Nav.Link eventKey="3" as={Link} to={"/login"}>Login</Nav.Link>*/}
-                    {/*    }*/}
-                    {/*</Nav.Item>*/}
                 </Nav>
-            </Navbar.Collapse>
-            <div style={{width:"20%"}}>
+
+            <div style={{backgroundColor: "#435ebe", width:"auto"}}>
                 <Row className={"text-center"}>
                     <Col className={"text-center"}>
                         {userToken != null &&
@@ -135,6 +128,7 @@ function NavigationBar(props: {notificationService: NotificationService}) {
                     </Col>
                 </Row>
             </div>
+            </Navbar.Collapse>
         </Navbar>
     );
 }

@@ -97,19 +97,19 @@ CREATE TABLE IF NOT EXISTS files (
 
 CREATE TABLE IF NOT EXISTS pathology (
     pathology_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    pathology_name VARCHAR
+    pathology_name VARCHAR UNIQUE
 );
 
 
 CREATE TABLE IF NOT EXISTS service (
     service_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    service_name VARCHAR
+    service_name VARCHAR UNIQUE
 );
 
 
 CREATE TABLE IF NOT EXISTS therapeutic_area (
     therapeutic_area_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    therapeutic_area_name VARCHAR
+    therapeutic_area_name VARCHAR UNIQUE
 );
 
 
