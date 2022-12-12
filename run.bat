@@ -14,6 +14,5 @@ echo Bundling the app...
 echo
 call bundle-app.bat
 cd casciffo-spring-backend
-echo Launching the app on port %1!
-call java -jar /build/libs/casciffo-1.0.0.jar --port=9000 --SPRING_DATABASE_URL=r2dbc:postgresql://localhost:5432/casciffo_db --SPRING_DATABASE_USERNAME=vp --SPRING_DATABASE_PASSWORD=vp123456
-
+echo Launching the app on port %port%!
+call java -jar \build\libs\casciffo-1.0.0.jar --port=%port%

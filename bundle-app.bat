@@ -23,7 +23,7 @@ mkdir webapp
 echo
 echo Copying optimized production build from front-end to /webapp...
 
-xcopy /s "..\casciffo-front-end\build" "webapp"
+robocopy /e /move "..\casciffo-front-end\build" "webapp"
 
 
 echo Creating environment variables...
