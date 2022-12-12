@@ -5,7 +5,7 @@ build/
 **/src/main/**/build/
 **/src/main/resources/build/
 **/src/main/resources/files/
-casciffo-spring-backend/src/main/resources/build/
+casciffo-spring-backend/webapp/
 !**/src/test/**/build/
 
 ### STS ###
