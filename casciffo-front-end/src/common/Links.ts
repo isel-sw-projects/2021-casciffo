@@ -1,5 +1,5 @@
-// const BASE_URL = `/api/casciffo` //for spring serving
-const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
+const BASE_URL = `/api/casciffo` //for spring serving
+// const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
 // const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
 
 /************************** USER **************************/

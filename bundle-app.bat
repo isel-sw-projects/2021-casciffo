@@ -35,4 +35,5 @@ ren "build\libs\casciffo-spring-backend-1.0.0.jar" "casciffo-1.0.0.jar"
 
 echo
 echo Done!
-echo You can run the app with the command java -jar build/libs/casciffo-1.0.0.jar
+echo While in the main directory (where you can see both module folders of casciffo)
+echo You can run the app with the command java -jar casciffo-spring-backend\build\libs\casciffo-1.0.0.jar

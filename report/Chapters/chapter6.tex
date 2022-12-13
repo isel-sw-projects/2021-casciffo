@@ -1,0 +1,12 @@
+% 
+%  chapter6.tex
+%
+\chapter{Module Evaluation}
+
+\section{Back-End Evaluation}
+
+\subsection{Testing}
+
+To assure the quality and that each layer was functioning properly several integration tests where made using \textit{Spring Unit}~\cite{spring-testing-unit} testing framework, the integration tests used an in-memory database based on \textit{H2}~\cite{h2-db} so that they can run without affecting the production database. The tests made verify each single layer, starting from the repositories, followed by the services together with repositories and finally the full layer chain of controller - service - repository. Testing the controller layer included the usage of the \textit{Postman}~\cite{postman} tool to verify the responses and facilitate the ability to manipulate the header requests as well as viewing the response headers.
+
+\section{Front-End Evaluation}

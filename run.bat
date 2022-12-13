@@ -14,5 +14,5 @@ echo Bundling the app...
 echo
 call bundle-app.bat
 cd casciffo-spring-backend
-echo Launching the app on port %port%!
-call java -jar \build\libs\casciffo-1.0.0.jar --port=%port%
+echo Launching the app on port %1!
+call java -jar \build\libs\casciffo-1.0.0.jar --port=
