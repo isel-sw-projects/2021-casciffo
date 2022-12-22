@@ -19,5 +19,4 @@ interface ResearchRepository: ReactiveSortingRepository<ResearchModel, Int> {
     )
     fun countTypes(): Mono<CountHolder>
 
-    fun findAllByType(type: ResearchType): Flux<ResearchModel>
 }

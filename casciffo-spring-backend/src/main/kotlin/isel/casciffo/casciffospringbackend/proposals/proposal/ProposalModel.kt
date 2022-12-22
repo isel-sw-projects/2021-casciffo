@@ -39,8 +39,6 @@ data class ProposalModel(
     @Column(value = "last_modified")
     var lastModified: LocalDateTime? = null,
 
-    @Column(value = "research_id")
-    var researchId: Int? = null,
 
     @Column(value = "state_id")
     var stateId: Int? = null,
@@ -52,6 +50,14 @@ data class ProposalModel(
     var pathologyId: Int? = null,
     @Column(value = "principal_investigator_id")
     var principalInvestigatorId: Int? = null,
+
+    /**
+     * Doesn't exist in entity itself.
+     * It's mapped in the repository through a join with the entity proposal_research
+     */
+    @Transient
+    @Value("null")
+    var researchId: Int? = null,
 
     @Transient
     @Value("null")

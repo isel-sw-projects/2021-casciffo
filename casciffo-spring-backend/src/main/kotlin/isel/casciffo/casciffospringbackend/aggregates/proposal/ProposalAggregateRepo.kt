@@ -39,7 +39,8 @@ interface ProposalAggregateRepo: ReactiveSortingRepository<ProposalAggregate, In
                 "state.state_name, st.service_name, ta.therapeutic_area_name, pl.pathology_name, " +
                 "pinv.user_name, pinv.user_email, pr.promoter_name, pr.promoter_email, prot.protocol_id, " +
                 "prot.validated, prot.validated_date, prot.comment_ref, " +
-                "f.file_name, f.file_size " +
+                "f.file_name, f.file_size, " +
+                "pcr.research_id " +
         "FROM proposal p " +
         "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
         "JOIN service st ON st.service_id = p.service_id " +
@@ -50,6 +51,7 @@ interface ProposalAggregateRepo: ReactiveSortingRepository<ProposalAggregate, In
         "LEFT JOIN promoter pr ON pfc.promoter_id = pr.promoter_id " +
         "LEFT JOIN protocol prot on pfc.proposal_financial_id = prot.pfc_id " +
         "LEFT JOIN files f ON pfc.financial_contract_id = f.file_id " +
+        "LEFT JOIN proposal_research pcr ON pcr.proposal_id = p.proposal_id " +
         "WHERE p.proposal_id = :id "
     )
     fun findByProposalId(id: Int): Mono<ProposalAggregate>

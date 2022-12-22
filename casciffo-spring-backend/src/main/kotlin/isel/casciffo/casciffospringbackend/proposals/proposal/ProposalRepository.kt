@@ -25,7 +25,5 @@ interface ProposalRepository : ReactiveSortingRepository<ProposalModel, Int> {
         "FROM proposal p"
     )
     fun countTypes(): Mono<CountHolder>
-    fun findByPrincipalInvestigatorId(id: Int): Flux<ProposalModel>
-    fun findAllByType(type: ResearchType, pageable: Pageable) : Flux<ProposalModel>
-    fun findAllByType(type: ResearchType) : Flux<ProposalModel>
+
 }

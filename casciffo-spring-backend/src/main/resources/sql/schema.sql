@@ -453,6 +453,19 @@ CREATE TABLE IF NOT EXISTS addenda_comment (
 
 
 ---------------------------------------------------------------------------------------
+-------------------------------RELATIONSHIP TABLES-------------------------------------
+---------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS proposal_research(
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    proposal_id INT,
+    research_id INT,
+    CONSTRAINT fk_pcr_p_id FOREIGN KEY (proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
+    CONSTRAINT fk_pcr_r_id FOREIGN KEY (research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE
+);
+
+
+---------------------------------------------------------------------------------------
 --------------------------------------TRIGGERS-----------------------------------------
 ---------------------------------------------------------------------------------------
 

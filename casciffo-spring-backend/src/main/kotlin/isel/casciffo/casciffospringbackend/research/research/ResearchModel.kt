@@ -26,7 +26,6 @@ data class ResearchModel (
     @Id
     @Column("research_id")
     var id: Int? = null,
-    var proposalId: Int? = null,
     var lastModified: LocalDateTime? = null,
     @Column("research_state_id")
     var stateId: Int? = null,
@@ -50,6 +49,14 @@ data class ResearchModel (
     var treatmentBranches: String? = null,
     var canceledReason: String? = null,
     var canceledById: Int? = null,
+
+    /**
+     * Doesn't exist in entity itself.
+     * It's mapped in the repository through a join with the entity proposal_research
+     */
+    @Transient
+    @Value("null")
+    var proposalId: Int? = null,
 
     @Transient
     @Value("null")

@@ -276,7 +276,8 @@ class ProposalServiceImpl(
             notifyTeam(proposal.id!!,
                 NotificationModel(
                     title = if (isClinicalTrial) "Ensaio Clínico criado!" else "Estudo observacional criado!",
-                    description = "O ${if (isClinicalTrial) "ensaio clínico" else "estudo observacional"} foi criado" +
+                    description = "A proposta com a sigla ${proposal.sigla} foi validada!" +
+                            "Como tal, o ${if (isClinicalTrial) "ensaio clínico" else "estudo observacional"} foi criado" +
                             " com sucesso, visita a página para preencheres os detalhes!",
                     notificationType = NotificationType.RESEARCH_DETAILS,
                     ids = convertToJson(listOf(Pair("researchId", proposal.researchId!!)))

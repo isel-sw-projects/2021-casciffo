@@ -19,9 +19,11 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "pinv.user_id, pinv.user_name, pinv.user_email, " +
                 "pr.promoter_name, " +
                 "pfc.has_partnerships, " +
+                "pcr.proposal_id, " +
                 "canceledBy.user_email as canceled_by_user_email, canceledBy.user_name as canceled_by_user_name " +
                 "FROM clinical_research cr " +
-                "JOIN proposal p on cr.proposal_id = p.proposal_id " +
+                "JOIN proposal_research pcr on pcr.research_id = cr.research_id " +
+                "JOIN proposal p on pcr.proposal_id = p.proposal_id " +
                 "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
                 "JOIN service st ON st.service_id = p.service_id " +
                 "JOIN therapeutic_area ta ON ta.therapeutic_area_id = p.therapeutic_area_id " +
@@ -43,9 +45,11 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "pinv.user_id, pinv.user_name, pinv.user_email, " +
                 "pr.promoter_name, " +
                 "pfc.has_partnerships, " +
+                "pcr.proposal_id, " +
                 "canceledBy.user_email as canceled_by_user_email, canceledBy.user_name as canceled_by_user_name " +
                 "FROM clinical_research cr " +
-                "JOIN proposal p on cr.proposal_id = p.proposal_id " +
+                "JOIN proposal_research pcr on pcr.research_id = cr.research_id " +
+                "JOIN proposal p on pcr.proposal_id = p.proposal_id " +
                 "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
                 "JOIN service st ON st.service_id = p.service_id " +
                 "JOIN therapeutic_area ta ON ta.therapeutic_area_id = p.therapeutic_area_id " +
@@ -67,9 +71,11 @@ interface ResearchAggregateRepo: ReactiveSortingRepository<ResearchAggregate, In
                 "pinv.user_id, pinv.user_name, pinv.user_email, " +
                 "pr.promoter_name, " +
                 "pfc.has_partnerships, " +
+                "pcr.proposal_id, " +
                 "canceledBy.user_email as canceled_by_user_email, canceledBy.user_name as canceled_by_user_name " +
                 "FROM clinical_research cr " +
-                "JOIN proposal p on cr.proposal_id = p.proposal_id " +
+                "JOIN proposal_research pcr on pcr.research_id = cr.research_id " +
+                "JOIN proposal p on pcr.proposal_id = p.proposal_id " +
                 "JOIN pathology pl ON p.pathology_id = pl.pathology_id " +
                 "JOIN service st ON st.service_id = p.service_id " +
                 "JOIN therapeutic_area ta ON ta.therapeutic_area_id = p.therapeutic_area_id " +
