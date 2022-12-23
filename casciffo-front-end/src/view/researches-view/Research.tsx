@@ -211,8 +211,12 @@ export function Research(props: { researchService: ResearchAggregateService }) {
     
 
     const filterData = useCallback(() => {
-        const regExp = new RegExp(`${query}.*`,"gi")
-        return ensaios.filter(e => regExp.test(`${e.research[searchProperty]}`))
+        return ensaios.filter(e => {
+            const regExp = new RegExp(`${query}.*`,"gmi")
+            const cmp = regExp.test(`${e.research[searchProperty]}`)
+            console.log(`/${regExp.source}/.test("${e.research[searchProperty]}")=${cmp}`)
+            return cmp
+        })
     }, [ensaios, query, searchProperty])
 
     const handleSearchSubmit = (query: string) => setQuery(query)

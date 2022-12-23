@@ -74,7 +74,7 @@ class VisitServiceImpl(
         participant.patient = patientWithVisitsDTO.patient
 
         if(patientWithVisitsDTO.scheduledVisits.isNullOrEmpty())
-            return PatientWithVisitsModel(patient = patientWithVisitsDTO.patient)
+            return PatientWithVisitsModel(researchPatient = participant)
 
         patientWithVisitsDTO.scheduledVisits.forEach {
             it.researchPatientId = participant.id!!
@@ -82,7 +82,7 @@ class VisitServiceImpl(
             it.researchId = researchId
         }
         val visits = scheduleVisits(researchId, patientWithVisitsDTO.scheduledVisits)
-        return PatientWithVisitsModel(patient = patientWithVisitsDTO.patient, visits = visits)
+        return PatientWithVisitsModel(researchPatient = participant, visits = visits)
     }
 
     @Transactional

@@ -185,4 +185,9 @@ class ResearchServiceImpl(
         }
         return researchModel
     }
+
+    @Transactional
+    override suspend fun removeParticipant(researchId: Int, researchParticipantId: Int) {
+        participantService.removeParticipant(researchId, researchParticipantId)
+    }
 }

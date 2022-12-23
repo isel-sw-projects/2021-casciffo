@@ -91,7 +91,6 @@ export function ResearchDetailsTab(props: RDT_Props) {
     }
 
     const onCancelResearch = (reason: string) => {
-        // console.log(reason)
         if(reason.length === 0) {
             alert("A razão de cancelamento tem de ser introduzida!")
             return

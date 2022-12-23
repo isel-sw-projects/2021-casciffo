@@ -5,6 +5,7 @@ import axios, {AxiosRequestConfig} from "axios";
 import FileSaver from "file-saver";
 import {MyError} from "../view/error-view/MyError";
 
+
 /******************************** TIME UTILITY FUNCTIONS ******************************** */
 /**************************************************************************************** */
 
@@ -147,6 +148,7 @@ const APPLICATION_CONTENT_TYPE = 'application/json'
 const HEADER_ACCEPT_JSON: [string,string] = ['Accept', APPLICATION_CONTENT_TYPE]
 const HEADER_CONTENT_TYPE: [string,string] = ['Content-Type', APPLICATION_CONTENT_TYPE]
 const HEADER_AUTHORIZATION = (token: string): [string,string] => ['Authorization', 'Bearer ' + token]
+const HTTP_STATUS_NO_CONTENT = 204
 
 function parseUrlHash(hash: string): KeyValuePair<string, string>[] {
     const params = hash.substring(1).split(PARAM_DELIMENTER)
@@ -161,10 +163,10 @@ function formatUrlHash(args: KeyValuePair<string, string>[]): string {
 }
 
 
-function checkAndRaiseError(rsp: Response): Response {
+async function checkAndRaiseError(rsp: Response): Promise<Response> {
     if(!rsp.ok) {
         throw new MyError(
-            `Error occurred trying to reach url: ${rsp.url}`, rsp.status)
+            `Error occurred trying to reach url: ${rsp.url}\n${await rsp.json().catch(() => "No body")}`, rsp.status)
     }
     return rsp
 }
@@ -191,7 +193,7 @@ function _httpFetch<T>(
     }
     return fetch(url, opt)
         .then(checkAndRaiseError)
-        .then(rsp => rsp.json())
+        .then(rsp => rsp.status === HTTP_STATUS_NO_CONTENT ? rsp : rsp.json())
 }
 
 export function httpGet<T>(url: string) : Promise<T> {

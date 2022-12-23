@@ -95,7 +95,7 @@ WHERE (v.validated = FALSE AND v.pfc_id=2) OR (p.validated = false AND p.pfc_id=
 SELECT s.*
 FROM states s
          JOIN next_possible_states nps ON s.state_id = nps.origin_state_id
-WHERE nps.state_flow_type='INITIAL' AND nps.state_type='RESEARCH';
+WHERE nps.state_flow_type='INITIAL' AND nps.state_type='STUDY_PROPOSAL';
 
 
 --SEARCH USER BY ROLE AND NAME
@@ -121,22 +121,22 @@ WHERE st.reference_id=2 and st.transition_type='FINANCE_PROPOSAL';
 --VERIFY PROPOSAL FOREIGN KEYS
 SELECT CASE WHEN COUNT(id)=4 THEN TRUE ELSE FALSE END
 FROM (
-         SELECT p.pathology_id as id
-         FROM pathology p
-         WHERE p.pathology_id=1
-         UNION ALL
-         SELECT st.service_id as id
-         FROM service st
-         WHERE st.service_id=1
-         UNION ALL
-         SELECT ta.therapeutic_area_id as id
-         FROM therapeutic_area ta
-         WHERE ta.therapeutic_area_id=1
-         UNION ALL
-         SELECT ua.user_id as id
-         FROM user_account ua
-         WHERE ua.user_id=3
-     ) as pisi;
+     SELECT p.pathology_id as id
+     FROM pathology p
+     WHERE p.pathology_id=1
+     UNION ALL
+     SELECT st.service_id as id
+     FROM service st
+     WHERE st.service_id=1
+     UNION ALL
+     SELECT ta.therapeutic_area_id as id
+     FROM therapeutic_area ta
+     WHERE ta.therapeutic_area_id=1
+     UNION ALL
+     SELECT ua.user_id as id
+     FROM user_account ua
+     WHERE ua.user_id=1
+ ) as pisi;
 
 
 

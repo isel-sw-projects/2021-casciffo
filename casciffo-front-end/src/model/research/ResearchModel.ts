@@ -131,6 +131,11 @@ export interface PatientVisitsAggregate {
     scheduledVisits: ResearchVisitModel[]
 }
 
+export interface ResearchPatientVisitsAggregate {
+    researchPatient: ResearchPatientModel
+    scheduledVisits: ResearchVisitModel[]
+}
+
 export interface ScientificActivityModel {
     id?: string
     researchId?: string

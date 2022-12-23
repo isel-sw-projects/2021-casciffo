@@ -27,6 +27,9 @@ class ResearchController(
     @Autowired val mapper: Mapper<ResearchModel, ResearchDTO>
 ) {
 
+    /** **************************************************************************************************/
+    /** *************************************** GET METHODS **********************************************/
+    /** **************************************************************************************************/
     @GetMapping(RESEARCH_COUNT_URL)
     suspend fun getResearchCount(): ResponseEntity<CountHolder> {
         val counters = researchService.getResearchCount()
@@ -67,13 +70,19 @@ class ResearchController(
         return mapper.mapModelToDTO(researchService.getResearch(researchId))
     }
 
-    @PutMapping(RESEARCH_DETAIL_URL)
-    suspend fun updateResearch(@RequestBody researchDTO: ResearchDTO, @PathVariable researchId: Int) : ResearchDTO {
-        val mappedModel = mapper.mapDTOtoModel(researchDTO)
-        val model = researchService.updateResearch(mappedModel)
-        return mapper.mapModelToDTO(model)
+    @GetMapping(ADDENDA_DETAIL_URL)
+    suspend fun getAddendaDetails(@PathVariable researchId: Int, @PathVariable addendaId: Int) : Addenda {
+        return researchService.getAddenda(researchId, addendaId)
     }
 
+    @GetMapping(RESEARCH_GENERAL_STATS_URL)
+    suspend fun getResearchStats(): ResponseEntity<Flow<ResearchStats>> {
+        val stats = researchService.getResearchStats()
+        return ResponseEntity.ok(stats)
+    }
+    /** **************************************************************************************************/
+    /** *************************************** POST METHODS *********************************************/
+    /** **************************************************************************************************/
     @PostMapping(RESEARCH_CANCEL_URL)
     suspend fun cancelResearch(@PathVariable researchId: Int,@RequestBody cancelDTO: CancelDTO): ResponseEntity<ResearchAnswerDTO> {
         val result = researchService.cancelResearch(researchId, cancelDTO.reason, cancelDTO.userId)
@@ -86,25 +95,12 @@ class ResearchController(
         return endResearch(result, researchId)
     }
 
-    suspend fun endResearch(result: Boolean, researchId: Int): ResponseEntity<ResearchAnswerDTO> {
-        val research = researchService.getResearch(researchId)
-        return ResponseEntity.ok(ResearchAnswerDTO(result, mapper.mapModelToDTO(research)))
-    }
 
     @PostMapping(RESEARCH_URL)
     suspend fun createResearch(@RequestBody researchDTO: ResearchDTO) : ResearchDTO {
         val mappedModel = mapper.mapDTOtoModel(researchDTO)
         val model = researchService.createResearch(mappedModel)
         return mapper.mapModelToDTO(model)
-    }
-
-    @PutMapping(RESEARCH_PATIENTS_RANDOMIZE)
-    suspend fun randomizeTreatmentBranches(
-        @PathVariable researchId: Int,
-        @RequestBody patients: List<ResearchPatient>
-    ): ResponseEntity<Flow<ResearchPatient>> {
-        val res = researchService.randomizeTreatmentBranches(researchId, patients)
-        return ResponseEntity.ok(res)
     }
 
     @PostMapping(RESEARCH_PATIENTS)
@@ -127,11 +123,6 @@ class ResearchController(
         return ResponseEntity.status(HttpStatus.CREATED).body(comment)
     }
 
-    @GetMapping(ADDENDA_DETAIL_URL)
-    suspend fun getAddendaDetails(@PathVariable researchId: Int, @PathVariable addendaId: Int) : Addenda {
-        return researchService.getAddenda(researchId, addendaId)
-    }
-
     @PostMapping(RESEARCH_STUDIES_URL)
     suspend fun createStudy(
         @PathVariable researchId: Int,
@@ -141,10 +132,46 @@ class ResearchController(
         return researchService.createStudy(study)
     }
 
-    @GetMapping(RESEARCH_GENERAL_STATS_URL)
-    suspend fun getResearchStats(): ResponseEntity<Flow<ResearchStats>> {
-        val stats = researchService.getResearchStats()
-        return ResponseEntity.ok(stats)
+
+    /** **************************************************************************************************/
+    /** *************************************** PUT METHODS **********************************************/
+    /** **************************************************************************************************/
+    @PutMapping(RESEARCH_DETAIL_URL)
+    suspend fun updateResearch(@RequestBody researchDTO: ResearchDTO, @PathVariable researchId: Int) : ResearchDTO {
+        val mappedModel = mapper.mapDTOtoModel(researchDTO)
+        val model = researchService.updateResearch(mappedModel)
+        return mapper.mapModelToDTO(model)
+    }
+
+    @PutMapping(RESEARCH_PATIENTS_RANDOMIZE)
+    suspend fun randomizeTreatmentBranches(
+        @PathVariable researchId: Int,
+        @RequestBody patients: List<ResearchPatient>
+    ): ResponseEntity<Flow<ResearchPatient>> {
+        val res = researchService.randomizeTreatmentBranches(researchId, patients)
+        return ResponseEntity.ok(res)
+    }
+
+    /** **************************************************************************************************/
+    /** ************************************** DELETE METHODS ********************************************/
+    /** **************************************************************************************************/
+
+    @DeleteMapping(RESEARCH_PATIENT_DETAILS)
+    suspend fun removeParticipant(
+        @PathVariable researchId: Int,
+        @PathVariable patientProcessNum: Int
+    ): ResponseEntity<Unit> {
+        researchService.removeParticipant(researchId, patientProcessNum)
+        return ResponseEntity.noContent().build()
+    }
+
+    /** **************************************************************************************************/
+    /** ************************************ AUXILIARY METHODS *******************************************/
+    /** **************************************************************************************************/
+
+    suspend fun endResearch(result: Boolean, researchId: Int): ResponseEntity<ResearchAnswerDTO> {
+        val research = researchService.getResearch(researchId)
+        return ResponseEntity.ok(ResearchAnswerDTO(result, mapper.mapModelToDTO(research)))
     }
 }
 

@@ -78,7 +78,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
             })
         )
         props.setPrincipalInvestigator(investigator)
-        showSuccessMessage(`${investigator.name} foi promovido como investigador principal!`, 1250)
+        showSuccessMessage(`${investigator.name} foi promovido a investigador principal!`, 1250)
     }
 
     function removeInvestigatorFromTeam(investigator: Investigator) {
@@ -188,7 +188,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                             >
                                 {
                                     principalInvestigator ?
-                                        <div className={"d-inline-flex"}>
+                                        <div className={"font-bold flex"}>
                                             <Stack direction={"vertical"} gap={1}>
                                                 {principalInvestigator.name}
                                                 <small>

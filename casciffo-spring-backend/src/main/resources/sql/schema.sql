@@ -338,7 +338,7 @@ CREATE TABLE IF NOT EXISTS research_participants (
     treatment_branch VARCHAR,
     last_visit_date TIMESTAMP,
     CONSTRAINT fk_rp_research_id FOREIGN KEY(research_id) REFERENCES clinical_research(research_id) ON DELETE CASCADE,
-    CONSTRAINT fk_rp_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id),
+    CONSTRAINT fk_rp_participant_id FOREIGN KEY(participant_id) REFERENCES participant(id) ON DELETE CASCADE,
     CONSTRAINT unique_rp UNIQUE (participant_id, research_id)
 );
 

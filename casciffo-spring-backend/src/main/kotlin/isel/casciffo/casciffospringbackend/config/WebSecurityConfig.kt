@@ -150,8 +150,10 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.POST, RESEARCH_CANCEL_URL, RESEARCH_COMPLETE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.POST, RESEARCH_DOSSIER_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             //research patients
+            .pathMatchers(HttpMethod.PUT, RESEARCH_PATIENTS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.GET, SEARCH_PATIENTS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.GET, RESEARCH_PATIENT_DETAILS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, RESEARCH_PATIENT_DETAILS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             //research visits
             .pathMatchers(HttpMethod.POST, RESEARCH_VISIT_DETAIL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             //research finance

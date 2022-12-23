@@ -3,7 +3,7 @@ import {MyError} from "../../error-view/MyError";
 import {
     DossierModel, PatientVisitsAggregate,
     ResearchFinance, ResearchFinanceEntry,
-    ResearchModel, ResearchPatientModel, ResearchTeamFinanceEntry,
+    ResearchModel, ResearchPatientModel, ResearchPatientVisitsAggregate, ResearchTeamFinanceEntry,
     ResearchVisitModel,
     ScientificActivityModel
 } from "../../../model/research/ResearchModel";
@@ -75,10 +75,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         props.researchService
             .fetchResearch(researchId!)
-            .then(value => {
-                console.log(value)
-                return value
-            })
             .then(setResearch, errorHandler)
     }, [props.researchService, researchId, errorHandler])
 
@@ -118,22 +114,22 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }, [errorHandler, props.researchService, researchId])
 
 
-    const addPatientAndVisits = useCallback((aggregate: PatientVisitsAggregate) => {
-        const addVisitsToList = (aggregate: PatientVisitsAggregate) => {
-            console.log(aggregate)
-            if(aggregate.scheduledVisits.length !== 0)
+    const addPatientAndVisits = useCallback((patientAndVisitsToAdd: PatientVisitsAggregate) => {
+        const addVisitsToList = (aggregate: ResearchPatientVisitsAggregate) => {
+            if(aggregate.scheduledVisits && aggregate.scheduledVisits.length !== 0)
                 setResearch(prevState => ({...prevState, visits: [...prevState.visits || [], ...aggregate.scheduledVisits]}))
         }
 
-        const addPatientToList = (aggregate: PatientVisitsAggregate) => {
-            setResearch(prevState => ({...prevState, patients: [...prevState.patients || [], aggregate.patient]}))
+        const addPatientToList = (aggregate: ResearchPatientVisitsAggregate) => {
+            setResearch(prevState => ({...prevState, patients: [...prevState.patients || [], aggregate.researchPatient]}))
             return aggregate
         }
 
         props.researchService
-            .addPatientAndScheduleVisits(researchId, aggregate)
+            .addPatientAndScheduleVisits(researchId, patientAndVisitsToAdd)
             .then(addPatientToList)
             .then(addVisitsToList)
+            .catch()
     },[props.researchService, researchId])
 
     const addNewVisit = useCallback((visit: ResearchVisitModel) => {
@@ -210,6 +206,12 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
             })
     }
 
+    const removePatient = (patientProcessNum: string) => {
+        props.researchService
+            .removeParticipant(researchId, patientProcessNum)
+            .then(() => setResearch(prevState => ({...prevState, patients: prevState.patients?.filter(p => p.patient!.processId !== patientProcessNum)})))
+    }
+
     const renderPatientOverviewScreen = () => {
         const args = [
             {key: TAB_PARAMETER, value: ResearchTabNames.patients},
@@ -243,7 +245,9 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                 onChangeScreenToAddPatient={renderPatientAddScreen}
                 onClickToPatientDetails={renderPatientDetailsScreen}
                 treatmentBranches={research.treatmentBranches?.split(';') || []}
-                saveRandomization={saveRandomization}/>
+                saveRandomization={saveRandomization}
+                removePatient={removePatient}
+            />
         }
 
         switch (tab) {
@@ -253,7 +257,9 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                     onChangeScreenToAddPatient={renderPatientAddScreen}
                     onClickToPatientDetails={renderPatientDetailsScreen}
                     treatmentBranches={research.treatmentBranches?.split(';') || []}
-                    saveRandomization={saveRandomization}/>
+                    saveRandomization={saveRandomization}
+                    removePatient={removePatient}
+                />
             case TabPaneScope.DETAILS:
                 return <PatientDetails
                     fetchPatient={props.researchService.fetchResearchPatient}

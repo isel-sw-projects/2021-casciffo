@@ -97,7 +97,7 @@ $$
                 (state_validado_id, NULL, 'FINANCE_PROPOSAL', 'TERMINAL'),
 
                 --STUDY PROPOSAL
-                (state_submetido_id, state_validacao_interna_ca_id, 'STUDY_PROPOSAL', 'PROGRESS'),
+                (state_submetido_id, state_validacao_interna_ca_id, 'STUDY_PROPOSAL', 'INITIAL'),
                 (state_validacao_interna_ca_id, state_validado_id, 'STUDY_PROPOSAL', 'PROGRESS'),
                 (state_validado_id, NULL, 'STUDY_PROPOSAL', 'TERMINAL'),
 

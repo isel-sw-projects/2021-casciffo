@@ -30,4 +30,5 @@ interface ResearchService {
     suspend fun completeResearch(researchId: Int): Boolean
     suspend fun randomizeTreatmentBranches(researchId: Int, patients: List<ResearchPatient>): Flow<ResearchPatient>
     suspend fun getResearchStats(): Flow<ResearchStats>
+    suspend fun removeParticipant(researchId: Int, patientProcessNum: Int)
 }

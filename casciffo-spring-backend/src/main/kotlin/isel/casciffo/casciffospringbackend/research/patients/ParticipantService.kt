@@ -10,4 +10,5 @@ interface ParticipantService {
     suspend fun save(patient: PatientModel) : PatientModel
     suspend fun getPatientDetails(researchId: Int, patientProcessNum: Long): ResearchPatient
     suspend fun updateResearchPatients(researchId: Int, patients: List<ResearchPatient>): Flow<ResearchPatient>
+    suspend fun removeParticipant(researchId: Int, patientProcessNum: Int)
 }

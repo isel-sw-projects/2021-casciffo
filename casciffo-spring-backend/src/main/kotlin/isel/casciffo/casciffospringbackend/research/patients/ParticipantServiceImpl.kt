@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 @Service
@@ -27,11 +28,18 @@ class ParticipantServiceImpl(
 
     private val logger = KotlinLogging.logger {  }
 
-    @Transactional
+    @Transactional(rollbackFor = [ResponseStatusException::class])
     override suspend fun addParticipantToResearch(participantId: Int, researchId: Int): ResearchPatient {
         //todo consider if in case the Id doesnt exist in casciffo db, check in admission db
         val participant = participantRepository.findById(participantId).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The patient Id doesnt exist in the db!!!")
+
+        val alreadyExists = researchParticipantsRepository
+            .findByResearchIdAndPatientId(researchId = researchId, patientId = participantId)
+            .awaitSingleOrNull() != null
+
+        if(alreadyExists) throw ResponseStatusException(HttpStatus.CONFLICT, "This patient already exists and cannot be re-added.")
+
 
         val researchParticipant = ResearchPatient(null, participantId, researchId, LocalDateTime.now())
         return researchParticipantsRepository.save(researchParticipant).awaitSingle()
@@ -70,6 +78,16 @@ class ParticipantServiceImpl(
             logger.error { ex.message }
             findAllByResearchId(researchId)
         }
+    }
+
+    @Transactional
+    override suspend fun removeParticipant(researchId: Int, patientProcessNum: Int) {
+        println()
+        researchParticipantsRepository
+            .deleteByResearchIdAndProcessNum(researchId, patientProcessNum)
+            .awaitSingleOrNull()
+
+        logger.info { "Patient with process number $patientProcessNum has been removed from research $researchId." }
     }
 
 }

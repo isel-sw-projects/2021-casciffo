@@ -1,10 +1,10 @@
 import ApiUrls from "../common/Links";
-import {httpGet, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
+import {httpDelete, httpGet, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
 import {
     DossierModel,
     PatientModel,
     PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance, ResearchFinanceEntry, ResearchFinanceNewEntryDTO,
-    ResearchModel, ResearchModelAnswer, ResearchPatientModel, ResearchTeamFinanceEntry,
+    ResearchModel, ResearchModelAnswer, ResearchPatientModel, ResearchPatientVisitsAggregate, ResearchTeamFinanceEntry,
     ResearchVisitModel, ScientificActivityModel
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
@@ -55,7 +55,7 @@ export class ResearchAggregateService {
         return httpPost(url, visit)
     }
 
-    addPatientAndScheduleVisits(researchId: string, patientVisitsAggregate: PatientVisitsAggregate): Promise<PatientVisitsAggregate> {
+    addPatientAndScheduleVisits(researchId: string, patientVisitsAggregate: PatientVisitsAggregate): Promise<ResearchPatientVisitsAggregate> {
         const url = ApiUrls.patientWithVisitsUrl(researchId)
         return httpPost(url, patientVisitsAggregate)
     }
@@ -113,5 +113,10 @@ export class ResearchAggregateService {
     saveNewTeamFinanceEntry(researchId: string, entry: ResearchTeamFinanceEntry): Promise<ResearchFinanceNewEntryDTO> {
         const url = ApiUrls.researchFinanceTeamEntryUrl(researchId)
         return httpPut(url, entry)
+    }
+
+    removeParticipant(researchId: string, patientId: string): Promise<void> {
+        const url = ApiUrls.researchPatientDetailUrl(researchId, patientId)
+        return httpDelete(url)
     }
 }

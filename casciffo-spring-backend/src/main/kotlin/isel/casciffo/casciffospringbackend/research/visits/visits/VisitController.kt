@@ -34,13 +34,14 @@ class VisitController(
     suspend fun addPatientAndScheduleVisits(
         @PathVariable researchId: Int,
         @RequestBody patientWithVisitsDTO: PatientWithVisitsDTO
-    ): ResponseEntity<PatientWithVisitsDTO> {
+    ): ResponseEntity<ResearchPatientWithVisitsDTO> {
 
         val aggregate = visitService.addPatientWithVisits(researchId, patientWithVisitsDTO)
-        val dto = PatientWithVisitsDTO(
-            patient = aggregate.patient,
+        val dto = ResearchPatientWithVisitsDTO(
+            researchPatient = aggregate.researchPatient,
             scheduledVisits = if(aggregate.visits != null) aggregate.visits.map(mapper::mapModelToDTO).toList() else null
         )
+        println()
         return ResponseEntity.status(HttpStatus.CREATED).body(dto)
     }
 
