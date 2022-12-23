@@ -93,13 +93,12 @@ class ProposalServiceImpl(
         }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [ResponseStatusException::class])
     override suspend fun create(proposal: ProposalModel): ProposalModel {
         verifyProposalKeyFields(proposal)
         setProposalStateToDefault(proposal)
 
         val createdProposal = proposalRepository.save(proposal).awaitSingle()
-        proposalResearchRepository.save(ProposalResearch(proposalId = createdProposal.id!!)).subscribe()
 
         createInvestigationTeam(proposal, createdProposal)
 
@@ -229,7 +228,7 @@ class ProposalServiceImpl(
             .map { proposalAggregateMapper.mapDTOtoModel(it) }
     }
 
-    @Transactional
+    @Transactional(rollbackFor = [ResponseStatusException::class])
     override suspend fun transitionState(
         proposalId: Int,
         nextStateId: Int,
@@ -364,11 +363,7 @@ class ProposalServiceImpl(
         var researchModel = ResearchModel(proposalId = proposal.id, stateId = stateAtivo.id, type = proposal.type)
         researchModel = researchService.createResearch(researchModel, isClinicalTrial)
         proposalResearchRepository
-            .findByProposalId(proposal.id!!)
-            .flatMap {
-                it.researchId = researchModel.id!!
-                proposalResearchRepository.save(it)
-            }
+            .save(ProposalResearch(proposalId = proposal.id, researchId = researchModel.id))
             .awaitSingle()
         proposal.researchId = researchModel.id!!
     }

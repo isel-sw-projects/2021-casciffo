@@ -58,8 +58,6 @@ class ProposalFinancialServiceImpl(
 
         pfc.id = proposalFinancialRepository.save(pfc).awaitSingle().id
 
-
-
         createValidations(pfc)
 
         pfc.protocol = protocolService.createProtocol(pfc.id!!)
