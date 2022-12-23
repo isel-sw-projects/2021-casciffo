@@ -125,18 +125,11 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
     function mapToChronoItem(): ChronoItemType[] {
 
         function filterEventsByTypeAndDate(e: TimelineEventModel) {
-            // console.log(e)
-            // console.log("isBetweenDateInterval(e): ",isBetweenDateInterval(e))
-            // console.log("filterByEventType(e): ",filterByEventType(e))
             return  isBetweenDateInterval(e) && filterByEventType(e);
         }
 
         return timelineEvents
             .filter(filterEventsByTypeAndDate)
-            // .map(value => {
-            //     console.log(`filtered event ${value}`)
-            //     return value
-            // })
             .map(event => ({
                 title: MyUtil.formatDateWithMonthName(event.deadlineDate!),
                 cardTitle: event.eventName,

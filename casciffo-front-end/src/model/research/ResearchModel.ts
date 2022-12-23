@@ -144,7 +144,7 @@ export interface ScientificActivityModel {
     hasBeenIndexed?: boolean
     publishedUrl?: string
     publicationType?: string
-    studyType?: string
+    researchType?: string
 }
 
 export interface ResearchAddenda {

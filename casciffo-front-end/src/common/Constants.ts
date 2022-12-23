@@ -101,6 +101,7 @@ export const ResearchTabNames = {
     finance: "financiamento"
 }
 
+
 export const NotificationType = {
     PROPOSAL_SUBMITTED: {
         id: "PROPOSAL_SUBMITTED",
@@ -122,7 +123,7 @@ export const NotificationType = {
         buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#t=${ProposalTabNames.contacts}`},
     RESEARCH_DETAILS: {
         id: "RESEARCH_DETAILS",
-        buildLink: (ids: MyHashMap): string => `/ensaio/${ids["researchId"]}#${ResearchTabNames.research}`},
+        buildLink: (ids: MyHashMap): string => `/ensaios/${ids["researchId"]}#${ResearchTabNames.research}`},
     RESEARCH_ADDENDA: {
         id: "RESEARCH_ADDENDA",
         buildLink: (ids: MyHashMap): string =>`/propostas/${ids["proposalId"]}#${ResearchTabNames.addenda}`},

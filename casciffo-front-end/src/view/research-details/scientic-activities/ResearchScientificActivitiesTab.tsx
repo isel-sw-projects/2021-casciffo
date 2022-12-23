@@ -40,8 +40,12 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.studyType,
-                id: 'studyType',
+                accessorFn: row => {
+                    console.log(row.researchType)
+                    console.log(Object.values(ResearchTypes).find(rt => {console.log(`${row.researchType} === ${rt.id} ? ${rt.id === row.researchType}`);return rt.id === row.researchType}))
+                    return Object.values(ResearchTypes).find(rt => rt.id === row.researchType)?.singularName
+                },
+                id: 'researchType',
                 cell: info => info.getValue(),
                 header: () => <span>Tipo de estudo</span>,
                 footer: props => props.column.id,
@@ -130,7 +134,7 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
         hasBeenIndexed: false,
         publishedUrl: "",
         publicationType: "",
-        studyType: "",
+        researchType: "",
     })
 
     const [showEntryForm, setShowEntryForm] = useState(false)
@@ -140,7 +144,7 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
     const saveEntry = useCallback((e: any) => {
         e.preventDefault()
         e.stopPropagation()
-        if (newEntry.datePublished === "" || newEntry.studyType === "" || newEntry.countryPublished === "") {
+        if (newEntry.datePublished === "" || newEntry.researchType === "" || newEntry.countryPublished === "") {
             alert("Por favor faça uma revisão nos campos obrigatórios!")
         }
         props.onSaveActivity(newEntry)
@@ -179,7 +183,7 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                                         onChange={updateNewEntry}
                                         style={{width:"96.5%"}}
                                     >
-                                        <option key={"op-invalid"} value={""} disabled>(Tipo de estudo)</option>
+                                        <option key={"op-invalid"} value={""} disabled>-Tipo de estudo-</option>
                                         {Object.values(ResearchTypes).map(t =>
                                             <option key={`op-${t.id}`} value={t.id}>{t.name}</option>
                                         )}

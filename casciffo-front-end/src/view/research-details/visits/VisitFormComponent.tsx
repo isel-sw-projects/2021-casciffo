@@ -12,6 +12,7 @@ import {VisitPeriodicity, VisitTypes} from "../../../common/Constants";
 import {FormListVisitInvestigators} from "../common/FormListVisitInvestigators";
 import {useParams} from "react-router-dom";
 import {MyUtil} from "../../../common/MyUtil";
+import {RequiredLabel} from "../../components/RequiredLabel";
 
 type Props = {
     patients: ResearchPatientModel[]
@@ -144,7 +145,7 @@ export function VisitFormComponent(props: Props) {
                 <Row className={"mb-3"}>
                     <Col>
                         <div className={"m-2 m-md-2"}>
-                            <Form.Label className={"font-bold"}>Paciente</Form.Label>
+                            <RequiredLabel label={"Paciente"}/>
                             <Select
                                 required
                                 placeholder={"-Escolher paciente-"}
@@ -152,7 +153,15 @@ export function VisitFormComponent(props: Props) {
                                 options={filteredPatients}
                                 value={selectedPatient}
                                 isSearchable
+                                noOptionsMessage={
+                                    () => <span>
+                                        Não encontras o paciente certo?
+                                        Verifica se está associado ao ensaio na aba dos pacientes.
+                                    </span>
+                                }
                             />
+                        {/*  todo maybe add validation feedback here <Link to={`#t=${ResearchTabNames.patients}&s=${TabPaneScope.OVERVIEW}`}/>  */}
+
                         </div>
                     </Col>
                     <Col>

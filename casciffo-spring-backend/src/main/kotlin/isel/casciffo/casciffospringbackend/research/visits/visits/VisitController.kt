@@ -7,6 +7,7 @@ import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_WITH_PATIENT
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -33,10 +34,14 @@ class VisitController(
     suspend fun addPatientAndScheduleVisits(
         @PathVariable researchId: Int,
         @RequestBody patientWithVisitsDTO: PatientWithVisitsDTO
-    ): ResponseEntity<Flow<VisitDTO>> {
+    ): ResponseEntity<PatientWithVisitsDTO> {
 
-        val result = visitService.addPatientWithVisits(researchId, patientWithVisitsDTO)
-        return ResponseEntity.status(HttpStatus.CREATED).body(result.map(mapper::mapModelToDTO))
+        val aggregate = visitService.addPatientWithVisits(researchId, patientWithVisitsDTO)
+        val dto = PatientWithVisitsDTO(
+            patient = aggregate.patient,
+            scheduledVisits = if(aggregate.visits != null) aggregate.visits.map(mapper::mapModelToDTO).toList() else null
+        )
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto)
     }
 
     @PostMapping(RESEARCH_VISIT_DETAIL_URL)

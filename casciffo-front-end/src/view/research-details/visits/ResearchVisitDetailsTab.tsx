@@ -56,6 +56,7 @@ function MyDateComponent(props: { date: string, title: string }) {
     </>;
 }
 
+//TODO ADD RESTRICTION TO WHO CAN MANIPULATE THE VISIT AND ONLY ALLOW EDIT ON THE DAY OF VISIT
 export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
 
     const {hash} = useLocation()
@@ -116,7 +117,8 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
     }, [props.service, researchId, visitId, visit, errorHandler])
 
     const updateVisit = (e: any) => setVisit(prevState => ({...prevState, [e.target.name]: e.target.value}))
-    const toggleAdverseEvent = () => setVisit(prevState => ({...prevState, hasAdverseEventAlert: !prevState.hasAdverseEventAlert}))
+    const setAdverseEvent = () => setVisit(prevState => ({...prevState, hasAdverseEventAlert: !prevState.hasAdverseEventAlert}))
+
 
     const changeParamsAndRenderPatientDetails = () => {
         props.onRenderPatientDetails(visit.researchPatient!.patient!.processId!)
@@ -136,14 +138,17 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
                 <Form className={"border-bottom border-2 border-secondary mb-2"}>
                     <Row>
                         <Col>
-                            <FormGroup>
-                                <FormLabel className={"font-bold"}>Periodicidade</FormLabel>
-                                <FormSelect value={0} disabled>
-                                    {/*TODO SE FOR CUSTOM ENTAO MOSTRAR ESSA CONFIGURAÇÃO*/}
-                                    <option
-                                        value={0}>{Object.values(VisitPeriodicity).find(p => p.id === visit.periodicity)!.name}</option>
-                                </FormSelect>
-                            </FormGroup>
+                            <Form.Group>
+                                <Form.Label className={"font-bold"}>Periodicidade</Form.Label>
+                                <Form.Select value={0} disabled>
+                                    <option value={0}>
+                                        {visit.customPeriodicity != null ?
+                                            `Agendado a cada ${visit.customPeriodicity > 1 ? "dias" : "dia"}.`
+                                            :
+                                            Object.values(VisitPeriodicity).find(p => p.id === visit.periodicity)!.name}
+                                    </option>
+                                </Form.Select>
+                            </Form.Group>
                         </Col>
                         <Col>
                            <MyDateComponent date={visit.scheduledDate!} title={"Dia Agendado"}/>
@@ -203,7 +208,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
                         </Col>
                         <Col>
 
-                            <Button variant={"link  float-end"} onClick={toggleAdverseEvent} disabled={visit.concluded}>
+                            <Button variant={"link  float-end"} onClick={setAdverseEvent} disabled={visit.concluded}>
                                 { visit.hasAdverseEventAlert
                                     ? <h5 className={"font-bold text-danger"}>Existência de evento adverso marcado!</h5>
                                     : <h5 className={"font-bold"}><CgDanger size={100}/> Marcar evento adverso</h5>

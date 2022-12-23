@@ -257,13 +257,14 @@ CREATE TABLE IF NOT EXISTS validations (
 
 CREATE TABLE IF NOT EXISTS clinical_research (
     research_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    proposal_id INT NOT NULL,
     research_state_id INT NOT NULL,
     last_modified TIMESTAMP DEFAULT NOW(),
     eudra_ct VARCHAR,
     sample_size INT,
     duration INT,
     cro VARCHAR,
+    start_date DATE,
+    end_date DATE,
     estimated_end_date DATE,
     estimated_patient_pool INT,
     actual_patient_pool INT,
@@ -278,8 +279,6 @@ CREATE TABLE IF NOT EXISTS clinical_research (
     canceled_reason VARCHAR,
     canceled_by_id INT,
     type VARCHAR NOT NULL,
-    CONSTRAINT fk_cr_proposal_id FOREIGN KEY(proposal_id)
-        REFERENCES proposal(proposal_id) ON DELETE CASCADE,
     CONSTRAINT fk_cr_state_id FOREIGN KEY(research_state_id)
         REFERENCES states(state_id),
     CONSTRAINT fk_cr_canceled_by_id FOREIGN KEY (canceled_by_id)
@@ -312,7 +311,6 @@ CREATE TABLE IF NOT EXISTS scientific_activities (
     has_been_indexed BOOLEAN,
     published_url TEXT,
     publication_type VARCHAR,
-    study_type VARCHAR,
     research_type VARCHAR,
     CONSTRAINT fk_sa_research_id FOREIGN KEY(research_id)
         REFERENCES clinical_research(research_id)

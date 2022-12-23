@@ -9,6 +9,7 @@ import {TypeOfMonetaryFlows} from "../../../common/Constants";
 type MyProps = {
     entries: ResearchFinanceEntry[]
     onNewEntry: (entry: ResearchFinanceEntry) => void
+    canShowForm: boolean
 }
 
 
@@ -94,7 +95,7 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
 
 
             {
-                !showEntryForm &&
+                !showEntryForm && props.canShowForm &&
                 <Button className={"block float-start mb-2 mt-2 mb-md-2 mt-md-2"} variant={"outline-primary"}
                         onClick={toggleEntryForm}>Nova entrada</Button>
             }
@@ -132,9 +133,10 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
                                 defaultValue={""}
                                 onChange={updateNewEntry}
                             >
-                                <option value={""} disabled>(Tipo de transação)</option>
+                                <option value={""} disabled>-Tipo de transação-</option>
                                 {
-                                    Object.values(TypeOfMonetaryFlows).map((tf) => <option key={tf.id} value={tf.id}>{tf.name}</option>)
+                                    Object.values(TypeOfMonetaryFlows)
+                                        .map((tf) => <option key={tf.id} value={tf.id}>{tf.name}</option>)
                                 }
                             </Form.Select>
                         </Form.Group>
@@ -156,7 +158,7 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
                         <br/>
                         <Button variant={"outline-success float-start m-2"}
                                 type={"submit"}>Adicionar</Button>
-                        <Button variant={"outline-danger float-end m-2"}
+                        <Button variant={"outline-danger float-end m-2"} type={"button"}
                                 onClick={resetEntryForm}>Cancelar</Button>
                     </fieldset>
                 </Form>

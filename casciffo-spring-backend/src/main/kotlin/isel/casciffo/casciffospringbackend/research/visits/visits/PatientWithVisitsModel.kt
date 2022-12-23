@@ -1,8 +1,9 @@
 package isel.casciffo.casciffospringbackend.research.visits.visits
 
 import isel.casciffo.casciffospringbackend.research.patients.PatientModel
+import kotlinx.coroutines.flow.Flow
 
 data class PatientWithVisitsModel(
-    var patient: PatientModel? = null,
-    var visits: List<VisitModel>? = null
+    val patient: PatientModel? = null,
+    val visits: Flow<VisitModel>? = null
 )

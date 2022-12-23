@@ -11,6 +11,7 @@ type MyProps = {
     team: TeamInvestigatorModel[]
     entries: ResearchTeamFinanceEntry[]
     onNewEntry: (entry: ResearchTeamFinanceEntry) => void
+    canShowForm: boolean
 }
 
 export function ResearchTeamFinanceEntriesTab(props: MyProps) {
@@ -128,7 +129,7 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
 
         <Container className={"flex"}>
 
-            { !showEntryForm &&
+            { !showEntryForm && props.canShowForm &&
                 <Button className={"float-start mb-2 mt-2 mb-md-2 mt-md-2"} variant={"outline-primary"} onClick={toggleEntryForm}>Nova entrada</Button>
             }
         </Container>
@@ -151,7 +152,7 @@ export function ResearchTeamFinanceEntriesTab(props: MyProps) {
                                     defaultValue={""}
                                     onChange={handleInvestigatorSelect}
                                 >
-                                    <option key={"op-invalid"} value={""} disabled><span className={"text-bold"}>(Selecionar membro de equipa)</span></option>
+                                    <option className={"font-bold"} key={"op-invalid"} value={""} disabled>-Selecionar membro de equipa-</option>
                                     {props.team.map(i =>
                                         <option key={`op-${i.id}`} value={i.memberId}>{i.member!.name}</option>
                                     )}

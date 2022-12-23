@@ -12,6 +12,7 @@ import {FormInputHelper} from "../../components/FormInputHelper";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {Roles} from "../../../model/role/Roles";
 import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
+import {Divider} from "@mui/material";
 
 type ResearchFinanceProps = {
     researchService: ResearchAggregateService
@@ -129,8 +130,8 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
                         <FormInputHelper label={"Nº de pacientes"} value={numOfPatients} inline/>
                     </Col>
                 </Row>
+            <Divider/>
             </Container>
-
             <Tabs
                 style={{width:"100%"}}
                 id="controlled-finance-tab"
@@ -140,6 +141,7 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
 
                 <TabPane title={"Ensaio"} eventKey={"research-finance"}>
                     <ResearchFinanceEntriesTab
+                        canShowForm={!isEditing}
                         entries={researchFinance.monetaryFlow || []}
                         onNewEntry={updateGeneralFinance}
                     />
@@ -147,6 +149,7 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
 
                 <TabPane title={"Equipa"} eventKey={"team-finance"}>
                     <ResearchTeamFinanceEntriesTab
+                        canShowForm={!isEditing}
                         entries={researchFinance.teamFinanceFlow || []}
                         onNewEntry={updateTeamFinance}
                         team={props.researchTeam}

@@ -23,5 +23,4 @@ data class ScientificActivity (
     var hasBeenIndexed: Boolean? = null,
     var publishedUrl: String? = null,
     var publicationType: String? = null,
-    var studyType: String? = null
 )

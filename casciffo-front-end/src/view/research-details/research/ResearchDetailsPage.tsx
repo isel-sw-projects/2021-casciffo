@@ -119,13 +119,20 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
 
     const addPatientAndVisits = useCallback((aggregate: PatientVisitsAggregate) => {
-        const addVisitsToList = (v: ResearchVisitModel[]) => {
-            console.log(v)
-            setResearch(prevState => ({...prevState, visits: [...prevState.visits || [], ...v]}))
+        const addVisitsToList = (aggregate: PatientVisitsAggregate) => {
+            console.log(aggregate)
+            if(aggregate.scheduledVisits.length !== 0)
+                setResearch(prevState => ({...prevState, visits: [...prevState.visits || [], ...aggregate.scheduledVisits]}))
+        }
+
+        const addPatientToList = (aggregate: PatientVisitsAggregate) => {
+            setResearch(prevState => ({...prevState, patients: [...prevState.patients || [], aggregate.patient]}))
+            return aggregate
         }
 
         props.researchService
             .addPatientAndScheduleVisits(researchId, aggregate)
+            .then(addPatientToList)
             .then(addVisitsToList)
     },[props.researchService, researchId])
 

@@ -46,14 +46,15 @@ class VisitServiceImpl(
         val model = visitMapper.mapDTOtoModel(visit)
         val createdVisit = visitRepository.save(model).awaitSingle()
 
+        val visitInvestigators = visit
+            .visitInvestigators!!
+            .map {
+                it.id = null
+                it.visitId = createdVisit.id!!
+                it
+            }
         createdVisit.visitInvestigators = visitInvestigatorsRepository
-            .saveAll(visit
-                    .visitInvestigators!!
-                    .map {
-                        it.visitId = createdVisit.id!!
-                        it
-                    }
-            )
+            .saveAll(visitInvestigators)
             .collectList()
             .awaitSingle()
             .asFlow()
@@ -63,7 +64,7 @@ class VisitServiceImpl(
         return createdVisit
     }
 
-    override suspend fun addPatientWithVisits(researchId: Int, patientWithVisitsDTO: PatientWithVisitsDTO): Flow<VisitModel> {
+    override suspend fun addPatientWithVisits(researchId: Int, patientWithVisitsDTO: PatientWithVisitsDTO): PatientWithVisitsModel {
         //small caveat is if participant doesn't exist needs to be addressed
 
         if(patientWithVisitsDTO.patient == null)
@@ -73,15 +74,15 @@ class VisitServiceImpl(
         participant.patient = patientWithVisitsDTO.patient
 
         if(patientWithVisitsDTO.scheduledVisits.isNullOrEmpty())
-            return emptyFlow()
+            return PatientWithVisitsModel(patient = patientWithVisitsDTO.patient)
 
-        patientWithVisitsDTO.scheduledVisits!!.forEach {
+        patientWithVisitsDTO.scheduledVisits.forEach {
             it.researchPatientId = participant.id!!
             it.researchPatient = participant
             it.researchId = researchId
         }
-
-        return scheduleVisits(researchId, patientWithVisitsDTO.scheduledVisits!!)
+        val visits = scheduleVisits(researchId, patientWithVisitsDTO.scheduledVisits)
+        return PatientWithVisitsModel(patient = patientWithVisitsDTO.patient, visits = visits)
     }
 
     @Transactional
@@ -92,8 +93,11 @@ class VisitServiceImpl(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Uma visita concluída não pode ser alterada.")
         }
         visit.concluded = true
-        visitRepository.save(visit).awaitSingle()
-        return visit
+        return visitRepository.save(visit)
+            .map {
+                it.visitInvestigators = visit.visitInvestigators
+                it
+            }.awaitSingle()
     }
 
     override suspend fun getVisitsForPatient(researchId: Int, participantId: Int): Flow<VisitModel> {
@@ -127,6 +131,7 @@ class VisitServiceImpl(
             hasMarkedAttendance = firstEntry.hasMarkedAttendance,
             observations = firstEntry.observations,
             periodicity = firstEntry.periodicity,
+            customPeriodicity = firstEntry.customPeriodicity,
             scheduledDate = firstEntry.scheduledDate,
             concluded = firstEntry.concluded,
             researchPatient = ResearchPatient(

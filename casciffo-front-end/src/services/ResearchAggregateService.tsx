@@ -55,7 +55,7 @@ export class ResearchAggregateService {
         return httpPost(url, visit)
     }
 
-    addPatientAndScheduleVisits(researchId: string, patientVisitsAggregate: PatientVisitsAggregate): Promise<ResearchVisitModel[]> {
+    addPatientAndScheduleVisits(researchId: string, patientVisitsAggregate: PatientVisitsAggregate): Promise<PatientVisitsAggregate> {
         const url = ApiUrls.patientWithVisitsUrl(researchId)
         return httpPost(url, patientVisitsAggregate)
     }

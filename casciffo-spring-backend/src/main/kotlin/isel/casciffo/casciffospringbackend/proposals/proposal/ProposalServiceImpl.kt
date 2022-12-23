@@ -280,7 +280,7 @@ class ProposalServiceImpl(
             notifyTeam(proposal.id!!,
                 NotificationModel(
                     title = if (isClinicalTrial) "Ensaio Clínico criado!" else "Estudo observacional criado!",
-                    description = "A proposta com a sigla ${proposal.sigla} foi validada!" +
+                    description = "A proposta com a sigla ${proposal.sigla} foi validada!\n" +
                             "Como tal, o ${if (isClinicalTrial) "ensaio clínico" else "estudo observacional"} foi criado" +
                             " com sucesso, visita a página para preencheres os detalhes!",
                     notificationType = NotificationType.RESEARCH_DETAILS,
@@ -363,6 +363,13 @@ class ProposalServiceImpl(
         val stateAtivo = stateService.findInitialStateByType(StateType.RESEARCH)
         var researchModel = ResearchModel(proposalId = proposal.id, stateId = stateAtivo.id, type = proposal.type)
         researchModel = researchService.createResearch(researchModel, isClinicalTrial)
+        proposalResearchRepository
+            .findByProposalId(proposal.id!!)
+            .flatMap {
+                it.researchId = researchModel.id!!
+                proposalResearchRepository.save(it)
+            }
+            .awaitSingle()
         proposal.researchId = researchModel.id!!
     }
 
