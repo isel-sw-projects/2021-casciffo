@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.common.FILES_DIR
 import isel.casciffo.casciffospringbackend.common.ValidationType
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.files.FileInfoRepository
+import isel.casciffo.casciffospringbackend.proposals.finance.partnership.Partnership
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
 import isel.casciffo.casciffospringbackend.proposals.finance.promoter.PromoterRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProtocolService
@@ -24,6 +25,7 @@ import org.springframework.http.codec.multipart.FilePart
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
+import reactor.core.publisher.Flux
 import java.nio.file.Path
 import java.time.LocalDateTime
 import kotlin.io.path.Path
@@ -38,12 +40,12 @@ class ProposalFinancialServiceImpl(
     @Autowired val partnershipService: PartnershipService,
     @Autowired val protocolService: ProtocolService,
     @Autowired val validationsRepository: ValidationsRepository,
-    @Autowired val fileInfoRepository: FileInfoRepository
+    @Autowired val fileInfoRepository: FileInfoRepository,
 ) : ProposalFinancialService {
 
     val logger: KLogger = KotlinLogging.logger { }
 
-    @Transactional
+    @Transactional(rollbackFor = [ResponseStatusException::class])
     override suspend fun createProposalFinanceComponent(
         pfc: ProposalFinancialComponent
     ): ProposalFinancialComponent {
@@ -52,12 +54,11 @@ class ProposalFinancialServiceImpl(
 
         verifyAndCreatePromoter(pfc)
 
+        createPartnerships(pfc)
+
         pfc.id = proposalFinancialRepository.save(pfc).awaitSingle().id
 
 
-        if(pfc.partnerships != null) {
-            createPartnerships(pfc)
-        }
 
         createValidations(pfc)
 
@@ -87,17 +88,23 @@ class ProposalFinancialServiceImpl(
     private fun createPartnerships(
         pfc: ProposalFinancialComponent
     ) {
-        pfc.partnerships = partnershipService.saveAll(
-            pfc.partnerships!!.map {
-                it.financeComponentId = pfc.id!!
-                it
-            }
-        )
+        val promoterPartnership = Flux.just(Partnership(name = pfc.promoter!!.name, email = pfc.promoter!!.email))
+        val partnerships =
+            (if(pfc.partnerships != null)
+                Flux.merge(promoterPartnership, pfc.partnerships)
+            else
+                promoterPartnership
+            )
+            .map {
+                    it.financeComponentId = pfc.id!!
+                    it
+                }
+        pfc.partnerships = partnershipService.saveAll(partnerships)
     }
 
     private suspend fun verifyAndCreatePromoter(pfc: ProposalFinancialComponent) {
-        if (pfc.proposalId == null) throw IllegalArgumentException("Proposal Id must not be null here!!!")
-        if (pfc.promoter == null && pfc.promoterId == null) throw IllegalArgumentException("Promoter must not be null here!!!")
+        if (pfc.proposalId == null) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Proposal Id must not be null here!!!")
+        if (pfc.promoter == null && pfc.promoterId == null) throw ResponseStatusException(HttpStatus.BAD_REQUEST,"Promoter must not be null here!!!")
         val promoter = promoterRepository.findByEmail(pfc.promoter!!.email!!).awaitSingleOrNull()
         if (promoter == null) {
             pfc.promoter = promoterRepository.save(pfc.promoter!!).awaitSingle()
@@ -105,6 +112,7 @@ class ProposalFinancialServiceImpl(
             pfc.promoter = promoter
         }
         pfc.promoterId = pfc.promoter!!.id!!
+
     }
 
     override suspend fun findComponentByProposalId(pid: Int, loadProtocol: Boolean): ProposalFinancialComponent {

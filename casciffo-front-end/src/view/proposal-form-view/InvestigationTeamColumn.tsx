@@ -159,14 +159,16 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                                             teamRole: TeamRoleTypes.MEMBER
                                         }))}
                             />
-                            <Button
-                                id="button-addon2"
-                                className={"btn-plus"}
-                                variant="outline-secondary"
-                                onClick={addInvestigatorToTeam}
-                            >
-                                <BsPlusSquare className={"mb-1"}/>
-                            </Button>
+                            <Tooltip title={"Adicionar à equipa"}>
+                                <Button
+                                    id="button-addon2"
+                                    className={"btn-plus"}
+                                    variant="outline-secondary"
+                                    onClick={addInvestigatorToTeam}
+                                >
+                                    <BsPlusSquare className={"mb-1"}/>
+                                </Button>
+                            </Tooltip>
                         </InputGroup>
                     </Form.Group>
                 </Form>

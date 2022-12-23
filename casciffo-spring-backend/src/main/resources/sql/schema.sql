@@ -227,10 +227,10 @@ CREATE TABLE IF NOT EXISTS partnerships (
     partnership_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     proposal_financial_id INT,
     name VARCHAR NOT NULL,
-    icon_url TEXT,
-    representative VARCHAR NOT NULL,
     email VARCHAR NOT NULL,
+    representative VARCHAR,
     phone_contact VARCHAR,
+    icon_url TEXT,
     site_url TEXT,
     description TEXT
 );

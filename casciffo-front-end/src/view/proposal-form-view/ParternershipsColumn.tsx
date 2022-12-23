@@ -53,10 +53,7 @@ function PartnershipCard(
     }
     const cancelChanges = () => {
         setEdit(false)
-        console.log(partnership)
         setPartnership(previous)
-        console.log(previous)
-        console.log(partnership)
     }
 
     return <Form key={`partnership-form-${partnership.email}`} onSubmit={saveChanges}>
@@ -115,18 +112,17 @@ function PartnershipCard(
                     </div>
                 </Card.Header>
                 <Card.Body>
-                    <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <RequiredLabel label={"Representativo"}/>
+                    <Form.Group className={"mb-3"} controlId={"name-group"}>
+                        <RequiredLabel label={"Nome"}/>
                         <Form.Control
                             required
                             readOnly={!edit}
-                            type={"input"}
-                            name={"representative"}
-                            value={partnership.representative}
+                            type={"text"}
+                            name={"name"}
+                            value={partnership.name}
                             onChange={handleChange}
                         />
-                    </Form.Group>
-                    <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
+                    </Form.Group><Form.Group className={"mb-3"} controlId={"email-group"}>
                         <RequiredLabel label={"Email"}/>
                         <Form.Control
                             required
@@ -137,8 +133,18 @@ function PartnershipCard(
                             onChange={handleChange}
                         />
                     </Form.Group>
-                    <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Contacto Telefónico</Form.Label>
+                    <Form.Group className={"mb-3"} controlId={"rep-group"}>
+                        <Form.Label className={"font-bold"}> Representativo </Form.Label>
+                        <Form.Control
+                            readOnly={!edit}
+                            type={"input"}
+                            name={"representative"}
+                            value={partnership.representative}
+                            onChange={handleChange}
+                        />
+                    </Form.Group>
+                    <Form.Group className={"mb-3"} controlId={"phone-group"}>
+                        <Form.Label className={"font-bold"}>Contacto Telefónico</Form.Label>
                         <Form.Control
                             readOnly={!edit}
                             type={"tel"}
@@ -149,10 +155,10 @@ function PartnershipCard(
                     </Form.Group>
                     <Form.Group
                         className={"mb-3"}
-                        controlId={"formBasicInput"}
+                        controlId={"site-group"}
                         hidden={partnership.siteUrl?.length === 0 || !edit}
                     >
-                        <Form.Label>Website</Form.Label>
+                        <Form.Label className={"font-bold"}>Website</Form.Label>
                         <Form.Control
                             readOnly={!edit}
                             type={"text"}
@@ -163,10 +169,10 @@ function PartnershipCard(
                     </Form.Group>
                     <Form.Group
                         className={"mb-3"}
-                        controlId={"formBasicInput"}
+                        controlId={"description-group"}
                         hidden={partnership.description?.length === 0 || !edit}
                     >
-                        <Form.Label>Descrição</Form.Label>
+                        <Form.Label className={"font-bold"}>Descrição</Form.Label>
                         <Form.Control
                             readOnly={!edit}
                             as={"textarea"}
@@ -221,7 +227,7 @@ function NewPartnershipForm(
                                                          onClick={props.onClose}/>}</Card.Header>
                 <Card.Body>
                     <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Nome</Form.Label>
+                        <RequiredLabel label={"Nome"}/>
                         <Form.Control
                             required
                             type={"input"}
@@ -230,18 +236,8 @@ function NewPartnershipForm(
                             onChange={handlePartnershipChange}
                         />
                     </Form.Group>
-                    <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Representativo</Form.Label>
-                        <Form.Control
-                            required
-                            type={"input"}
-                            name={"representative"}
-                            value={partnershipToAdd.representative}
-                            onChange={handlePartnershipChange}
-                        />
-                    </Form.Group>
                     <Form.Group className={"mb-3"} controlId={"formBasicEmail"}>
-                        <Form.Label>Email</Form.Label>
+                        <RequiredLabel label={"Email"}/>
                         <Form.Control
                             required
                             type={"email"}
@@ -251,9 +247,17 @@ function NewPartnershipForm(
                         />
                     </Form.Group>
                     <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Contacto Telefónico</Form.Label>
+                        <Form.Label className={"font-bold"}>Representativo</Form.Label>
                         <Form.Control
-                            required
+                            type={"input"}
+                            name={"representative"}
+                            value={partnershipToAdd.representative}
+                            onChange={handlePartnershipChange}
+                        />
+                    </Form.Group>
+                    <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
+                        <Form.Label className={"font-bold"}>Contacto Telefónico</Form.Label>
+                        <Form.Control
                             type={"tel"}
                             name={"phoneContact"}
                             value={partnershipToAdd.phoneContact}
@@ -261,7 +265,7 @@ function NewPartnershipForm(
                         />
                     </Form.Group>
                     <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Website</Form.Label>
+                        <Form.Label className={"font-bold"}>Website</Form.Label>
                         <Form.Control
                             type={"text"}
                             name={"siteUrl"}
@@ -270,7 +274,7 @@ function NewPartnershipForm(
                         />
                     </Form.Group>
                     <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Descrição</Form.Label>
+                        <Form.Label className={"font-bold"}>Descrição</Form.Label>
                         <Form.Control
                             as={"textarea"}
                             rows={2}

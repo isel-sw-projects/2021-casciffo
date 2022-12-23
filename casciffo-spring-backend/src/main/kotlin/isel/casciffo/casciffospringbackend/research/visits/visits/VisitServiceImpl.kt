@@ -70,7 +70,7 @@ class VisitServiceImpl(
         if(patientWithVisitsDTO.patient == null)
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente não pode vir null!!!")
 
-        val participant = participantService.addParticipantToResearch(patientWithVisitsDTO.patient!!.id!!, researchId)
+        val participant = participantService.addParticipantToResearch(patientWithVisitsDTO.patient.id!!, researchId)
         participant.patient = patientWithVisitsDTO.patient
 
         if(patientWithVisitsDTO.scheduledVisits.isNullOrEmpty())
