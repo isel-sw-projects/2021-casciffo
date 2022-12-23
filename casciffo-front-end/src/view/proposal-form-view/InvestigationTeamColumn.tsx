@@ -58,10 +58,10 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
         }
         let newTeam = [...state.team, state.investigator]
         props.setTeam(newTeam)
-        setState(() => {
+        setState(prevState => {
             return ({
                 team: newTeam,
-                investigator: {name: "", id: "", email: "", teamRole: TeamRoleTypes.MEMBER}
+                investigator: {...prevState.investigator}
             })
         })
     }
@@ -118,22 +118,26 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
 
     return (
         <Col className="block-example border border-dark">
-            <Alert
-                variant={"danger"}
-                show={errorAlert.show}
-                onClose={() => setErrorAlert({show: false, msg: ""})}
-                dismissible
-            >
-                {errorAlert.msg}
-            </Alert>
-            <Alert
-                variant={"success"}
-                show={successAlert.show}
-                onClose={() => setSuccessAlert({show: false, msg: ""})}
-                dismissible
-            >
-                {successAlert.msg}
-            </Alert>
+            <Container className={"align-content-center"}>
+                <Alert
+                    style={{position:"absolute"}}
+                    variant={"danger"}
+                    show={errorAlert.show}
+                    onClose={() => setErrorAlert({show: false, msg: ""})}
+                    dismissible
+                >
+                    {errorAlert.msg}
+                </Alert>
+                <Alert
+                    style={{position:"absolute"}}
+                    variant={"success"}
+                    show={successAlert.show}
+                    onClose={() => setSuccessAlert({show: false, msg: ""})}
+                    dismissible
+                >
+                    {successAlert.msg}
+                </Alert>
+            </Container>
             <h5 className={"text-center m-2"}>Equipa de investigação</h5>
             <Divider/>
             <br/>
@@ -176,7 +180,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                             <label className={"font-bold"}>Investigador Principal</label>
                             <ListGroup.Item
                                 as={"li"}
-                                className={"d-flex justify-content-between align-item-start mt-2"}
+                                className={"d-flex justify-content-between mt-2"}
                                 style={{backgroundColor: '#b8d3ff'}}
                                 key={`principal-investigador-item`}
                             >
@@ -201,7 +205,8 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                                             </div>
                                         </div>
                                         :
-                                        <span className={"font-bold"}>É necessário um investigador principal para submeter a proposta.</span>
+                                        <span className={"font-bold flex-wrap"}>É necessário um investigador principal
+                                            para submeter a proposta.</span>
                                 }
                             </ListGroup.Item>
                             <br/>  <Divider/>
@@ -211,29 +216,32 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                                 .map((currInvestigator, idx) =>
                                 <ListGroup.Item
                                     as="li"
-                                    className="d-flex justify-content-between align-items-start mt-2"
-                                    style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
+                                    className="flex mt-2"
+                                    style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke', padding: 6}}
                                     key={`${currInvestigator}-${idx}`}
                                 >
-                                    <div className={"d-flex flex-row"}>
-                                        <div className={"d-flex-column float-start"} style={{padding: 6, width: "80%"}}>
+                                    <div className={"flex"}>
+                                    <div className={"float-start"}>
+                                        <Tooltip title={"Definir como investigador principal"}  >
+                                            <Badge bg={"outline-danger"} pill>
+                                                <Button variant={"outline-primary"} onClick={() => setPrincipalInvestigator(currInvestigator)}>
+                                                    <AiOutlineUserAdd/>
+                                                </Button>
+                                            </Badge>
+                                        </Tooltip>
+                                    </div>
+                                    <Divider orientation="vertical" flexItem />
+                                        <div className={"float-start"}>
                                             {currInvestigator.name}
                                             <br/>
                                             <small>
                                                 {currInvestigator.email}
                                             </small>
                                         </div>
-                                        <div className={"d-inline-flex float-end"} style={{padding: 6, width: "20%"}}>
-                                            <small>
-                                                <Tooltip title={"Definir como investigador principal"} style={{position:"absolute"}}>
-                                                    <Button variant={"outline-primary"} onClick={() => setPrincipalInvestigator(currInvestigator)}>
-                                                        <AiOutlineUserAdd/>
-                                                    </Button>
-                                                </Tooltip>
-                                            </small>
-                                            <div className={"d-flex"}>
-                                                <Tooltip title={"Remover da equipa"} style={{position:"absolute"}}>
-                                                    <Badge bg={"outline-danger"} pill style={{top:5, right:0, position:"absolute"}}>
+                                        <div className={"flex"} style={{padding: 6}}>
+                                            <div className={"float-end"}>
+                                                <Tooltip title={"Remover da equipa"}>
+                                                    <Badge bg={"outline-danger"} pill>
                                                         <CloseButton
                                                             style={{fontSize: 12}}
                                                             onClick={() => removeInvestigatorFromTeam(currInvestigator)}

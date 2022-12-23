@@ -1,22 +1,17 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Badge, Button, Card, CloseButton, Col, Container, Form} from "react-bootstrap";
 import {PartnershipModel} from "../../model/proposal/finance/PartnershipModel";
 import {Divider, Tooltip} from "@mui/material";
 import {AiFillEdit} from "react-icons/ai";
-import {CiFloppyDisk} from "react-icons/ci";
+import {FcCancel} from "react-icons/fc";
 import {ImFloppyDisk} from "react-icons/im";
-import {TbDeviceFloppy} from "react-icons/tb";
+import {RequiredLabel} from "../components/RequiredLabel";
 
 
-type PsC_Props = {
+type Props = {
     partnerships: Array<PartnershipModel>,
     setPartnerships: (arr: Array<PartnershipModel>) => void
     display: boolean
-}
-
-type PartnershipsState = {
-    isNewPartnership: boolean,
-    partnershipToAdd: PartnershipModel
 }
 
 function PartnershipCard(
@@ -26,70 +21,104 @@ function PartnershipCard(
         handlePartnershipOnSaveEdit: (p: PartnershipModel) => void
     }
 ) {
+    const emptyPartnership = () => ({
+        description: "",
+        phoneContact: "",
+        email: "",
+        name: "",
+        representative: "",
+        siteUrl: "",
+    })
     const [edit, setEdit] = useState(false)
-    const [partnership, setPartnership] = useState(props.p)
+    const [partnership, setPartnership] = useState<PartnershipModel>(emptyPartnership())
+    const [previous, setPrevious] = useState<PartnershipModel>(emptyPartnership())
 
-    const handleChange = (e: any) => {
+    useEffect(() => {
+        setPartnership(props.p)
+        setPrevious(props.p)
+    }, [props.p])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const key = e.target.name
-        const value = e.target.vale
+        const value = e.target.value
         setPartnership(prevState => ({...prevState, [key]: value}))
     }
 
-    const saveChanges = () => {
+    const saveChanges = (e: any) => {
+        e.preventDefault()
+        e.stopPropagation()
         setEdit(false)
+        setPrevious(partnership)
         props.handlePartnershipOnSaveEdit(partnership)
     }
     const cancelChanges = () => {
         setEdit(false)
-        setPartnership(props.p)
+        console.log(partnership)
+        setPartnership(previous)
+        console.log(previous)
+        console.log(partnership)
     }
 
-    return <Form>
+    return <Form key={`partnership-form-${partnership.email}`} onSubmit={saveChanges}>
             <br/>
             <br/>
-            <Card className={"small"}>
-                <Card.Header className="d-flex justify-content-between align-items-start">
+            <Card className={"small"} key={`partnership-card-${partnership.email}`}>
+                <Card.Header>
+                    <div className={"flex"}>
+
                     {
                         edit
                         ?
                         <div>
-                            <Tooltip title={"Guardar"}>
-                                <Badge bg={"outline-danger"} pill>
-                                    <Button variant={"outline-primary"} onClick={saveChanges}>
-                                        <CiFloppyDisk size={"2x"}/>
-                                        <TbDeviceFloppy size={2}/>
-                                    </Button>
-                                </Badge>
-                            </Tooltip>
-                            <Tooltip title={"Cancelar"}>
-                                <Badge bg={"outline-danger"} pill>
-                                    <Button variant={"outline-primary"} onClick={cancelChanges}>
-                                        <AiFillEdit/>
-                                    </Button>
-                                </Badge>
-                            </Tooltip>
+                            <div className={"float-start"}>
+                                <Tooltip title={"Guardar"}>
+                                    <Badge bg={"outline-danger"} pill>
+                                        <Button variant={"outline-primary"} type={"submit"}>
+                                            <ImFloppyDisk/>
+                                        </Button>
+                                    </Badge>
+                                </Tooltip>
+                            </div>
+                            <div className={"float-end"}>
+                                <Tooltip title={"Cancelar"}>
+                                    <Badge bg={"outline-danger"} pill>
+                                        <Button variant={"outline-primary"} onClick={cancelChanges}>
+                                            <FcCancel/>
+                                        </Button>
+                                    </Badge>
+                                </Tooltip>
+                            </div>
                         </div>
                         :
                         <div>
-                            <Badge bg={"outline-danger"} pill>
-                                <Button variant={"outline-primary"} onClick={() => setEdit(true)}>
-                                    <AiFillEdit/>
-                                </Button>
-                            </Badge>
-
-                            <Badge bg={"outline-danger"} pill>
-                                <CloseButton
-                                style={{fontSize: 12}}
-                                onClick={() => props.removePartnership(partnership)}
-                                />
-                            </Badge>
+                            <div className={"float-start"}>
+                                <Tooltip title={"Editar"}>
+                                    <Badge bg={"outline-danger"} pill>
+                                        <Button variant={"outline-primary"} onClick={() => setEdit(true)}>
+                                            <AiFillEdit/>
+                                        </Button>
+                                    </Badge>
+                                </Tooltip>
+                            </div>
+                            <div className={"float-end"}>
+                                <Tooltip title={"Remover"}>
+                                    <Badge bg={"outline-danger"} pill>
+                                        <CloseButton
+                                        style={{fontSize: 12}}
+                                        onClick={() => props.removePartnership(partnership)}
+                                        />
+                                    </Badge>
+                                </Tooltip>
+                            </div>
                         </div>
                     }
+                    </div>
                 </Card.Header>
                 <Card.Body>
                     <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Representativo</Form.Label>
+                        <RequiredLabel label={"Representativo"}/>
                         <Form.Control
+                            required
                             readOnly={!edit}
                             type={"input"}
                             name={"representative"}
@@ -98,8 +127,9 @@ function PartnershipCard(
                         />
                     </Form.Group>
                     <Form.Group className={"mb-3"} controlId={"formBasicInput"}>
-                        <Form.Label>Email</Form.Label>
+                        <RequiredLabel label={"Email"}/>
                         <Form.Control
+                            required
                             readOnly={!edit}
                             type={"email"}
                             name={"email"}
@@ -120,7 +150,7 @@ function PartnershipCard(
                     <Form.Group
                         className={"mb-3"}
                         controlId={"formBasicInput"}
-                        hidden={partnership.siteUrl?.length === 0}
+                        hidden={partnership.siteUrl?.length === 0 || !edit}
                     >
                         <Form.Label>Website</Form.Label>
                         <Form.Control
@@ -134,7 +164,7 @@ function PartnershipCard(
                     <Form.Group
                         className={"mb-3"}
                         controlId={"formBasicInput"}
-                        hidden={partnership.description?.length === 0}
+                        hidden={partnership.description?.length === 0 || !edit}
                     >
                         <Form.Label>Descrição</Form.Label>
                         <Form.Control
@@ -257,11 +287,12 @@ function NewPartnershipForm(
     </Form>;
 }
 
-export function PartnershipsColumn(props: PsC_Props) {
+export function PartnershipsColumn(props: Props) {
     const [isNewPartnership, setIsNewPartnership] = useState(false)
 
     function addNewPartnership(partnershipToAdd: PartnershipModel) {
         props.setPartnerships([...props.partnerships, partnershipToAdd])
+        setIsNewPartnership(false)
     }
 
     function handlePartnershipSaveChanges(partnership: PartnershipModel) {
@@ -270,10 +301,6 @@ export function PartnershipsColumn(props: PsC_Props) {
 
     function removePartnership(partnership: PartnershipModel) {
         props.setPartnerships(props.partnerships.filter(p => p !== partnership))
-    }
-
-    function toggleIsNewPartnership() {
-        setIsNewPartnership(prevState => !prevState)
     }
 
     return (
@@ -291,6 +318,7 @@ export function PartnershipsColumn(props: PsC_Props) {
                 {props.partnerships
                     .map(partnership =>
                         <PartnershipCard
+                            key={`partnership-card-component-${partnership.email}`}
                             p={partnership}
                             removePartnership={removePartnership}
                             handlePartnershipOnSaveEdit={handlePartnershipSaveChanges}
@@ -299,7 +327,7 @@ export function PartnershipsColumn(props: PsC_Props) {
 
                 {isNewPartnership &&
                     <NewPartnershipForm onSubmit={addNewPartnership}
-                                        onClose={toggleIsNewPartnership} />
+                                        onClose={() => setIsNewPartnership(false)} />
                 }
                 <br/>
                 <Container className={"align-content-center text-center"}>
@@ -309,7 +337,7 @@ export function PartnershipsColumn(props: PsC_Props) {
                         style={{
                             borderRadius: "8px"
                         }}
-                        onClick={() => toggleIsNewPartnership()}
+                        onClick={() => setIsNewPartnership(true)}
                         hidden={isNewPartnership}
                     >
                         Adicionar Parceria

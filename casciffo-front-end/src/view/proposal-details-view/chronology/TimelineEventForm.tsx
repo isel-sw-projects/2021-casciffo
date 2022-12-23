@@ -6,6 +6,7 @@ import {STATES} from "../../../model/state/STATES";
 import {MyUtil} from "../../../common/MyUtil";
 import {useParams} from "react-router-dom";
 import {StateModel} from "../../../model/state/StateModel";
+import {RequiredLabel} from "../../components/RequiredLabel";
 
 
 type TimelineProps = {
@@ -55,6 +56,11 @@ export function TimelineEventForm(props: TimelineProps) {
 
     function handleFormSubmission(e: React.FormEvent) {
         e.preventDefault()
+        e.stopPropagation()
+        if(eventToAdd.deadlineDate == null) {
+            alert("Tem de ter data limite!")
+            return
+        }
         eventToAdd.eventType = eventToAdd.isAssociatedToState ? EventTypes.STATES.id : EventTypes.DEADLINES.id
         props.onEventAdded(eventToAdd)
         setEventToAdd({
@@ -77,18 +83,7 @@ export function TimelineEventForm(props: TimelineProps) {
 
     function showStateSelection() {
         return (
-            // <Form.Select
-            //     key={"state-associated-selection"}
-            //     required
-            //     aria-label="state selection"
-            //     name={"stateId"}
-            //     defaultValue={STATES.VALIDADO.id}
-            //     onChange={handleSelectedState}
-            // >
-            //     {MyUtil.proposalStates
-            //         .map((rt) => <option key={rt.id} value={rt.id}>{rt.name}</option>)
-            //     }
-            // </Form.Select>
+
             <Form.Select
                 key={"state-associated-selection"}
                 required
@@ -137,7 +132,7 @@ export function TimelineEventForm(props: TimelineProps) {
                     </Col>
                     <Col>
                         <Form.Group>
-                            <Form.Label>Título</Form.Label>
+                            <RequiredLabel label={"Título"}/>
                             <Form.Control
                                 required
                                 type={"text"}
@@ -149,7 +144,7 @@ export function TimelineEventForm(props: TimelineProps) {
                     </Col>
                     <Col>
                         <Form.Group>
-                            <Form.Label>Data limite</Form.Label>
+                            <RequiredLabel label={"Data limite"}/>
                             <Form.Control
                                 required
                                 min={MyUtil.getTodayDate()}

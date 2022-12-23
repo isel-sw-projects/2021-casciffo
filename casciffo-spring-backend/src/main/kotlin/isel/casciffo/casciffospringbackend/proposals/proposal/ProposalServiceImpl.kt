@@ -9,6 +9,8 @@ import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.mappers.Mapper
+import isel.casciffo.casciffospringbackend.proposal_research.ProposalResearch
+import isel.casciffo.casciffospringbackend.proposal_research.ProposalResearchRepository
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialService
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
@@ -67,7 +69,8 @@ class ProposalServiceImpl(
     @Autowired val jwtSupport: JwtSupport,
     @Autowired val userService: UserService,
     @Autowired val proposalStats: ProposalStatsRepo,
-    @Autowired val notificationService: NotificationService
+    @Autowired val notificationService: NotificationService,
+    @Autowired val proposalResearchRepository: ProposalResearchRepository
 ) : ProposalService {
 
     override suspend fun getProposalCount(): CountHolder {
@@ -96,6 +99,7 @@ class ProposalServiceImpl(
         setProposalStateToDefault(proposal)
 
         val createdProposal = proposalRepository.save(proposal).awaitSingle()
+        proposalResearchRepository.save(ProposalResearch(proposalId = createdProposal.id!!)).subscribe()
 
         createInvestigationTeam(proposal, createdProposal)
 
@@ -290,7 +294,7 @@ class ProposalServiceImpl(
         }
 
         stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
-// TODO
+// TODO notify role and team upon progress
 //        if(nextState.stateFlowType !== StateFlowType.TERMINAL) {
 //            val nextStateRoles = nextState.roles!!.map { Roles.valueOf(it) }.collectList().awaitSingle()
 //            userService.notifyRoles(nextStateRoles,

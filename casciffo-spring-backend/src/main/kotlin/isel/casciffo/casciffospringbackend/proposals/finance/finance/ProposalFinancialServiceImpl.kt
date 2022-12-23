@@ -72,8 +72,7 @@ class ProposalFinancialServiceImpl(
         //store file locally
         file.transferTo(path).awaitSingleOrNull()
         //save file information in db
-        val fileInfo = fileInfoRepository.save(getFileInfo()).awaitSingle()
-        return fileInfo
+        return fileInfoRepository.save(getFileInfo()).awaitSingle()
     }
 
     private suspend fun createValidations(pfc: ProposalFinancialComponent) {

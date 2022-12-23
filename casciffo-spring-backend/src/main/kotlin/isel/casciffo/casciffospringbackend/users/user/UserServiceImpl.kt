@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.users.user
 
 import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregate
 import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregateRepo
+import isel.casciffo.casciffospringbackend.common.DEFAULT_PASSWORD
 import isel.casciffo.casciffospringbackend.common.NotificationType
 import isel.casciffo.casciffospringbackend.common.QuadTuple
 import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
@@ -161,7 +162,11 @@ class UserServiceImpl(
     }
 
     override suspend fun createNewUser(model: UserModel): UserModel {
-        model.password = encoder.encode(model.password)
+
+        model.password = encoder.encode(
+            if(model.password != null) model.password
+            else DEFAULT_PASSWORD
+        )
         return  userRepository.save(model).awaitSingleOrNull()
                         ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
     }

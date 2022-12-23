@@ -1,4 +1,4 @@
-package isel.casciffo.casciffospringbackend.proposals.proposal_research
+package isel.casciffo.casciffospringbackend.proposal_research
 
 data class ProposalResearch(
     var id: Int? = null,

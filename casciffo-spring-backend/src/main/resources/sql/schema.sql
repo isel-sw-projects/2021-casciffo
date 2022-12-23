@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS state_transition (
     state_id_before INT NOT NULL,
     state_id_after INT NOT NULL,
     transition_date TIMESTAMP DEFAULT NOW(),
-    CONSTRAINT fk_state_before FOREIGN KEY (state_id_before) REFERENCES states(state_id),
-    CONSTRAINT fk_state_after FOREIGN KEY (state_id_after) REFERENCES states(state_id)
+    CONSTRAINT fk_state_before FOREIGN KEY (state_id_before) REFERENCES states(state_id) ON DELETE CASCADE,
+    CONSTRAINT fk_state_after FOREIGN KEY (state_id_after) REFERENCES states(state_id) ON DELETE CASCADE
 );
 
 
@@ -116,20 +116,18 @@ CREATE TABLE IF NOT EXISTS therapeutic_area (
 CREATE TABLE IF NOT EXISTS proposal (
     proposal_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     state_id INT NOT NULL,
-    pathology_id INT NOT NULL,
-    service_id INT NOT NULL,
-    therapeutic_area_id INT NOT NULL,
---     protocol_state_id INT,
+    pathology_id INT,
+    service_id INT,
+    therapeutic_area_id INT,
     sigla VARCHAR NOT NULL,
     principal_investigator_id INT NOT NULL,
     proposal_type VARCHAR NOT NULL, --clinical trial / observational study
     created_date TIMESTAMP DEFAULT NOW(),
     last_modified TIMESTAMP DEFAULT NOW(),
-    CONSTRAINT fk_p_state_id FOREIGN KEY(state_id) REFERENCES states(state_id),
-    CONSTRAINT fk_p_pathology_id FOREIGN KEY(pathology_id) REFERENCES pathology(pathology_id),
-    CONSTRAINT fk_p_service_id FOREIGN KEY(service_id) REFERENCES service(service_id),
+    CONSTRAINT fk_p_state_id FOREIGN KEY(state_id) REFERENCES states(state_id) ON DELETE SET NULL ,
+    CONSTRAINT fk_p_pathology_id FOREIGN KEY(pathology_id) REFERENCES pathology(pathology_id) ON DELETE SET NULL,
+    CONSTRAINT fk_p_service_id FOREIGN KEY(service_id) REFERENCES service(service_id) ON DELETE SET NULL,
     CONSTRAINT fk_p_therapeutic_area_id FOREIGN KEY(therapeutic_area_id) REFERENCES therapeutic_area(therapeutic_area_id),
---     CONSTRAINT fk_protocol_state FOREIGN KEY(protocol_state_id) REFERENCES states(state_id),
     CONSTRAINT fk_p_principal_investigator FOREIGN KEY(principal_investigator_id) REFERENCES user_account(user_id)
 );
 
@@ -169,7 +167,9 @@ CREATE TABLE IF NOT EXISTS timeline_event (
     days_over_due INT DEFAULT 0,
     is_associated_to_state BOOLEAN DEFAULT FALSE,
     state_name VARCHAR,
-    CONSTRAINT  fk_te_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE
+    state_id INT,
+    CONSTRAINT fk_te_state_id FOREIGN KEY (state_id) REFERENCES states(state_id) ON DELETE SET NULL,
+    CONSTRAINT fk_te_proposal_id FOREIGN KEY(proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE
 );
 
 ---------------------------------------------------------------------------------------
@@ -246,8 +246,8 @@ CREATE TABLE IF NOT EXISTS validations (
     validation_type VARCHAR NOT NULL, --finance_dep, juridical_dep
     validation_date TIMESTAMP,
     validated BOOLEAN DEFAULT FALSE,
-    CONSTRAINT fk_v_pfc_id FOREIGN KEY (pfc_id) REFERENCES proposal_financial_component(proposal_financial_id),
-    CONSTRAINT fk_v_comment_id FOREIGN KEY (comment_ref) REFERENCES proposal_comments(comment_id)
+    CONSTRAINT fk_v_pfc_id FOREIGN KEY (pfc_id) REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE,
+    CONSTRAINT fk_v_comment_id FOREIGN KEY (comment_ref) REFERENCES proposal_comments(comment_id) ON DELETE CASCADE
 );
 
 
@@ -448,7 +448,7 @@ CREATE TABLE IF NOT EXISTS addenda_comment (
     created_date TIMESTAMP NOT NULL DEFAULT NOW(),
     observation VARCHAR NOT NULL,
     CONSTRAINT fk_ac_addenda_id FOREIGN KEY(addenda_id) REFERENCES addenda(addenda_id) ON DELETE CASCADE,
-    CONSTRAINT fk_ac_author_id FOREIGN KEY(author_id) REFERENCES user_account(user_id)
+    CONSTRAINT fk_ac_author_id FOREIGN KEY(author_id) REFERENCES user_account(user_id) ON DELETE CASCADE
 );
 
 

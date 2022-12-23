@@ -49,6 +49,8 @@ const val AUTH_DELIM = "_"
 const val EMAIL_AUTH = "EMAIL$AUTH_DELIM"
 const val ROLE_AUTH = "ROLE$AUTH_DELIM"
 
+const val DEFAULT_PASSWORD = "123456"
+
 //may not be needed
 const val SUPERUSER_AUTHORITY = "${ROLE_AUTH}SUPERUSER"
 const val UIC_AUTHORITY = "${ROLE_AUTH}UIC"
