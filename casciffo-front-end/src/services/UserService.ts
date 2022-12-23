@@ -10,6 +10,11 @@ export class UserService {
         return httpGet(ApiUrls.usersUrl)
     }
 
+    fetchUser(userId: string): Promise<UserModel> {
+        const url = ApiUrls.userDetailsUrl(userId)
+        return httpGet(url)
+    }
+
     login(userModel: userModel) : Promise<UserToken> {
         return httpPost(ApiUrls.userLoginUrl, userModel)
     }

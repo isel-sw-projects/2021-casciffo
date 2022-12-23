@@ -1,10 +1,25 @@
-import {Alert, Badge, Button, Card, CloseButton, Col, Container, Form, InputGroup, ListGroup} from "react-bootstrap";
+import {
+    Alert,
+    Badge,
+    Button,
+    Card,
+    CloseButton,
+    Col,
+    Container,
+    Form,
+    InputGroup,
+    ListGroup,
+    Stack
+} from "react-bootstrap";
 import React, {useState} from "react";
 import {Investigator} from "../../common/Types";
 import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
 import {BsPlusSquare} from "react-icons/bs";
-import {TeamRoleTypes} from "../../common/Constants";
+import {LONG_TIMEOUT, TeamRoleTypes} from "../../common/Constants";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
+
+import {Divider, Tooltip} from "@mui/material";
+import {AiOutlineUserAdd} from "react-icons/ai";
 
 
 type InvestigatorTeamState = {
@@ -14,11 +29,13 @@ type InvestigatorTeamState = {
 
 type ITC_Props = {
     setTeam: (team: Array<Investigator>) => void,
+    setPrincipalInvestigator: (inv: Investigator) => void
     service: ProposalAggregateService
 }
 
 export function InvestigatorTeamColumn(props: ITC_Props) {
-    const [errorState, setErrorState] = useState({show: false, message: ""})
+    const [errorAlert, setErrorAlert] = useState({show: false, msg: ""})
+    const [successAlert, setSuccessAlert] = useState({show: false, msg: ""})
     const [state, setState] = useState<InvestigatorTeamState>(
         {
             investigator: {
@@ -32,11 +49,11 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
 
     function addInvestigatorToTeam(event: React.MouseEvent<HTMLButtonElement>) {
         if (state.investigator.id.length === 0) {
-            showErrorMessage("Por favor escolha um investigador da lista de resultados.")
+            showErrorMessage("Por favor escolha um investigador da lista de resultados.", LONG_TIMEOUT)
             return
         }
         if (state.team.some(t => t.id === state.investigator.id)) {
-            showErrorMessage("O investigador que tentou adicionar já existe.")
+            showErrorMessage("O investigador que tentou adicionar já existe.", LONG_TIMEOUT)
             return;
         }
         let newTeam = [...state.team, state.investigator]
@@ -49,6 +66,21 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
         })
     }
 
+    const principalInvestigator = state.team.find(i => i.teamRole === TeamRoleTypes.PRINCIPAL)
+    function setPrincipalInvestigator(investigator: Investigator) {
+        setState(prevState => ({
+                ...prevState,
+                team: prevState.team.map(inv =>
+                        investigator.id === inv.id
+                            ? {...inv, teamRole: TeamRoleTypes.PRINCIPAL}
+                            : {...inv, teamRole: TeamRoleTypes.MEMBER}
+                )
+            })
+        )
+        props.setPrincipalInvestigator(investigator)
+        showSuccessMessage(`${investigator.name} foi promovido como investigador principal!`, 1250)
+    }
+
     function removeInvestigatorFromTeam(investigator: Investigator) {
         let newTeam = state.team.filter(member => member !== investigator)
         props.setTeam(newTeam)
@@ -58,6 +90,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                 team: newTeam,
             })
         })
+        showSuccessMessage("Removido!", 1250)
     }
 
     function handleInvestigatorInputChange(investigator: Investigator) {
@@ -69,28 +102,45 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
         })
     }
 
-    function showErrorMessage(msg: string) {
-        setErrorState({show: true, message: msg})
+    function showErrorMessage(msg: string, timeout: number) {
+        setErrorAlert({show: true, msg: msg})
         setTimeout(() => {
-            setErrorState({show: false, message: ""})
-        }, 8000)
+            setErrorAlert({show: false, msg: ""})
+        }, timeout)
+    }
+    function showSuccessMessage(msg: string, timeout: number) {
+        setSuccessAlert({show: true, msg: msg})
+        setTimeout(() => {
+            if(successAlert.msg === msg && successAlert.show)
+                setSuccessAlert({show: false, msg: ""})
+        }, timeout)
     }
 
     return (
         <Col className="block-example border border-dark">
             <Alert
                 variant={"danger"}
-                show={errorState.show}
-                onClose={() => setErrorState({show: false, message: ""})}
+                show={errorAlert.show}
+                onClose={() => setErrorAlert({show: false, msg: ""})}
                 dismissible
             >
-                {errorState.message}
+                {errorAlert.msg}
+            </Alert>
+            <Alert
+                variant={"success"}
+                show={successAlert.show}
+                onClose={() => setSuccessAlert({show: false, msg: ""})}
+                dismissible
+            >
+                {successAlert.msg}
             </Alert>
             <h5 className={"text-center m-2"}>Equipa de investigação</h5>
+            <Divider/>
             <br/>
             <br/>
             <Container>
                 <Form>
+                    {}
                     <Form.Group>
                         <Form.Label className={"font-bold"}>Procurar por investigador</Form.Label>
                         <InputGroup>
@@ -106,9 +156,9 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                                         }))}
                             />
                             <Button
+                                id="button-addon2"
                                 className={"btn-plus"}
                                 variant="outline-secondary"
-                                id="button-addon2"
                                 onClick={addInvestigatorToTeam}
                             >
                                 <BsPlusSquare className={"mb-1"}/>
@@ -122,21 +172,77 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                         <b>Equipa</b>
                     </Card.Header>
                     <Card.Body>
-                        <ListGroup className={"mt-2"} variant="flush">
-                            {state.team.map((currInvestigator, idx) =>
+                        <ListGroup as={"ul"} className={"mt-2"} variant="flush">
+                            <label className={"font-bold"}>Investigador Principal</label>
+                            <ListGroup.Item
+                                as={"li"}
+                                className={"d-flex justify-content-between align-item-start mt-2"}
+                                style={{backgroundColor: '#b8d3ff'}}
+                                key={`principal-investigador-item`}
+                            >
+                                {
+                                    principalInvestigator ?
+                                        <div className={"d-inline-flex"}>
+                                            <Stack direction={"vertical"} gap={1}>
+                                                {principalInvestigator.name}
+                                                <small>
+                                                    {principalInvestigator.email}
+                                                </small>
+                                            </Stack>
+                                            <div className={"flex float-end"} style={{}}>
+                                                <Tooltip title={"Remover da equipa"} style={{position:"absolute"}}>
+                                                    <Badge bg={"outline-danger"} pill style={{top:5, right:0, position:"absolute"}}>
+                                                        <CloseButton
+                                                            style={{fontSize: 12}}
+                                                            onClick={() => removeInvestigatorFromTeam(principalInvestigator)}
+                                                        />
+                                                    </Badge>
+                                                </Tooltip>
+                                            </div>
+                                        </div>
+                                        :
+                                        <span className={"font-bold"}>É necessário um investigador principal para submeter a proposta.</span>
+                                }
+                            </ListGroup.Item>
+                            <br/>  <Divider/>
+
+                            {state.team
+                                .filter(i => i.teamRole === TeamRoleTypes.MEMBER)
+                                .map((currInvestigator, idx) =>
                                 <ListGroup.Item
                                     as="li"
                                     className="d-flex justify-content-between align-items-start mt-2"
                                     style={{backgroundColor: (idx & 1) === 1 ? 'white' : 'whitesmoke'}}
                                     key={`${currInvestigator}-${idx}`}
                                 >
-                                    {currInvestigator.name}
-                                    <Badge bg={"outline-danger"} pill>
-                                        <CloseButton
-                                            style={{fontSize: 9}}
-                                            onClick={() => removeInvestigatorFromTeam(currInvestigator)}
-                                        />
-                                    </Badge>
+                                    <div className={"d-flex flex-row"}>
+                                        <div className={"d-flex-column float-start"} style={{padding: 6, width: "80%"}}>
+                                            {currInvestigator.name}
+                                            <br/>
+                                            <small>
+                                                {currInvestigator.email}
+                                            </small>
+                                        </div>
+                                        <div className={"d-inline-flex float-end"} style={{padding: 6, width: "20%"}}>
+                                            <small>
+                                                <Tooltip title={"Definir como investigador principal"} style={{position:"absolute"}}>
+                                                    <Button variant={"outline-primary"} onClick={() => setPrincipalInvestigator(currInvestigator)}>
+                                                        <AiOutlineUserAdd/>
+                                                    </Button>
+                                                </Tooltip>
+                                            </small>
+                                            <div className={"d-flex"}>
+                                                <Tooltip title={"Remover da equipa"} style={{position:"absolute"}}>
+                                                    <Badge bg={"outline-danger"} pill style={{top:5, right:0, position:"absolute"}}>
+                                                        <CloseButton
+                                                            style={{fontSize: 12}}
+                                                            onClick={() => removeInvestigatorFromTeam(currInvestigator)}
+                                                        />
+                                                    </Badge>
+                                                </Tooltip>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </ListGroup.Item>
                             )}
                         </ListGroup>

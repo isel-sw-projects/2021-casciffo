@@ -1,12 +1,14 @@
-import {Alert, Button, Col, Container, Form} from "react-bootstrap";
+import {Alert, Button, Col, Form} from "react-bootstrap";
 
 import React, {useEffect, useState} from "react";
 import {ConstantsModel, Investigator, ProposalForm} from "../../common/Types";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 import {PromoterModel} from "../../model/proposal/finance/PromoterModel";
 import {PartnershipModel} from "../../model/proposal/finance/PartnershipModel";
-import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
 import {PromoterTypes, ResearchTypes} from "../../common/Constants";
+import {RequiredLabel} from "../components/RequiredLabel";
+import {RequiredSpan} from "../components/RequiredSpan";
+import {Divider} from "@mui/material";
 
 type PFC_Props = {
     onSubmit: () => void,
@@ -52,6 +54,14 @@ export function ProposalFormColumn(props: PFC_Props) {
         let value = event.target.value
         props.setFormData(updateState(propKey, value))
     }
+
+    function handleResearchTypeChange(e: any) {
+        const newVal = e.target.value
+        if(newVal === ResearchTypes.OBSERVATIONAL_STUDY.id && props.hasPartnerships) props.setHasPartnerships(false)
+
+        props.setFormData(updateState("researchType", newVal))
+    }
+
     function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault(); //stop redirect
         const form = event.currentTarget;
@@ -125,184 +135,175 @@ export function ProposalFormColumn(props: PFC_Props) {
                 {errorState.message}
             </Alert>
             <Form onSubmit={handleFormSubmit}>
-                <Container>
-                    <h5 className={"text-center m-2"}>Proposta</h5>
-                    <Form.Group className={"mb-3"} controlId={"formBasicSwitch"}>
-
-                        <Form.Check
-                            key={"switch-partnerships"}
-                            type={"switch"}
-                            name={"hasPartnerships"}
-                            disabled={!isClinicalTrial}
-                            checked={props.hasPartnerships}
-                            onChange={(() => props.setHasPartnerships(!props.hasPartnerships))}
-                            label={<span className={"font-bold"}>Parcerias</span>}
-                        />
-
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicInput">
-                        <Form.FloatingLabel className={"font-bold"} label={"Sigla"}>
-                            <Form.Control
-                                key={"sigla"}
+                <h5 className={"text-center m-2"}>Proposta</h5>
+                <Divider/>
+                <br/>
+                <br/>
+                <Form.Group className="mb-3" controlId="formBasicInput">
+                    <RequiredLabel label={"Sigla"}/>
+                    <Form.Control
+                        key={"sigla"}
+                        required
+                        type={"text"}
+                        name={"sigla"}
+                        placeholder={"Sigla"}
+                        value={props.formData.sigla}
+                        onChange={handleInputChange}
+                    />
+                </Form.Group>
+                <Form.Group>
+                    <RequiredLabel label={"Patologia"}/>
+                    <Form.Select
+                        key={"pathology-id"}
+                        required
+                        aria-label="Default select example"
+                        name={"pathologyId"}
+                        defaultValue={""}
+                        onChange={handleInputChange}
+                    >
+                        <option key={"op-invalid"} value={""} disabled>-Patologias-</option>
+                        {constants.pathologies.map(p =>
+                            <option key={`op-${p.id}`} value={p.id}>{p.name}</option>
+                        )}
+                    </Form.Select>
+                </Form.Group>
+                <br/>
+                <Form.Group>
+                    <RequiredLabel label={"Tipo de serviço"}/>
+                    <Form.Select
+                        key={"service-id"}
+                        required
+                        aria-label="service type selection"
+                        name={"serviceTypeId"}
+                        defaultValue={""}
+                        onChange={handleInputChange}
+                    >
+                        <option key={"op-invalid"} value={""} disabled>-Serviço-</option>
+                        {constants.serviceTypes.map(s =>
+                            <option key={`op-${s.id}`} value={s.id}>{s.name}</option>
+                        )}
+                    </Form.Select>
+                </Form.Group>
+                <br/>
+                {/*TODO use searchable select*/}
+                <Form.Group>
+                    <RequiredLabel label={"Área terapeutica"}/>
+                    <Form.Select
+                        key={"therapeutic-area-id"}
+                        required
+                        aria-label="therapeutica area selection"
+                        name={"therapeuticAreaId"}
+                        defaultValue={""}
+                        onChange={handleInputChange}
+                    >
+                        <option key={"op-invalid"} value={""} disabled>-Área terapeutica-</option>
+                        {constants.therapeuticAreas.map(t =>
+                            <option key={`op-${t.id}`} value={t.id}>{t.name}</option>
+                        )}
+                    </Form.Select>
+                </Form.Group>
+                <br/>
+                <Form.Group controlId={"research-type-select-group"}>
+                    <RequiredLabel label={"Tipo de estudo"}/>
+                    <br/>
+                    {Object.values(ResearchTypes).map((rt, idx) => (
+                        <div key={`default-div-radio-${idx}`} className="mb-2" >
+                            <Form.Check
                                 required
-                                type={"text"}
-                                name={"sigla"}
-                                placeholder={"Sigla"}
-                                value={props.formData.sigla}
-                                onChange={handleInputChange}
+                                key={`default-radio-${idx}`}
+                                id={`default-radio-id-${idx}`}
+                                label={rt.singularName}
+                                name={"researchType"}
+                                type={"radio"}
+                                value={rt.id}
+                                onChange={handleResearchTypeChange}
                             />
-                        </Form.FloatingLabel>
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="formBasicInput">
-                        <Form.Label className={"font-bold"}>Investigador</Form.Label>
-                        <AsyncAutoCompleteSearch
-                            requestUsers={(q: string) => {
-                                return props.service.fetchInvestigators(q)
-                            }}
-                            // selectedUser={props.formData.pInvestigator}
-                            setInvestigator={(i => props.setFormData(
-                                updateState("pInvestigator",
-                                    {...props.formData.pInvestigator, ...i}
-                                )))}
-                            // useValidation
-                        />
-                    </Form.Group>
-                    <Form.Group>
-                        <Form.Label className={"font-bold"}>Patologia</Form.Label>
-                        <Form.Select
-                            key={"pathology-id"}
-                            required
-                            aria-label="Default select example"
-                            name={"pathologyId"}
-                            defaultValue={""}
-                            onChange={handleInputChange}
-                        >
-                            <option key={"op-invalid"} value={""} disabled>-Patologias-</option>
-                            {constants.pathologies.map(p =>
-                                <option key={`op-${p.id}`} value={p.id}>{p.name}</option>
-                            )}
-                        </Form.Select>
-                    </Form.Group>
-                    <br/>
-                    <Form.Group>
-                        <Form.Label className={"font-bold"}>Tipo de serviço</Form.Label>
-                        <Form.Select
-                            key={"service-id"}
-                            required
-                            aria-label="service type selection"
-                            name={"serviceTypeId"}
-                            defaultValue={""}
-                            onChange={handleInputChange}
-                        >
-                            <option key={"op-invalid"} value={""} disabled>-Serviço-</option>
-                            {constants.serviceTypes.map(s =>
-                                <option key={`op-${s.id}`} value={s.id}>{s.name}</option>
-                            )}
-                        </Form.Select>
-                    </Form.Group>
-                    <br/>
-                    <Form.Group>
-                        <Form.Label className={"font-bold"}>Área terapeutica</Form.Label>
-                        <Form.Select
-                            key={"therapeutic-area-id"}
-                            required
-                            aria-label="therapeutica area selection"
-                            name={"therapeuticAreaId"}
-                            defaultValue={""}
-                            onChange={handleInputChange}
-                        >
-                            <option key={"op-invalid"} value={""} disabled>-Área terapeuta-</option>
-                            {constants.therapeuticAreas.map(t =>
-                                <option key={`op-${t.id}`} value={t.id}>{t.name}</option>
-                            )}
-                        </Form.Select>
-                    </Form.Group>
-                    <br/>
-                    <Form.Group>
-                        <Form.Label className={"font-bold"}> Tipo de estudo</Form.Label>
-                        {Object.values(ResearchTypes).map((rt, idx) => (
-                            <div key={`default-radio-${idx}`} className="mb-3">
-                                <Form.Check
-                                    key={`default-radio-${idx}`}
-                                    required
-                                    name={"researchType"}
-                                    type={"radio"}
-                                    value={rt.id}
-                                    label={rt.singularName}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        ))}
-                    </Form.Group>
+                        </div>
 
-                    {isClinicalTrial
-                        &&
-                        <>
-                            <fieldset>
-                                <Form.Label className={"font-bold"}>Promotor</Form.Label>
-                                <Form.Group>
-                                    <Form.FloatingLabel className={"font-bold"} label={"Nome"}>
-                                        <Form.Control
-                                            key={"promoter-name"}
-                                            required={isClinicalTrial}
-                                            type={"text"}
-                                            name={"name"}
-                                            placeholder={"Nome"}
-                                            value={props.formData.promoter.name}
-                                            onChange={handlePromoterChange}
-                                        />
-                                    </Form.FloatingLabel>
-                                </Form.Group>
-                                <br/>
-                                <Form.Group>
-                                    <Form.FloatingLabel className={"font-bold"} label={"Email"}>
-                                        <Form.Control
-                                            key={"promoter-email"}
-                                            required={isClinicalTrial}
-                                            placeholder={"Email"}
-                                            type={"email"}
-                                            name={"email"}
-                                            value={props.formData.promoter.email}
-                                            onChange={handlePromoterChange}
-                                        />
-                                    </Form.FloatingLabel>
-                                </Form.Group>
-                                <br/>
-                                <Form.Group>
-                                    <Form.Label className={"font-bold"}>Tipo de promotor</Form.Label>
-                                    <Form.Select
-                                        key={"therapeutic-area-id"}
-                                        required={isClinicalTrial}
-                                        aria-label="therapeutica area selection"
-                                        name={"therapeuticAreaId"}
-                                        defaultValue={""}
-                                        onChange={handlePromoterTypeChange}
-                                    >
-                                        <option key={"op-invalid"} value={""} disabled>-Tipo de promotor-</option>
-                                        {Object.values(PromoterTypes).map((p, idx) => (
-                                            <option key={`default-radio-${idx}`} value={p.id}>
-                                                {p.name}
-                                            </option>))}
-                                    </Form.Select>
-                                </Form.Group>
-                                <br/>
-                                <Form.Group controlId="formFile" className="mb-3">
-                                    <Form.Label className={"font-bold"}>Contrato financeiro</Form.Label>
+                    ))}
+                </Form.Group>
+                <br/>
+                <Form.Group className={"mb-3 flex-row"} controlId={"partnerships-switch-group"}>
+                    <label htmlFor={"partnerships-switch-group"} className={"font-bold"}>Parcerias</label>
+                    <Form.Check
+                        className={"ms-2 d-inline"}
+                        key={"partnerships-switch"}
+                        type={"switch"}
+                        name={"hasPartnerships"}
+                        disabled={!isClinicalTrial}
+                        checked={props.hasPartnerships}
+                        onChange={(() => props.setHasPartnerships(!props.hasPartnerships))}
+                    />
+
+                </Form.Group>
+
+                {isClinicalTrial
+                    &&
+                    <>
+                        <fieldset>
+                            <h5>Promotor</h5>
+                            <Form.Group>
+                                <Form.FloatingLabel className={"font-bold"} label={<RequiredSpan text={"Nome"}/>}>
                                     <Form.Control
-                                        key={"financial-contract-file"}
-                                        required={props.formData.researchType === ResearchTypes.CLINICAL_TRIAL.id}
-                                        type={"file"}
-                                        name={"file"}
-                                        onInput={handleFileInput}
+                                        key={"promoter-name"}
+                                        required={isClinicalTrial}
+                                        type={"text"}
+                                        name={"name"}
+                                        placeholder={"Nome"}
+                                        value={props.formData.promoter.name}
+                                        onChange={handlePromoterChange}
                                     />
-                                </Form.Group>
-                            </fieldset>
-                        </>
-                    }
-                    <Button type={"submit"} className={"mb-2"} style={{borderRadius: "8px"}}>
-                        Criar proposta
-                    </Button>
-                </Container>
+                                </Form.FloatingLabel>
+                            </Form.Group>
+                            <br/>
+                            <Form.Group>
+                                <Form.FloatingLabel className={"font-bold"} label={<RequiredSpan text={"Email"}/>}>
+                                    <Form.Control
+                                        key={"promoter-email"}
+                                        required={isClinicalTrial}
+                                        placeholder={"Email"}
+                                        type={"email"}
+                                        name={"email"}
+                                        value={props.formData.promoter.email}
+                                        onChange={handlePromoterChange}
+                                    />
+                                </Form.FloatingLabel>
+                            </Form.Group>
+                            <br/>
+                            <Form.Group>
+                                <RequiredLabel label={"Tipo de promotor"}/>
+                                <Form.Select
+                                    key={"therapeutic-area-id"}
+                                    required={isClinicalTrial}
+                                    aria-label="therapeutica area selection"
+                                    name={"therapeuticAreaId"}
+                                    defaultValue={""}
+                                    onChange={handlePromoterTypeChange}
+                                >
+                                    <option key={"op-invalid"} value={""} disabled>-Tipo de promotor-</option>
+                                    {Object.values(PromoterTypes).map((p, idx) => (
+                                        <option key={`default-radio-${idx}`} value={p.id}>
+                                            {p.name}
+                                        </option>))}
+                                </Form.Select>
+                            </Form.Group>
+                            <br/>
+                            <Form.Group controlId="formFile" className="mb-3">
+                                <RequiredLabel label={"Contrato financeiro"}/>
+                                <Form.Control
+                                    key={"financial-contract-file"}
+                                    required={props.formData.researchType === ResearchTypes.CLINICAL_TRIAL.id}
+                                    type={"file"}
+                                    name={"file"}
+                                    onInput={handleFileInput}
+                                />
+                            </Form.Group>
+                        </fieldset>
+                    </>
+                }
+                <Button type={"submit"} className={"mb-2"} style={{borderRadius: "8px"}}>
+                    Criar proposta
+                </Button>
             </Form>
         </Col>
     )

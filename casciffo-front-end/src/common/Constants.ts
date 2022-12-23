@@ -135,6 +135,11 @@ export const NotificationType = {
     }
 }
 
+export const SHORT_TIMEOUT = 1250
+export const MEDIUM_TIMEOUT = 3000
+export const LONG_TIMEOUT = 8000
+
+
 export const TOKEN_KEY = "token"
 
 export const KEY_VALUE_DELIMENTER = "="

@@ -1,9 +1,10 @@
-const BASE_URL = `/api/casciffo` //for spring serving
-// const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
+// const BASE_URL = `/api/casciffo` //for spring serving
+ const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
 // const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
 
 /************************** USER **************************/
 const USERS_URL = `${BASE_URL}/users`
+const USER_DETAILS_URL = (userId: string) => `${USERS_URL}/${userId}`
 const USER_LOGIN_URL = `${USERS_URL}/login`
 const USER_REGISTER_URL = `${USERS_URL}/register`
 const USERS_CREATE_URL = `${USERS_URL}/create`
@@ -118,6 +119,7 @@ const ApiUrls = {
     researchLatestModifiedUrl: RESEARCH_LAST_MODIFIED_URL,
     patientWithVisitsUrl: PATIENT_WITH_VISITS_URL,
     usersUrl: USERS_URL,
+    userDetailsUrl: USER_DETAILS_URL,
     userLoginUrl: USER_LOGIN_URL,
     userRegisterUrl: USER_REGISTER_URL,
     usersByRoleUrl: USERS_BY_ROLE_URL,

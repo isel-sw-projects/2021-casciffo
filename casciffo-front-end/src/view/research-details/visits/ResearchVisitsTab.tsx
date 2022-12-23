@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {MyUtil} from "../../../common/MyUtil";
 import {
-    PatientVisitsAggregate,
     ResearchPatientModel,
     ResearchVisitModel
 } from "../../../model/research/ResearchModel";

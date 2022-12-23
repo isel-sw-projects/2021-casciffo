@@ -6,6 +6,7 @@ import {MyTable} from "../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
 import {UserRoleModel} from "../../model/role/UserRoleModel";
 import {Roles} from "../../model/role/Roles";
+import {RequiredSpan} from "../components/RequiredSpan";
 
 type UsersProps = {
     service: UserService
@@ -121,7 +122,7 @@ export function Users(props: UsersProps) {
                         <fieldset className={"border border-2 p-3"}>
                             <legend className={"float-none w-auto p-2"}>Criar novo utilizador</legend>
                             <Form.Group className={"m-1 m-md-1"} >
-                                <Form.FloatingLabel label={"Nome"} >
+                                <Form.FloatingLabel label={<RequiredSpan text={"Nome"}/>} >
                                     <Form.Control
                                         type={"text"}
                                         value={newUser.name}
@@ -142,23 +143,12 @@ export function Users(props: UsersProps) {
                             </Form.Group>
 
                             <Form.Group className={"m-1 m-md-1"}>
-                                <Form.FloatingLabel label={"Email"}>
+                                <Form.FloatingLabel label={<RequiredSpan text={"Email"}/>}>
                                     <Form.Control
                                         type={"email"}
                                         placeholder={"Email"}
                                         value={newUser.email}
                                         name={"email"}
-                                        onChange={updateUser}
-                                    />
-                                </Form.FloatingLabel>
-                            </Form.Group>
-                            <Form.Group className={"m-1 m-md-1"}>
-                                <Form.FloatingLabel label={"Password"}>
-                                    <Form.Control
-                                        type={"password"}
-                                        placeholder={"Password"}
-                                        value={newUser.password}
-                                        name={"password"}
                                         onChange={updateUser}
                                     />
                                 </Form.FloatingLabel>

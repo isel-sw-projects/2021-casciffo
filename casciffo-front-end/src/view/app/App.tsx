@@ -32,6 +32,7 @@ import {MyUtil} from "../../common/MyUtil";
 import {Tooltip, Badge as MuiBadge}  from "@mui/material";
 import {MdNotificationImportant} from "react-icons/md";
 import {IoMdNotifications} from "react-icons/io";
+import {CreateRoutes} from "./CreateRoutes";
 
 function NavigationBar(props: {notificationService: NotificationService}) {
 
@@ -130,46 +131,6 @@ function NavigationBar(props: {notificationService: NotificationService}) {
             </div>
             </Navbar.Collapse>
         </Navbar>
-    );
-}
-
-function CreateRoutes() {
-
-    return (
-        <Routes>
-
-            <Route path={"/"} element={RequiresAuth(<Dashboard statisticsService={new StatisticsService()}/>)}/>
-            <Route path={"/login"} element={<Login UserService={new UserService()}/>}/>
-            <Route path={"/logout"} element={<Logout/>}/>
-            <Route path={"/propostas"}
-                   element={RequiresAuth(<Proposals service={new ProposalService()}/>)}/>
-            <Route path={"/propostas/criar"}
-                element={RequiresAuth(<CreateProposal
-                    service={new ProposalAggregateService()}
-                />)}
-            />
-            <Route path={"/propostas/:proposalId"}
-                   element={RequiresAuth(<ProposalDetailsPage proposalService={new ProposalAggregateService()}/>)}
-            />
-
-            <Route path={"/ensaios"}
-                element={RequiresAuth(<Research researchService={new ResearchAggregateService()}/>)}
-            />
-
-            <Route path={"/ensaios/:researchId"}
-                element={RequiresAuth(<ResearchDetailsPage researchService={new ResearchAggregateService()}/>)}
-            />
-
-            <Route path={"/utilizadores"}
-                   element={RequiresAuth(<Users service={new UserService()}/>)}/>
-
-            <Route path={"/utilizadores/:userId/notificacoes"}
-                   element={RequiresAuth(<NotificationsView service={new NotificationService()}/>)}/>
-            {/*<Route path={"/users/:userId"}*/}
-            {/*       element={RequiresAuth(<UserDetails service={new UserService()}/>)}/>*/}
-
-
-        </Routes>
     );
 }
 

@@ -106,7 +106,7 @@ export function CreateProposal(props : CP_Props) {
 
     return (
         <div className={"d-flex justify-content-evenly m-3"}>
-            <Row>
+            <Row sm={1} md={hasPartnerships ? 3 : 2}>
                 <ProposalFormColumn
                     onSubmit={handleFormSubmit}
                     service={props.service}
@@ -116,17 +116,15 @@ export function CreateProposal(props : CP_Props) {
                     setFormData={setProposalForm}
                 />
                 <InvestigatorTeamColumn
+                    setPrincipalInvestigator={inv => setProposalForm(updateState("pInvestigator", inv))}
                     setTeam={(team => setProposalForm(updateState("team", team)))}
                     service={props.service}
                 />
-                {hasPartnerships ?
-                    <PartnershipsColumn
-                        setPartnerships={(partnerships =>
-                            setProposalForm(updateState("partnerships", partnerships)))}
-                        partnerships={proposalForm.partnerships}
-                    /> :
-                    <></>
-                }
+                <PartnershipsColumn
+                    setPartnerships={(partnerships => setProposalForm(updateState("partnerships", partnerships)))}
+                    partnerships={proposalForm.partnerships}
+                    display={hasPartnerships}
+                />
             </Row>
         </div>
     );

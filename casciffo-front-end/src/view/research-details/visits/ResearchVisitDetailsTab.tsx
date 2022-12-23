@@ -87,7 +87,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
 
 
     useEffect(() => {
-        // console.log(`VISIT DETAILS READING HASH ${hash}`)
+
         try {
             const params = MyUtil.parseUrlHash(hash).find(params => params.key === VISIT_ID_PARAMETER)
             if (!params) {
@@ -98,9 +98,6 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
 
             props.service
                 .getVisitDetails(researchId!, vId)
-                // .then(value => {
-                //     console.log(value); return value
-                // })
                 .then(setVisit)
                 .then(_ => setDataReady(true))
                 .catch(errorHandler)
