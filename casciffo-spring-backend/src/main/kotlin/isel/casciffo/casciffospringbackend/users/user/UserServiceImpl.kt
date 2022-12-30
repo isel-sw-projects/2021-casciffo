@@ -64,13 +64,12 @@ class UserServiceImpl(
             return BearerTokenWrapper(token.value, existingUser.userId!!, existingUser.name!!, roles)
         }
 
-        throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Login credentials incorrect!")
+        throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais incorretas!")
     }
 
     override suspend fun findUserByEmail(email: String): UserModel? {
         return mapAggregateToModel(userRolesAggregateRepo.findByUserEmail(email), true)
             .awaitFirstOrNull()
-            ?: throw UserNotFoundException()
     }
 
     override suspend fun notifyRoles(roles: List<Roles>, notificationModel: NotificationModel) {
@@ -113,14 +112,15 @@ class UserServiceImpl(
 
     override suspend fun deleteUser(userId: Int): UserModel {
         val deletedUser = getUser(userId)!!
-        userRepository.deleteById(userId).subscribe()
+        userRepository.deleteById(userId).awaitSingleOrNull()
         return deletedUser
     }
 
     override suspend fun updateUserRoles(roles: List<Int>, userId: Int): UserModel {
-        if (roles.isEmpty()) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Roles cannot come empty!")
+        val user = getUser(userId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilizador com id [$userId] não existe!")
 
-        val user = getUser(userId, true)!!
+        if (roles.isEmpty()) return user
+
         val currentRoles = user.roles?.collectList()?.awaitFirstOrNull()
         val rolesToAdd =
             if (!currentRoles.isNullOrEmpty())
@@ -145,7 +145,14 @@ class UserServiceImpl(
                 notificationType = NotificationType.USER_NEW_ROLES
             )
         )
-        return getUser(userId, true)!!
+        return getUser(userId)!!
+    }
+
+    override suspend fun deleteUserRoles(roleIds: List<Int>, userId: Int): UserModel {
+        val userExists = userRepository.existsById(userId).awaitSingle()
+        if(!userExists) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Utilizador com id [$userId] não existe!")
+        userRolesRepo.deleteUserRolesByUserIdAndRoleIdIn(userId, roleIds).awaitSingleOrNull()
+        return getUser(userId)!!
     }
 
 
@@ -155,7 +162,7 @@ class UserServiceImpl(
             .asFlow()
     }
 
-    override suspend fun getUser(id: Int, loadDetails: Boolean): UserModel? {
+    override suspend fun getUser(id: Int): UserModel? {
         return mapAggregateToModel(userRolesAggregateRepo.findByUserId(id))
             .awaitFirstOrNull()
             ?: throw UserNotFoundException()
@@ -208,12 +215,12 @@ class UserServiceImpl(
         //leaving it like this for now to avoid confusion
         val email = username
         if(email === null)
-            throw org.springframework.security.core.userdetails.UsernameNotFoundException("User email can't be null!!!")
+            throw org.springframework.security.core.userdetails.UsernameNotFoundException("É obrigatório ter Email!")
 
         return userRepository.findByEmail(email)
             .switchIfEmpty(
                 Mono.error(
-                    org.springframework.security.core.userdetails.UsernameNotFoundException("User email can't be null!!!")
+                    org.springframework.security.core.userdetails.UsernameNotFoundException("É obrigatório ter Email!")
                 ))
             .flatMap(this::buildUserDetails)
     }

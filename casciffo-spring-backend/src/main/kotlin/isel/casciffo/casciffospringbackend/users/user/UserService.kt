@@ -13,7 +13,7 @@ interface UserService: ReactiveUserDetailsService {
 
     override fun findByUsername(username: String?): Mono<UserDetails>
     suspend fun getAllUsers() : Flow<UserModel?>
-    suspend fun getUser(id: Int, loadDetails: Boolean = false) : UserModel?
+    suspend fun getUser(id: Int) : UserModel?
     suspend fun registerUser(userModel: UserModel) : BearerTokenWrapper
     suspend fun getAllUsersByRoleNames(roles: List<String>): Flow<UserModel>
     suspend fun searchUsers(name: String, roles: List<String>): Flow<UserModel?>
@@ -30,5 +30,6 @@ interface UserService: ReactiveUserDetailsService {
 
     suspend fun deleteUser(userId: Int): UserModel
     suspend fun updateUserRoles(roles: List<Int>, userId: Int): UserModel
+    suspend fun deleteUserRoles(roleIds: List<Int>, userId: Int): UserModel
     suspend fun createNewUser(model: UserModel): UserModel
 }

@@ -189,7 +189,7 @@ class ProposalServiceImpl(
     @Transactional
     override suspend fun uploadCF(proposalId: Int, pfcId: Int, file: FilePart?): FileInfo {
         if(file == null)
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "File cannot be null!!")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "O ficheiro tem de ser especificado!")
         return proposalFinancialService.createCF(file, pfcId)
     }
 
@@ -197,7 +197,7 @@ class ProposalServiceImpl(
     override suspend fun updateProposal(proposal: ProposalModel): ProposalModel {
         val existingProposal = proposalRepository.findById(proposal.id!!).awaitSingleOrNull() ?: throw ProposalNotFoundException()
         if (existingProposal.stateId != proposal.stateId) {
-            throw InvalidStateTransitionException("State transition not allowed here!")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Transição de estado não é permitida aqui!")
         }
         proposalRepository.save(proposal).awaitSingleOrNull() ?: throw Exception("Idk what happened bro ngl")
         return proposal
@@ -205,7 +205,8 @@ class ProposalServiceImpl(
 
     @Transactional
     override suspend fun deleteProposal(proposalId: Int): ProposalModel {
-        val prop = proposalRepository.findById(proposalId).awaitSingleOrNull() ?: throw ProposalNotFoundException()
+        val prop = proposalRepository.findById(proposalId).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Proposta [$proposalId] não existe!")
         proposalRepository.deleteById(proposalId).awaitSingle()
         return prop
     }
@@ -263,7 +264,7 @@ class ProposalServiceImpl(
         if(isClinicalTrial && currState.name == States.VALIDACAO_CF.name) {
             val check = validationsRepository.isPfcValidatedByProposalId(proposal.id!!).awaitSingle()
             if(!check) {
-                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot advance state without the required validations!")
+                throw ResponseStatusException(HttpStatus.BAD_REQUEST, "O contrato financeiro ainda não foi completamente validado!")
             }
         }
         if (stateService.isTerminalState(nextStateId, stateType)) {
@@ -272,7 +273,7 @@ class ProposalServiceImpl(
                 if (!fullyValidated)
                     throw ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Financial component must be fully validated before advancing."
+                        "O contrato financeiro ainda não foi completamente validado!"
                     )
             }
             createResearch(proposal, isClinicalTrial)
@@ -334,7 +335,7 @@ class ProposalServiceImpl(
         validationComment: ValidationComment
     ): ProposalValidationModel {
         val wasValid = validationsRepository.isPfcValidatedByPfcId(pfcId).awaitSingle()
-        if(wasValid) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component already valid!")
+        if(wasValid) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "O componente financeiro já está validado!")
         val c = commentsService.createComment(validationComment.comment!!)
         validationComment.comment = c
         val res = proposalFinancialService.validate(pfcId, validationComment)

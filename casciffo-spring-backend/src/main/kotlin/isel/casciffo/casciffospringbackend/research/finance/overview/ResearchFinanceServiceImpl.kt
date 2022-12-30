@@ -32,7 +32,7 @@ class ResearchFinanceServiceImpl(
     }
     override suspend fun getFinanceComponentByResearchId(researchId: Int): ResearchFinance {
         val rf = researchFinanceRepository.findByResearchId(researchId).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No finance component for research with id $researchId.")
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhum componente financeiro para o ensaio [$researchId].")
 
         rf.monetaryFlow = researchMonetaryFlowRepository.findByRfcId(rf.id!!).asFlow()
         rf.teamFinanceFlow = researchTeamMonetaryFlowAggregate
@@ -47,7 +47,7 @@ class ResearchFinanceServiceImpl(
         if(!isValidated) validateResearchId(researchId)
 
         return researchFinanceRepository.save(researchFinance).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $researchFinance.")
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível atualizar o registo financeiro.")
     }
 
     override suspend fun saveMonetaryTeamFlowEntry(
@@ -56,7 +56,7 @@ class ResearchFinanceServiceImpl(
     ): ResearchFinanceWithEntryDTO {
         val rfc = validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
         val newEntry = researchTeamMonetaryFlowRepository.save(entry).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $entry")
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível guardar o registo.")
 
         return ResearchFinanceWithEntryDTO(
             id = rfc.id,
@@ -90,7 +90,7 @@ class ResearchFinanceServiceImpl(
     ): ResearchFinanceWithEntryDTO {
         val rfc = validateAndUpdateRFC(researchId, entry.amount!!, entry.typeOfMonetaryFlow!!)
         val newEntry = researchMonetaryFlowRepository.save(entry).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not save object $entry")
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível guardar a nova entrada!")
         return ResearchFinanceWithEntryDTO(
             id = rfc.id,
             researchId = rfc.researchId,
@@ -106,7 +106,7 @@ class ResearchFinanceServiceImpl(
         val rfc = researchFinanceRepository.findByResearchId(researchId).awaitSingleOrNull()
         val isValid = rfc !== null
         if(!isValid)
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "No financial component associated to research with id $researchId")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi encontrado nenhum componente financeiro para o ensaio [$researchId].")
         return rfc!!
     }
 }

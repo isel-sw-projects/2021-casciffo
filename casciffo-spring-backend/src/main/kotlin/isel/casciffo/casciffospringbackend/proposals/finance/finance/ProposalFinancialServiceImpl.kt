@@ -49,8 +49,6 @@ class ProposalFinancialServiceImpl(
     override suspend fun createProposalFinanceComponent(
         pfc: ProposalFinancialComponent
     ): ProposalFinancialComponent {
-//        val fileInfo = createFile(file)
-//        pfc.financialContractId = fileInfo.id
 
         verifyAndCreatePromoter(pfc)
 
@@ -101,8 +99,10 @@ class ProposalFinancialServiceImpl(
     }
 
     private suspend fun verifyAndCreatePromoter(pfc: ProposalFinancialComponent) {
-        if (pfc.proposalId == null) throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Proposal Id must not be null here!!!")
-        if (pfc.promoter == null && pfc.promoterId == null) throw ResponseStatusException(HttpStatus.BAD_REQUEST,"Promoter must not be null here!!!")
+        if (pfc.proposalId == null)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "O identificador da proposta não pode vir em branco!")
+        if (pfc.promoter == null && pfc.promoterId == null)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "O promotor tem de ser especificado!")
         val promoter = promoterRepository.findByEmail(pfc.promoter!!.email!!).awaitSingleOrNull()
         if (promoter == null) {
             pfc.promoter = promoterRepository.save(pfc.promoter!!).awaitSingle()
@@ -115,13 +115,13 @@ class ProposalFinancialServiceImpl(
 
     override suspend fun findComponentByProposalId(pid: Int, loadProtocol: Boolean): ProposalFinancialComponent {
         val component = proposalFinancialRepository.findByProposalId(pid).awaitFirstOrNull()
-            ?: throw IllegalArgumentException("No financial component for proposal Id:$pid!!!")
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Nenhum componente financeiro foi encontrado para a proposta [$pid]!")
         return loadRelations(component, loadProtocol)
     }
 
     override suspend fun createCF(file: FilePart, pfcId: Int): FileInfo {
         val pfc = proposalFinancialRepository.findById(pfcId).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Financial component $pfcId doesn't exist!!!")
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "O componente financeiro [$pfcId] não existe!")
 
         if(pfc.financialContractId !== null) {
 
@@ -155,7 +155,7 @@ class ProposalFinancialServiceImpl(
 
     override suspend fun getCF(pfcId: Int): Path {
         val fileInfo = fileInfoRepository.findByPfcId(pfcId).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "File doesn't exist!!!!!")
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "O ficheiro pedido não existe!")
         return Path(fileInfo.filePath!!)
     }
 

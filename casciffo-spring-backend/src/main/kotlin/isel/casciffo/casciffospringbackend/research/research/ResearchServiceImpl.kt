@@ -23,7 +23,6 @@ import isel.casciffo.casciffospringbackend.states.transitions.StateTransitionSer
 import isel.casciffo.casciffospringbackend.statistics.ResearchStats
 import isel.casciffo.casciffospringbackend.statistics.ResearchStatsRepo
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
@@ -35,7 +34,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import reactor.core.publisher.Flux
 
 @Service
 class ResearchServiceImpl(
@@ -70,7 +68,7 @@ class ResearchServiceImpl(
 
     override suspend fun getResearch(researchId: Int, loadDetails: Boolean): ResearchModel {
         val aggregate = aggregateRepo.findAggregateById(researchId).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "research Id doesnt exist!!!")
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Ensaio com id [$researchId] não existe!")
 
         val research = aggregateMapper.mapDTOtoModel(aggregate)
 
@@ -81,7 +79,7 @@ class ResearchServiceImpl(
     @Transactional
     override suspend fun createResearch(researchModel: ResearchModel, withFinance: Boolean): ResearchModel {
         val research = researchRepository.save(researchModel).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Couldn't save object $researchModel")
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Não foi possível criar o ensaio. Valor recebido: $researchModel")
 
         if(withFinance) {
             researchFinanceService.createResearchFinance(research.id!!)
@@ -187,7 +185,7 @@ class ResearchServiceImpl(
     }
 
     @Transactional
-    override suspend fun removeParticipant(researchId: Int, researchParticipantId: Int) {
-        participantService.removeParticipant(researchId, researchParticipantId)
+    override suspend fun removeParticipant(researchId: Int, patientProcessNum: Int) {
+        participantService.removeParticipant(researchId, patientProcessNum)
     }
 }

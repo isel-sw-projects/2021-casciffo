@@ -24,7 +24,7 @@ class TimelineEventServiceImpl(
     override suspend fun createEvent(proposalId: Int, event: TimelineEventModel): TimelineEventModel {
         event.proposalId = proposalId
         if(event.deadlineDate == null)
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Deadline date must not be null!!!")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "A data limite tem de ser especificada!")
         return timelineEventRepository.save(event).awaitSingle()
     }
 

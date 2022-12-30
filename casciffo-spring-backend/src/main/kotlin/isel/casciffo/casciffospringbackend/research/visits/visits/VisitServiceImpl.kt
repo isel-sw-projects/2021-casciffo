@@ -40,8 +40,10 @@ class VisitServiceImpl(
 
     @Transactional
     override suspend fun createVisit(visit: VisitDTO): VisitModel {
-        if(visit.visitInvestigators == null) throw IllegalArgumentException("A visit must have assigned investigators!!!")
-        if(visit.researchPatientId == null) throw IllegalArgumentException("Participant Id must not be null!!!")
+        if(visit.visitInvestigators == null)
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Uma visita precisa de investigadores associados!")
+        if(visit.researchPatientId == null)
+            throw IllegalArgumentException("Uma visita requer um paciente!")
 
         val model = visitMapper.mapDTOtoModel(visit)
         val createdVisit = visitRepository.save(model).awaitSingle()
@@ -68,7 +70,7 @@ class VisitServiceImpl(
         //small caveat is if participant doesn't exist needs to be addressed
 
         if(patientWithVisitsDTO.patient == null)
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente não pode vir null!!!")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Uma visita requer um paciente!")
 
         val participant = participantService.addParticipantToResearch(patientWithVisitsDTO.patient.id!!, researchId)
         participant.patient = patientWithVisitsDTO.patient
@@ -188,7 +190,8 @@ class VisitServiceImpl(
                     VisitPeriodicity.MONTHLY -> {date -> date.plusMonths(1)}
                     VisitPeriodicity.CUSTOM -> {date -> date.plusDays(it.customPeriodicity!!.toLong())}
                 else ->
-                    throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Periodicity of visit isn't what's expected! Current value: ${it.periodicity}")
+                    throw ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Valor de periodicidade não está dentro dos valores esperados. Valor recebido: ${it.periodicity}")
             }
 
             while (currDate.isBefore(it.endDate!!)) {

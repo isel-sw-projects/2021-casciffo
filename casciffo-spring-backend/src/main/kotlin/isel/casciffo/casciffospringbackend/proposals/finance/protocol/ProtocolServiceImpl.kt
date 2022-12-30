@@ -28,7 +28,7 @@ class ProtocolServiceImpl(
         val protocol = proposalProtocolRepository
             .findByFinancialComponentId(financeId)
             .awaitSingleOrNull()
-            ?: throw ResourceNotFoundException("No protocol found for proposalId:$proposalId")
+            ?: throw ResourceNotFoundException("Nenhum protocolo encontrado para a proposta [$proposalId]")
         if(!loadComments) return ProtocolAndCommentsDTO(protocol, null)
 
         val page = PageRequest.of(0, 20, Sort.by("created_date").descending())
@@ -43,7 +43,7 @@ class ProtocolServiceImpl(
 
     override suspend fun handleNewProtocolComment(proposalId: Int, pfcId: Int, validationComment: ValidationComment): ProtocolAggregate {
         if(validationComment.comment!!.commentType !== CommentType.PROTOCOL)
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Protocol validation comments must have Protocol validationType!")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Comentários de validação do protocolo têm de ser do tipo [Protocol] no campo validationType!")
 
         val protocol = getProtocolDetails(proposalId, pfcId).protocol!!
         validationComment.comment!!.proposalId = proposalId

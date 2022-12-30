@@ -32,13 +32,14 @@ class ParticipantServiceImpl(
     override suspend fun addParticipantToResearch(participantId: Int, researchId: Int): ResearchPatient {
         //todo consider if in case the Id doesnt exist in casciffo db, check in admission db
         val participant = participantRepository.findById(participantId).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "The patient Id doesnt exist in the db!!!")
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "O paciente não existe!")
 
         val alreadyExists = researchParticipantsRepository
             .findByResearchIdAndPatientId(researchId = researchId, patientId = participantId)
             .awaitSingleOrNull() != null
 
-        if(alreadyExists) throw ResponseStatusException(HttpStatus.CONFLICT, "This patient already exists and cannot be re-added.")
+        if(alreadyExists) throw ResponseStatusException(HttpStatus.CONFLICT,
+            "O paciente [$participantId] já está associado ao ensaio [$researchId].")
 
 
         val researchParticipant = ResearchPatient(null, participantId, researchId, LocalDateTime.now())
@@ -65,7 +66,7 @@ class ParticipantServiceImpl(
     override suspend fun getPatientDetails(researchId: Int, patientProcessNum: Long): ResearchPatient {
         val patient = aggregateRepo.findByResearchIdAndProcessId(researchId, patientProcessNum).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST
-                , "No resource found with params [researchId:$researchId,patientId:$patientProcessNum]")
+                , "O paciente com nº de processo [$patientProcessNum] não foi encontrado no ensaio [$researchId]")
 
         return aggregateMapper.mapDTOtoModel(patient)
     }

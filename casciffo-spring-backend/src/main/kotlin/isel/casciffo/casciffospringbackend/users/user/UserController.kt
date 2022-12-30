@@ -41,6 +41,16 @@ class UserController(
         return ResponseEntity.ok().body(dto)
     }
 
+    @DeleteMapping(USER_ROLES_URL)
+    suspend fun deleteUserRoles(
+        @RequestBody roles: List<Int>,
+        @PathVariable userId: Int
+    ): ResponseEntity<UserDTO> {
+        val user = service.deleteUserRoles(roles, userId)
+        val dto = mapper.mapModelToDTO(user)
+        return ResponseEntity.ok().body(dto)
+    }
+
     @PostMapping(REGISTER_USER_SEPARATE_URL)
     suspend fun createUser(@RequestBody userDTO: UserDTO): UserDTO {
         val model = mapper.mapDTOtoModel(userDTO)
@@ -51,7 +61,7 @@ class UserController(
 
     @GetMapping(USER_DETAIL_URL)
     suspend fun getUser(@PathVariable userId : Int): UserDTO? {
-        return mapper.mapModelToDTO(service.getUser(userId, loadDetails = true))
+        return mapper.mapModelToDTO(service.getUser(userId))
     }
 
     @GetMapping(USERS_URL)

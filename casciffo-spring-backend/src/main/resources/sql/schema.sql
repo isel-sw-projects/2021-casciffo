@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS user_roles (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id INT NOT NULL,
     role_id INT NOT NULL,
-    UNIQUE (user_id, role_id) ,
+    UNIQUE (user_id, role_id),
     CONSTRAINT fk_ur_user_id FOREIGN KEY(user_id) REFERENCES user_account(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_ur_role_id FOREIGN KEY(role_id) REFERENCES roles(role_id) ON DELETE CASCADE
 );

@@ -17,16 +17,14 @@ class DossierServiceImpl(
     }
 
     override suspend fun updateDossier(dossier: Dossier, researchId: Int): Dossier {
-        repository.findById(dossier.id!!).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Requested dossier does not exist!!!")
         dossier.clinicalResearchId = researchId
         return repository.save(dossier).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error updating dossier, value was $dossier")
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro na atualização do dossier com valor $dossier")
     }
 
     override suspend fun createDossier(dossier: Dossier, researchId: Int): Dossier {
         dossier.clinicalResearchId = researchId
         return repository.save(dossier).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error creating dossier, value was $dossier")
+            ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro na criação do dossier com valor $dossier")
     }
 }

@@ -22,7 +22,7 @@ class RoleServiceImpl(@Autowired private val repository: RoleRepository) : RoleS
 
     override suspend fun findById(id: Int): RoleModel {
         return repository.findById(id).awaitSingleOrNull()
-            ?: throw NonExistentResourceException("Role with id: $id doesn't exist.")
+            ?: throw NonExistentResourceException("Papél com id [$id] não existe.")
     }
 
     override suspend fun deleteRole(roleId: Int): RoleModel {

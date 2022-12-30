@@ -101,6 +101,7 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.POST, REGISTER_USER_SEPARATE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY)
             .pathMatchers(USER_DETAIL_URL, USER_SEARCH_URL).authenticated()
             .pathMatchers(HttpMethod.PUT, USER_ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, USER_ROLES_URL).hasAuthority(SUPERUSER_AUTHORITY)
             .pathMatchers(HttpMethod.PUT, USER_NOTIFICATIONS_URL).authenticated()
             .pathMatchers(HttpMethod.DELETE, USER_NOTIFICATIONS_URL).authenticated()
             .pathMatchers(HttpMethod.GET, USER_NOTIFICATIONS_URL).authenticated()

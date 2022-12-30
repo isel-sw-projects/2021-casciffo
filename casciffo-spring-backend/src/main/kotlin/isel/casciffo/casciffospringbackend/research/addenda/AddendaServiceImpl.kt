@@ -14,7 +14,9 @@ import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
 
 @Service
@@ -30,7 +32,7 @@ class AddendaServiceImpl(
 
     override suspend fun updateAddenda(addenda: Addenda): Addenda {
         val existingAddenda = addendaRepository.findById(addenda.id!!).awaitFirstOrNull()
-            ?: throw IllegalArgumentException("Proposal doesnt exist!!!")
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Adenda não existe!")
         val hasStateTransitioned = addenda.stateId == existingAddenda.stateId
 
         if(hasStateTransitioned) {

@@ -35,6 +35,10 @@ class AppConfig : WebFluxConfigurer {
 @Component
 class ServeStaticContent : WebFilter {
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
+        // server side rendering
+        // when a request is made while the client app is not loaded, like a hard refresh,
+        // send redirect the request to /index in order to first load the required javascript and
+        // let the front end handle it
         return if (
             !exchange.request.uri.path.startsWith("/api")
             && exchange.request.uri.path != "/"

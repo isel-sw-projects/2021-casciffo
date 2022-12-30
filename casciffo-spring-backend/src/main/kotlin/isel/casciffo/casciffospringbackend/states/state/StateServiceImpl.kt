@@ -55,14 +55,14 @@ class StateServiceImpl(
             .awaitSingleOrNull()
 
         if(nextState.isNullOrEmpty() || nextState.any { it.nextStateId == null }) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "State transition isn't valid.")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Transição de estado inválida.")
         }
 
         if(roles.contains(Roles.SUPERUSER.name)) return nextState.map { it.roleName!! }
 
         val hasNecessaryRoleToAdvanceState = nextState.any { ns -> roles.any{r -> ns.roleName == r} }
         if(!hasNecessaryRoleToAdvanceState) {
-            throw ResponseStatusException(HttpStatus.FORBIDDEN, "You don't have the permissions to do this transition.")
+            throw ResponseStatusException(HttpStatus.FORBIDDEN, "Não tem permissões para realizar esta operação.")
         }
 
         return nextState.map { it.roleName!! }
@@ -77,7 +77,7 @@ class StateServiceImpl(
             val chainType = StateType.valueOf(type.uppercase())
             return mapToState(stateAggregateRepo.findStateChainByType(chainType)).asFlow()
         } catch (e: Exception) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Mal-formatted parameter type!!")
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Parâmetro mal formatado!")
         }
     }
 

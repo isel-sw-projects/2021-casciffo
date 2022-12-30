@@ -22,18 +22,18 @@ class ScientificActivitiesServiceImpl(
         return repository.save(scientificActivity).awaitSingleOrNull()
             ?: throw ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Coulnd't create scientific activity, value was $scientificActivity"
+                "Não foi possível criar a atividade científica. Valor recebido: [$scientificActivity]"
             )
     }
 
     override suspend fun updateScientificActivity(scientificActivity: ScientificActivity): ScientificActivity {
         repository.findById(scientificActivity.id!!).awaitSingleOrNull()
-            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Scientific activity doesn't exist!!!")
+            ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Atividade científica com id [${scientificActivity.id}] não existe")
 
         return repository.save(scientificActivity).awaitSingleOrNull()
             ?: throw ResponseStatusException(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "Coulnd't update scientific activity, value was $scientificActivity"
+                "Não foi possível atualizar a atividade científica [${scientificActivity.id}]. Valor recebido: [$scientificActivity]"
             )
     }
 }
