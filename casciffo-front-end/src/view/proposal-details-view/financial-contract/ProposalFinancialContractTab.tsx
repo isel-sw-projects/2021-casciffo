@@ -12,6 +12,7 @@ import {BiCheckboxChecked, BiCheckboxMinus} from "react-icons/bi";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {Roles} from "../../../model/role/Roles";
 import {BsDownload} from "react-icons/bs";
+import {MyError} from "../../error-view/MyError";
 
 
 type PfcProps = {
@@ -20,6 +21,7 @@ type PfcProps = {
     onSubmitValidationComment: (c: ValidationCommentDTO, validationType:string) => void,
     downloadCf: () => void
     uploadCf: (file: File) => void
+    showErrorToast: (err: MyError) => void
 }
 
 type ValidationType = {
@@ -147,9 +149,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
         let file = e.target.files.item(0)
 
         if(file === null) {
-            //TODO put a good looking alert here
-            alert("Ocorreu uma falha ao carregar ficheiro, por favor tente de novo.")
-            // showErrorMessage("Falha ao carregar ficheiro, por favor tente de novo.");
+            props.showErrorToast(new MyError("Ocorreu uma falha ao carregar ficheiro, por favor tente de novo."))
             return;
         }
         setCfFile(file)
@@ -237,7 +237,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
 
             <div className={"border-top border-2 "} style={{display: display}}>
                 <Button className={"m-2 m-md-10 p-2 p-md-2"} onClick={toggleDisplayForm} style={{display: displayForm ? "none" : "inherit"}}>
-                    Criar comentário
+                    Validar
                 </Button>
                 <ValidationComment
                     displayForm={displayForm}

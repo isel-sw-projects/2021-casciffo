@@ -22,12 +22,12 @@ export class StatisticsService {
     }
 
     getResearchStats(): Promise<ResearchStats[]> {
-        const url = ApiUrls.researchStatsUrl()
+        const url = ApiUrls.researchStatsUrl
         return httpGet(url)
     }
 
     getLastFiveUpdatedResearch(): Promise<ResearchAggregateModel[]> {
-        const url = ApiUrls.researchLatestModifiedUrl()
+        const url = ApiUrls.researchLatestModifiedUrl
         return httpGet(url)
     }
 

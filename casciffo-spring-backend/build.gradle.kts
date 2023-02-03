@@ -17,12 +17,12 @@ repositories {
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:3.0.0")
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.7")
-	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.springframework.boot:spring-boot-starter-security") //Spring Security
+	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc:3.0.0") //Spring Data R2DBC
+	implementation("org.springframework.boot:spring-boot-starter-webflux") //Spring Webflux
+	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.7") //Kotlin Flow
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.6.4") //Kotlin coroutines
+	implementation("org.jetbrains.kotlin:kotlin-reflect") //Kotlin reflection
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
 	implementation("io.github.microutils:kotlin-logging-jvm:3.0.4")

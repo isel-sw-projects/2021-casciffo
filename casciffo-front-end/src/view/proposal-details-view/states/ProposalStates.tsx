@@ -16,6 +16,7 @@ type StateProps = {
     states: StateModel[],
     currentStateId: number,
     isProtocolValidated?: boolean
+    showErrorToast: (err: MyError) => void
 }
 
 type StateToggleButtonProps = {
@@ -72,7 +73,7 @@ export function ProposalStateView(props: StateProps) {
             throw new MyError("Não existe estado próximo possível!", 400)
         }
         if(currentState.nextInChain[0].name === STATES.VALIDADO.id && (props.isProtocolValidated != null && !props.isProtocolValidated)) {
-            alert("O Protocolo tem de estar validado para avançar!")
+            props.showErrorToast(new MyError("O Protocolo tem de estar validado para avançar!"))
             return
         }
         props.onAdvanceClick(currentState.id!, currentState.name!, currentState.nextInChain[0].id!)
@@ -190,7 +191,7 @@ export function ProposalStateView(props: StateProps) {
                 }<br/>
                 <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
                 <Button className={"float-end mb-2"} variant={"outline-secondary"} onClick={advanceState}
-                disabled={props.stateTransitions?.some(s => s.newState!.name === 'VALIDADO'/*s.newState!.stateFlowType === "TERMINAL"*/)}>
+                disabled={props.stateTransitions?.some(s => s.newState!.name === 'VALIDADO'/* todo check this magic string s.newState!.stateFlowType === "TERMINAL"*/)}>
                     Progredir estado
                 </Button>
                 <br/>

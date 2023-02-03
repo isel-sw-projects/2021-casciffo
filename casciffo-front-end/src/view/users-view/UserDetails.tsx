@@ -3,6 +3,7 @@ import {UserService} from "../../services/UserService";
 import {useParams} from "react-router-dom";
 import UserModel from "../../model/user/UserModel";
 import {useErrorHandler} from "react-error-boundary";
+import {Form} from "react-bootstrap";
 
 type Props = {
     service: UserService
@@ -22,7 +23,15 @@ export function UserDetails(props: Props) {
             .catch(errorHandler)
     }, [props.service, userId, errorHandler])
 
-    return <React.Fragment>
+    const updateUserData = (e: any) => {
+        e.preventDefault()
+        e.stopPropagation()
 
+    }
+
+    return <React.Fragment>
+        <Form onSubmit={updateUserData}>
+            
+        </Form>
     </React.Fragment>
 }

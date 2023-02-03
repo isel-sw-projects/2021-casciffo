@@ -2,9 +2,9 @@ package isel.casciffo.casciffospringbackend.mappers.research
 
 import isel.casciffo.casciffospringbackend.aggregates.research.ResearchAggregate
 import isel.casciffo.casciffospringbackend.mappers.Mapper
-import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
+import isel.casciffo.casciffospringbackend.data_management.Pathology
+import isel.casciffo.casciffospringbackend.data_management.ServiceType
+import isel.casciffo.casciffospringbackend.data_management.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalModel
 import isel.casciffo.casciffospringbackend.research.research.ResearchModel
 import isel.casciffo.casciffospringbackend.states.state.State

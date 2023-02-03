@@ -41,9 +41,13 @@ const val USER_NOTIFICATIONS_CHECK_URL = "$USERS_URL/{userId}/notifications/chec
 
 const val CONSTANTS_URL = "$API_URL/constants"
 
-const val SERVICE_TYPE_URL = "$CONSTANTS_URL/service"
-const val THERAPEUTIC_AREA_URL = "$CONSTANTS_URL/therapeutic-area"
-const val PATHOLOGY_URL = "$CONSTANTS_URL/pathology"
+const val SERVICE_TYPE_URL = "$CONSTANTS_URL/service-types"
+const val THERAPEUTIC_AREA_URL = "$CONSTANTS_URL/therapeutic-areas"
+const val PATHOLOGY_URL = "$CONSTANTS_URL/pathologies"
+
+const val PATHOLOGY_DETAIL_URL = "$PATHOLOGY_URL/{pathologyId}"
+const val SERVICE_TYPE_DETAIL_URL = "$SERVICE_TYPE_URL/{serviceTypeId}"
+const val THERAPEUTIC_AREA_DETAIL_URL = "$THERAPEUTIC_AREA_URL/{therapeuticAreaId}"
 
 
 /************************************ STATES *******************************************/
@@ -58,9 +62,14 @@ const val STATES_CHAIN_TYPE_URL = "$STATES_URL/{chainType}"
 const val PROPOSALS_URL = "$API_URL/proposals"
 const val PROPOSALS_COUNT_URL = "$PROPOSALS_URL/count"
 
+
 const val PROPOSALS_LASTEST_MODIFIED_URL = "$PROPOSALS_URL/last_modified"
 
 const val PROPOSAL_URL = "$PROPOSALS_URL/{proposalId}"
+const val PROPOSAL_DETAILS_FILE_UPLOAD_URL = "$PROPOSAL_URL/file-upload"
+const val PROPOSAL_DETAILS_FILE_URL = "$PROPOSAL_URL/files/{fileId}"
+const val PROPOSAL_DETAILS_FILE_DOWNLOAD_URL = "$PROPOSAL_DETAILS_FILE_URL/download"
+
 
 const val PROPOSAL_COMMENTS_URL = "$PROPOSAL_URL/comments"
 const val PROPOSAL_COMMENTS_DETAIL_URL = "$PROPOSAL_COMMENTS_URL/{cId}"
@@ -101,14 +110,19 @@ const val RESEARCH_STUDIES_URL = "$RESEARCH_DETAIL_URL/studies"
 const val RESEARCH_VISIT_URL = "$RESEARCH_DETAIL_URL/visits"
 const val RESEARCH_VISIT_WITH_PATIENT_URL = "$RESEARCH_DETAIL_URL/visits-n-patient"
 const val RESEARCH_VISIT_DETAIL_URL = "$RESEARCH_DETAIL_URL/visits/{visitId}"
-const val RESEARCH_PATIENTS = "$RESEARCH_DETAIL_URL/patients"
-const val RESEARCH_PATIENTS_RANDOMIZE = "$RESEARCH_PATIENTS/randomize"
-const val RESEARCH_VISIT_PATIENTS = "$RESEARCH_PATIENTS/{patientId}/visits"
+const val RESEARCH_PATIENTS_URL = "$RESEARCH_DETAIL_URL/patients"
+const val RESEARCH_PATIENTS_RANDOMIZE_URL = "$RESEARCH_PATIENTS_URL/randomize"
+const val RESEARCH_VISIT_PATIENTS_URL = "$RESEARCH_PATIENTS_URL/{patientId}/visits"
 const val RESEARCH_DOSSIER_URL = "$RESEARCH_DETAIL_URL/dossier"
-const val RESEARCH_PATIENT_DETAILS = "$RESEARCH_PATIENTS/{patientProcessNum}"
-const val RESEARCH_FINANCE = "$RESEARCH_DETAIL_URL/finance"
-const val RESEARCH_FINANCE_TEAM_ENTRY = "$RESEARCH_FINANCE/team-entry"
-const val RESEARCH_FINANCE_RESEARCH_ENTRY = "$RESEARCH_FINANCE/research-entry"
+const val RESEARCH_PATIENT_DETAILS_URL = "$RESEARCH_PATIENTS_URL/{patientProcessNum}"
+const val RESEARCH_FINANCE_URL = "$RESEARCH_DETAIL_URL/finance"
+const val RESEARCH_FINANCE_TEAM_ENTRY_URL = "$RESEARCH_FINANCE_URL/team-entry"
+const val RESEARCH_FINANCE_RESEARCH_ENTRY_URL = "$RESEARCH_FINANCE_URL/research-entry"
 const val RESEARCH_GENERAL_STATS_URL = "$RESEARCH_URL/stats"
 
-const val SEARCH_PATIENTS = "$API_URL/patients/search"
+
+/*********************************** PATIENTS ******************************************/
+/***************************************************************************************/
+const val SEARCH_PATIENTS_URL = "$API_URL/patients/search"
+const val PATIENTS_URL = "$API_URL/patients"
+const val PATIENTS_DETAIL_URL = "$PATIENTS_URL/{patientId}"

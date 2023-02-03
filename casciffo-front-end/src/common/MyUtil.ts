@@ -5,9 +5,24 @@ import axios, {AxiosRequestConfig} from "axios";
 import FileSaver from "file-saver";
 import {MyError} from "../view/error-view/MyError";
 
+/** ********************************************************************************************************************/
+/** ********************************************** ARRAY UTILITY FUNCTIONS *********************************************/
+/** ********************************************************************************************************************/
+function removeItem<T>(arr: Array<T>, value: T): Array<T> {
+    const index = arr.indexOf(value);
+    return removeIndexOf(arr, index)
+}
 
-/******************************** TIME UTILITY FUNCTIONS ******************************** */
-/**************************************************************************************** */
+function removeIndexOf<T>(arr: Array<T>, index: number): Array<T> {
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+    return arr;
+}
+
+/** ********************************************************************************************************************/
+/** ********************************************** TIME UTILITY FUNCTIONS **********************************************/
+/** ********************************************************************************************************************/
 
 function convertSecondsToMillis(s: number): number {
     return s * Math.pow(10, 3)
@@ -141,8 +156,9 @@ function cmpWithToday(date: string | undefined | null, withHours: boolean = fals
 }
 
 
-/****************************************** HTTP UTILITY FUNCTIONS ***********************************/
-/*************************************************************************************************** */
+/** ********************************************************************************************************************/
+/** ********************************************** HTTP UTILITY FUNCTIONS **********************************************/
+/** ********************************************************************************************************************/
 
 const APPLICATION_CONTENT_TYPE = 'application/json'
 const HEADER_ACCEPT_JSON: [string,string] = ['Accept', APPLICATION_CONTENT_TYPE]
@@ -165,8 +181,10 @@ function formatUrlHash(args: KeyValuePair<string, string>[]): string {
 
 async function checkAndRaiseError(rsp: Response): Promise<Response> {
     if(!rsp.ok) {
+        const status = rsp.status
+        const body = await rsp.text()
         throw new MyError(
-            `Error occurred trying to reach url: ${rsp.url}\n${await rsp.json().catch(() => "No body")}`, rsp.status)
+            JSON.parse(body).reason, status)
     }
     return rsp
 }
@@ -253,8 +271,9 @@ export function httpGetFile(url: string): Promise<void> {
 }
 
 
-/************************************** BROWSER UTILITY FUNCTIONS *******************************/
-/**************************************************************************************************** */
+/** ********************************************************************************************************************/
+/** ********************************************* BROWSER UTILITY FUNCTIONS ********************************************/
+/** ********************************************************************************************************************/
 
 const getUserToken = () => {
     const tokenString = localStorage.getItem(TOKEN_KEY)
@@ -270,6 +289,8 @@ const clearUserToken = () => {
 const apiTitle = (title: string) => `CASCIFFO | ${title}`
 
 export const MyUtil = {
+    removeItem,
+    removeIndexOf,
     convertSecondsToMillis,
     convertMinutesToMillis,
     convertHoursToMillis,
@@ -297,5 +318,6 @@ export const MyUtil = {
     RESEARCH_VISIT_DETAIL_TITLE: (researchId: string, visitId: string) => apiTitle(`Ensaio ${researchId} | Visita ${visitId}`),
     RESEARCH_PATIENTS_TITLE: (researchId: string) => apiTitle(`Ensaio ${researchId} | Pacientes`),
     RESEARCH_PATIENT_DETAILS_TITLE: (researchId: string, patientId: string) => apiTitle(`Ensaio ${researchId} | Paciente ${patientId}`),
-    NOTIFICATIONS_TITLE: () => apiTitle('Notificações')
+    NOTIFICATIONS_TITLE: apiTitle('Notificações'),
+    DATA_TITLE: apiTitle('Gestão de Dados')
 }

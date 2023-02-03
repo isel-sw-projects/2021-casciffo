@@ -1,6 +1,6 @@
-// const BASE_URL = `/api/casciffo` //for spring serving
-const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
-// const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
+const BASE_URL = `/api/casciffo` //for spring serving
+//const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
+//const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
 
 /************************** USER **************************/
 const USERS_URL = `${BASE_URL}/users`
@@ -25,7 +25,6 @@ const USER_ROLES = (userId: string) => `${USERS_URL}/${userId}/roles`
 /************************** STATE **************************/
 const STATES_URL = `${BASE_URL}/states`
 const STATES_CHAIN_URL = (type: string) => `${STATES_URL}/${type}`
-// const STATES_CHAIN_BY_RESEARCH_ID = (researchId: string) => `${STATES_CHAIN_URL}`
 
 /************************** PROPOSAL **************************/
 const PROPOSALS_URL =  `${BASE_URL}/proposals`
@@ -59,9 +58,9 @@ const NEAREST_EVENTS_URL = (t: string) =>  `${BASE_URL}/events?t=${t}`
 
 /************************** CONSTANTS **************************/
 const CONSTANTS_URL = `${BASE_URL}/constants`
-const SERVICE_TYPES_URL = `${BASE_URL}/service-types`
-const THERAPEUTIC_AREAS_URL = `${BASE_URL}/therapeutic-areas`
-const PATHOLOGIES_URL = `${BASE_URL}/pathologies`
+const SERVICE_TYPES_URL = `${CONSTANTS_URL}/service-types`
+const THERAPEUTIC_AREAS_URL = `${CONSTANTS_URL}/therapeutic-areas`
+const PATHOLOGIES_URL = `${CONSTANTS_URL}/pathologies`
 
 const SERVICE_TYPES_DETAILS_URL = (id: string) => `${SERVICE_TYPES_URL}/${id}`
 const PATHOLOGIES_DETAILS_URL = (id: string) => `${THERAPEUTIC_AREAS_URL}/${id}`
@@ -85,14 +84,16 @@ const PATIENTS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patien
 const RESEARCH_PATIENT_DETAIL_URL = (rId: string, pId: string) => `${PATIENTS_RESEARCH_URL(rId)}/${pId}`
 const RESEARCH_FINANCE_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/finance`
 
-const PATIENTS_LIKE_URL = (processId: string) => `${BASE_URL}/patients/search?q=${processId}`
+const PATIENTS_URL = `${BASE_URL}/patients`
+const PATIENT_DETAILS_URL = (pId: string) => `${PATIENTS_URL}/${pId}`
+const PATIENTS_LIKE_URL = (processId: string) => `${PATIENTS_URL}/search?q=${processId}`
 const RANDOMIZE_PATIENTS = (researchId: string) => `${PATIENTS_RESEARCH_URL(researchId)}/randomize`
 
 const researchFinanceEntryUrl = (researchId: string) => `${RESEARCH_FINANCE_URL(researchId)}/research-entry`
 const researchFinanceTeamEntryUrl = (researchId: string)  => `${RESEARCH_FINANCE_URL(researchId)}/team-entry`
 
-const RESEARCH_STATS_URL = () => `${RESEARCH_URL}/stats`
-const RESEARCH_LAST_MODIFIED_URL = () => `${RESEARCH_URL}/last_modified`
+const RESEARCH_STATS_URL = `${RESEARCH_URL}/stats`
+const RESEARCH_LAST_MODIFIED_URL = `${RESEARCH_URL}/last_modified`
 
 const ApiUrls = {
     baseUrl: BASE_URL,
@@ -151,6 +152,8 @@ const ApiUrls = {
     userRolesUrl: USER_ROLES,
     usersCreateUrl: USERS_CREATE_URL,
     // statesChainByIdUrl: STATES_CHAIN_BY_RESEARCH_ID
+    patientsUrl: PATIENTS_URL,
+    patientDetailsUrl: PATIENT_DETAILS_URL,
     patientsLikeUrl: PATIENTS_LIKE_URL,
     nearestEventsUrl: NEAREST_EVENTS_URL,
     userNotifications: USER_NOTIFICATIONS_URL,

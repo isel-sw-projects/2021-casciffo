@@ -25,6 +25,8 @@ import {Roles} from "../../../model/role/Roles";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {useErrorHandler} from "react-error-boundary";
 import {ProposalDetailsTab} from "./ProposalDetailsTab";
+import {toast, ToastContainer} from "react-toastify";
+import {MyError} from "../../error-view/MyError";
 
 type ProposalDetailsProps = {
     proposalService: ProposalAggregateService
@@ -41,7 +43,8 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         //show error and move backwards using navigate
     }
 
-    const handler = useErrorHandler()
+    const showErrorToast = (error: MyError) => toast.error(error.message)
+    const errorHandler = useErrorHandler()
 
     const [proposal, setProposal] = useState<ProposalModel>({
         createdDate: undefined,
@@ -70,17 +73,15 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     useEffect(() => {
         document.title = MyUtil.PROPOSAL_DETAIL_TITLE
     })
-    
+
     useEffect(() => {
         const params = MyUtil.parseUrlHash(hash).find(p => p.key === TAB_PARAMETER)
         const tabParam = ( params && params.value ) || ProposalTabNames.proposal
-        
+
         setSelectedTab(tabParam)
     }, [hash])
-    // const ProposalStateView = React.memo(ProposalStateView, (prevProps, nextProps) => {
-    //     console.log('prevProps:' + prevProps + '\nnextProps:' + nextProps + '\n\n')
-    //     return JSON.stringify(prevProps) === JSON.stringify(nextProps)
-    // })
+
+
 
     useEffect(() => {
         const removeSuperUserFromRoles = (list: StateModel[]) =>
@@ -108,16 +109,16 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
             .then(setProposalAndGetItsType)
             .then(fetchStates)
             .then(() => setDataReady(true))
-        // .catch(handleFetchError)
-    }, [proposalId, props.proposalService])
-    
-    
+            .catch(errorHandler)
+    }, [errorHandler, proposalId, props.proposalService])
+
+
     const advanceState = useCallback((currentId: string, currStateName: string, nextStateId:string) => {
         props.proposalService
             .advanceState(proposalId!, nextStateId)
             .then(setProposal)
-            .catch(handler)
-    }, [handler, proposalId, props.proposalService])
+            .catch(error => toast.error(error.message))
+    }, [proposalId, props.proposalService])
 
     const updateProtocol = (pfcId: string, validationComment: ValidityComment) => {
         props.proposalService
@@ -132,6 +133,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     comments: [...prevState.comments || [], protocolAggregate.comment!]
                 }))
             })
+            .catch(showErrorToast)
     }
 
     // const handleFetchError = useCallback((reason: any) => {
@@ -143,6 +145,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
     //     console.log(value);
     //     return value
     // }
+
 
     const updateState = (key: keyof ProposalModel, value: unknown) =>
         (
@@ -168,11 +171,13 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
 
         props.proposalService.saveProposalComment(commentModel)
             .then(value => setProposal(updateState("comments", [...proposal.comments!, value])))
+            .catch(showErrorToast)
     };
 
     const handleNewEvent = (event: TimelineEventModel) => {
         props.proposalService.saveTimelineEvent(proposalId!, event)
             .then(value => setProposal(updateState("timelineEvents", [...proposal.timelineEvents!, value])))
+            .catch(showErrorToast)
     }
 
     const handleUpdateEvent = (e: TimelineEventModel) => {
@@ -182,6 +187,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                 setProposal(updateState("timelineEvents", newEvents))
                 return newEvents
             })
+            .catch(showErrorToast)
     }
 
     const onSubmitValidation = (c: ValidationCommentDTO, validationType: string) => {
@@ -201,6 +207,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     }
                 }))
             })
+            .catch(showErrorToast)
     }
 
     const downloadCf = async () => {
@@ -216,6 +223,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     ...prevState.financialComponent,
                     financialContract: rsp.data
                 }})))
+            .catch(showErrorToast)
     }
 
     const onSelectTab = (tab: string | null) => {
@@ -228,6 +236,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
 
     return (
         <React.Fragment>
+            <ToastContainer/>
             <Container>
                 <Tabs
                     id="controlled-tab-example"
@@ -244,7 +253,9 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 timelineEvents={proposal.timelineEvents || []}
                                 stateTransitions={proposal.stateTransitions || []}
                                 submittedDate={proposal.createdDate!}
-                                states={states || []}/>
+                                states={states || []}
+                                showErrorToast={showErrorToast}
+                            />
                             : <span><Spinner as={"span"} animation={"border"}/> A carregar estados... </span>
                         }
 
@@ -261,6 +272,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 stateTransitions={proposal.stateTransitions || []}
                                 submittedDate={proposal.createdDate!}
                                 states={states || []}
+                                showErrorToast={showErrorToast}
                             />}
                             <ProposalFinancialContractTab
                                 pfc={proposal.financialComponent!}
@@ -268,6 +280,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 onSubmitValidationComment={onSubmitValidation}
                                 downloadCf={downloadCf}
                                 uploadCf={uploadCf}
+                                showErrorToast={showErrorToast}
                             />
                         </Tab>
                     }
@@ -281,6 +294,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                             stateTransitions={proposal.stateTransitions || []}
                             submittedDate={proposal.createdDate!}
                             states={states || []}
+                            showErrorToast={showErrorToast}
                         />
                         <ProposalCommentsTabContent
                             comments={proposal.comments!}
@@ -297,6 +311,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                             stateTransitions={proposal.stateTransitions || []}
                             submittedDate={proposal.createdDate!}
                             states={states || []}
+                            showErrorToast={showErrorToast}
                         />
                         <ProposalCommentsTabContent
                             comments={proposal.comments!}
@@ -315,6 +330,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 stateTransitions={proposal.stateTransitions || []}
                                 submittedDate={proposal.createdDate!}
                                 states={states || []}
+                                showErrorToast={showErrorToast}
                             />
                             <PartnershipsTabContent
                                 partnerships={proposal.financialComponent!.partnerships!}
@@ -346,6 +362,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 stateTransitions={proposal.stateTransitions || []}
                                 submittedDate={proposal.createdDate!}
                                 states={states || []}
+                                showErrorToast={showErrorToast}
                             />
                             <ProposalTimelineTabContent
                                 possibleStates={states || []}

@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS user_notification (
     viewed BOOLEAN DEFAULT FALSE,
     ids TEXT,
     notification_type VARCHAR,
+    created_date TIMESTAMP DEFAULT NOW(),
     CONSTRAINT fk_notified_user FOREIGN KEY(user_id) REFERENCES user_account(user_id) ON DELETE CASCADE
 );
 
@@ -232,7 +233,10 @@ CREATE TABLE IF NOT EXISTS partnerships (
     phone_contact VARCHAR,
     icon_url TEXT,
     site_url TEXT,
-    description TEXT
+    description TEXT,
+    CONSTRAINT partnerships_unique_ne UNIQUE (name, email),
+    CONSTRAINT fk_partnership_pfc_id FOREIGN KEY (proposal_financial_id)
+        REFERENCES proposal_financial_component(proposal_financial_id) ON DELETE CASCADE
 );
 
 ---------------------------------------------------------------------------------------

@@ -50,6 +50,10 @@ class ParticipantServiceImpl(
         return aggregateRepo.findResearchPatientsByResearchId(researchId).asFlow().map { aggregateMapper.mapDTOtoModel(it) }
     }
 
+    override suspend fun findAll(): Flow<PatientModel> {
+        return participantRepository.findAll().asFlow()
+    }
+
     override suspend fun findByProcessId(pid: Long): PatientModel? {
         return participantRepository.findByProcessId(pid).awaitSingle()
     }
@@ -61,6 +65,15 @@ class ParticipantServiceImpl(
     @Transactional
     override suspend fun save(patient: PatientModel): PatientModel {
         return participantRepository.save(patient).awaitSingle()
+    }
+
+    @Transactional
+    override suspend fun deletePatient(patientId: Int): PatientModel? {
+        val toDelete = participantRepository.findById(patientId).awaitSingleOrNull()
+        if (toDelete != null) {
+            participantRepository.delete(toDelete).awaitSingleOrNull()
+        }
+        return toDelete
     }
 
     override suspend fun getPatientDetails(researchId: Int, patientProcessNum: Long): ResearchPatient {

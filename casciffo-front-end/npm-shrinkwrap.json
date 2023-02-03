@@ -42,10 +42,11 @@
         "react-dom": "^18.2.0",
         "react-error-boundary": "^3.1.4",
         "react-icons": "^4.7.1",
-        "react-notifications-component": "^4.0.1",
+        "react-multi-select-component": "^4.3.4",
         "react-router-bootstrap": "^0.26.2",
         "react-router-dom": "^6.6.0",
         "react-select": "^5.7.0",
+        "react-toastify": "^9.1.1",
         "serve": "^14.1.2",
         "typescript": "^4.9.4",
         "web-vitals": "^3.1.0",
@@ -13435,9 +13436,9 @@
       "dev": true
     },
     "node_modules/json5": {
-      "version": "2.2.1",
-      "resolved": "https://registry.npmjs.org/json5/-/json5-2.2.1.tgz",
-      "integrity": "sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==",
+      "version": "2.2.2",
+      "resolved": "https://registry.npmjs.org/json5/-/json5-2.2.2.tgz",
+      "integrity": "sha512-46Tk9JiOL2z7ytNQWFLpj99RZkVgeHf87yGQKsIkaPz1qSH9UczKH1rO7K3wgRselo0tYMUNfecYpm/p1vC7tQ==",
       "bin": {
         "json5": "lib/cli.js"
       },
@@ -16354,12 +16355,13 @@
       "resolved": "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz",
       "integrity": "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
     },
-    "node_modules/react-notifications-component": {
-      "version": "4.0.1",
-      "resolved": "https://registry.npmjs.org/react-notifications-component/-/react-notifications-component-4.0.1.tgz",
-      "integrity": "sha512-NRBkWO19AsXmN0b8YQ0L12eoCAhrnmIZtGm77ATWSfQEXPL5PYSyeACpx7tePP+R2De9b0IP4yk9vY4TtzC02w==",
+    "node_modules/react-multi-select-component": {
+      "version": "4.3.4",
+      "resolved": "https://registry.npmjs.org/react-multi-select-component/-/react-multi-select-component-4.3.4.tgz",
+      "integrity": "sha512-Ui/bzCbROF4WfKq3OKWyQJHmy/bd1mW7CQM+L83TfiltuVvHElhKEyPM3JzO9urIcWplBUKv+kyxqmEnd9jPcA==",
       "peerDependencies": {
-        "react": "^18.0.1"
+        "react": "^16 || ^17 || ^18",
+        "react-dom": "^16 || ^17 || ^18"
       }
     },
     "node_modules/react-overlays": {
@@ -16552,6 +16554,18 @@
       "peerDependencies": {
         "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
         "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
+      }
+    },
+    "node_modules/react-toastify": {
+      "version": "9.1.1",
+      "resolved": "https://registry.npmjs.org/react-toastify/-/react-toastify-9.1.1.tgz",
+      "integrity": "sha512-pkFCla1z3ve045qvjEmn2xOJOy4ZciwRXm1oMPULVkELi5aJdHCN/FHnuqXq8IwGDLB7PPk2/J6uP9D8ejuiRw==",
+      "dependencies": {
+        "clsx": "^1.1.1"
+      },
+      "peerDependencies": {
+        "react": ">=16",
+        "react-dom": ">=16"
       }
     },
     "node_modules/react-transition-group": {
@@ -18324,18 +18338,6 @@
         "strip-bom": "^3.0.0"
       }
     },
-    "node_modules/tsconfig-paths/node_modules/json5": {
-      "version": "1.0.1",
-      "resolved": "https://registry.npmjs.org/json5/-/json5-1.0.1.tgz",
-      "integrity": "sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==",
-      "dev": true,
-      "dependencies": {
-        "minimist": "^1.2.0"
-      },
-      "bin": {
-        "json5": "lib/cli.js"
-      }
-    },
     "node_modules/tsconfig-paths/node_modules/strip-bom": {
       "version": "3.0.0",
       "resolved": "https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz",
@@ -19935,7 +19937,7 @@
         "convert-source-map": "^1.7.0",
         "debug": "^4.1.0",
         "gensync": "^1.0.0-beta.2",
-        "json5": "^2.2.1",
+        "json5": "2.2.2",
         "semver": "^6.3.0"
       }
     },
@@ -22441,7 +22443,7 @@
       "dev": true,
       "requires": {
         "ejs": "^3.1.6",
-        "json5": "^2.2.0",
+        "json5": "2.2.2",
         "magic-string": "^0.25.0",
         "string.prototype.matchall": "^4.0.6"
       }
@@ -29639,9 +29641,9 @@
       "dev": true
     },
     "json5": {
-      "version": "2.2.1",
-      "resolved": "https://registry.npmjs.org/json5/-/json5-2.2.1.tgz",
-      "integrity": "sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA=="
+      "version": "2.2.2",
+      "resolved": "https://registry.npmjs.org/json5/-/json5-2.2.2.tgz",
+      "integrity": "sha512-46Tk9JiOL2z7ytNQWFLpj99RZkVgeHf87yGQKsIkaPz1qSH9UczKH1rO7K3wgRselo0tYMUNfecYpm/p1vC7tQ=="
     },
     "jsonfile": {
       "version": "6.1.0",
@@ -29743,7 +29745,7 @@
       "requires": {
         "big.js": "^5.2.2",
         "emojis-list": "^3.0.0",
-        "json5": "^2.1.2"
+        "json5": "2.2.2"
       }
     },
     "locate-path": {
@@ -31620,10 +31622,10 @@
       "resolved": "https://registry.npmjs.org/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz",
       "integrity": "sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA=="
     },
-    "react-notifications-component": {
-      "version": "4.0.1",
-      "resolved": "https://registry.npmjs.org/react-notifications-component/-/react-notifications-component-4.0.1.tgz",
-      "integrity": "sha512-NRBkWO19AsXmN0b8YQ0L12eoCAhrnmIZtGm77ATWSfQEXPL5PYSyeACpx7tePP+R2De9b0IP4yk9vY4TtzC02w==",
+    "react-multi-select-component": {
+      "version": "4.3.4",
+      "resolved": "https://registry.npmjs.org/react-multi-select-component/-/react-multi-select-component-4.3.4.tgz",
+      "integrity": "sha512-Ui/bzCbROF4WfKq3OKWyQJHmy/bd1mW7CQM+L83TfiltuVvHElhKEyPM3JzO9urIcWplBUKv+kyxqmEnd9jPcA==",
       "requires": {}
     },
     "react-overlays": {
@@ -31762,6 +31764,14 @@
         "prop-types": "^15.6.0",
         "react-transition-group": "^4.3.0",
         "use-isomorphic-layout-effect": "^1.1.2"
+      }
+    },
+    "react-toastify": {
+      "version": "9.1.1",
+      "resolved": "https://registry.npmjs.org/react-toastify/-/react-toastify-9.1.1.tgz",
+      "integrity": "sha512-pkFCla1z3ve045qvjEmn2xOJOy4ZciwRXm1oMPULVkELi5aJdHCN/FHnuqXq8IwGDLB7PPk2/J6uP9D8ejuiRw==",
+      "requires": {
+        "clsx": "^1.1.1"
       }
     },
     "react-transition-group": {
@@ -33085,20 +33095,11 @@
       "dev": true,
       "requires": {
         "@types/json5": "^0.0.29",
-        "json5": "^1.0.1",
+        "json5": "2.2.2",
         "minimist": "^1.2.6",
         "strip-bom": "^3.0.0"
       },
       "dependencies": {
-        "json5": {
-          "version": "1.0.1",
-          "resolved": "https://registry.npmjs.org/json5/-/json5-1.0.1.tgz",
-          "integrity": "sha512-aKS4WQjPenRxiQsC93MNfjx+nbF4PAdYzmd/1JIj8HYzqfbu86beTuNgXDzPknWk0n0uARlyewZo4s++ES36Ow==",
-          "dev": true,
-          "requires": {
-            "minimist": "^1.2.0"
-          }
-        },
         "strip-bom": {
           "version": "3.0.0",
           "resolved": "https://registry.npmjs.org/strip-bom/-/strip-bom-3.0.0.tgz",

@@ -3,9 +3,9 @@ package isel.casciffo.casciffospringbackend.mappers.proposal
 import isel.casciffo.casciffospringbackend.aggregates.proposal.ProposalAggregate
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
-import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
+import isel.casciffo.casciffospringbackend.data_management.Pathology
+import isel.casciffo.casciffospringbackend.data_management.ServiceType
+import isel.casciffo.casciffospringbackend.data_management.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.promoter.Promoter
 import isel.casciffo.casciffospringbackend.proposals.finance.protocol.ProposalProtocol

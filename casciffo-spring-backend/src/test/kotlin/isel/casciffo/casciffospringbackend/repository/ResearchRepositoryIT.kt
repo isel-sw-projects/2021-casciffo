@@ -1,9 +1,9 @@
 package isel.casciffo.casciffospringbackend.repository
 
 import isel.casciffo.casciffospringbackend.proposals.proposal.ProposalRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
+import isel.casciffo.casciffospringbackend.data_management.PathologyRepository
+import isel.casciffo.casciffospringbackend.data_management.ServiceTypeRepository
+import isel.casciffo.casciffospringbackend.data_management.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.research.research.ResearchRepository
 import isel.casciffo.casciffospringbackend.states.state.StateRepository
 import org.junit.jupiter.api.Test

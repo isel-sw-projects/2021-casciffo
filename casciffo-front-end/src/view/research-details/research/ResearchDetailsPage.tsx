@@ -34,6 +34,7 @@ import {
 import {ResearchVisitDetailsTab} from "../visits/ResearchVisitDetailsTab";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {MyUtil} from "../../../common/MyUtil";
+import {toast, ToastContainer} from "react-toastify";
 
 export function ResearchDetailsPage(props: { researchService: ResearchAggregateService }) {
     const {researchId} = useParams()
@@ -44,6 +45,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     const [selectedTab, setSelectedTab] = useState(ResearchTabNames.research)
     const [tabPaneScope, setTabPaneScope] = useState<TabPaneScope>(TabPaneScope.OVERVIEW)
     const errorHandler = useErrorHandler()
+    const errorToast = useCallback( (error: MyError)=> toast.error(error.message), [])
     // const ResearchDetailsContext = createContext({research: {}, setResearch: (r: ResearchModel): void => {}})
 
     const userId = useUserAuthContext().userToken?.userId
@@ -69,13 +71,15 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     useEffect(() => {
         props.researchService
             .fetchResearchStateChain()
-            .then(setStateChain, errorHandler)
+            .then(setStateChain)
+            .catch(errorHandler)
     }, [props.researchService, researchId, errorHandler])
 
     useEffect(() => {
         props.researchService
             .fetchResearch(researchId!)
-            .then(setResearch, errorHandler)
+            .then(setResearch)
+            .catch(errorHandler)
     }, [props.researchService, researchId, errorHandler])
 
 
@@ -83,8 +87,8 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         props.researchService
             .updateResearch(data)
             .then(setResearch)
-            .catch(errorHandler)
-    }, [errorHandler, props.researchService])
+            .catch(errorToast)
+    }, [errorToast, props.researchService])
 
 
     const submitDossier = useCallback((researchId: string) => {
@@ -97,21 +101,21 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                         dossiers: [d, ...prevState.dossiers ?? []]
                     }))
                 })
-                .catch(errorHandler)
+                .catch(errorToast)
         }
-    }, [errorHandler, props.researchService])
+    }, [errorToast, props.researchService])
 
     const saveRandomization = useCallback((patients: ResearchPatientModel[]) => {
         props.researchService.saveRandomization(researchId, patients)
             .then(value => setResearch(prevState => ({...prevState, patients: value})))
-            .catch(errorHandler)
-    }, [errorHandler, props.researchService, researchId])
+            .catch(errorToast)
+    }, [errorToast, props.researchService, researchId])
 
     const updateResearchFinance = useCallback((rf: ResearchFinance) => {
         props.researchService.updateResearchFinance(researchId, rf)
             .then(value => setResearch(prevState => ({...prevState, financeComponent: value})))
-            .catch(errorHandler)
-    }, [errorHandler, props.researchService, researchId])
+            .catch(errorToast)
+    }, [errorToast, props.researchService, researchId])
 
 
     const addPatientAndVisits = useCallback((patientAndVisitsToAdd: PatientVisitsAggregate) => {
@@ -129,8 +133,8 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
             .addPatientAndScheduleVisits(researchId, patientAndVisitsToAdd)
             .then(addPatientToList)
             .then(addVisitsToList)
-            .catch()
-    },[props.researchService, researchId])
+            .catch(errorToast)
+    },[errorToast, props.researchService, researchId])
 
     const addNewVisit = useCallback((visit: ResearchVisitModel) => {
         const addVisitsToList = (v: ResearchVisitModel[]) => {
@@ -140,13 +144,14 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         props.researchService
             .scheduleVisit(researchId, visit)
             .then(addVisitsToList)
-    }, [props.researchService, researchId])
+            .catch(errorToast)
+    }, [errorToast, props.researchService, researchId])
 
     const onSaveScientificActivity = useCallback((activity: ScientificActivityModel) => {
         props.researchService.newScientificActivityEntry(researchId!, activity)
             .then(value => setResearch(prevState => ({...prevState, scientificActivities: [value, ...prevState.scientificActivities || []]})))
-            .catch(errorHandler)
-    }, [errorHandler, props.researchService, researchId])
+            .catch(errorToast)
+    }, [errorToast, props.researchService, researchId])
 
     const onCompleteResearch = useCallback(() =>
         props.researchService
@@ -155,7 +160,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                 if(answer.success) {
                     setResearch(answer.research!)
                 } else {
-                    alert("Failure to complete. 😭")
+                    toast.error("Não foi possível completar! Tente refrescar a página.")
                 }
             })
             .catch(errorHandler)
@@ -168,7 +173,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                 if(answer.success) {
                     setResearch(answer.research!)
                 } else {
-                    alert("Failure to cancel. 😭")
+                    toast.error("Não foi possível cancelar! Tente refrescar a página.")
                 }
             })
             .catch(errorHandler)
@@ -189,6 +194,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                     }
                 }))
             })
+            .catch(errorToast)
     }
     const saveTeamFinanceEntry = (entry: ResearchTeamFinanceEntry) => {
         entry.rfcId = research.financeComponent!.id
@@ -204,12 +210,14 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                     }
                 }))
             })
+            .catch(errorToast)
     }
 
     const removePatient = (patientProcessNum: string) => {
         props.researchService
             .removeParticipant(researchId, patientProcessNum)
             .then(() => setResearch(prevState => ({...prevState, patients: prevState.patients?.filter(p => p.patient!.processId !== patientProcessNum)})))
+            .catch(errorToast)
     }
 
     const renderPatientOverviewScreen = () => {
@@ -381,6 +389,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     return (
         // <ResearchDetailsContext.Provider value={re}>
             <Container>
+                <ToastContainer/>
                 <Tabs
                     id="controlled-tab-example"
                     activeKey={selectedTab}

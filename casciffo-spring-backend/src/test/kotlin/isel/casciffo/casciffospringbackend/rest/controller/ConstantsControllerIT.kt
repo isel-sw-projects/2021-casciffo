@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.rest.controller
 
-import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
+import isel.casciffo.casciffospringbackend.data_management.PathologyRepository
+import isel.casciffo.casciffospringbackend.data_management.ServiceTypeRepository
+import isel.casciffo.casciffospringbackend.data_management.TherapeuticAreaRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired

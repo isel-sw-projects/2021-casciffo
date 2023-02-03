@@ -100,6 +100,12 @@ export const ResearchTabNames = {
     patients: "pacientes",
     finance: "financiamento"
 }
+export const DataTypesTabNames = {
+    serviceType: "tipo-de-servico",
+    pathology: "patologias",
+    therapeuticArea: "areas-de-terapia",
+    patients: "pacientes"
+}
 
 
 export const NotificationType = {
@@ -136,10 +142,11 @@ export const NotificationType = {
     }
 }
 
-export const SHORT_TIMEOUT = 1250
-export const MEDIUM_TIMEOUT = 3000
-export const LONG_TIMEOUT = 8000
+export const SHORT_TIMEOUT_MILLIS = 1250
+export const MEDIUM_TIMEOUT_MILLIS = 3000
+export const LONG_TIMEOUT_MILLIS = 8000
 
+export const NOTIFICATION_CHECK_INTERVAL_MINUTES = 10
 
 export const TOKEN_KEY = "token"
 

@@ -64,7 +64,7 @@
 % Additional packages you may want to use (comment those not needed)
 %================================================
 %\usepackage{colortbl}
-
+\usepackage{cleveref}
 
 % Sort citations - ONLY if using "plain" style, otherwise keep commented
 %\usepackage[sort]{cite}
@@ -101,11 +101,11 @@
 % File glossary.tex is not found, ignore
 }
 
-\InputIfFileExists{Chapters/glossary}{%
-% File glossary.tex exists and is read
-}{%
-% File glossary.tex is not found, ignore
-}
+% \InputIfFileExists{Chapters/glossary}{%
+% % File glossary.tex exists and is read
+% }{%
+% % File glossary.tex is not found, ignore
+% }
 
 % To register TODO notes in the text
 \setlength{\marginparwidth}{1.5cm}
@@ -161,7 +161,7 @@
 %% All the names inside braces below sould correspond to a file
 %%     with extension ".tex" and located in the "Chapters" folder
 %% ------------------------------------------------------------
-\dedicatoryfile{dedicatory} 
+% \dedicatoryfile{dedicatory} 
 
 % Acknowledgments text. Will only be considered for final documents,
 % i.e., "bsc", "msc" and "phd", otherwise, it will be silently ignored
@@ -180,7 +180,7 @@
 % Conditionally insert List of Figures, Tables and Code Listings
 \addlisttofrontmatter{\conditionalLoF} 	% The List of Figures. 
 \addlisttofrontmatter{\conditionalLoT} 	% The List of Tables. 
-\addlisttofrontmatter{\conditionalLoL}		% The List of Code Listings.
+\addlisttofrontmatter{\conditionalLoL}	% The List of Code Listings.
 
 \addlisttofrontmatter{\printnoidxglossary[type=acronym]} % The List of Abreviations 
 \addlisttofrontmatter{\printnoidxglossary} %  default: type=main,  Glossary. Comment to omit.						
@@ -194,6 +194,7 @@
 \chapterfile{chapter4}
 \chapterfile{chapter5}
 \chapterfile{chapter6}
+\chapterfile{chapter7}
 
 %% ------------------------------------------------------------
 %% Bibliography style

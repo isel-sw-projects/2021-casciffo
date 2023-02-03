@@ -18,9 +18,9 @@ import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.files.FileInfoRepository
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsRepository
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsService
-import isel.casciffo.casciffospringbackend.proposals.constants.PathologyRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceTypeRepository
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticAreaRepository
+import isel.casciffo.casciffospringbackend.data_management.PathologyRepository
+import isel.casciffo.casciffospringbackend.data_management.ServiceTypeRepository
+import isel.casciffo.casciffospringbackend.data_management.TherapeuticAreaRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialRepository
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialService

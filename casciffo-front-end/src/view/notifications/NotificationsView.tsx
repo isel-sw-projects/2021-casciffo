@@ -23,7 +23,7 @@ type NotificationRow = {
 export function NotificationsView(props: NotificationProps) {
 
     useEffect(() => {
-        document.title = MyUtil.NOTIFICATIONS_TITLE()
+        document.title = MyUtil.NOTIFICATIONS_TITLE
     })
 
     const {userId} = useParams()
@@ -121,6 +121,13 @@ export function NotificationsView(props: NotificationProps) {
                         id={`master-check`}
                         onChange={selectAllNotificationRows}/>,
                     cell: info => info.getValue(),
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => MyUtil.formatDate(row.notification.createdDate!, true),
+                    id: 'date-time',
+                    cell: info => info.getValue(),
+                    header: () => <span>Data & hora</span>,
                     footer: props => props.column.id,
                 },
                 {

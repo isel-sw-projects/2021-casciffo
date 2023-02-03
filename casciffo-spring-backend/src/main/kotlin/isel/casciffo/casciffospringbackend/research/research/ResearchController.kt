@@ -9,11 +9,8 @@ import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.comments.AddendaComment
 import isel.casciffo.casciffospringbackend.research.patients.ResearchPatient
 import isel.casciffo.casciffospringbackend.research.studies.ScientificActivity
-import isel.casciffo.casciffospringbackend.research.visits.visits.PatientWithVisitsDTO
-import isel.casciffo.casciffospringbackend.research.visits.visits.VisitModel
 import isel.casciffo.casciffospringbackend.statistics.ResearchStats
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -103,7 +100,7 @@ class ResearchController(
         return mapper.mapModelToDTO(model)
     }
 
-    @PostMapping(RESEARCH_PATIENTS)
+    @PostMapping(RESEARCH_PATIENTS_URL)
     suspend fun addParticipant(
         @PathVariable researchId: Int,
         @RequestParam participantId: Int
@@ -143,7 +140,7 @@ class ResearchController(
         return mapper.mapModelToDTO(model)
     }
 
-    @PutMapping(RESEARCH_PATIENTS_RANDOMIZE)
+    @PutMapping(RESEARCH_PATIENTS_RANDOMIZE_URL)
     suspend fun randomizeTreatmentBranches(
         @PathVariable researchId: Int,
         @RequestBody patients: List<ResearchPatient>
@@ -156,7 +153,7 @@ class ResearchController(
     /** ************************************** DELETE METHODS ********************************************/
     /** **************************************************************************************************/
 
-    @DeleteMapping(RESEARCH_PATIENT_DETAILS)
+    @DeleteMapping(RESEARCH_PATIENT_DETAILS_URL)
     suspend fun removeParticipant(
         @PathVariable researchId: Int,
         @PathVariable patientProcessNum: Int

@@ -51,7 +51,8 @@ class ProposalMapper(
             comments = dto.comments?.map{commentsMapper.mapDTOtoModel(it)}?.asFlow(),
             investigationTeam = dto.investigationTeam?.map{invTeamMapper.mapDTOtoModel(it)}?.toFlux(),
             stateTransitions = dto.stateTransitions?.asFlow(),
-            timelineEvents = dto.timelineEvents?.toFlux()
+            timelineEvents = dto.timelineEvents?.toFlux(),
+            files = dto.files?.asFlow()
         )
     }
 
@@ -88,7 +89,8 @@ class ProposalMapper(
             comments = model.comments?.map { commentsMapper.mapModelToDTO(it) }?.toList(),
             investigationTeam = model.investigationTeam?.collectList()?.awaitSingleOrNull()?.map { invTeamMapper.mapModelToDTO(it) },
             stateTransitions = model.stateTransitions?.toList(),
-            timelineEvents = model.timelineEvents?.collectList()?.awaitSingleOrNull()
+            timelineEvents = model.timelineEvents?.collectList()?.awaitSingleOrNull(),
+            files = model.files?.toList()
         )
     }
 }

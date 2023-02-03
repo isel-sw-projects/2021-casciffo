@@ -2,13 +2,48 @@
 %  chapter7.tex
 %
 \chapter{Conclusions and Future Work}\label{ch:conclusion}
-The management and monitoring of clinical trial data is a arduous task for the researchers within the UIC, who have to contribute a considerable amount of effort and time into organizing the overview of clinical trials. To decrease this burden and optimize the management of clinical trials, the platform CASCIFFO has been proposed.
 
+The platform CASCIFFO was developed with the main goal of modernizing \acrshort{hff}'s clinical investigation unit, bringing new simple and effective ways of managing clinical trials. 
+This management includes tracking the progress of proposals and clinical trials; asset management in clinical trials; financial management by keeping track of budget use; scheduling visits transparent to their physical location (face-to-face or tele-consultation); management and tracking of patients who are added to a clinical trial as participants and finally allowing data to be exported into Excel files.
 
+Defining the platform's functional requirements was the first step in developing it. This allows us to gain a clear understanding of the problems that need to be addressed and create a suitable solution for each problem according to their needs. Additionally, by delineating the functional requirements, the business logic flow will be derived naturally from their analysis. 
 
-\section{Future work}\label{sec:future-work}
+To help with visualization of the requirements, several \acrfull{ui} mock-ups were created with the goal for providing a guideline on addressing each functional requirement.
 
-\textbf{TODO} screen only for finance roles showing the proposals/trials that require payment
-\textbf{TODO} finance events on clinical trials 
-\textbf{TODO} 
-\textbf{TODO} 
+Upon completing this step, we began an analysis of the technology and frameworks that will be used in CASCIFFO's implementation. 
+The platform was planned to have 2 main modules, the \acrfull{be} module that manages business logic, and the \acrfull{fe} module where user interactive begins and presents the platform's capabilities to the user. The interaction of these modules was defined to be over HTTP, by exposing the \acrshort{be} as a REST API to be consumed by the \acrshort{fe}.
+
+With a mind set on innovative technology, the framework chosen for the \acrshort{be} was \textit{Spring WebFlux}~\cite{spring-webflux}, in conjuncture with \textit{Gradle} and written in \textit{Kotlin}.
+
+The choice for \textit{Spring WebFlux}~\cite{spring-webflux} resides in the non-blocking environment offered by the framework. Not only is it fully capable of receiving and responding over HTTP in a \emph{reactive} manner, while also providing support for the \textit{R2DBC driver}~\cite{r2dbc}; a database driver capable of making non-blocking access calls to a certain database. 
+In the scope of this platform, the database was written in \textit{PostgreSQL}~\cite{postgresql}, chosen for its capabilities and the support available through the community and documentation.
+
+Moving onto the technology that makes up the \acrshort{fe}, we chose a \textit{Node.js}~\cite{nodejs} environment along with the framework \textit{React.js}~\cite{reactjs} in conjunction with the language \textit{TypeScript}~\cite{typescript}. 
+Since the \acrshort{fe} consists in the development of the website of the platform CASCIFFO, choosing \textit{Node.js}~\cite{nodejs} was an immediate choice, \textit{React.js}~\cite{reactjs} was chosen due to its simplicity in creating websites by using a reactive and component based approach; incredible popularity and support; the community and documentation available makes it an alluring framework to choose. Finally, with \textit{TypeScript}~\cite{typescript} being a super set of \textit{JavaScript}, offering type safety and many other features that allow detection of errors at compile time was the first and foremost choice and final decision for the programming language of the \acrshort{fe} module. 
+
+Once the second phase of development - choosing the technology for each module - finished, the third phase began. This phase consists in the implementation of both modules accompanied by continuous testing for quality assurance. To facilitate continuous development, the \textit{Heroku} cloud-based service was used, which allowed for testing, rapid maintenance and feature delivery. 
+Having both modules in separate \textit{Heroku} instances allowed either one to work independently, which enabled the deployment of newer versions on either module without implying a deployment on the one other as well. Although the \acrshort{fe} relies heavily on the \acrshort{be} module for data, it can function on its own as a \acrfull{pwa}. 
+As a plus, the database was also stored in conjunction with the \acrshort{be} module in its \textit{Heroku} instance. 
+
+Although the use of \textit{Heroku} allows for testing by simply accessing the URL of the instance in question, since it's using their free plan, the instance will hibernate after a set timeout. Accessing the instance URL will wake it up and make it ready for use. This process takes time and causes a delay on startup. As of November 28th of 2022, \textit{Heroku} has deprecated~\footnote{https://devcenter.heroku.com/changelog-items/2461}~\label{fn:heroku-rip} some of it's free resources, including \textit{PostgreSQL} hosting, thus not allowing the recreation of this process without spending resources.  
+
+When it came to testing each module, the \acrshort{be} module was tested using unit tests for each non-controller component. The controllers, which consume the HTTP requests, were tested with the help of the framework \textit{Postman}~\cite{postman}. The tests made for the \acrshort{fe} module consisted on two main aspects, the performance evaluation made by the \textit{Developer Tool Lighthouse}~\cite{lighthouse} and the feedback given by the team at \acrshort{hff} accompanying us.
+
+Once the implementation was finished, the platform was deployed on-premises on a dedicated server instance running on Ubuntu and served by the Apache service. Based on the needs of the HFF, the application was hosted via HTTP, not HTTPS, which deters the possibility for the \acrshort{fe} to be a \acrshort{pwa}. This could be a future next step, as the module is fully ready to operate as a \acrshort{pwa} needing only to be hosted via HTTPS.
+
+Looking at the developed solution, we can conclude that the functional requirements were met, though some deviated from their original~\acrshort{ui} mock-up design due to sudden business logic changes or previously uncounted obstacles.
+As to the non-functional requirements, the integration of the \acrshort{hff}/\acrshort{uic} database - "Admission", was not completed in time, having been replaced with the possibility of adding patient and investigator data manually through the platform.
+Although it is early to conclude whether the platform CASCIFFO will achieve its desired goal in full, it is certain that it's a step into the right direction.
+
+Setting the sight on the future of CASCIFFO, an interesting take on the next steps of development could be the addition of new functionalities and quality of life improvements, such as:
+\begin{itemize}
+    \item Having a screen dedicated to the finance and juridical roles to display proposals pending validation; 
+    \item Adding a timeline with events on the financial aspect of a clinical trial;
+    \item Having push notifications over site notifications;
+    \item Integrating with a finance module to provide improved ways of finance management of clinical trials;
+    \item Integration with a calendar platform to merge the scheduled visits in that calendar;
+    \item Implementation of a Publisher Subscribe~\footnote{https://learn.microsoft.com/en-us/azure/architecture/patterns/publisher-subscriber}\label{fn:pub-sub} methodology to allow users to 'Subscribe' to updates on certain clinical trials;
+    \item Standardize the responses made by the \acrlong{be} module. For example using HATEOAS.
+    \item Analysis of hosting via HTTP vs HTTPS, as the latter allows the \acrshort{fe} module to be considered a \acrshort{pwa}.
+    \item Integration with the HFF's internal database to pull patient and researcher data over having to manually add each of them.
+\end{itemize}

@@ -45,10 +45,6 @@ export function PatientDetails(props: Props) {
         setPatientProcessNum(pId)
 
         props.fetchPatient(researchId!, pId)
-            // .then(value => {
-            //     console.log(value)
-            //     return value
-            // })
             .then(setPatient)
             .then(_ => setDataReady(true))
             .catch(errorHandler)

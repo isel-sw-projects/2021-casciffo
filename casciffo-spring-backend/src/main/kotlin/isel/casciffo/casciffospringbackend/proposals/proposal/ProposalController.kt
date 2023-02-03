@@ -4,8 +4,6 @@ import isel.casciffo.casciffospringbackend.common.CountHolder
 import isel.casciffo.casciffospringbackend.common.FILE_NAME_HEADER
 import isel.casciffo.casciffospringbackend.common.ResearchType
 import isel.casciffo.casciffospringbackend.endpoints.*
-import isel.casciffo.casciffospringbackend.exceptions.DataBaseException
-import isel.casciffo.casciffospringbackend.exceptions.InvalidStateException
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.statistics.ProposalStats
@@ -61,6 +59,47 @@ class ProposalController(
         val page = PageRequest.of(p, n, if (so) Sort.by(s).descending() else Sort.by(s).ascending())
         return service.getAllProposals(type, page).map(mapper::mapModelToDTO)
     }
+
+// todo
+//    @PostMapping(PROPOSAL_DETAILS_FILE_UPLOAD_URL)
+//    suspend fun uploadProposalFile(
+//        @PathVariable proposalId: Int,
+//        @RequestPart("file") filePart: Mono<FilePart>
+//    ): ResponseEntity<FileInfo> {
+//        val fileInfo = service.uploadFile(proposalId, filePart.awaitSingleOrNull())
+//        return ResponseEntity.status(HttpStatus.CREATED).body(fileInfo)
+//    }
+//
+//    @DeleteMapping(PROPOSAL_DETAILS_FILE_URL)
+//    suspend fun deleteProposalFile(
+//        @PathVariable proposalId: Int,
+//        @PathVariable fileId: Int
+//    ): ResponseEntity<Unit> {
+//        service.deleteFile(proposalId, fileId)
+//        return ResponseEntity.ok().build()
+//    }
+//
+//    @GetMapping(PROPOSAL_DETAILS_FILE_DOWNLOAD_URL)
+//    suspend fun downloadProposalFile(
+//        @PathVariable proposalId: Int,
+//        @PathVariable fileId: Int
+//    ): ResponseEntity<InputStreamResource> {
+//        val path = service.downloadFile(proposalId, fileId)
+//        val fileName = path.fileName.toString().replaceAfterLast("-", "").dropLast(1)
+//        return ResponseEntity.ok()
+//            .headers {
+//                //attachment header very important because it tells the browser to commence the download natively
+//                it.contentDisposition = ContentDisposition.parse("attachment")
+//                it.contentType = MediaType.APPLICATION_PDF
+//                it.contentLength = path.fileSize()
+//                it.set(FILE_NAME_HEADER, fileName)
+//                it.accessControlExposeHeaders = listOf(FILE_NAME_HEADER)
+//            }
+//            .body(InputStreamResource(withContext(Dispatchers.IO) {
+//                Files.newInputStream(path)
+//            }))
+//    }
+
 
     @GetMapping(PROPOSALS_COUNT_URL)
     suspend fun getProposalsCount(): ResponseEntity<CountHolder> {

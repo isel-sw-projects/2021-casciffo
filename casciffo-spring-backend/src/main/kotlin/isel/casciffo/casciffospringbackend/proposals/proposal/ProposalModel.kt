@@ -1,11 +1,12 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamModel
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalComment
-import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
+import isel.casciffo.casciffospringbackend.data_management.Pathology
+import isel.casciffo.casciffospringbackend.data_management.ServiceType
+import isel.casciffo.casciffospringbackend.data_management.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponent
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.states.state.State
@@ -26,20 +27,14 @@ data class ProposalModel(
     @Id
     @Column(value = "proposal_id")
     var id: Int? = null,
-
     @Column(value = "sigla")
     var sigla: String? = null,
-
     @Column(value = "proposal_type")
     var type: ResearchType? = null,
-
     @Column(value = "created_date")
     var createdDate: LocalDate? = null,
-
     @Column(value = "last_modified")
     var lastModified: LocalDateTime? = null,
-
-
     @Column(value = "state_id")
     var stateId: Int? = null,
     @Column(value = "service_id")
@@ -58,6 +53,10 @@ data class ProposalModel(
     @Transient
     @Value("null")
     var researchId: Int? = null,
+
+    @Transient
+    @Value("null")
+    var files: Flow<FileInfo>? = null,
 
     @Transient
     @Value("null")

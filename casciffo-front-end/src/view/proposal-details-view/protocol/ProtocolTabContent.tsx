@@ -95,10 +95,9 @@ export function ProtocolTabContent(props: PPT_Props) {
                     </Button>
                 </Stack>
 
-
             <div className={"justify-content-evenly"}>
                 <Button onClick={showCommentForm} style={{display: displayForm ? "none" : "inherit"}}>
-                    Criar comentário
+                    Validar
                 </Button>
 
                 <ValidationComment

@@ -18,6 +18,9 @@ type TableProps = {
     getCheckedRows?: (data: any[]) => void
     loading?: boolean
     emptyDataPlaceholder?: JSX.Element | string
+    pageSize?: number
+    pageNumber?: number
+    totalNumber?: number
 }
 
 export function MyTable(props: TableProps) {
@@ -90,7 +93,7 @@ export function MyTable(props: TableProps) {
                         ? <tr key={"no-values"}><td colSpan={headerSize}>{props.emptyDataPlaceholder ?? "Sem dados."}</td></tr>
                         : table
                             .getRowModel()
-                            .rows.slice(0, 10)
+                            .rows.slice(props.pageNumber ?? 0, props.pageSize ?? 10) //TODO this limits row numbers
                             .map(row => {
                                 return (
                                     <tr key={row.id}>

@@ -2,37 +2,25 @@ import React, {useEffect, useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../assets/css/main/app.css";
 import "../../assets/css/shared/iconly.css";
-import {Button, Col, Container, Nav, Navbar, Row, Stack} from 'react-bootstrap';
-import {BrowserRouter, Link, Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css';
+import {Button, Container, Nav, Navbar, Stack} from 'react-bootstrap';
+import {BrowserRouter, Link, useLocation, useNavigate} from "react-router-dom";
 import {useUserAuthContext} from '../context/UserAuthContext';
 import {Roles} from "../../model/role/Roles";
+import {ErrorBoundary} from "react-error-boundary";
+import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
+import {NotificationService} from "../../services/NotificationService";
+import {MyUtil} from "../../common/MyUtil";
+import {Tooltip, Badge as MuiBadge, Grid} from "@mui/material";
+import {CreateRoutes} from "./CreateRoutes";
+// !!! IMPORTANT !!! react-icons imports !!!MUST!!! be imported like this, by specifying the folder
+// which is the prefix of the desired icon. Having the default /all will cause the app to crash.
 import {FaUser} from "react-icons/fa";
 import {BsDoorOpen} from "react-icons/bs";
 import {GiExitDoor} from "react-icons/gi";
-import {StatisticsService} from "../../services/StatisticsService";
-import ProposalAggregateService from "../../services/ProposalAggregateService";
-import {UserService} from "../../services/UserService";
-import {ErrorBoundary} from "react-error-boundary";
-import {Dashboard} from "./Dashboard";
-import {ResearchDetailsPage} from "../research-details/research/ResearchDetailsPage";
-import {Login} from "../login-view/Login";
-import {Research} from "../researches-view/Research";
-import {Users} from "../users-view/Users";
-import {Proposals} from "../proposals-view/Proposals";
-import ProposalService from "../../services/ProposalService";
-import RequiresAuth from "../login-view/RequiresAuth";
-import {ProposalDetailsPage} from "../proposal-details-view/proposal/ProposalDetailsPage";
-import {ResearchAggregateService} from "../../services/ResearchAggregateService";
-import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
-import {Logout} from "../login-view/Logout";
-import {CreateProposal} from "../proposal-form-view/CreateProposal";
-import {NotificationService} from "../../services/NotificationService";
-import {NotificationsView} from "../notifications/NotificationsView";
-import {MyUtil} from "../../common/MyUtil";
-import {Tooltip, Badge as MuiBadge}  from "@mui/material";
 import {MdNotificationImportant} from "react-icons/md";
 import {IoMdNotifications} from "react-icons/io";
-import {CreateRoutes} from "./CreateRoutes";
+import {NOTIFICATION_CHECK_INTERVAL_MINUTES} from "../../common/Constants";
 
 function NavigationBar(props: {notificationService: NotificationService}) {
 
@@ -48,17 +36,16 @@ function NavigationBar(props: {notificationService: NotificationService}) {
     useEffect(() => {
         if(userToken == null) return
         const interval = setInterval(() => {
-            // console.log("Checking for new notifications...")
             props.notificationService
                 .checkForNewNotifications(userToken!.userId!)
-                // .then(value => {console.log(`Found ${value} new notifications.`); return value;})
                 .then(setNotificationCount)
-        }, MyUtil.convertMinutesToMillis(1))
+        }, MyUtil.convertMinutesToMillis(NOTIFICATION_CHECK_INTERVAL_MINUTES))
         return () => clearInterval(interval)
     }, [props.notificationService, userToken])
 
+    const isUserAdmin = userToken && userToken.roles.find(r => r === Roles.SUPERUSER.id) != null
+
     return (
-        //FIXME BACKGROUND ON MOBILE IS TRANSPARENT FOR GOD KNOWS WHAT REASON
         <Navbar collapseOnSelect className={"ml-auto flex-fill"} bg="primary" variant="dark" expand="lg">
             <Navbar.Toggle  title={"Menu"}/>
             <Navbar.Collapse style={{backgroundColor: "#435ebe", width: "80%"}}>
@@ -75,60 +62,62 @@ function NavigationBar(props: {notificationService: NotificationService}) {
                             <Nav.Link eventKey="5" as={Link} to={"/ensaios"}>Ensaios Clínicos</Nav.Link>
                         </Nav.Item>
 
-                        {userToken.roles.find(r => r === Roles.SUPERUSER.id) &&
-                        <Nav.Item>
-                            <Nav.Link eventKey="6" as={Link} to={"/utilizadores"}>Utilizadores</Nav.Link>
-                        </Nav.Item>
-                    } </>}
+                        { isUserAdmin && <>
+                            <Nav.Item>
+                                <Nav.Link eventKey="6" as={Link} to={"/utilizadores"}>Utilizadores</Nav.Link>
+                            </Nav.Item>
+                            <Nav.Item>
+                                <Nav.Link eventKey={7} as={Link} to={"/dados"}>Gestão de Dados</Nav.Link>
+                            </Nav.Item>
+                            </>
+                        }
+                    </>}
                 </Nav>
 
-            <div style={{backgroundColor: "#435ebe", width:"auto"}}>
-                <Row className={"text-center"}>
-                    <Col className={"text-center"}>
-                        {userToken != null &&
-                            <Link to={`/utilizadores/${userToken.userId}/notificacoes`}>
-                                <Tooltip title={"Notificações"}>
-                                        <MuiBadge style={{top:10}} badgeContent={notificationCount} color={"warning"}>
-                                            {notificationCount === 0
-                                                ? <IoMdNotifications color={"#ffffff"} size={25}/>
-                                                : <MdNotificationImportant color={"#ffffff"} size={25}/>
-                                            }
-                                        </MuiBadge>
-                                </Tooltip>
-                            </Link>
-                        }
-                    </Col>
-                    <Col>
-                        <div >
+                <div className={"float-end"}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{backgroundColor: "#435ebe"}}>
+                        <Grid item xs={4} className={"text-center"}>
                             {userToken != null &&
-                                <FaUser size={20} color={"#f3ffff"} />
+                                <Link to={`/utilizadores/${userToken.userId}/notificacoes`}>
+                                    <Tooltip title={"Notificações"}>
+                                            <MuiBadge style={{top:10}} badgeContent={notificationCount} color={"warning"}>
+                                                {notificationCount === 0
+                                                    ? <IoMdNotifications color={"#ffffff"} size={25}/>
+                                                    : <MdNotificationImportant color={"#ffffff"} size={25}/>
+                                                }
+                                            </MuiBadge>
+                                    </Tooltip>
+                                </Link>
                             }
-                        </div>
-                    </Col>
-                    <Col>
-                            {userToken != null ?
-                                <GiExitDoor size={20} color={"#f3ffff"} />
-                                :
-                                <BsDoorOpen size={20} color={"#f3ffff"} />
-                            }
-                    </Col>
-                </Row>
-                <Row className={"text-center"}>
-                    <Col/>
-                    <Col>
-                        <p className={"mt-2 mt-md-2 text-capitalize"} style={{color:"#f3ffff", top:5}}>
-                        {userToken && userToken.userName}
-                        </p>
-                    </Col>
-                    <Col>
-                       {userToken != null ?
-                           <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={logout}>Logout</Button>
-                           :
-                           <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={() => navigate("/login")}>Login</Button>
-                       }
-                    </Col>
-                </Row>
-            </div>
+                        </Grid>
+                        <Grid item xs={4} className={"text-center"}>
+                                {userToken != null &&
+                                    <FaUser size={20} color={"#f3ffff"} style={{top: "0px"}}/>
+                                }
+                        </Grid>
+                        <Grid item xs={4} className={"text-center"}>
+                                {userToken != null ?
+                                    <GiExitDoor size={20} color={"#f3ffff"} />
+                                    :
+                                    <BsDoorOpen size={20} color={"#f3ffff"} />
+                                }
+                        </Grid>
+
+                        <Grid item xs={4}/>
+                        <Grid item xs={4} className={"text-center"}>
+                            <p className={"mt-2 mt-md-2 text-capitalize"} style={{color:"#f3ffff", top:5}}>
+                            {userToken && userToken.userName}
+                            </p>
+                        </Grid>
+                        <Grid item xs={4} className={"text-center"}>
+                           {userToken != null ?
+                               <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={logout}>Logout</Button>
+                               :
+                               <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={() => navigate("/login")}>Login</Button>
+                           }
+                        </Grid>
+                    </Grid>
+                </div>
             </Navbar.Collapse>
         </Navbar>
     );

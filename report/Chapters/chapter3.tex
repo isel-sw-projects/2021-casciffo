@@ -3,7 +3,7 @@
 %
 \chapter{Functional and Non-Functional Requirements}
 \label{ch:functionalities}
-This chapter details the functional and non-functional requirements and presents a mock \acrfull{ui} that will satisfy the requirement.
+This chapter details the functional requirements and presents a mock \acrfull{ui} that will satisfy the requirement.
 
 The main features of CASCIFFO can be separated into two groups: general functionalities and clinical component.
 These two groups contain the functional requirements of CASCIFFO.
@@ -281,5 +281,25 @@ In this setting, any investigator (associated to the clinical trial) is able to 
 When a visit occurs, the associated investigators will have access to the observations ("Observações") field and adverse event ("Evento adverso") warning. In addition to this, the field "Marcar presença" is now available to mark attendance.
 
 \section{Non-Functional Requirements}
-METER AQUI TABELA COM REQUISITOS NAO FUNCIONAIS
-NOTIFICAÇÕES/PAGINAÇÃO/ETC
+This section quickly lists, in a tabular fashion, the non-functional requirements noted during the analysis and development of the platform.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Non-Functional Requirements Specification.}
+\label{table:non-func-reqs}
+\begin{tabular}{lll}
+\toprule
+\textbf{Ref.} & \textbf{Description} & \textbf{Label} \\ \midrule
+1 & \begin{tabular}[c]{@{}l@{}}The user should be able to receive and read notifications \\within the application.\\ Notifications should include:\end{tabular} & Required \\ \hline
+1.1 & Proposal status updates. & Required \\ \hline
+1.2 & New Contacts. & Optional \\ \hline
+1.3 & New Observations. & Optional \\ \hline
+1.4 & When a time line event completes or is overdue. & Optional \\ \hline
+1.5 & Research status updates. & Required \\ \hline
+2 & All data presented with tables should have pagination. & Optional \\ \hline
+3 & Apache hosting. & Required \\ \hline
+4 & Integration with \acrshort{hff}'s patient database. & Optional \\ \hline
+\bottomrule
+\end{tabular}
+\end{table}

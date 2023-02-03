@@ -3,6 +3,7 @@ import {ValidationCommentDTO} from "../../../model/proposal/finance/ValidationMo
 import React, {useEffect, useState} from "react";
 import {Button, CloseButton, Form} from "react-bootstrap";
 import {useUserAuthContext} from "../../context/UserAuthContext";
+import {RequiredLabel} from "../../components/RequiredLabel";
 
 type ValidationCommentProps = {
     displayForm: boolean,
@@ -99,12 +100,12 @@ export function ValidationComment(props: ValidationCommentProps) {
         <Form className={"justify-content-evenly m-2"} onSubmit={submitComment}>
         <fieldset className={"border p-3"}>
             <legend className={"float-none w-auto p-2 flex-column"}>
-                Comentário
+                Validação
                 {<CloseButton className={"float-end"} onClick={props.onClose}/>}
             </legend>
 
             <Form.Group className={"m-2"} style={{width:"20%"}}>
-                <Form.Label>Tipo de validação</Form.Label>
+                <RequiredLabel label={"Tipo de validação"}/>
                 <Form.Select
                     required
                     key={"department-type"}
@@ -119,7 +120,7 @@ export function ValidationComment(props: ValidationCommentProps) {
                 </Form.Select>
             </Form.Group>
 
-            <Form.Group className={"m-2"}>
+            <Form.Group className={"font-bold m-2"}>
                 <Form.Check
                     type={"checkbox"}
                     name={"validated"}
@@ -128,7 +129,7 @@ export function ValidationComment(props: ValidationCommentProps) {
                     label={"Validado"}
                 />
             </Form.Group>
-            <Form.Group className={"m-2"}>
+            <Form.Group className={"font-bold m-2"}>
                 <Form.Check
                     type={"checkbox"}
                     name={"newValidation"}
@@ -140,7 +141,7 @@ export function ValidationComment(props: ValidationCommentProps) {
             </Form.Group>
 
             <Form.Group className={"m-2"}>
-                <Form.Label>Observação</Form.Label>
+                <RequiredLabel label={"Observação"}/>
                 <Form.Control
                     required
                     as={"textarea"}

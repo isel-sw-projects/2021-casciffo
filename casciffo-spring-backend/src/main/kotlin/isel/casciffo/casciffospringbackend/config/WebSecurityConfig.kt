@@ -9,7 +9,6 @@ import isel.casciffo.casciffospringbackend.security.JwtServerAuthenticationConve
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.authorization.AuthorizationDecision
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -19,7 +18,6 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Mono
 
 
 @Component
@@ -80,6 +78,7 @@ class WebSecurityConfig {
         proposalRoutesAuth(http)
         commentsRoutesAuth(http)
         researchRoutesAuth(http)
+        patientRoutesAuth(http)
 
         return http.build()
     }
@@ -121,6 +120,18 @@ class WebSecurityConfig {
             .authorizeExchange()
             .pathMatchers(HttpMethod.GET, CONSTANTS_URL).permitAll()
             .pathMatchers(HttpMethod.POST, "$CONSTANTS_URL/*").hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, "$CONSTANTS_URL/*").hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, "$CONSTANTS_URL/*").hasAuthority(SUPERUSER_AUTHORITY)
+    }
+
+    private fun patientRoutesAuth(http: ServerHttpSecurity) {
+        http
+            .authorizeExchange()
+            .pathMatchers(HttpMethod.GET, PATIENTS_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.POST, PATIENTS_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, PATIENTS_DETAIL_URL).hasAuthority(SUPERUSER_AUTHORITY)
+            .pathMatchers(HttpMethod.GET, PATIENTS_DETAIL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, PATIENTS_DETAIL_URL).hasAuthority(SUPERUSER_AUTHORITY)
     }
 
     private fun proposalRoutesAuth(http: ServerHttpSecurity) {
@@ -135,6 +146,7 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.POST, PROPOSAL_FINANCIAL_FILE_UPLOAD_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.GET, PROPOSAL_FINANCIAL_FILE_DOWNLOAD_URL).authenticated()
             .pathMatchers(HttpMethod.GET, NEAREST_EVENTS_URL).authenticated()
+            .pathMatchers(HttpMethod.DELETE, PROPOSAL_DETAILS_FILE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
     }
 
     private fun commentsRoutesAuth(http: ServerHttpSecurity) {
@@ -151,15 +163,15 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.POST, RESEARCH_CANCEL_URL, RESEARCH_COMPLETE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.POST, RESEARCH_DOSSIER_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             //research patients
-            .pathMatchers(HttpMethod.PUT, RESEARCH_PATIENTS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
-            .pathMatchers(HttpMethod.GET, SEARCH_PATIENTS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
-            .pathMatchers(HttpMethod.GET, RESEARCH_PATIENT_DETAILS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
-            .pathMatchers(HttpMethod.DELETE, RESEARCH_PATIENT_DETAILS).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, RESEARCH_PATIENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.GET, SEARCH_PATIENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.GET, RESEARCH_PATIENT_DETAILS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, RESEARCH_PATIENT_DETAILS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             //research visits
             .pathMatchers(HttpMethod.POST, RESEARCH_VISIT_DETAIL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             //research finance
-            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
-            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_RESEARCH_ENTRY).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
-            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_TEAM_ENTRY).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_RESEARCH_ENTRY_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
+            .pathMatchers(HttpMethod.PUT, RESEARCH_FINANCE_TEAM_ENTRY_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY, FINANCE_AUTHORITY)
     }
 }

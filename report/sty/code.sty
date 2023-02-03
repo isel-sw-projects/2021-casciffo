@@ -231,41 +231,91 @@ literate=%
 
 
 % ************ DEFINE KOTLIN LANGUAGE DEFINITIONS ************ 
-\lstset{
-basicstyle=\scriptsize\sffamily\color{black},
-frame=single,
-numbers=left,
-numbersep=5pt,
-numberstyle=\tiny\color{gray},
-showspaces=false,
-showstringspaces=false,
-tabsize=1
-}
+
 \lstdefinelanguage{kt}{
+  basicstyle=\scriptsize\sffamily,
+  numbers=left,
+  numbersep=5pt,
+  numberstyle=\tiny\color{gray},
+  showspaces=false,
+  showstringspaces=false,
   comment=[l]{//},
   commentstyle={\color{gray}\ttfamily},
-  emph={filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, zipWith, flatMap, findById, findByKeyId, collectList, awaitSingle, mapToDTO},
-  emphstyle={\color{OrangeRed}},
+  emph={filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, zipWith, flatMap, findById, findByKeyId, collectList, awaitSingle, mapToDTO, 
+  setServerAuthenticationConverter, pathMatchers, authorizeExchange, hasAnyAuthority, hasAuthority, build},
+  emphstyle={\color{Orange}},
   identifierstyle=\color{black},
   keywords={!in, !is, abstract, actual, annotation, as, as?, break, by, catch, class, companion, const, constructor, continue, crossinline, data, delegate, do, dynamic, else, enum, expect, external, false, field, file, final, finally, for, fun, get, if, import, in, infix, init, inline, inner, interface, internal, is, lateinit, noinline, null, object, open, operator, out, override, package, param, private, property, protected, public, receiveris, reified, return, return@, sealed, set, setparam, super, suspend, tailrec, this, throw, true, try, typealias, typeof, val, var, vararg, when, where, while},
   keywordstyle={\color{NavyBlue}\bfseries},
   morecomment=[s]{/*}{*/},
   morestring=[b]",
   morestring=[s]{"""*}{*"""},
-  ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String, Any, Unit, Nothing, Mono, Flux, Flow, Object},
+  ndkeywords={@Deprecated, @JvmField, @JvmName, @JvmOverloads, @JvmStatic, @JvmSynthetic, Array, Byte, Double, Float, Int, Integer, Iterable, Long, Runnable, Short, String, Any, Unit, Nothing, Mono, Flux, Flow, Object, @Value, @Transient, @Id, @Table, @Column, @ResponseStatus, @ExceptionHandler, @Controller, @Service, @Component, @RestControllerAdvice, @RestController, @Transactional, @GetMapping, @PutMapping, @PostMapping, @PatchMapping, @DeleteMapping, @PathVariable, @RequestBody, @PathParameter, @Bean, @Autowire},
   ndkeywordstyle={\color{BurntOrange}\bfseries},
   sensitive=true,
   stringstyle={\color{ForestGreen}\ttfamily},
 }
+
+% ************* DEFINE TYPESCRIPT LANGUAGE DEFINITIONS *************
+\definecolor{types}{RGB}{64,128,128}
+\definecolor{builtin}{RGB}{224,102,255}
+
+% Define the TypeScript language
+
+\lstdefinelanguage{ts}{
+  basicstyle=\scriptsize\ttfamily,
+  numbers=left,
+  numbersep=5pt,
+  numberstyle=\tiny\color{gray},
+  keywords={
+    var, let, const, function, return, interface, class, extends, public, private,
+    import, export, as, from, type,
+    abstract, any, boolean, bigint, never, null, number, object,
+    string, symbol, this, true, false, undefined,
+    super, static, readonly, get, set,constructor
+  },
+  keywordstyle=\color{Orange}\bfseries,
+  ndkeywords={
+    Array, Boolean, Date, Error, Function, Math, Number, Object,
+    RegExp, String, Symbol, ArrayBuffer, Atomics, BigInt,
+    BigInt64Array, BigUint64Array, DataView, JSON,
+    Map, parseFloat, parseInt, Promise, Reflect, Set,
+    SharedArrayBuffer, SIMD, WeakMap, WeakSet, map, flatMap, 
+    any, every, contains, fetch
+  },
+  ndkeywordstyle={\color{builtin}\bfseries},
+  emph={
+    number, string, boolean, void, 
+    Array, object, any, BigInt, 
+    Map, Set, Symbol, JSON,
+  },
+  emphstyle=\color{types},
+  sensitive=true,
+  stringstyle={\color{ForestGreen}\ttfamily},
+  morecomment=[l]{\#},
+  morestring=[b]',
+  morestring=[b]"
+}
+
+
 
 % ************* DEFINE JSON LANGUAGE DEFINITIONS *************
 \definecolor{delim}{RGB}{20,105,176}
 \definecolor{numb}{RGB}{106, 109, 32}
 \definecolor{string}{rgb}{0.64,0.08,0.08}
 
+
 \lstdefinelanguage{json}{
+    basicstyle=\scriptsize\sffamily\color{black},
+    keywords={true, false},
+    keywordstyle={\color{Blue}\bfseries},
+    frame=single,
     numbers=left,
-    numberstyle=\small,
+    numbersep=5pt,
+    numberstyle=\tiny\color{gray},
+    showspaces=false,
+    showstringspaces=false,
+    tabsize=1,
     frame=single,
     rulecolor=\color{black},
     showspaces=false,
@@ -273,25 +323,9 @@ tabsize=1
     breaklines=true,
     postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{gray}\hookrightarrow\space}},
     breakatwhitespace=true,
-    basicstyle=\ttfamily\small,
     upquote=true,
-    morestring=[b]",
-    stringstyle=\color{string},
-    literate=
-     *{0}{{{\color{numb}0}}}{1}
-      {1}{{{\color{numb}1}}}{1}
-      {2}{{{\color{numb}2}}}{1}
-      {3}{{{\color{numb}3}}}{1}
-      {4}{{{\color{numb}4}}}{1}
-      {5}{{{\color{numb}5}}}{1}
-      {6}{{{\color{numb}6}}}{1}
-      {7}{{{\color{numb}7}}}{1}
-      {8}{{{\color{numb}8}}}{1}
-      {9}{{{\color{numb}9}}}{1}
-      {\{}{{{\color{delim}{\{}}}}{1}
-      {\}}{{{\color{delim}{\}}}}}{1}
-      {[}{{{\color{delim}{[}}}}{1}
-      {]}{{{\color{delim}{]}}}}{1},
+    stringstyle={\color{string}\ttfamily},
+    morestring=[b]"
 }
 
 % ************* FOR INLINE CODE ************* 

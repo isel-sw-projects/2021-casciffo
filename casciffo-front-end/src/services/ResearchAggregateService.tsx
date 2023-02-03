@@ -10,8 +10,10 @@ import {
 import {StateModel} from "../model/state/StateModel";
 import {StateChainTypes} from "../common/Constants";
 import {CountHolder} from "../common/Types";
+import {PatientService} from "./PatientService";
 
 export class ResearchAggregateService {
+    patientService = new PatientService()
 
     getResearchCount(): Promise<CountHolder> {
         const url = ApiUrls.researchCountUrl
@@ -66,13 +68,11 @@ export class ResearchAggregateService {
     }
 
     searchPatientsByProcessId(processId: string): Promise<PatientModel[]> {
-        const url = ApiUrls.patientsLikeUrl(processId)
-        return httpGet(url)
+        return this.patientService.searchPatientsByProcessId(processId)
     }
 
     fetchResearchPatient(researchId: string, patientId: string): Promise<ResearchPatientModel> {
-        const url = ApiUrls.researchPatientDetailUrl(researchId, patientId)
-        return httpGet(url)
+        return this.patientService.fetchResearchPatient(researchId, patientId)
     }
 
     newScientificActivityEntry(researchId: string, activity: ScientificActivityModel): Promise<ScientificActivityModel> {

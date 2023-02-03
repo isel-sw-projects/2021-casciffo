@@ -2,7 +2,7 @@ import ApiUrls from "../common/Links";
 import UserModel from "../model/user/UserModel";
 import userModel from "../model/user/UserModel";
 import {UserToken} from "../common/Types";
-import {httpGet, httpPost, httpPut} from "../common/MyUtil";
+import {httpDelete, httpGet, httpPost, httpPut} from "../common/MyUtil";
 import {UserRoleModel} from "../model/role/UserRoleModel";
 
 export class UserService {
@@ -41,6 +41,11 @@ export class UserService {
     addRolesToUser(userId: string, roleIds: number[]): Promise<UserModel> {
         const url = ApiUrls.userRolesUrl(userId)
         return httpPut(url, roleIds)
+    }
+
+    removeUserRoles(userId: string, roleIds: number[]): Promise<UserModel> {
+        const url = ApiUrls.userRolesUrl(userId)
+        return httpDelete(url, roleIds)
     }
 
     createUser(newUser: UserModel): Promise<UserModel> {

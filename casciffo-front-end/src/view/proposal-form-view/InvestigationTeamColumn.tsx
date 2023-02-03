@@ -15,7 +15,7 @@ import React, {useState} from "react";
 import {Investigator} from "../../common/Types";
 import {AsyncAutoCompleteSearch} from "./AsyncAutoCompleteSearch";
 import {BsPlusSquare} from "react-icons/bs";
-import {LONG_TIMEOUT, TeamRoleTypes} from "../../common/Constants";
+import {LONG_TIMEOUT_MILLIS, TeamRoleTypes} from "../../common/Constants";
 import ProposalAggregateService from "../../services/ProposalAggregateService";
 
 import {Divider, Tooltip} from "@mui/material";
@@ -49,11 +49,11 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
 
     function addInvestigatorToTeam(event: React.MouseEvent<HTMLButtonElement>) {
         if (state.investigator.id.length === 0) {
-            showErrorMessage("Por favor escolha um investigador da lista de resultados.", LONG_TIMEOUT)
+            showErrorMessage("Por favor escolha um investigador da lista de resultados.", LONG_TIMEOUT_MILLIS)
             return
         }
         if (state.team.some(t => t.id === state.investigator.id)) {
-            showErrorMessage("O investigador que tentou adicionar já existe.", LONG_TIMEOUT)
+            showErrorMessage("O investigador que tentou adicionar já existe.", LONG_TIMEOUT_MILLIS)
             return;
         }
         let newTeam = [...state.team, state.investigator]
@@ -182,8 +182,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                             <label className={"font-bold"}>Investigador Principal</label>
                             <ListGroup.Item
                                 as={"li"}
-                                className={"d-flex justify-content-between mt-2"}
-                                style={{backgroundColor: '#b8d3ff'}}
+                                className={`d-flex justify-content-between mt-2 border border-2 ${principalInvestigator ? '' :'border-warning'}`}
                                 key={`principal-investigador-item`}
                             >
                                 {
@@ -207,8 +206,15 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
                                             </div>
                                         </div>
                                         :
-                                        <span className={"font-bold flex-wrap"}>É necessário um investigador principal
-                                            para submeter a proposta.</span>
+                                        <span className={"font-bold"}>
+                                            É necessário um investigador principal para submeter a proposta.
+                                            <br/>
+                                            <small className={"text-info"}>
+                                                Podes fazer isto ao clicar no botão <AiOutlineUserAdd/>
+                                                <br/>
+                                                Presente no lado esquerdo de um investigador.
+                                            </small>
+                                        </span>
                                 }
                             </ListGroup.Item>
                             <br/>  <Divider/>

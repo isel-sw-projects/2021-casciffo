@@ -7,6 +7,7 @@ import isel.casciffo.casciffospringbackend.exceptions.InvalidStateTransitionExce
 import isel.casciffo.casciffospringbackend.exceptions.NonExistentProposalException
 import isel.casciffo.casciffospringbackend.exceptions.ProposalNotFoundException
 import isel.casciffo.casciffospringbackend.files.FileInfo
+import isel.casciffo.casciffospringbackend.files.FileService
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamService
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.proposal_research.ProposalResearch
@@ -52,6 +53,7 @@ import reactor.kotlin.core.publisher.toFlux
 import java.nio.file.Path
 import java.time.LocalDate
 
+//TODO CHANGE REPOSITORIES TO SERVICES
 @Service
 class ProposalServiceImpl(
     @Autowired val proposalRepository: ProposalRepository,
@@ -70,7 +72,8 @@ class ProposalServiceImpl(
     @Autowired val userService: UserService,
     @Autowired val proposalStats: ProposalStatsRepo,
     @Autowired val notificationService: NotificationService,
-    @Autowired val proposalResearchRepository: ProposalResearchRepository
+    @Autowired val proposalResearchRepository: ProposalResearchRepository,
+    @Autowired val fileInfoService: FileService
 ) : ProposalService {
 
     override suspend fun getProposalCount(): CountHolder {
@@ -294,19 +297,18 @@ class ProposalServiceImpl(
         }
 
         stateTransitionService.newTransition(proposal.stateId!!, nextState.id!!, stateType, proposal.id!!)
-// TODO notify role and team upon progress
-//        if(nextState.stateFlowType !== StateFlowType.TERMINAL) {
-//            val nextStateRoles = nextState.roles!!.map { Roles.valueOf(it) }.collectList().awaitSingle()
-//            userService.notifyRoles(nextStateRoles,
-//                NotificationModel(
-//                    title = "Progresso no estado de Proposta",
-//                    description = "Proposta com sigla ${proposal.sigla!!} avançou para o estado ${nextState.name!!}",
-//                    notificationType = NotificationType.RESEARCH_DETAILS,
-//                    ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
-//                    viewed = false
-//                )
-//            )
-//        }
+
+        if(nextState.stateFlowType !== StateFlowType.TERMINAL) {
+            notifyTeam(proposal.id!!,
+                NotificationModel(
+                    title = "Progresso no estado de Proposta",
+                    description = "Proposta com sigla ${proposal.sigla!!} avançou para o estado ${nextState.name!!}",
+                    notificationType = NotificationType.PROPOSAL_DETAILS,
+                    ids = convertToJson(listOf(Pair("proposalId", proposal.id!!))),
+                    viewed = false
+                )
+            )
+        }
 
         proposal.stateId = nextState.id
         proposal.state = nextState
@@ -432,6 +434,8 @@ class ProposalServiceImpl(
             prop.financialComponent!!.validations = validationsRepository
                 .findAllByPfcId(prop.financialComponent!!.id!!)
         }
+
+        prop.files =
         return prop
     }
 }

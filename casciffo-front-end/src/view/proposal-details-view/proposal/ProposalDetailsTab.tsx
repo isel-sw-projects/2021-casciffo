@@ -13,6 +13,7 @@ export function ProposalDetailsTab(props: PDT_Props) {
     const [isDataReady, setIsDataReady] = useState(false)
     const [proposal, setProposal] = useState<ProposalModel>()
 
+
     useEffect(() => {
         setIsDataReady(props.dataReady)
     }, [props.dataReady])

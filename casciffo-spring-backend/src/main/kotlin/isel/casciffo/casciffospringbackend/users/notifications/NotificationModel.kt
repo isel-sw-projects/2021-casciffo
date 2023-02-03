@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.common.NotificationType
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import java.time.LocalDateTime
 
 @Table("user_notification")
 data class NotificationModel(
@@ -15,5 +16,6 @@ data class NotificationModel(
     var description: String? = null,
     var viewed: Boolean? = null,
     var ids: String? = null,
-    var notificationType: NotificationType? = null
+    var notificationType: NotificationType? = null,
+    var createdDate: LocalDateTime? = null
 )

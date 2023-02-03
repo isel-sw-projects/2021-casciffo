@@ -18,6 +18,9 @@ import {NotificationsView} from "../notifications/NotificationsView";
 import {NotificationService} from "../../services/NotificationService";
 import React from "react";
 import {UserDetails} from "../users-view/UserDetails";
+import {DataPage} from "../input-data-view/DataPage";
+import {ConstantsService} from "../../services/ConstantsService";
+import {PatientService} from "../../services/PatientService";
 
 export function CreateRoutes() {
 
@@ -51,9 +54,14 @@ export function CreateRoutes() {
 
             <Route path={"/utilizadores/:userId/notificacoes"}
                    element={RequiresAuth(<NotificationsView service={new NotificationService()}/>)}/>
-            <Route path={"/users/:userId"}
+            <Route path={"/utilizadores/:userId"}
                    element={RequiresAuth(<UserDetails service={new UserService()}/>)}/>
-
+            <Route path={"/dados"}
+                    element={RequiresAuth(
+                        <DataPage
+                            constantsService={new ConstantsService()}
+                            patientService={new PatientService()}/>
+                    )}/>
 
         </Routes>
     );

@@ -36,7 +36,7 @@ import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-
+//TODO CHANGE REPOSITORIES TO SERVICES
 @Service
 class UserServiceImpl(
     @Autowired val userRepository: UserRepository,
@@ -52,19 +52,16 @@ class UserServiceImpl(
 
     override suspend fun loginUser(userModel: UserModel): BearerTokenWrapper {
         val existingUser = findUserByEmail(userModel.email!!)
+            ?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais incorretas!")
 
+        if(!encoder.matches(userModel.password, existingUser.password))
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais incorretas!")
 
-        existingUser?.let {
-            if(!encoder.matches(userModel.password, it.password)) return@let
+        val roles = if (existingUser.roles == null) null
+        else existingUser.roles!!.map {r -> r.roleName!! }.collectList().awaitSingleOrNull()
 
-            val roles = if (existingUser.roles == null) null
-            else existingUser.roles!!.map {r -> r.roleName!! }.collectList().awaitSingleOrNull()
-
-            val token = jwtSupport.generate(it.email!!)
-            return BearerTokenWrapper(token.value, existingUser.userId!!, existingUser.name!!, roles)
-        }
-
-        throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais incorretas!")
+        val token = jwtSupport.generate(existingUser.email!!)
+        return BearerTokenWrapper(token.value, existingUser.userId!!, existingUser.name!!, roles)
     }
 
     override suspend fun findUserByEmail(email: String): UserModel? {

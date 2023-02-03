@@ -1,11 +1,12 @@
 package isel.casciffo.casciffospringbackend.proposals.proposal
 
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.investigation_team.InvestigationTeamDTO
 import isel.casciffo.casciffospringbackend.proposals.comments.ProposalCommentsDTO
-import isel.casciffo.casciffospringbackend.proposals.constants.Pathology
-import isel.casciffo.casciffospringbackend.proposals.constants.ServiceType
-import isel.casciffo.casciffospringbackend.proposals.constants.TherapeuticArea
+import isel.casciffo.casciffospringbackend.data_management.Pathology
+import isel.casciffo.casciffospringbackend.data_management.ServiceType
+import isel.casciffo.casciffospringbackend.data_management.TherapeuticArea
 import isel.casciffo.casciffospringbackend.proposals.finance.finance.ProposalFinancialComponentDTO
 import isel.casciffo.casciffospringbackend.proposals.timeline_events.TimelineEventModel
 import isel.casciffo.casciffospringbackend.states.state.State
@@ -39,4 +40,5 @@ data class ProposalDTO (
     var stateTransitions: List<StateTransition>? = null,
     var timelineEvents: List<TimelineEventModel>? = null,
     var comments: List<ProposalCommentsDTO>? = null,
+    var files: List<FileInfo>? = null
 )

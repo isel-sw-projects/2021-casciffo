@@ -1,8 +1,8 @@
 package isel.casciffo.casciffospringbackend.research.finance.overview
 
-import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_FINANCE
-import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_FINANCE_RESEARCH_ENTRY
-import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_FINANCE_TEAM_ENTRY
+import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_FINANCE_URL
+import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_FINANCE_RESEARCH_ENTRY_URL
+import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_FINANCE_TEAM_ENTRY_URL
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.finance.research_monetary_flow.ResearchMonetaryFlow
 import isel.casciffo.casciffospringbackend.research.finance.team_monetary_flow.ResearchTeamMonetaryFlow
@@ -19,7 +19,7 @@ class ResearchFinanceController(
     @Autowired val mapper: Mapper<ResearchFinance, ResearchFinanceDTO>
 ) {
 
-    @PutMapping(RESEARCH_FINANCE)
+    @PutMapping(RESEARCH_FINANCE_URL)
     suspend fun updateResearchFinance(
         @PathVariable researchId: Int,
         @RequestBody rf: ResearchFinanceDTO
@@ -30,7 +30,7 @@ class ResearchFinanceController(
         return ResponseEntity.ok(dto)
     }
 
-    @PutMapping(RESEARCH_FINANCE_TEAM_ENTRY)
+    @PutMapping(RESEARCH_FINANCE_TEAM_ENTRY_URL)
     suspend fun addNewTeamEntry(
         @PathVariable researchId: Int,
         @RequestBody teamEntry: ResearchTeamMonetaryFlow
@@ -39,7 +39,7 @@ class ResearchFinanceController(
         return ResponseEntity.ok(entry)
     }
 
-    @PutMapping(RESEARCH_FINANCE_RESEARCH_ENTRY)
+    @PutMapping(RESEARCH_FINANCE_RESEARCH_ENTRY_URL)
     suspend fun addNewResearchEntry(
         @PathVariable researchId: Int,
         @RequestBody researchEntry: ResearchMonetaryFlow

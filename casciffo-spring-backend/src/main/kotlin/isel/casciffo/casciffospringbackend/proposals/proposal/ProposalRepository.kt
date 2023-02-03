@@ -26,4 +26,6 @@ interface ProposalRepository : ReactiveSortingRepository<ProposalModel, Int> {
     )
     fun countTypes(): Mono<CountHolder>
 
+    fun findAllBySiglaIs(sigla: String): Flux<ProposalModel>
+
 }
