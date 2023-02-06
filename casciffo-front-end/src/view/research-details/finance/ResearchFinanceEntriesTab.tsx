@@ -165,6 +165,10 @@ export function ResearchFinanceEntriesTab(props: MyProps) {
             }
         </Container>
 
-        <MyTable data={entries} columns={columns}/>
+        <MyTable
+            pagination
+            data={entries}
+            columns={columns}
+        />
     </React.Fragment>
 }

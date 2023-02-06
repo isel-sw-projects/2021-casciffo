@@ -266,6 +266,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
             </Form>
 
             <MyTable
+                pagination
                 data={comments.filter(filterCommentsByDepartment)}
                 columns={columns}
                 colgroup={colgroup}

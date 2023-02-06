@@ -15,11 +15,11 @@ type AxiosResponseBody = {
     statusText: string
 }
 
-// type Page = {
-//     pageNum: number,
-//     elementsLimit: number,
-//     searchQuery: string
-// }
+type PageInfo = {
+    pageNum: number,
+    limitPerPage: number,
+    totalItems: number
+}
 //
 // type ResearchType = {
 //     name: string,
@@ -99,5 +99,5 @@ export type {
     AxiosResponseBody,
     Investigator,
     ConstantsModel, Filter, ProposalForm, Promoter,
-    UserToken, KeyValuePair, MyHashMap
+    UserToken, KeyValuePair, MyHashMap, PageInfo
 }

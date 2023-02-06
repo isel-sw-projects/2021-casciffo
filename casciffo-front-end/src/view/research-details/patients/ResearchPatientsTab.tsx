@@ -169,7 +169,11 @@ export function ResearchPatientsTab(props: RPT_Props) {
                 </Col>
             </Row>
 
-            <MyTable data={patients} columns={columns}/>
+            <MyTable
+                pagination
+                data={patients}
+                columns={columns}
+            />
         </Container>
     </Container>
 }

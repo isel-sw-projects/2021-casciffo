@@ -184,6 +184,7 @@ export function Users(props: UsersProps) {
             }
 
             <MyTable
+                pagination
                 data={users}
                 columns={columns}
             />

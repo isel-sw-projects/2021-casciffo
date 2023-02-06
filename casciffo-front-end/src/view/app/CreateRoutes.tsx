@@ -18,7 +18,7 @@ import {NotificationsView} from "../notifications/NotificationsView";
 import {NotificationService} from "../../services/NotificationService";
 import React from "react";
 import {UserDetails} from "../users-view/UserDetails";
-import {DataPage} from "../input-data-view/DataPage";
+import {DataPage} from "../data-management-view/DataPage";
 import {ConstantsService} from "../../services/ConstantsService";
 import {PatientService} from "../../services/PatientService";
 

@@ -78,6 +78,7 @@ export function ResearchAddendaTab(props: AddendaProps) {
 
             <Container>
                 <MyTable
+                    pagination
                     data={addendas}
                     columns={columns}
                 />

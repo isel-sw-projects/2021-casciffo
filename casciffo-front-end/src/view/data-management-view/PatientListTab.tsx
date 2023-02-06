@@ -223,6 +223,7 @@ export function PatientListTab(props: Props) {
 
         <Container className={"mt-5"}>
             <MyTable
+                pagination
                 data={filterData()}
                 columns={columns}
             />

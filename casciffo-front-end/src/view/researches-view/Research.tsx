@@ -277,7 +277,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                 <br/>
                 <br/>
 
-                 <Container>
+                 <div>
                      {
                          checkedInfo.nSelected === 0
                              ? <div className={"float-start mb-2"}>
@@ -309,15 +309,15 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                      {/*        {`Exportar todas (${researchType === ResearchTypes.CLINICAL_TRIAL.id ? totalCount.trials : totalCount.studies}) deste tipo`}*/}
                      {/*    </CSVLink>*/}
                      {/*}*/}
-                 </Container>
+                 </div>
+                <br/>
 
-
-                {isDataReady &&
-                    <MyTable
-                        data={filterData()}
-                        columns={columns}
-                    />
-                }
+                <MyTable
+                    pagination
+                    loading={!isDataReady}
+                    data={filterData()}
+                    columns={columns}
+                />
 
             </Container>
         </React.Fragment>

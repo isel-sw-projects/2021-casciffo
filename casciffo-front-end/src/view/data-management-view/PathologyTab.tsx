@@ -1,22 +1,23 @@
 
-import {TherapeuticAreaModel} from "../../model/proposal-constants/TherapeuticAreaModel";
-import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
-import {RiDeleteBin6Fill} from "react-icons/ri";
-import {MyTable} from "../components/MyTable";
-import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
-import {ColumnDef} from "@tanstack/react-table";
-import {FaEdit} from "react-icons/fa";
-import {ImCancelCircle} from "react-icons/im";
-import {IconButton, Tooltip} from "@mui/material";
-import {AiFillSave} from "react-icons/ai";
+import {PathologyModel} from "../../model/proposal-constants/PathologyModel";
 import {SearchComponent} from "../components/SearchComponent";
+import {MyTable} from "../components/MyTable";
+import React, {useEffect, useState} from "react";
+import {ColumnDef} from "@tanstack/react-table";
+import {IconButton, Tooltip} from "@mui/material";
+import {RiDeleteBin6Fill} from "react-icons/ri";
+import {FaEdit} from "react-icons/fa";
+import {AiFillSave} from "react-icons/ai";
+import {ImCancelCircle} from "react-icons/im";
+import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
+
 
 type Props = {
-    therapeuticAreas: TherapeuticAreaModel[]
-    saveTherapeuticArea: (therapeuticArea: TherapeuticAreaModel) => void
-    updateTherapeuticArea: (therapeuticArea: TherapeuticAreaModel) => void
-    deleteTherapeuticArea: (therapeuticAreaId: number) => void
+    pathologies: PathologyModel[]
+    savePathology: (pathology: PathologyModel) => void
+    updatePathology: (pathology: PathologyModel) => void
+    deletePathology: (pathologyId: number) => void
 }
 
 type CheckRow = {
@@ -25,17 +26,17 @@ type CheckRow = {
     isEdit: boolean
 }
 
-export function TherapeuticAreaTab(props: Props) {
+export function PathologyTab(props: Props) {
 
     const [query, setQuery] = useState("")
     const [showEntryForm, setShowEntryForm] = useState(false)
-    const [newEntry, setNewEntry] = useState<TherapeuticAreaModel>({})
+    const [newEntry, setNewEntry] = useState<PathologyModel>({})
     const [data, setData] = useState<CheckRow[]>([])
 
     useEffect(() => {
-        const mappedData = props.therapeuticAreas.map(p => ({...p, isEdit: false}))
+        const mappedData = props.pathologies.map(p => ({...p, isEdit: false}))
         setData(mappedData)
-    }, [props.therapeuticAreas])
+    }, [props.pathologies])
 
     const handleSearchSubmit = (q: string) => {
         setQuery(q)
@@ -44,14 +45,13 @@ export function TherapeuticAreaTab(props: Props) {
     const filterData = () => {
         const regExp = new RegExp(`${query}.*`, "gi")
         return data
-            .filter(s => query === "" || regExp.test(s.name!))
+            .filter(p => query === "" || regExp.test(p.name!))
     }
 
     const handleNewEntry = (e: any) => {
         e.preventDefault()
         e.stopPropagation()
-        props.saveTherapeuticArea(newEntry)
-        resetAndHideForm()
+
     }
 
     const resetAndHideForm = () => {
@@ -81,7 +81,7 @@ export function TherapeuticAreaTab(props: Props) {
                         <input type={"text"} value={row.name} onChange={event => updateName({...row, name: event.target.value})} />
                         : row.name,
                     id: 'somtimes-an-input-name',
-                    header: () => "Áreas terapeuticas",
+                    header: () => "Patologia",
                     cell: info => info.getValue(),
                     footer: props => props.column.id,
                 },
@@ -90,7 +90,7 @@ export function TherapeuticAreaTab(props: Props) {
                         <Container className={"flex-row"}>
                             <div className={"float-start"}>
                                 <Tooltip title={"Guardar"} placement={"top"} arrow>
-                                    <IconButton aria-label={"guardar"} onClick={() => props.updateTherapeuticArea(row)}>
+                                    <IconButton aria-label={"guardar"} onClick={() => props.updatePathology(row)}>
                                         <AiFillSave style={{color: "#7bb06a"}}/>
                                     </IconButton>
                                 </Tooltip>
@@ -112,7 +112,7 @@ export function TherapeuticAreaTab(props: Props) {
                                     </IconButton>
                                 </Tooltip>
                             </div>
-                            <div className={"float-end"} onClick={() => props.deleteTherapeuticArea(row.id!)}>
+                            <div className={"float-end"} onClick={() => props.deletePathology(row.id!)}>
                                 <Tooltip title={"Apagar"} placement={"top"} arrow>
                                     <IconButton aria-label={"apagar"}>
                                         <RiDeleteBin6Fill style={{color: "red"}}/>
@@ -125,7 +125,7 @@ export function TherapeuticAreaTab(props: Props) {
                     cell: info => info.getValue(),
                     footer: props => props.column.id,
                 }
-            ]
+        ]
         },[props])
 
     return <Container>
@@ -148,12 +148,12 @@ export function TherapeuticAreaTab(props: Props) {
                             style={{width: "40%"}}
                             onSubmit={handleNewEntry}>
                             <fieldset className={"border p-3 border-secondary"}>
-                                <legend className={"float-none w-auto p-2"}>Nova Área Terapeutica</legend>
+                                <legend className={"float-none w-auto p-2"}>Nova Patologia</legend>
                                 <FloatingLabelHelper
                                     required
                                     onChange={e => setNewEntry({name: e.target.value})}
                                     value={newEntry.name}
-                                    label={"Área Terapeutica"}
+                                    label={"Patologia"}
                                     name={"name"}
                                 />
                                 <br/>
@@ -167,13 +167,14 @@ export function TherapeuticAreaTab(props: Props) {
                                 </div>
                             </fieldset>
                         </Form>
-                        : <Button onClick={() => setShowEntryForm(true)}>Adicionar nova Área Terapeutica</Button>}
+                        : <Button onClick={() => setShowEntryForm(true)}>Adicionar nova Patologia</Button>}
                 </Col>
             </Row>
         </Container>
 
         <Container className={"mt-5"}>
             <MyTable
+                pagination
                 data={filterData()}
                 columns={columns}
             />

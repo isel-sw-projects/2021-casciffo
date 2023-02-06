@@ -231,6 +231,7 @@ export function ResearchVisitsTab(props: VisitProps) {
                 {/*</Container>*/}
 
                 <MyTable
+                    pagination
                     data={filterData()}
                     columns={columns}
                 />

@@ -45,6 +45,10 @@ class WebSecurityConfig {
         filter.setServerAuthenticationConverter(converter)
 
         http
+            .httpBasic().disable()
+            .formLogin().disable()
+            .logout().disable()
+            .csrf().disable()
             .cors()
             .and()
             //Work around to disabling spring web session
@@ -66,10 +70,6 @@ class WebSecurityConfig {
             .and()
             //jwt filter
             .addFilterAt(filter, SecurityWebFiltersOrder.AUTHENTICATION)
-            .httpBasic().disable()
-            .formLogin().disable()
-            .logout().disable()
-            .csrf().disable()
 
         statesRoutesAuth(http)
         usersRoutesAuth(http)

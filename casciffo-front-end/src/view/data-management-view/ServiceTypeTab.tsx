@@ -1,23 +1,25 @@
 
-import {Button, Col, Container, Form, Row} from "react-bootstrap";
-import {PathologyModel} from "../../model/proposal-constants/PathologyModel";
-import {SearchComponent} from "../components/SearchComponent";
-import {MyTable} from "../components/MyTable";
+import {ServiceTypeModel} from "../../model/proposal-constants/ServiceTypeModel";
 import React, {useEffect, useState} from "react";
 import {ColumnDef} from "@tanstack/react-table";
+import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {IconButton, Tooltip} from "@mui/material";
-import {RiDeleteBin6Fill} from "react-icons/ri";
-import {FaEdit} from "react-icons/fa";
 import {AiFillSave} from "react-icons/ai";
 import {ImCancelCircle} from "react-icons/im";
+import {FaEdit} from "react-icons/fa";
+import {RiDeleteBin6Fill} from "react-icons/ri";
+import {SearchComponent} from "../components/SearchComponent";
 import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
+import {MyTable} from "../components/MyTable";
+import {PageInfo} from "../../common/Types";
+import TablePagination from "@mui/material/TablePagination";
 
 
 type Props = {
-    pathologies: PathologyModel[]
-    savePathology: (pathology: PathologyModel) => void
-    updatePathology: (pathology: PathologyModel) => void
-    deletePathology: (pathologyId: number) => void
+    serviceTypes: ServiceTypeModel[]
+    saveServiceType: (serviceType: ServiceTypeModel) => void
+    updateServiceType: (serviceType: ServiceTypeModel) => void
+    deleteServiceType: (serviceTypeId: number) => void
 }
 
 type CheckRow = {
@@ -26,17 +28,17 @@ type CheckRow = {
     isEdit: boolean
 }
 
-export function PathologyTab(props: Props) {
+export function ServiceTypeTab(props: Props) {
 
     const [query, setQuery] = useState("")
     const [showEntryForm, setShowEntryForm] = useState(false)
-    const [newEntry, setNewEntry] = useState<PathologyModel>({})
+    const [newEntry, setNewEntry] = useState<ServiceTypeModel>({})
     const [data, setData] = useState<CheckRow[]>([])
 
     useEffect(() => {
-        const mappedData = props.pathologies.map(p => ({...p, isEdit: false}))
+        const mappedData = props.serviceTypes.map(p => ({...p, isEdit: false}))
         setData(mappedData)
-    }, [props.pathologies])
+    }, [props.serviceTypes])
 
     const handleSearchSubmit = (q: string) => {
         setQuery(q)
@@ -45,13 +47,14 @@ export function PathologyTab(props: Props) {
     const filterData = () => {
         const regExp = new RegExp(`${query}.*`, "gi")
         return data
-            .filter(p => query === "" || regExp.test(p.name!))
+            .filter(s => query === "" || regExp.test(s.name!))
     }
 
     const handleNewEntry = (e: any) => {
         e.preventDefault()
         e.stopPropagation()
-
+        props.saveServiceType(newEntry)
+        resetAndHideForm()
     }
 
     const resetAndHideForm = () => {
@@ -81,7 +84,7 @@ export function PathologyTab(props: Props) {
                         <input type={"text"} value={row.name} onChange={event => updateName({...row, name: event.target.value})} />
                         : row.name,
                     id: 'somtimes-an-input-name',
-                    header: () => "Patologia",
+                    header: () => "Serviços",
                     cell: info => info.getValue(),
                     footer: props => props.column.id,
                 },
@@ -90,7 +93,7 @@ export function PathologyTab(props: Props) {
                         <Container className={"flex-row"}>
                             <div className={"float-start"}>
                                 <Tooltip title={"Guardar"} placement={"top"} arrow>
-                                    <IconButton aria-label={"guardar"} onClick={() => props.updatePathology(row)}>
+                                    <IconButton aria-label={"guardar"} onClick={() => props.updateServiceType(row)}>
                                         <AiFillSave style={{color: "#7bb06a"}}/>
                                     </IconButton>
                                 </Tooltip>
@@ -112,7 +115,7 @@ export function PathologyTab(props: Props) {
                                     </IconButton>
                                 </Tooltip>
                             </div>
-                            <div className={"float-end"} onClick={() => props.deletePathology(row.id!)}>
+                            <div className={"float-end"} onClick={() => props.deleteServiceType(row.id!)}>
                                 <Tooltip title={"Apagar"} placement={"top"} arrow>
                                     <IconButton aria-label={"apagar"}>
                                         <RiDeleteBin6Fill style={{color: "red"}}/>
@@ -125,7 +128,7 @@ export function PathologyTab(props: Props) {
                     cell: info => info.getValue(),
                     footer: props => props.column.id,
                 }
-        ]
+            ]
         },[props])
 
     return <Container>
@@ -148,12 +151,12 @@ export function PathologyTab(props: Props) {
                             style={{width: "40%"}}
                             onSubmit={handleNewEntry}>
                             <fieldset className={"border p-3 border-secondary"}>
-                                <legend className={"float-none w-auto p-2"}>Nova Patologia</legend>
+                                <legend className={"float-none w-auto p-2"}>Novo Serviço</legend>
                                 <FloatingLabelHelper
                                     required
                                     onChange={e => setNewEntry({name: e.target.value})}
                                     value={newEntry.name}
-                                    label={"Patologia"}
+                                    label={"Serviço"}
                                     name={"name"}
                                 />
                                 <br/>
@@ -167,13 +170,14 @@ export function PathologyTab(props: Props) {
                                 </div>
                             </fieldset>
                         </Form>
-                        : <Button onClick={() => setShowEntryForm(true)}>Adicionar nova Patologia</Button>}
+                        : <Button onClick={() => setShowEntryForm(true)}>Adicionar novo Serviço</Button>}
                 </Col>
             </Row>
         </Container>
 
         <Container className={"mt-5"}>
             <MyTable
+                pagination
                 data={filterData()}
                 columns={columns}
             />

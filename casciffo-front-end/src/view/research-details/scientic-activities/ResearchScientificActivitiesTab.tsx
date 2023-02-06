@@ -174,13 +174,14 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
                             <Col>
                                 <Form.Group>
                                     <Form.Select
+                                        //todo VALUE ?????????
                                         key={"research-type-id"}
                                         required
                                         aria-label="research type selection"
                                         name={"studyType"}
                                         className={"font-bold text-center ms-2"}
                                         defaultValue={""}
-                                        onChange={updateNewEntry}
+                                        onSelect={updateNewEntry}
                                         style={{width:"96.5%"}}
                                     >
                                         <option key={"op-invalid"} value={""} disabled>-Tipo de estudo-</option>
@@ -310,7 +311,11 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
         </Container>
         <br/>
         <Container className={"m-2 mt-5 mb-5"}>
-            <MyTable data={activities} columns={columns}/>
+            <MyTable
+                pagination
+                data={activities}
+                columns={columns}
+            />
         </Container>
         </div>
     </React.Fragment>

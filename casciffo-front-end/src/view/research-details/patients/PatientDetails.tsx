@@ -140,9 +140,14 @@ export function PatientDetails(props: Props) {
         </Container>
 
         <Container className={"flex justify-content-evenly"}>
-            { dataReady &&
-                <MyTable data={props.visits.filter(v => v.researchPatient!.patient!.processId === patient.patient!.processId)} columns={columns}/>
-            }
+
+            <MyTable
+                data={props.visits.filter(v => v.researchPatient!.patient!.processId === patient.patient!.processId)}
+                columns={columns}
+                loading={dataReady}
+                emptyDataPlaceholder={"Sem histórico de visitas."}
+            />
+
         </Container>
     </React.Fragment>
 }

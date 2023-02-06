@@ -39,6 +39,8 @@ val dateDiffInDays = { date: LocalDate, other: LocalDate -> date.until(other, Ch
 /************************ Authorization related constants *******************************/
 /***************************************************************************************/
 
+const val CASCIFFO_AUTH_HEADER = "Casciffo-Authenticate"
+
 val newExpirationTime: Date = Date.from(Instant.now().plus(amountOfTime, ChronoUnit.DAYS))
 const val tokenIssuer = "Casciffo-back-end"
 

@@ -1,23 +1,22 @@
 
-import {ServiceTypeModel} from "../../model/proposal-constants/ServiceTypeModel";
+import {TherapeuticAreaModel} from "../../model/proposal-constants/TherapeuticAreaModel";
 import React, {useEffect, useState} from "react";
-import {ColumnDef} from "@tanstack/react-table";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
+import {RiDeleteBin6Fill} from "react-icons/ri";
+import {MyTable} from "../components/MyTable";
+import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
+import {ColumnDef} from "@tanstack/react-table";
+import {FaEdit} from "react-icons/fa";
+import {ImCancelCircle} from "react-icons/im";
 import {IconButton, Tooltip} from "@mui/material";
 import {AiFillSave} from "react-icons/ai";
-import {ImCancelCircle} from "react-icons/im";
-import {FaEdit} from "react-icons/fa";
-import {RiDeleteBin6Fill} from "react-icons/ri";
 import {SearchComponent} from "../components/SearchComponent";
-import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
-import {MyTable} from "../components/MyTable";
-
 
 type Props = {
-    serviceTypes: ServiceTypeModel[]
-    saveServiceType: (serviceType: ServiceTypeModel) => void
-    updateServiceType: (serviceType: ServiceTypeModel) => void
-    deleteServiceType: (serviceTypeId: number) => void
+    therapeuticAreas: TherapeuticAreaModel[]
+    saveTherapeuticArea: (therapeuticArea: TherapeuticAreaModel) => void
+    updateTherapeuticArea: (therapeuticArea: TherapeuticAreaModel) => void
+    deleteTherapeuticArea: (therapeuticAreaId: number) => void
 }
 
 type CheckRow = {
@@ -26,17 +25,17 @@ type CheckRow = {
     isEdit: boolean
 }
 
-export function ServiceTypeTab(props: Props) {
+export function TherapeuticAreaTab(props: Props) {
 
     const [query, setQuery] = useState("")
     const [showEntryForm, setShowEntryForm] = useState(false)
-    const [newEntry, setNewEntry] = useState<ServiceTypeModel>({})
+    const [newEntry, setNewEntry] = useState<TherapeuticAreaModel>({})
     const [data, setData] = useState<CheckRow[]>([])
 
     useEffect(() => {
-        const mappedData = props.serviceTypes.map(p => ({...p, isEdit: false}))
+        const mappedData = props.therapeuticAreas.map(p => ({...p, isEdit: false}))
         setData(mappedData)
-    }, [props.serviceTypes])
+    }, [props.therapeuticAreas])
 
     const handleSearchSubmit = (q: string) => {
         setQuery(q)
@@ -51,7 +50,7 @@ export function ServiceTypeTab(props: Props) {
     const handleNewEntry = (e: any) => {
         e.preventDefault()
         e.stopPropagation()
-        props.saveServiceType(newEntry)
+        props.saveTherapeuticArea(newEntry)
         resetAndHideForm()
     }
 
@@ -82,7 +81,7 @@ export function ServiceTypeTab(props: Props) {
                         <input type={"text"} value={row.name} onChange={event => updateName({...row, name: event.target.value})} />
                         : row.name,
                     id: 'somtimes-an-input-name',
-                    header: () => "Serviços",
+                    header: () => "Áreas terapeuticas",
                     cell: info => info.getValue(),
                     footer: props => props.column.id,
                 },
@@ -91,7 +90,7 @@ export function ServiceTypeTab(props: Props) {
                         <Container className={"flex-row"}>
                             <div className={"float-start"}>
                                 <Tooltip title={"Guardar"} placement={"top"} arrow>
-                                    <IconButton aria-label={"guardar"} onClick={() => props.updateServiceType(row)}>
+                                    <IconButton aria-label={"guardar"} onClick={() => props.updateTherapeuticArea(row)}>
                                         <AiFillSave style={{color: "#7bb06a"}}/>
                                     </IconButton>
                                 </Tooltip>
@@ -113,7 +112,7 @@ export function ServiceTypeTab(props: Props) {
                                     </IconButton>
                                 </Tooltip>
                             </div>
-                            <div className={"float-end"} onClick={() => props.deleteServiceType(row.id!)}>
+                            <div className={"float-end"} onClick={() => props.deleteTherapeuticArea(row.id!)}>
                                 <Tooltip title={"Apagar"} placement={"top"} arrow>
                                     <IconButton aria-label={"apagar"}>
                                         <RiDeleteBin6Fill style={{color: "red"}}/>
@@ -149,12 +148,12 @@ export function ServiceTypeTab(props: Props) {
                             style={{width: "40%"}}
                             onSubmit={handleNewEntry}>
                             <fieldset className={"border p-3 border-secondary"}>
-                                <legend className={"float-none w-auto p-2"}>Novo Serviço</legend>
+                                <legend className={"float-none w-auto p-2"}>Nova Área Terapeutica</legend>
                                 <FloatingLabelHelper
                                     required
                                     onChange={e => setNewEntry({name: e.target.value})}
                                     value={newEntry.name}
-                                    label={"Serviço"}
+                                    label={"Área Terapeutica"}
                                     name={"name"}
                                 />
                                 <br/>
@@ -168,13 +167,14 @@ export function ServiceTypeTab(props: Props) {
                                 </div>
                             </fieldset>
                         </Form>
-                        : <Button onClick={() => setShowEntryForm(true)}>Adicionar novo Serviço</Button>}
+                        : <Button onClick={() => setShowEntryForm(true)}>Adicionar nova Área Terapeutica</Button>}
                 </Col>
             </Row>
         </Container>
 
         <Container className={"mt-5"}>
             <MyTable
+                pagination
                 data={filterData()}
                 columns={columns}
             />

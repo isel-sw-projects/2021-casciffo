@@ -191,7 +191,13 @@ export function NotificationsView(props: NotificationProps) {
         </Container>
         <Container className={"display-flex"}>
             <div className={"float-start"}>{`(${checkedInfo.selectedRows}) Notificaç${checkedInfo.selectedRows > 1 ? "ões" : "ão"} selecionada${checkedInfo.selectedRows > 1 ? "s" : ""} `}</div>
-            <MyTable data={notifications} columns={columns} loading={!isDataReady} emptyDataPlaceholder={"Sem notificações."}/>
+            <MyTable
+                pagination
+                data={notifications}
+                columns={columns}
+                loading={!isDataReady}
+                emptyDataPlaceholder={"Sem notificações."}
+            />
         </Container>
     </React.Fragment>
 }
