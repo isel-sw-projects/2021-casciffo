@@ -77,6 +77,13 @@ export function ProposalFinancialContractTab(props: PfcProps) {
     const columns = React.useMemo<ColumnDef<ValidityComment>[]>(
         () => [
             {
+                accessorFn: row => row.comment!.commentType,
+                id: 'commentType',
+                cell: info => info.getValue(),
+                header: () => <span>Tipo de Validação</span>,
+                footer: props => props.column.id,
+            },
+            {
                 accessorFn: row => row.comment!.createdDate,
                 id: 'createdDate',
                 cell: info => info.getValue(),

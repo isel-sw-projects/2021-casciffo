@@ -70,13 +70,6 @@ export function TherapeuticAreaTab(props: Props) {
             }
             return [
                 {
-                    accessorFn: row => row.id,
-                    id: 'id',
-                    cell: info => info.getValue(),
-                    header: () => <span>Id</span>,
-                    footer: props => props.column.id,
-                },
-                {
                     accessorFn: row => row.isEdit ?
                         <input type={"text"} value={row.name} onChange={event => updateName({...row, name: event.target.value})} />
                         : row.name,

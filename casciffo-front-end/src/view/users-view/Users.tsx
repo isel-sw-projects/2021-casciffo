@@ -8,6 +8,9 @@ import {UserRoleModel} from "../../model/role/UserRoleModel";
 import {Roles} from "../../model/role/Roles";
 import {RequiredSpan} from "../components/RequiredSpan";
 import {MultiSelect} from "react-multi-select-component";
+import {toast, ToastContainer} from "react-toastify";
+import {MyError} from "../error-view/MyError";
+import { Grid } from "@mui/material";
 
 type UsersProps = {
     service: UserService
@@ -20,7 +23,7 @@ type RoleWithDisplayName = {
 }
 
 function UserForm(props: { onSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void, newUser: UserModel, onChange: (e: any) => void, onClick: () => void }) {
-    return <Container className={"m-2 m-md-2 p-2 p-md-2 justify-content-evenly float-start"} style={{width: "30%"}}>
+    return <div className={"m-2 m-md-2 p-2 p-md-2 justify-content-evenly float-start"} style={{width: "30%"}}>
         <Form id={"user-form"} onSubmit={props.onSubmit}>
             <fieldset className={"border border-2 p-3"}>
                 <legend className={"float-none w-auto p-2"}>Criar novo utilizador</legend>
@@ -61,7 +64,7 @@ function UserForm(props: { onSubmit: (e: React.ChangeEvent<HTMLFormElement>) => 
                 <Button className={"float-end m-1 m-md-1"} variant={"outline-primary"} type={"submit"}>Criar</Button>
             </fieldset>
         </Form>
-    </Container>;
+    </div>;
 }
 
 export function Users(props: UsersProps) {
@@ -69,6 +72,8 @@ export function Users(props: UsersProps) {
     const [newUser, setNewUser] = useState<UserModel>({email: "", name: ""})
     const [showForm, setShowForm] = useState(false)
     const [roles, setRoles] = useState<RoleWithDisplayName[]>([])
+
+    const showErrorToast = (err: MyError) => toast.error(err.message)
 
     const mapWithDisplayName = useCallback((roles: UserRoleModel[]) => {
         const toRoleWithDisplayName = (role: UserRoleModel): RoleWithDisplayName => ({
@@ -98,6 +103,7 @@ export function Users(props: UsersProps) {
             .then(updatedUser => {
                 setUsers(prevState => prevState.map(u => updatedUser.userId === u.userId ? updatedUser : u))
             })
+            .catch(showErrorToast)
     }, [props.service])
 
     const onRemoveUserRoles = useCallback((roleIds: number[], userId: string) => {
@@ -106,14 +112,17 @@ export function Users(props: UsersProps) {
             .then(updatedUser => {
                 setUsers(prevState => prevState.map(u => updatedUser.userId === u.userId ? updatedUser : u))
             })
+            .catch(showErrorToast)
     }, [props.service])
 
     const createUser = useCallback((newUser: UserModel) => {
         props.service
             .createUser(newUser)
             .then(r => {
+                console.log(r)
                 setUsers(prevState => ([...prevState, r]))
             })
+            .catch(showErrorToast)
     }, [props.service])
 
     const columns = React.useMemo<ColumnDef<UserModel>[]>(
@@ -174,14 +183,21 @@ export function Users(props: UsersProps) {
 
     return (
         <Container>
-            { !showForm && <Button onClick={() => setShowForm(true)}>Criar novo utilizador</Button>}
-            { showForm &&
-                <UserForm
-                    onSubmit={handleOnSubmit}
-                    newUser={newUser}
-                    onChange={updateUser}
-                    onClick={() => setShowForm(false)}/>
-            }
+            <ToastContainer/>
+            <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={2}>
+                    <div className={"d-grid"}>
+                        { !showForm && <Button onClick={() => setShowForm(true)}>Criar novo utilizador</Button>}
+                        { showForm &&
+                            <UserForm
+                                onSubmit={handleOnSubmit}
+                                newUser={newUser}
+                                onChange={updateUser}
+                                onClick={() => setShowForm(false)}/>
+                        }
+                    </div>
+                </Grid>
+            </Grid>
 
             <MyTable
                 pagination

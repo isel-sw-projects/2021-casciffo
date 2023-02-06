@@ -10,6 +10,7 @@ import {ImNotification} from "react-icons/im";
 import {NOT_AVAILABLE, NotificationType} from "../../common/Constants";
 import {MyHashMap} from "../../common/Types";
 import {MyUtil} from "../../common/MyUtil";
+import {useNotificationContext} from "../context/NotificationContext";
 
 type NotificationProps = {
     service: NotificationService
@@ -34,7 +35,12 @@ export function NotificationsView(props: NotificationProps) {
         masterCheck: false,
         selectedRows: 0
     })
+    const {setNotificationCount} = useNotificationContext()
 
+    useEffect(() => {
+        setNotificationCount(notifications.filter(n => !n.notification.viewed).length)
+    },[notifications, setNotificationCount])
+    
     useEffect(() => {
         props.service
             .fetchNotifications(userId!)
@@ -42,13 +48,16 @@ export function NotificationsView(props: NotificationProps) {
             .then(_ => setIsDataReady(true))
     }, [userId, props.service])
 
-    // const navigate = useNavigate()
     const markViewed = () => {
         props.service
-            .updateNotifications(userId!, notifications.filter(n => n.selected).map(n => {
-                n.notification.viewed = true
-                return n.notification
-            }))
+            .updateNotifications(userId!
+                , notifications
+                    .filter(n => n.selected)
+                    .map(n => {
+                        n.notification.viewed = true
+                        return n.notification
+                    })
+            )
             .then(value => setNotifications(prevState => {
                 const notModified = prevState.filter(n => !n.selected)
                 return [...notModified, ...value.map(n => ({selected: false, notification: n!}))]

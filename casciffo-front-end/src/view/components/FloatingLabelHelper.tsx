@@ -5,7 +5,15 @@ import {RequiredSpan} from "./RequiredSpan";
 type InputType = "number"|"text"|"date"
 
 export function FloatingLabelHelper(
-    props: {label: string, name: string, value?: string, required?: boolean, type?: InputType, onChange?: (e: any) => void, style?: {}}
+    props: {
+        label: string,
+        name: string,
+        value?: string,
+        required?: boolean,
+        type?: InputType,
+        readOnly?: boolean,
+        onChange?: (e: any) => void, style?: {}
+    }
 ) {
     return (
         <FloatingLabel className={"font-bold m-2"} label={props.required ? <RequiredSpan text={props.label}/>: props.label}>
@@ -15,7 +23,7 @@ export function FloatingLabelHelper(
                 value={props.value ?? ""}
                 name={props.name}
                 placeholder={props.label}
-                readOnly={props.onChange == null}
+                readOnly={props.onChange == null || props.readOnly === true}
                 onChange={props.onChange}
                 required={props.required}
             />

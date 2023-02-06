@@ -1,7 +1,7 @@
 import {MyError} from "../../error-view/MyError";
 
 import {
-    DossierModel, PatientVisitsAggregate,
+    DossierModel, PatientModel, PatientVisitsAggregate,
     ResearchFinance, ResearchFinanceEntry,
     ResearchModel, ResearchPatientModel, ResearchPatientVisitsAggregate, ResearchTeamFinanceEntry,
     ResearchVisitModel,
@@ -35,6 +35,7 @@ import {ResearchVisitDetailsTab} from "../visits/ResearchVisitDetailsTab";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {MyUtil} from "../../../common/MyUtil";
 import {toast, ToastContainer} from "react-toastify";
+import {ToastMsgContext} from "../../context/ToastMsgContext";
 
 export function ResearchDetailsPage(props: { researchService: ResearchAggregateService }) {
     const {researchId} = useParams()
@@ -45,13 +46,22 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     const [selectedTab, setSelectedTab] = useState(ResearchTabNames.research)
     const [tabPaneScope, setTabPaneScope] = useState<TabPaneScope>(TabPaneScope.OVERVIEW)
     const errorHandler = useErrorHandler()
-    const errorToast = useCallback( (error: MyError)=> toast.error(error.message), [])
-    // const ResearchDetailsContext = createContext({research: {}, setResearch: (r: ResearchModel): void => {}})
+    const errorToast = useCallback( (error: MyError)=> {
+        toast.error(error.message)
+    }, [])
+    const infoToast = useCallback( (msg: string, type: "info" | "success") => {
+        if(type === "info") {
+            toast.info(msg)
+        } else {
+            toast.success(msg)
+        }
+    }, [])
 
     const userId = useUserAuthContext().userToken?.userId
     if(userId == null) {
         throw new MyError("", 400)
     }
+
     const [research, setResearch] = useState<ResearchModel>({})
     const [stateChain, setStateChain] = useState<StateModel[]>([])
     const {hash} = useLocation()
@@ -148,6 +158,7 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }, [errorToast, props.researchService, researchId])
 
     const onSaveScientificActivity = useCallback((activity: ScientificActivityModel) => {
+        console.log(activity)
         props.researchService.newScientificActivityEntry(researchId!, activity)
             .then(value => setResearch(prevState => ({...prevState, scientificActivities: [value, ...prevState.scientificActivities || []]})))
             .catch(errorToast)
@@ -278,7 +289,10 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
             case TabPaneScope.CREATE:
                 return <AddNewPatient
                     team={research.investigationTeam!}
-                    searchByProcessId={props.researchService.searchPatientsByProcessId}
+                    //if passing the direct props.researchService.searchPatientsByProcessId function,
+                    // context capture is lost from the service
+                    // resulting in undefined properties when the services access "this".property
+                    searchByProcessId={pId => {return props.researchService.searchPatientsByProcessId(pId)}}
                     onRenderOverviewClick={renderPatientOverviewScreen}
                     onSavePatientAndVisits={addPatientAndVisits}
                 />
@@ -387,7 +401,12 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
 
     return (
-        // <ResearchDetailsContext.Provider value={re}>
+        <ToastMsgContext.Provider value={
+            {
+                showErrorToastMsg: errorToast,
+                showToastMsg: infoToast
+            }
+        }>
             <Container>
                 <ToastContainer/>
                 <Tabs
@@ -473,6 +492,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                     }
                 </Tabs>
             </Container>
-        // </ResearchDetailsContext.Provider>
+        </ToastMsgContext.Provider>
     )
 }

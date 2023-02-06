@@ -21,6 +21,7 @@ import UserModel from "../../../model/user/UserModel";
 import {VisitPeriodicity, VisitTypes} from "../../../common/Constants";
 import {AsyncAutoCompletePatientSearch} from "./AsyncAutoCompletePatientSearch";
 import {FormListVisitInvestigators} from "../common/FormListVisitInvestigators";
+import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
 
 type Props = {
     team: TeamInvestigatorModel[]
@@ -76,53 +77,32 @@ export function AddNewPatient(props: Props) {
                     <AsyncAutoCompletePatientSearch requestPatients={props.searchByProcessId} setPatient={onSelectPatient}/>
                 </div>
 
-                <Form.FloatingLabel className={"m-2 m-md-2 font-bold"}
-                                    label={<span>Nº Processo <span style={{color: "red"}}>*</span></span>}>
-                    <Form.Control
-                        required
-                        type={"number"}
-                        name={"processId"}
-                        placeholder={"Nº Processo"}
-                        value={patientToAdd.patient.processId}
-                        onChange={updateUserToAdd}
-                    />
-                </Form.FloatingLabel>
-
-                <Form.FloatingLabel className={"m-2 m-md-2 font-bold"}
-                                    label={<span>Nome completo <span style={{color: "red"}}>*</span></span>}>
-                    <Form.Control
-                        required
-                        type={"text"}
-                        name={"fullName"}
-                        placeholder={"Nome"}
-                        value={patientToAdd.patient.fullName}
-                        onChange={updateUserToAdd}
-                    />
-                </Form.FloatingLabel>
-
-                <Form.FloatingLabel className={"m-2 m-md-2 font-bold"}
-                                    label={<span>Género <span style={{color: "red"}}>*</span></span>}>
-                    <Form.Control
-                        required
-                        type={"text"}
-                        name={"gender"}
-                        placeholder={"Género"}
-                        value={patientToAdd.patient.gender}
-                        onChange={updateUserToAdd}
-                    />
-                </Form.FloatingLabel>
-
-                <Form.FloatingLabel className={"m-2 m-md-2 font-bold"}
-                                    label={<span>Idade <span style={{color: "red"}}>*</span></span>}>
-                    <Form.Control
-                        required
-                        type={"number"}
-                        name={"idade"}
-                        placeholder={"Idade"}
-                        value={patientToAdd.patient.age}
-                        onChange={updateUserToAdd}
-                    />
-                </Form.FloatingLabel>
+                <FloatingLabelHelper
+                    required
+                    label={"Nº Processo"}
+                    name={"processId"}
+                    type={"number"}
+                    value={patientToAdd.patient.processId}
+                />
+                <FloatingLabelHelper
+                    required
+                    label={"Nome completo"}
+                    name={"fullName"}
+                    value={patientToAdd.patient.fullName}
+                />
+                <FloatingLabelHelper
+                    required
+                    label={"Género"}
+                    name={"gender"}
+                    value={patientToAdd.patient.gender}
+                />
+                <FloatingLabelHelper
+                    required
+                    label={"Idade"}
+                    name={"age"}
+                    type={"number"}
+                    value={patientToAdd.patient.age}
+                />
             </fieldset>
         </Form>
 

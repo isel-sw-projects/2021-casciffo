@@ -5,7 +5,7 @@ import "../../assets/css/shared/iconly.css";
 import 'react-toastify/dist/ReactToastify.css';
 import {Button, Container, Nav, Navbar, Stack} from 'react-bootstrap';
 import {BrowserRouter, Link, useLocation, useNavigate} from "react-router-dom";
-import {useUserAuthContext} from '../context/UserAuthContext';
+import {UserAuthContextProvider, useUserAuthContext} from '../context/UserAuthContext';
 import {Roles} from "../../model/role/Roles";
 import {ErrorBoundary} from "react-error-boundary";
 import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
@@ -21,6 +21,7 @@ import {GiExitDoor} from "react-icons/gi";
 import {MdNotificationImportant} from "react-icons/md";
 import {IoMdNotifications} from "react-icons/io";
 import {NOTIFICATION_CHECK_INTERVAL_MINUTES} from "../../common/Constants";
+import {NotificationContextProvider, useNotificationContext} from "../context/NotificationContext";
 
 function NavigationBar(props: {notificationService: NotificationService}) {
 
@@ -31,7 +32,7 @@ function NavigationBar(props: {notificationService: NotificationService}) {
         navigate('/logout')
     }
 
-    const [notificationCount, setNotificationCount] = useState(0)
+    const {notificationCount, setNotificationCount} = useNotificationContext()
 
     useEffect(() => {
         if(userToken == null) return
@@ -41,7 +42,7 @@ function NavigationBar(props: {notificationService: NotificationService}) {
                 .then(setNotificationCount)
         }, MyUtil.convertMinutesToMillis(NOTIFICATION_CHECK_INTERVAL_MINUTES))
         return () => clearInterval(interval)
-    }, [props.notificationService, userToken])
+    }, [props.notificationService, setNotificationCount, userToken])
 
     const isUserAdmin = userToken && userToken.roles.find(r => r === Roles.SUPERUSER.id) != null
 
@@ -75,12 +76,12 @@ function NavigationBar(props: {notificationService: NotificationService}) {
                 </Nav>
 
                 <div className={"float-end"}>
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{backgroundColor: "#435ebe"}}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{backgroundColor: "#435ebe", top:20}}>
                         <Grid item xs={4} className={"text-center"}>
                             {userToken != null &&
                                 <Link to={`/utilizadores/${userToken.userId}/notificacoes`}>
                                     <Tooltip title={"Notificações"}>
-                                            <MuiBadge style={{top:10}} badgeContent={notificationCount} color={"warning"}>
+                                            <MuiBadge badgeContent={notificationCount} color={"warning"}>
                                                 {notificationCount === 0
                                                     ? <IoMdNotifications color={"#ffffff"} size={25}/>
                                                     : <MdNotificationImportant color={"#ffffff"} size={25}/>
@@ -156,13 +157,17 @@ function DisplayPath() {
 
 function App() {
     return (
-        <BrowserRouter basename={"/"} key={"router"}>
-            <ErrorBoundary FallbackComponent={GlobalErrorBoundary}>
-                <NavigationBar notificationService={new NotificationService()}/>
-                <DisplayPath/>
-                <CreateRoutes/>
-            </ErrorBoundary>
-        </BrowserRouter>
+        <UserAuthContextProvider>
+            <NotificationContextProvider>
+                <BrowserRouter basename={"/"} key={"router"}>
+                    <ErrorBoundary FallbackComponent={GlobalErrorBoundary}>
+                        <NavigationBar notificationService={new NotificationService()}/>
+                        <DisplayPath/>
+                        <CreateRoutes/>
+                    </ErrorBoundary>
+                </BrowserRouter>
+            </NotificationContextProvider>
+        </UserAuthContextProvider>
     )
 }
 

@@ -13,7 +13,7 @@ import {CountHolder} from "../common/Types";
 import {PatientService} from "./PatientService";
 
 export class ResearchAggregateService {
-    patientService = new PatientService()
+    private patientService = new PatientService()
 
     getResearchCount(): Promise<CountHolder> {
         const url = ApiUrls.researchCountUrl
@@ -68,6 +68,9 @@ export class ResearchAggregateService {
     }
 
     searchPatientsByProcessId(processId: string): Promise<PatientModel[]> {
+        console.log(`searchPatientsByProcessId called with ${processId}`)
+        console.log(`this.service: ${this.patientService}`)
+        console.log(`this:`, this)
         return this.patientService.searchPatientsByProcessId(processId)
     }
 

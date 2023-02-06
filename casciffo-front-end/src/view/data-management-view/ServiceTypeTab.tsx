@@ -11,8 +11,6 @@ import {RiDeleteBin6Fill} from "react-icons/ri";
 import {SearchComponent} from "../components/SearchComponent";
 import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
 import {MyTable} from "../components/MyTable";
-import {PageInfo} from "../../common/Types";
-import TablePagination from "@mui/material/TablePagination";
 
 
 type Props = {
@@ -72,13 +70,6 @@ export function ServiceTypeTab(props: Props) {
                 setData(prevState => prevState.map(p => p.id === row.id ? row : p))
             }
             return [
-                {
-                    accessorFn: row => row.id,
-                    id: 'id',
-                    cell: info => info.getValue(),
-                    header: () => <span>Id</span>,
-                    footer: props => props.column.id,
-                },
                 {
                     accessorFn: row => row.isEdit ?
                         <input type={"text"} value={row.name} onChange={event => updateName({...row, name: event.target.value})} />
