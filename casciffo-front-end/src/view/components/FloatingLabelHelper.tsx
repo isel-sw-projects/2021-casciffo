@@ -2,7 +2,7 @@ import {FloatingLabel, Form} from "react-bootstrap";
 import React from "react";
 import {RequiredSpan} from "./RequiredSpan";
 
-type InputType = "number"|"text"|"date"
+type InputType = "number"|"text"|"date"|"password"
 
 export function FloatingLabelHelper(
     props: {

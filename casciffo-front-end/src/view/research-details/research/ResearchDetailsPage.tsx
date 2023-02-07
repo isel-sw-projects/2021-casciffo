@@ -1,7 +1,7 @@
 import {MyError} from "../../error-view/MyError";
 
 import {
-    DossierModel, PatientModel, PatientVisitsAggregate,
+    DossierModel, PatientVisitsAggregate,
     ResearchFinance, ResearchFinanceEntry,
     ResearchModel, ResearchPatientModel, ResearchPatientVisitsAggregate, ResearchTeamFinanceEntry,
     ResearchVisitModel,

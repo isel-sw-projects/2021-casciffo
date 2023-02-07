@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "../../assets/css/main/app.css";
 import "../../assets/css/shared/iconly.css";
 import 'react-toastify/dist/ReactToastify.css';
-import {Button, Container, Nav, Navbar, Stack} from 'react-bootstrap';
+import {Container, Nav, Navbar, Stack} from 'react-bootstrap';
 import {BrowserRouter, Link, useLocation, useNavigate} from "react-router-dom";
 import {UserAuthContextProvider, useUserAuthContext} from '../context/UserAuthContext';
 import {Roles} from "../../model/role/Roles";
@@ -11,7 +11,7 @@ import {ErrorBoundary} from "react-error-boundary";
 import {GlobalErrorBoundary} from "../error-view/GlobalErrorBoundary";
 import {NotificationService} from "../../services/NotificationService";
 import {MyUtil} from "../../common/MyUtil";
-import {Tooltip, Badge as MuiBadge, Grid} from "@mui/material";
+import {Tooltip, Badge as MuiBadge, Grid, IconButton} from "@mui/material";
 import {CreateRoutes} from "./CreateRoutes";
 // !!! IMPORTANT !!! react-icons imports !!!MUST!!! be imported like this, by specifying the folder
 // which is the prefix of the desired icon. Having the default /all will cause the app to crash.
@@ -20,8 +20,8 @@ import {BsDoorOpen} from "react-icons/bs";
 import {GiExitDoor} from "react-icons/gi";
 import {MdNotificationImportant} from "react-icons/md";
 import {IoMdNotifications} from "react-icons/io";
-import {NOTIFICATION_CHECK_INTERVAL_MINUTES} from "../../common/Constants";
 import {NotificationContextProvider, useNotificationContext} from "../context/NotificationContext";
+import {NOTIFICATION_CHECK_INTERVAL_MINUTES} from "../../common/Constants";
 
 function NavigationBar(props: {notificationService: NotificationService}) {
 
@@ -32,13 +32,34 @@ function NavigationBar(props: {notificationService: NotificationService}) {
         navigate('/logout')
     }
 
+    const login = () => {
+        navigate('/login')
+    }
+
+    const goToUserDetails = () => {
+        if(userToken == null) {
+            alert("how did you do this?")
+            return
+        }
+        navigate(`/utilizadores/${userToken.userId!}`)
+    }
+
+    const goToUserNotifications = () => {
+        if(userToken == null) {
+            alert("how did you do this?")
+            return
+        }
+        navigate(`/utilizadores/${userToken.userId!}/notificacoes`)
+    }
+
     const {notificationCount, setNotificationCount} = useNotificationContext()
 
     useEffect(() => {
         if(userToken == null) return
         const interval = setInterval(() => {
+            if(userToken == null) return
             props.notificationService
-                .checkForNewNotifications(userToken!.userId!)
+                .checkForNewNotifications(userToken.userId!)
                 .then(setNotificationCount)
         }, MyUtil.convertMinutesToMillis(NOTIFICATION_CHECK_INTERVAL_MINUTES))
         return () => clearInterval(interval)
@@ -76,47 +97,48 @@ function NavigationBar(props: {notificationService: NotificationService}) {
                 </Nav>
 
                 <div className={"float-end"}>
-                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} style={{backgroundColor: "#435ebe", top:20}}>
+                    <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 5 }} style={{backgroundColor: "#435ebe"}}>
                         <Grid item xs={4} className={"text-center"}>
                             {userToken != null &&
-                                <Link to={`/utilizadores/${userToken.userId}/notificacoes`}>
-                                    <Tooltip title={"Notificações"}>
-                                            <MuiBadge badgeContent={notificationCount} color={"warning"}>
-                                                {notificationCount === 0
-                                                    ? <IoMdNotifications color={"#ffffff"} size={25}/>
-                                                    : <MdNotificationImportant color={"#ffffff"} size={25}/>
-                                                }
-                                            </MuiBadge>
-                                    </Tooltip>
-                                </Link>
+                                <Tooltip title={"Notificações"} arrow>
+                                    <IconButton onClick={goToUserNotifications}>
+                                        <MuiBadge badgeContent={notificationCount} color={"warning"}>
+                                            {notificationCount === 0
+                                                ? <IoMdNotifications color={"#ffffff"} size={28}/>
+                                                : <MdNotificationImportant color={"#ffffff"} size={28}/>
+                                            }
+                                        </MuiBadge>
+                                    </IconButton>
+                                </Tooltip>
                             }
                         </Grid>
                         <Grid item xs={4} className={"text-center"}>
                                 {userToken != null &&
-                                    <FaUser size={20} color={"#f3ffff"} style={{top: "0px"}}/>
+                                    <Tooltip title={userToken.userName} arrow>
+                                        <IconButton onClick={goToUserDetails}>
+                                            <FaUser size={27} color={"#f3ffff"}/>
+                                        </IconButton>
+                                    </Tooltip>
                                 }
                         </Grid>
-                        <Grid item xs={4} className={"text-center"}>
-                                {userToken != null ?
-                                    <GiExitDoor size={20} color={"#f3ffff"} />
-                                    :
-                                    <BsDoorOpen size={20} color={"#f3ffff"} />
-                                }
-                        </Grid>
-
-                        <Grid item xs={4}/>
-                        <Grid item xs={4} className={"text-center"}>
-                            <p className={"mt-2 mt-md-2 text-capitalize"} style={{color:"#f3ffff", top:5}}>
-                            {userToken && userToken.userName}
-                            </p>
-                        </Grid>
-                        <Grid item xs={4} className={"text-center"}>
-                           {userToken != null ?
-                               <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={logout}>Logout</Button>
-                               :
-                               <Button className={"font-bold"} style={{color: "white"}} variant={"link"} onClick={() => navigate("/login")}>Login</Button>
-                           }
-                        </Grid>
+                        {
+                            userToken != null ?
+                                <Grid item xs={4} className={"text-center"}>
+                                    <Tooltip title={"Logout"} arrow>
+                                        <IconButton onClick={logout}>
+                                            <GiExitDoor size={30} color={"#f3ffff"} />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                                :
+                                <Grid item xs={12} className={"text-center"}>
+                                    <Tooltip title={"Iniciar Sessão"} arrow>
+                                        <IconButton onClick={login}>
+                                            <BsDoorOpen size={30} color={"#f3ffff"} />
+                                        </IconButton>
+                                    </Tooltip>
+                                </Grid>
+                        }
                     </Grid>
                 </div>
             </Navbar.Collapse>

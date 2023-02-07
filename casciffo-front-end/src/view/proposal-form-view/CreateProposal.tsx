@@ -61,7 +61,7 @@ export function CreateProposal(props : CP_Props) {
     }
 
     function proposalFormToModel(proposalForm: ProposalForm) {
-        proposalForm.team.push(proposalForm.pInvestigator)
+        console.log(proposalForm.team)
         const model : ProposalModel = {
             pathologyId: proposalForm.pathologyId,
             principalInvestigatorId: parseInt(proposalForm.pInvestigator.id),

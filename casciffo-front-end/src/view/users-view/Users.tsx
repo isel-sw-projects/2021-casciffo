@@ -11,6 +11,7 @@ import {MultiSelect} from "react-multi-select-component";
 import {toast, ToastContainer} from "react-toastify";
 import {MyError} from "../error-view/MyError";
 import { Grid } from "@mui/material";
+import {Link} from "react-router-dom";
 
 type UsersProps = {
     service: UserService
@@ -128,7 +129,12 @@ export function Users(props: UsersProps) {
     const columns = React.useMemo<ColumnDef<UserModel>[]>(
         () => [
             {
-                accessorFn: row => row.userId,
+                accessorFn: row => <div>
+                    <div className={"flex-column"}>
+                        {row.userId}
+                    </div>
+                    <Link to={`${row.userId}`}>Ver detalhes</Link>
+                </div>,
                 id: 'userId',
                 cell: info => info.getValue(),
                 header: () => <span>Id</span>,

@@ -36,8 +36,6 @@ export function AddNewPatient(props: Props) {
 
     const [patientToAdd, setPatientToAdd] = useState<PatientVisitsAggregate>(freshPatient())
 
-    const updateUserToAdd = (e: any) => setPatientToAdd(prevState => ({...prevState, patient:{...prevState.patient, [e.target.name]: e.target.value}}))
-
     const onSaveVisit = (visit: ResearchVisitModel, idx: number) => {
         const newVisits = patientToAdd.scheduledVisits
         newVisits[idx] = visit

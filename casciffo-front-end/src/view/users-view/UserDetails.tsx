@@ -3,10 +3,12 @@ import {UserService} from "../../services/UserService";
 import {useParams} from "react-router-dom";
 import UserModel from "../../model/user/UserModel";
 import {useErrorHandler} from "react-error-boundary";
-import {Button, Form} from "react-bootstrap";
+import {Button, Container, Form} from "react-bootstrap";
 import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
 import {useNotificationContext} from "../context/NotificationContext";
 import {Grid} from "@mui/material";
+import {toast, ToastContainer} from "react-toastify";
+import {MyError} from "../error-view/MyError";
 
 type Props = {
     service: UserService
@@ -19,8 +21,10 @@ export function UserDetails(props: Props) {
     const [userPrev, setUserPrev] = useState<UserModel>({})
     const [isEdit, setIsEdit] = useState(false)
 
+    const errorToast = (err: MyError) => toast.error(err.message)
+    const successToast = (msg: string) => toast.success(msg)
+    const infoToast = (msg: string) => toast.info(msg)
     const errorHandler = useErrorHandler()
-    const {notificationTimerInMinutes, setNotificationTimer} = useNotificationContext()
 
     useEffect(() => {
         props.service
@@ -41,7 +45,17 @@ export function UserDetails(props: Props) {
     const saveUserDataChanges = (e: any) => {
         e.preventDefault()
         e.stopPropagation()
-
+        props.service
+            .updateUser(user)
+            .then(value => {
+                setUser(value)
+                setUserPrev(value)
+                successToast("Alterações guardadas com sucesso!")
+            })
+            .catch(err => {
+                errorToast(err.msg)
+                setUser(userPrev)
+            })
     }
 
     const cancelChanges = () => {
@@ -49,51 +63,64 @@ export function UserDetails(props: Props) {
         setIsEdit(false)
     }
 
-    return <React.Fragment>
-        <Grid>
-            <Form onSubmit={saveUserDataChanges}>
-                    <fieldset className={"border p-3"}>
-                        <legend className={"float-none w-auto p-2"}>Dados pessoais</legend>
-                            <FloatingLabelHelper
-                                required={isEdit}
-                                readOnly={!isEdit}
-                                label={"Nome"}
-                                name={"name"}
-                                value={user.name}
-                                onChange={updateUserData}
-                            />
-                            <FloatingLabelHelper
-                                required={isEdit}
-                                readOnly={!isEdit}
-                                label={"Password"}
-                                name={"password"}
-                                value={user.password}
-                                onChange={updateUserData}
-                            />
-                            <FloatingLabelHelper
-                                required={isEdit}
-                                readOnly={!isEdit}
-                                label={"Email"}
-                                name={"email"}
-                                value={user.email}
-                                onChange={updateUserData}
-                            />
-                        {isEdit &&
-                            <Grid container title={"A title"} columnSpacing={{ xs: 3, sm: 6, md: 9 }}>
-                                <Grid item xs={6} sm={3} md={1.5}>
-                                    <Button type={"submit"} variant={"outline-primary"}>
-                                        Salvar
-                                    </Button>
-                                </Grid>
-                                <Grid item xs={6} sm={3} md={1.5}>
-                                    <Button variant={"outline-danger"} onClick={cancelChanges}>
-                                        Cancelar
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        }
-                    </fieldset>
-            </Form>
+    const enableEdit = () => {
+        setIsEdit(true)
+    }
+
+    return <Container>
+        <ToastContainer/>
+        <Grid container columnSpacing={{sm: 8}}>
+            <Grid item sm={3}>
+                <Form onSubmit={saveUserDataChanges}>
+                        <fieldset className={"border p-3"}>
+                            <legend className={"float-none w-auto p-2"}>Dados pessoais</legend>
+                                <FloatingLabelHelper
+                                    required={isEdit}
+                                    readOnly={!isEdit}
+                                    label={"Nome"}
+                                    name={"name"}
+                                    value={user.name}
+                                    onChange={updateUserData}
+                                />
+                            {
+                                isEdit &&
+                                <FloatingLabelHelper
+                                    required
+                                    label={"Password"}
+                                    name={"password"}
+                                    value={user.password}
+                                    onChange={updateUserData}
+                                />
+                            }
+                                <FloatingLabelHelper
+                                    required={isEdit}
+                                    readOnly={!isEdit}
+                                    label={"Email"}
+                                    name={"email"}
+                                    value={user.email}
+                                    onChange={updateUserData}
+                                />
+                            {isEdit ?
+                                <div className={"flex ms-2 me-2"}>
+                                    <div className={"float-start"}>
+                                        <Button type={"submit"} variant={"outline-primary"}>
+                                            Salvar
+                                        </Button>
+                                    </div>
+                                    <div className={"float-end"}>
+                                        <Button variant={"outline-danger"} onClick={cancelChanges}>
+                                            Cancelar
+                                        </Button>
+                                    </div>
+                                </div>
+                                :
+                                <div className={"flex ms-2 me-2"}>
+                                    <Button className={"float-end"} onClick={enableEdit}>Editar</Button>
+                                </div>
+                            }
+                        </fieldset>
+                </Form>
+            </Grid>
         </Grid>
-    </React.Fragment>
+    </Container>
 }

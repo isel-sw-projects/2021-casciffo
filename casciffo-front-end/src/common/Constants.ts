@@ -138,7 +138,10 @@ export const NotificationType = {
         buildLink: (ids: MyHashMap): string => `/propostas/${ids["proposalId"]}#${ResearchTabNames.visits}`},
     USER_NEW_ROLES: {
         id: "USER_NEW_ROLES",
-        buildLink: (ids: MyHashMap): string => NOT_AVAILABLE
+        buildLink: (ids: MyHashMap): string => NOT_AVAILABLE},
+    USER_CREATED: {
+        id: "USER_CREATED",
+        buildLink: (ids: MyHashMap): string => `/utilizadores/${ids["userId"]}`
     }
 }
 

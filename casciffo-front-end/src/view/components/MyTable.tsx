@@ -9,7 +9,6 @@ import {
     useReactTable
 } from "@tanstack/react-table";
 import {Spinner, Table as RBTable} from "react-bootstrap";
-import TablePagination from "@mui/material/TablePagination";
 import {MyPagination} from "./MyPagination";
 
 type TableProps = {

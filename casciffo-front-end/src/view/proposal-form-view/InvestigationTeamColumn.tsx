@@ -68,28 +68,26 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
 
     const principalInvestigator = state.team.find(i => i.teamRole === TeamRoleTypes.PRINCIPAL)
     function setPrincipalInvestigator(investigator: Investigator) {
+        const newTeam = state.team.map(inv =>
+            investigator.id === inv.id
+                ? {...inv, teamRole: TeamRoleTypes.PRINCIPAL}
+                : {...inv, teamRole: TeamRoleTypes.MEMBER})
+        props.setTeam(newTeam)
         setState(prevState => ({
-                ...prevState,
-                team: prevState.team.map(inv =>
-                        investigator.id === inv.id
-                            ? {...inv, teamRole: TeamRoleTypes.PRINCIPAL}
-                            : {...inv, teamRole: TeamRoleTypes.MEMBER}
-                )
-            })
-        )
+                    ...prevState,
+                    team: newTeam}))
         props.setPrincipalInvestigator(investigator)
         showSuccessMessage(`${investigator.name} foi promovido a investigador principal!`, 1250)
     }
 
     function removeInvestigatorFromTeam(investigator: Investigator) {
+
         let newTeam = state.team.filter(member => member !== investigator)
         props.setTeam(newTeam)
-        setState(prevState => {
-            return ({
+        setState(prevState => ({
                 ...prevState,
                 team: newTeam,
-            })
-        })
+            }))
         showSuccessMessage("Removido!", 1250)
     }
 

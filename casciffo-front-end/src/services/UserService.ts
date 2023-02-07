@@ -52,4 +52,9 @@ export class UserService {
         const url = ApiUrls.usersCreateUrl
         return httpPost(url, newUser)
     }
+
+    updateUser(user: UserModel): Promise<UserModel> {
+        const url = ApiUrls.userDetailsUrl(user.userId!)
+        return httpPut(url, user)
+    }
 }

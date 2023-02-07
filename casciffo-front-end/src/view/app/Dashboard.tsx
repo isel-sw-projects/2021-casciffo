@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {MyUtil} from "../../common/MyUtil";
-import {Button, Col, Container, Row} from "react-bootstrap";
+import {Button, Container} from "react-bootstrap";
 import {ProposalStats, ResearchStats, StatisticsService} from "../../services/StatisticsService";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
@@ -13,6 +13,7 @@ import {MyTable} from "../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
 import {useNavigate} from "react-router-dom";
 import {STATES} from "../../model/state/STATES";
+import {Grid} from "@mui/material";
 
 
 type DashboardProps = {
@@ -309,74 +310,73 @@ export function Dashboard(props: DashboardProps) {
             }
         ], [navigate])
 
-    return <React.Fragment>
-        <Container>
-            <Row>
-                <Col>
+    return <Container>
+        <Grid container columnSpacing={{xs:6, sm: 6, md: 1}} className={"justify-content-evenly"}>
+            <Grid item xs={12} sm={12} md={6} className={"mt-3"}>
+                <Grid container columnSpacing={{xs:6, sm:6, md:1}}>
                     <Container className={"text-center font-bold"}>
                         <h4>Ensaios clínicos</h4>
                     </Container>
-                </Col>
-                <Col>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <MyDonut
+                            label={"Ensaios clínicos"}
+                            hasData={researchTrialStats.hasData}
+                            data={researchTrialStatsDonutData}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <MyDonut
+                            label={"Ensaios observacionais"}
+                            hasData={researchStudyStats.hasData}
+                            data={researchStudyStatsDonutData}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs={12} sm={12} md={6} className={"mt-3"}>
+                <Grid container columnSpacing={{xs:6, sm:6, md:1}}>
                     <Container className={"text-center font-bold"}>
                         <h4>Propostas</h4>
                     </Container>
-                </Col>
-            </Row>
-            <Row>
-                <Col>
-                    <MyDonut
-                        label={"Ensaios clínicos"}
-                        hasData={researchTrialStats.hasData}
-                        data={researchTrialStatsDonutData}
-                    />
-                </Col>
-                <Col>
-                    <MyDonut
-                        label={"Ensaios observacionais"}
-                        hasData={researchStudyStats.hasData}
-                        data={researchStudyStatsDonutData}
-                    />
-                </Col>
-                <Col>
-                    <MyDonut
-                        label={"Ensaios clínicos"}
-                        hasData={proposalTrialStats.hasData}
-                        data={proposalTrialStatsDonutData}
-                    />
-                </Col>
-                <Col>
-                    <MyDonut
-                        label={"Estudos Observacionais"}
-                        hasData={proposalStudyStats.hasData}
-                        data={proposalStudyStatsDonutData}
-                    />
-                </Col>
-            </Row>
-        </Container>
-        <Container className={"mt-2 border-top border-secondary border-2"}>
-            <Row className={"mt-3"}>
-                <Col>
-                    <Container className={"text-center"}>
-                        <h5>Últimos 5 ensaios atualizados.</h5>
-                    </Container>
-                        <MyTable data={latestResearch} columns={researchColumns}/>
-                </Col>
-                <Col>
-                    <Container className={"text-center"}>
-                        <h5>Últimas 5 propostas atualizadas.</h5>
-                    </Container>
-                        <MyTable data={latestProposals.sort((a,b) => MyUtil.cmp(b.lastModified, a.lastModified))} columns={proposalColumns}/>
-                </Col>
-            </Row>
-        </Container>
 
-        <Container>
-            <h5>Eventos esta semana.</h5>
-            <MyTable data={nearestEvents} columns={eventColumns}/>
-        </Container>
+                    <Grid item xs={12} sm={6} md={6}>
+                        <MyDonut
+                            label={"Ensaios clínicos"}
+                            hasData={proposalTrialStats.hasData}
+                            data={proposalTrialStatsDonutData}
+                        />
+                    </Grid>
 
-    </React.Fragment>;
+                    <Grid item xs={12} sm={6} md={6}>
+                        <MyDonut
+                            label={"Estudos Observacionais"}
+                            hasData={proposalStudyStats.hasData}
+                            data={proposalStudyStatsDonutData}
+                        />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+        <Grid container className={"mt-2 border-top border-secondary border-2"} columnSpacing={{xs:6, sm: 6, md: 2}}>
+            <Grid item className={"mt-3"} xs={12} sm={12} md={6}>
+                <Container className={"text-center"}>
+                    <h5>Últimos 5 ensaios atualizados.</h5>
+                </Container>
+                <MyTable data={latestResearch} columns={researchColumns}/>
+            </Grid>
+
+            <Grid item className={"mt-3"} xs={12} sm={12} md={6}>
+                <Container className={"text-center"}>
+                    <h5>Últimas 5 propostas atualizadas.</h5>
+                </Container>
+                <MyTable data={latestProposals.sort((a,b) => MyUtil.cmp(b.lastModified, a.lastModified))} columns={proposalColumns}/>
+            </Grid>
+        </Grid>
+
+        <h5>Eventos esta semana</h5>
+        <MyTable data={nearestEvents} columns={eventColumns}/>
+
+    </Container>;
 }
 
 type MyProps = {
