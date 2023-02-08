@@ -1,16 +1,27 @@
 import ApiUrls from "../common/Links";
-import {httpDelete, httpGet, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
+import {axiosPostFormFile, httpDelete, httpGet, httpGetFile, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
 import {
     DossierModel,
     PatientModel,
-    PatientVisitsAggregate, ResearchAggregateModel, ResearchFinance, ResearchFinanceEntry, ResearchFinanceNewEntryDTO,
-    ResearchModel, ResearchModelAnswer, ResearchPatientModel, ResearchPatientVisitsAggregate, ResearchTeamFinanceEntry,
-    ResearchVisitModel, ScientificActivityModel
+    PatientVisitsAggregate,
+    ResearchAddenda,
+    ResearchAggregateModel,
+    ResearchFinance,
+    ResearchFinanceEntry,
+    ResearchFinanceNewEntryDTO,
+    ResearchModel,
+    ResearchModelAnswer,
+    ResearchPatientModel,
+    ResearchPatientVisitsAggregate,
+    ResearchTeamFinanceEntry,
+    ResearchVisitModel,
+    ScientificActivityModel
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
 import {StateChainTypes} from "../common/Constants";
 import {CountHolder} from "../common/Types";
 import {PatientService} from "./PatientService";
+import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
 
 export class ResearchAggregateService {
     private patientService = new PatientService()
@@ -121,5 +132,30 @@ export class ResearchAggregateService {
     removeParticipant(researchId: string, patientId: string): Promise<void> {
         const url = ApiUrls.researchPatientDetailUrl(researchId, patientId)
         return httpDelete(url)
+    }
+
+    fetchAddendaDetails(researchId: string, addendaId: string): Promise<ResearchAddenda> {
+        const url = ApiUrls.researchAddendaDetailUrl(researchId, addendaId)
+        return httpGet(url)
+    }
+
+    updateAddenda(addenda: ResearchAddenda): Promise<ResearchAddenda> {
+        const url = ApiUrls.researchAddendaDetailUrl(addenda.researchId!, addenda.id!)
+        return httpGet(url)
+    }
+
+    updateAddendaState(researchId: string, addendaId: string, nextStateId: string): Promise<ResearchAddenda> {
+        const url = ApiUrls.researchAddendaDetailStateUrl(researchId, addendaId, nextStateId)
+        return httpPut(url)
+    }
+
+    uploadAddendaFile(researchId: string, addendaId: string, file: File): Promise<FileInfo> {
+        const url = ApiUrls.researchAddendaDetailFileUploadUrl(researchId, addendaId)
+        return axiosPostFormFile(url, file)
+    }
+
+    downloadAddendaFile(researchId: string, addendaId: string): Promise<void> {
+        const url = ApiUrls.researchAddendaDetailFileDownloadUrl(researchId, addendaId)
+        return httpGetFile(url)
     }
 }

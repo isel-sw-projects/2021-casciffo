@@ -48,14 +48,16 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
         })
 
     function addInvestigatorToTeam(event: React.MouseEvent<HTMLButtonElement>) {
+        let isValid = true
         if (state.investigator.id.length === 0) {
             showErrorMessage("Por favor escolha um investigador da lista de resultados.", LONG_TIMEOUT_MILLIS)
-            return
+            isValid = false
         }
         if (state.team.some(t => t.id === state.investigator.id)) {
             showErrorMessage("O investigador que tentou adicionar já existe.", LONG_TIMEOUT_MILLIS)
-            return;
+            isValid = false
         }
+        if(!isValid) return
         let newTeam = [...state.team, state.investigator]
         props.setTeam(newTeam)
         setState(prevState => {

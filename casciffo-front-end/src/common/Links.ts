@@ -71,18 +71,18 @@ const THERAPEUTIC_AREAS_DETAILS_URL = (id: string) => `${PATHOLOGIES_URL}/${id}`
 const RESEARCH_URL = `${BASE_URL}/research`
 const RESEARCH_COUNT_URL =  `${RESEARCH_URL}/count`
 const RESEARCH_BY_TYPE_URL = (type: string) => `${RESEARCH_URL}?type=${type}`
-const DETAIL_RESEARCH_URL = (id: string) => `${RESEARCH_URL}/${id}`
-const COMPLETE_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/complete`
-const CANCEL_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/cancel`
-const DOSSIER_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/dossier`
-const STUDIES_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/studies`
-const VISITS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/visits`
-const PATIENT_WITH_VISITS_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/visits-n-patient`
+const RESEARCH_DETAIL_URL = (id: string) => `${RESEARCH_URL}/${id}`
+const COMPLETE_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/complete`
+const CANCEL_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/cancel`
+const DOSSIER_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/dossier`
+const STUDIES_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/studies`
+const VISITS_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/visits`
+const PATIENT_WITH_VISITS_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/visits-n-patient`
 const VISIT_DETAILS_URL = (rId: string, vId: string) => `${VISITS_RESEARCH_URL(rId)}/${vId}`
-const PATIENTS_RESEARCH_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients`
+const PATIENTS_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/patients`
 // const RESEARCH_PATIENT_WITH_VISITS_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/patients/create`
 const RESEARCH_PATIENT_DETAIL_URL = (rId: string, pId: string) => `${PATIENTS_RESEARCH_URL(rId)}/${pId}`
-const RESEARCH_FINANCE_URL = (id: string) => `${DETAIL_RESEARCH_URL(id)}/finance`
+const RESEARCH_FINANCE_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/finance`
 
 const PATIENTS_URL = `${BASE_URL}/patients`
 const PATIENT_DETAILS_URL = (pId: string) => `${PATIENTS_URL}/${pId}`
@@ -95,13 +95,27 @@ const researchFinanceTeamEntryUrl = (researchId: string)  => `${RESEARCH_FINANCE
 const RESEARCH_STATS_URL = `${RESEARCH_URL}/stats`
 const RESEARCH_LAST_MODIFIED_URL = `${RESEARCH_URL}/last_modified`
 
+const RESEARCH_ADDENDA_DETAIL_URL =
+    (researchId: string, addendaId: string) => `${RESEARCH_DETAIL_URL(researchId)}/addenda/${addendaId}`
+const RESEARCH_ADDENDA_DETAIL_STATE_URL =
+    (researchId: string, addendaId: string, nextStateId: string) =>
+        `${RESEARCH_ADDENDA_DETAIL_URL(researchId,addendaId)}/state?nId=${nextStateId}`
+const RESEARCH_ADDENDA_DETAIL_FILE_DOWNLOAD_URL =
+    (researchId: string, addendaId: string) => `${RESEARCH_ADDENDA_DETAIL_URL(researchId, addendaId)}/download`
+const RESEARCH_ADDENDA_DETAIL_FILE_UPLOAD_URL =
+    (researchId: string, addendaId: string) => `${RESEARCH_ADDENDA_DETAIL_URL(researchId, addendaId)}/upload`
+
 const ApiUrls = {
     baseUrl: BASE_URL,
     commentsUrl: COMMENTS_URL,
     commentsByTypeUrl: COMMENTS_BY_TYPE_URL,
     researchUrl: RESEARCH_URL,
     researchCountUrl: RESEARCH_COUNT_URL,
-    researchDetailUrl: DETAIL_RESEARCH_URL,
+    researchDetailUrl: RESEARCH_DETAIL_URL,
+    researchAddendaDetailUrl: RESEARCH_ADDENDA_DETAIL_URL,
+    researchAddendaDetailStateUrl: RESEARCH_ADDENDA_DETAIL_STATE_URL,
+    researchAddendaDetailFileDownloadUrl: RESEARCH_ADDENDA_DETAIL_FILE_DOWNLOAD_URL,
+    researchAddendaDetailFileUploadUrl: RESEARCH_ADDENDA_DETAIL_FILE_UPLOAD_URL,
     researchCompleteUrl: COMPLETE_RESEARCH_URL,
     researchCancelUrl: CANCEL_RESEARCH_URL,
     researchDossierUrl: DOSSIER_RESEARCH_URL,

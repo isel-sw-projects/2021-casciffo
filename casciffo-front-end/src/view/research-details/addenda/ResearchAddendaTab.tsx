@@ -44,13 +44,6 @@ export function ResearchAddendaTab(props: AddendaProps) {
                 header: () => <span>Dia submetido</span>,
                 footer: props => props.column.id,
             },
-            // {
-            //     accessorFn: row => row.createdDate?.substring(0, 4) || "Não definido",
-            //     id: 'startDate',
-            //     cell: info => info.getValue(),
-            //     header: () => <span>Última modificação</span>,
-            //     footer: props => props.column.id,
-            // },
             {
                 accessorFn: row => row.state?.name,
                 id: 'state',

@@ -160,7 +160,7 @@ export interface ResearchAddenda {
     createdDate?: string
     state?: StateModel
     stateTransitions?: StateTransitionModel[]
-    observations?: AddendaCommentsModel
+    observations?: AddendaCommentsModel[]
     fileInfo?: string
 }
 

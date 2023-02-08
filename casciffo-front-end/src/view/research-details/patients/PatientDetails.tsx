@@ -34,7 +34,6 @@ export function PatientDetails(props: Props) {
 
     useEffect(() => {
         const hash = window.location.hash
-        // console.log(`PATIENT DETAILS READING HASH ${hash}`)
 
         const params = MyUtil.parseUrlHash(hash).find(params => params.key === PATIENT_ID_PARAMETER)
         if(params == null) {
