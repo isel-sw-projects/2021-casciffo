@@ -183,7 +183,8 @@ CREATE TABLE IF NOT EXISTS investigation_team (
     member_role VARCHAR(50) NOT NULL,
     member_id INT NOT NULL,
     CONSTRAINT fk_it_member FOREIGN KEY (member_id) REFERENCES user_account(user_id),
-    CONSTRAINT fk_it_proposal FOREIGN KEY (proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE
+    CONSTRAINT fk_it_proposal FOREIGN KEY (proposal_id) REFERENCES proposal(proposal_id) ON DELETE CASCADE,
+    CONSTRAINT unique_member UNIQUE (member_id, proposal_id)
 );
 
 
@@ -378,7 +379,8 @@ CREATE TABLE IF NOT EXISTS visit_assigned_investigators (
     --PRIMARY KEY (visit_id, investigator_id),
     CONSTRAINT fk_vai_visit_id FOREIGN KEY(visit_id)
         REFERENCES clinical_visit(visit_id) ON DELETE CASCADE,
-    CONSTRAINT fk_vai_investigator_id FOREIGN KEY(investigator_id) REFERENCES user_account(user_id)
+    CONSTRAINT fk_vai_investigator_id FOREIGN KEY(investigator_id) REFERENCES user_account(user_id),
+    CONSTRAINT unique_vi UNIQUE (visit_id, investigator_id)
 );
 
 ---------------------------------------------------------------------------------------

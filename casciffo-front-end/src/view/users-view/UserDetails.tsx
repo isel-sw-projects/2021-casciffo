@@ -102,12 +102,12 @@ export function UserDetails(props: Props) {
                                 />
                             {isEdit ?
                                 <div className={"flex ms-2 me-2"}>
-                                    <div className={"float-start"}>
+                                    <div className={"float-end"}>
                                         <Button type={"submit"} variant={"outline-primary"}>
                                             Salvar
                                         </Button>
                                     </div>
-                                    <div className={"float-end"}>
+                                    <div className={"float-start"}>
                                         <Button variant={"outline-danger"} onClick={cancelChanges}>
                                             Cancelar
                                         </Button>

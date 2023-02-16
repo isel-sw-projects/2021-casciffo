@@ -139,6 +139,11 @@ export class ResearchAggregateService {
         return httpGet(url)
     }
 
+    fetchAddendaStateChain(): Promise<StateModel[]> {
+        const url = ApiUrls.statesChainUrl(StateChainTypes.ADDENDA)
+        return httpGet(url)
+    }
+
     updateAddenda(addenda: ResearchAddenda): Promise<ResearchAddenda> {
         const url = ApiUrls.researchAddendaDetailUrl(addenda.researchId!, addenda.id!)
         return httpGet(url)

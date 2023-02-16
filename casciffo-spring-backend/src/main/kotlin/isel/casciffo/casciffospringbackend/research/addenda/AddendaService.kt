@@ -8,6 +8,7 @@ interface AddendaService {
     suspend fun createAddenda(addenda: Addenda) : Addenda
     suspend fun updateAddenda(addenda: Addenda) : Addenda
     suspend fun getAddendaByResearchId(researchId: Int) : Flux<Addenda>
+    suspend fun transitionState(addendaId: Int, nextStateId: Int): Addenda
 
     suspend fun getAddendaDetails(addendaId: Int): Addenda
 

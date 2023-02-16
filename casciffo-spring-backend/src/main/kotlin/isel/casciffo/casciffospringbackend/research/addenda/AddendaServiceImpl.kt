@@ -63,6 +63,10 @@ class AddendaServiceImpl(
             }
     }
 
+    override suspend fun transitionState(addendaId: Int, nextStateId: Int): Addenda {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getAddendaDetails(addendaId: Int): Addenda {
         val addenda = addendaAggregateRepo.findById(addendaId)
             .map {

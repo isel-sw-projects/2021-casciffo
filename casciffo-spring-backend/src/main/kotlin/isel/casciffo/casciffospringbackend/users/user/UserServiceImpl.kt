@@ -3,10 +3,7 @@ package isel.casciffo.casciffospringbackend.users.user
 
 import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregate
 import isel.casciffo.casciffospringbackend.aggregates.user.UserRolesAggregateRepo
-import isel.casciffo.casciffospringbackend.common.DEFAULT_PASSWORD
-import isel.casciffo.casciffospringbackend.common.NotificationType
-import isel.casciffo.casciffospringbackend.common.QuadTuple
-import isel.casciffo.casciffospringbackend.common.ROLE_AUTH
+import isel.casciffo.casciffospringbackend.common.*
 import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
 import isel.casciffo.casciffospringbackend.roles.RoleModel
 import isel.casciffo.casciffospringbackend.roles.RoleService
@@ -166,13 +163,24 @@ class UserServiceImpl(
     }
 
     override suspend fun createNewUser(model: UserModel): UserModel {
-
+        val exists = findUserByEmail(model.email!!)
+        if(exists != null) throw ResponseStatusException(HttpStatus.CONFLICT, "O email introduzido já existe, tem de usar um email único!")
         model.password = encoder.encode(
             if(model.password != null) model.password
             else DEFAULT_PASSWORD
         )
-        return  userRepository.save(model).awaitSingleOrNull()
-                        ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
+        val newUser = userRepository.save(model).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.I_AM_A_TEAPOT, "¯\\_(ツ)_/¯")
+        notificationService.createNotification(newUser.userId!!,
+            NotificationModel(
+                title = "Conta criada",
+                description = "A tua conta foi criada! Podes alterar a password no teu perfil ao clicar no botão superior direito.",
+                notificationType = NotificationType.USER_CREATED,
+                ids = convertToJson(listOf(Pair("userId", newUser.userId!!))),
+                viewed = false
+            )
+        )
+        return newUser
     }
 
     @Transactional

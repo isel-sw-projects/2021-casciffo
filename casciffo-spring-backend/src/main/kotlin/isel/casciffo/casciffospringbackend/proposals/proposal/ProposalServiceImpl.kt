@@ -435,7 +435,7 @@ class ProposalServiceImpl(
                 .findAllByPfcId(prop.financialComponent!!.id!!)
         }
 
-        prop.files =
+//        prop.files =
         return prop
     }
 }

@@ -81,7 +81,7 @@ class ProposalFinancialServiceImpl(
         pfc.validations = validationsRepository.saveAll(validations)
     }
 
-    private fun createPartnerships(
+    private suspend fun createPartnerships(
         pfc: ProposalFinancialComponent
     ) {
         val promoterPartnership = Flux.just(Partnership(name = pfc.promoter!!.name, email = pfc.promoter!!.email))
@@ -91,10 +91,14 @@ class ProposalFinancialServiceImpl(
             else
                 promoterPartnership
             )
+//            .map { TODO gotta resolve duplicates here
+//                partnershipService.findByNameAndEmail(it.name!!, it.email!!)
+//            }
+
             .map {
-                    it.financeComponentId = pfc.id!!
-                    it
-                }
+                it.financeComponentId = pfc.id!!
+                it
+            }
         pfc.partnerships = partnershipService.saveAll(partnerships)
     }
 

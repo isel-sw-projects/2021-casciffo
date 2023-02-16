@@ -10,7 +10,6 @@ export default function RequiresAuth(childs: any) {
         return <Navigate to={"/login"} replace={true}/>
     }
 
-
     return <React.Fragment>
         {childs}
     </React.Fragment>

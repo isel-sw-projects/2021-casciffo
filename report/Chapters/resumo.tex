@@ -1,13 +1,20 @@
 \abstractPT  % Do NOT modify this line
 
-Com o intuito de modernizar o software utilizado pela Unidade de Investigação Clínica do Hospital Professor Doutor Fernando Fonseca, o projeto CASCIFFO foi realizado em parceria entre o Instituto Superior de Engenharia de Lisboa (ISEL) e o Hospital Professor Doutor Fernando Fonseca. O financiamento do projeto foi possibilitado pela atribuição do prémio pela Agência de Investigação Clínica
-e Inovação Biomédica (AICIB).
-O projeto tem como objetivos desenvolver uma plataforma, CASCIFFO, e fornecer mecanismos inovativos na interoperabilidade com sistemas de informação externos ou internos ao hospital. Permitir, quando desejado, sincronização de dados, índices de pesquisa, identificação de gestão de dados e acesso a detalhes de ensaios clínicos. Tem ainda como objetivo permitir a gestão e monitorização de ensaios clínicos, incluindo a gestão de participantes nos ensaios.
+Com o intuito de modernizar o software utilizado pela Unidade de Investigação Clínica do Hospital Professor Doutor Fernando Fonseca, o projeto CASCIFFO foi realizado em parceria entre o Instituto Superior de Engenharia de Lisboa (ISEL) e o Hospital Professor Doutor Fernando Fonseca. 
+
+O projeto tem como objetivos desenvolver uma plataforma, CASCIFFO, que fornece mecanismos inovativos na interoperabilidade com sistemas de informação externos ou internos ao hospital. Estes mecanismos incluem permitir, quando desejado, sincronização de dados, índices de pesquisa, acesso a detalhes de ensaios clínicos, a gestão e monitorização de ensaios clínicos, incluindo os seus participantes.
+
+A plataforma desenvolvida segue a arquitetura \acrfull{spa} e utiliza a sua própria base de dados criada com o sistema de base de dados \textit{PostgreSQL}. Esta plataforma é constituída por dois módulos essenciais, o \acrfull{fe} e o \acrfull{be}.
+
+O módulo \acrshort{fe} representa a aplicação do lado do cliente onde a interação com o utilizador começa. Este módulo foi desenvolvido num ambiente \textit{NodeJs} e utiliza a infraestrutura \textit{ReactJs}.
+
+O módulo \acrshort{be} foi desenvolvido com o objetivo de ser um servidor que dispõe de um serviço REST API que permite comunicação através de HTTP. Este módulo utiliza a infraestrutra \textit{Spring WebFlux} o que favorece um ambiente e comunicação \textit{non-blocking I/O} do momento que um pedido HTTP é recebido, processado e gerado a resposta. Este processamento incluí pedidos de acesso à base de dados de forma assíncrona.
+
+A solução desenvolvida foi testada com testes unitários e de integração em conjunto de um ambiente que possibilita a metodologia de desenvolimento contínuo ao utilizar o serviço \textit{cloud} \textit{Heroku}. 
+Uma vez testada, a plataforma foi alojada num server interno no hospital e servida pelo serviço \textit{Apache}.
 
 A contribuição principal esperada por este projeto será a otimização e simplicidade na gestão de ensaios clínicos no âmbito de facilitar o esforço feito pelos investigadores nesta gestão.
 Deste modo, espera-se que esta modernização venha a trazer uma mudança no pensamento dos investigadores na sua visão da instituição e a sua importância.
-
-
 % Independentemente da língua em que está escrita a dissertação, é necessário um resumo na língua do texto principal e um resumo noutra língua.  Assume-se que as duas línguas em questão serão sempre o Português e o Inglês.
 
 % O \emph{template} colocará automaticamente em primeiro lugar o resumo na língua do texto principal e depois o resumo na outra língua. 
@@ -26,6 +33,6 @@ Deste modo, espera-se que esta modernização venha a trazer uma mudança no pen
 
 % Keywords of abstract in Portuguese
 \begin{keywords}
-Gestão de ensaios clínicos, Investigação Clínica, Unidade de Investigação Clínica, Hospital Professor Doutor Fernando Fonseca, HFF, Reativo, Não-bloqueante
+Gestão de ensaios clínicos, Investigação Clínica, Unidade de Investigação Clínica, Hospital Professor Doutor Fernando Fonseca, HFF, Reativo, Não-bloqueante, SPA, React, Apache, Spring, Spring WebFlux, PostgreSQL
 \end{keywords} 
 % to add an extra black line

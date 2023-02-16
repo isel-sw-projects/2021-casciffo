@@ -24,7 +24,7 @@ type RoleWithDisplayName = {
 }
 
 function UserForm(props: { onSubmit: (e: React.ChangeEvent<HTMLFormElement>) => void, newUser: UserModel, onChange: (e: any) => void, onClick: () => void }) {
-    return <div className={"m-2 m-md-2 p-2 p-md-2 justify-content-evenly float-start"} style={{width: "30%"}}>
+    return <div className={"justify-content-evenly float-start"}>
         <Form id={"user-form"} onSubmit={props.onSubmit}>
             <fieldset className={"border border-2 p-3"}>
                 <legend className={"float-none w-auto p-2"}>Criar novo utilizador</legend>
@@ -191,7 +191,7 @@ export function Users(props: UsersProps) {
         <Container>
             <ToastContainer/>
             <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} md={3}>
                     <div className={"d-grid"}>
                         { !showForm && <Button onClick={() => setShowForm(true)}>Criar novo utilizador</Button>}
                         { showForm &&

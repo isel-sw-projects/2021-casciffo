@@ -52,10 +52,12 @@ class UserController(
     }
 
     @PostMapping(REGISTER_USER_SEPARATE_URL)
-    suspend fun createUser(@RequestBody userDTO: UserDTO): UserDTO {
+    suspend fun createUser(@RequestBody userDTO: UserDTO): ResponseEntity<UserDTO> {
         val model = mapper.mapDTOtoModel(userDTO)
         val res = service.createNewUser(model)
-        return mapper.mapModelToDTO(res)
+        val dto = mapper.mapModelToDTO(res)
+        if(dto.roles == null) dto.roles = listOf()
+        return ResponseEntity.status(HttpStatus.CREATED).body(dto)
     }
 
 
