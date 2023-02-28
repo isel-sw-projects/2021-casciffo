@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.research.addenda.comments.AddendaComment
 import isel.casciffo.casciffospringbackend.states.state.State
 import isel.casciffo.casciffospringbackend.states.transitions.StateTransition
+import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Transient
@@ -34,7 +35,7 @@ data class Addenda (
 
     @Transient
     @Value("null")
-    var stateTransitions: Flux<StateTransition>? = null,
+    var stateTransitions: Flow<StateTransition>? = null,
 
     @Transient
     @Value("null")
@@ -42,5 +43,5 @@ data class Addenda (
 
     @Transient
     @Value("null")
-    var observations: Flux<AddendaComment>? = null
+    var observations: Flow<AddendaComment>? = null
 )

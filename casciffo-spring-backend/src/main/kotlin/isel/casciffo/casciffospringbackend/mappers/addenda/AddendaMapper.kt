@@ -3,6 +3,8 @@ package isel.casciffo.casciffospringbackend.mappers.addenda
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import isel.casciffo.casciffospringbackend.research.addenda.Addenda
 import isel.casciffo.casciffospringbackend.research.addenda.AddendaDTO
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toFlux
@@ -18,9 +20,9 @@ class AddendaMapper: Mapper<Addenda, AddendaDTO> {
             fileId = dto.fileId,
             createdDate = dto.createdDate,
             state = dto.state,
-            stateTransitions = dto.stateTransitions?.toFlux(),
+            stateTransitions = dto.stateTransitions?.asFlow(),
             fileInfo = dto.fileInfo,
-            observations = dto.observations?.toFlux()
+            observations = dto.observations?.asFlow()
         )
     }
 
@@ -33,9 +35,9 @@ class AddendaMapper: Mapper<Addenda, AddendaDTO> {
             fileId = model.fileId,
             createdDate = model.createdDate,
             state = model.state,
-            stateTransitions = model.stateTransitions?.collectList()?.awaitSingleOrNull(),
+            stateTransitions = model.stateTransitions?.toList(),
             fileInfo = model.fileInfo,
-            observations = model.observations?.collectList()?.awaitSingleOrNull()
+            observations = model.observations?.toList()
         )
     }
 }

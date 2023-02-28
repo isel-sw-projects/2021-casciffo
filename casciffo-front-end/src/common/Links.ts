@@ -1,6 +1,6 @@
-//const BASE_URL = `/api/casciffo` //for spring serving
-const BASE_URL = `http://localhost:8080/api/casciffo` //for separate development
-//const BASE_URL = `https://casciffo-back-end.herokuapp.com/api/casciffo` //for heroku
+const BASE_URL = process.env.NODE_ENV === "development" ?
+    `http://localhost:8080/api/casciffo`
+    : `/api/casciffo`
 
 /************************** USER **************************/
 const USERS_URL = `${BASE_URL}/users`
@@ -92,18 +92,26 @@ const RANDOMIZE_PATIENTS = (researchId: string) => `${PATIENTS_RESEARCH_URL(rese
 const researchFinanceEntryUrl = (researchId: string) => `${RESEARCH_FINANCE_URL(researchId)}/research-entry`
 const researchFinanceTeamEntryUrl = (researchId: string)  => `${RESEARCH_FINANCE_URL(researchId)}/team-entry`
 
+
 const RESEARCH_STATS_URL = `${RESEARCH_URL}/stats`
 const RESEARCH_LAST_MODIFIED_URL = `${RESEARCH_URL}/last_modified`
 
+
+/************************** RESEARCH-ADDENDA **************************/
 const RESEARCH_ADDENDA_DETAIL_URL =
     (researchId: string, addendaId: string) => `${RESEARCH_DETAIL_URL(researchId)}/addenda/${addendaId}`
 const RESEARCH_ADDENDA_DETAIL_STATE_URL =
     (researchId: string, addendaId: string, nextStateId: string) =>
         `${RESEARCH_ADDENDA_DETAIL_URL(researchId,addendaId)}/state?nId=${nextStateId}`
+
+const RESEARCH_ADDENDA_DETAIL_CANCEL_URL =
+    (researchId: string, addendaId: string) => `${RESEARCH_ADDENDA_DETAIL_URL(researchId, addendaId)}/state/cancel`
 const RESEARCH_ADDENDA_DETAIL_FILE_DOWNLOAD_URL =
-    (researchId: string, addendaId: string) => `${RESEARCH_ADDENDA_DETAIL_URL(researchId, addendaId)}/download`
+    (researchId: string, addendaId: string) => `${RESEARCH_ADDENDA_DETAIL_URL(researchId, addendaId)}/file`
 const RESEARCH_ADDENDA_DETAIL_FILE_UPLOAD_URL =
-    (researchId: string, addendaId: string) => `${RESEARCH_ADDENDA_DETAIL_URL(researchId, addendaId)}/upload`
+    (researchId: string) => `${RESEARCH_DETAIL_URL(researchId)}/addenda`
+const RESEARCH_ADDENDA_DETAIL_COMMENTS_URL =
+    (researchId: string, addendaId: string) => `${RESEARCH_ADDENDA_DETAIL_URL(researchId, addendaId)}/comments`
 
 const ApiUrls = {
     baseUrl: BASE_URL,
@@ -114,6 +122,8 @@ const ApiUrls = {
     researchDetailUrl: RESEARCH_DETAIL_URL,
     researchAddendaDetailUrl: RESEARCH_ADDENDA_DETAIL_URL,
     researchAddendaDetailStateUrl: RESEARCH_ADDENDA_DETAIL_STATE_URL,
+    researchAddendaCancelUrl: RESEARCH_ADDENDA_DETAIL_CANCEL_URL,
+    researchAddendaDetailCommentsUrl: RESEARCH_ADDENDA_DETAIL_COMMENTS_URL,
     researchAddendaDetailFileDownloadUrl: RESEARCH_ADDENDA_DETAIL_FILE_DOWNLOAD_URL,
     researchAddendaDetailFileUploadUrl: RESEARCH_ADDENDA_DETAIL_FILE_UPLOAD_URL,
     researchCompleteUrl: COMPLETE_RESEARCH_URL,

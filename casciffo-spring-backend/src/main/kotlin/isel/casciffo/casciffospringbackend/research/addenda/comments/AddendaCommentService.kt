@@ -8,5 +8,5 @@ interface AddendaCommentService {
 
     suspend fun deleteComment(addendaCommentId: Int)
 
-    suspend fun findAllCommentsByAddendaId(addendaId: Int): Flux<AddendaComment>
+    suspend fun findAllCommentsByAddendaId(addendaId: Int): Flow<AddendaComment>
 }

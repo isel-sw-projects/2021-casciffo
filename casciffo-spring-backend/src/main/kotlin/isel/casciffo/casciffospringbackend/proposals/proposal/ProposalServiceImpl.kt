@@ -238,11 +238,7 @@ class ProposalServiceImpl(
         nextStateId: Int,
         request: ServerHttpRequest
     ): ProposalModel {
-        val token = request.headers.getFirst(HttpHeaders.AUTHORIZATION)!!
-        val bearer = BearerToken(token.substringAfter("Bearer "))
-        val userEmail = jwtSupport.getUserEmail(bearer)
-        val user = userService.findUserByEmail(userEmail)!!
-        val userRoles = user.roles!!.map { it.roleName!! }.collectList().awaitSingle()
+        val userRoles = userService.getUserRolesFromRequest(request)
         val prop = getProposalById(proposalId, false)
         return handleStateTransition(prop, nextStateId, userRoles)
     }

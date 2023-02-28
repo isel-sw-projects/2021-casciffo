@@ -4,6 +4,7 @@ import isel.casciffo.casciffospringbackend.common.FILES_DIR
 import isel.casciffo.casciffospringbackend.common.ValidationType
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.files.FileInfoRepository
+import isel.casciffo.casciffospringbackend.files.FileService
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.Partnership
 import isel.casciffo.casciffospringbackend.proposals.finance.partnership.PartnershipService
 import isel.casciffo.casciffospringbackend.proposals.finance.promoter.PromoterRepository
@@ -41,6 +42,7 @@ class ProposalFinancialServiceImpl(
     @Autowired val protocolService: ProtocolService,
     @Autowired val validationsRepository: ValidationsRepository,
     @Autowired val fileInfoRepository: FileInfoRepository,
+    @Autowired val fileService: FileService,
 ) : ProposalFinancialService {
 
     val logger: KLogger = KotlinLogging.logger { }
@@ -64,12 +66,7 @@ class ProposalFinancialServiceImpl(
     }
 
     private suspend fun createFile(file: FilePart): FileInfo {
-        val path = FILES_DIR(file.filename())
-        val getFileInfo = { FileInfo(fileName = path.name, filePath = path.pathString, fileSize = path.fileSize()) }
-        //store file locally
-        file.transferTo(path).awaitSingleOrNull()
-        //save file information in db
-        return fileInfoRepository.save(getFileInfo()).awaitSingle()
+        return fileService.createFile(file)
     }
 
     private suspend fun createValidations(pfc: ProposalFinancialComponent) {

@@ -3,6 +3,7 @@ package isel.casciffo.casciffospringbackend.proposals.proposal
 import isel.casciffo.casciffospringbackend.common.CountHolder
 import isel.casciffo.casciffospringbackend.common.FILE_NAME_HEADER
 import isel.casciffo.casciffospringbackend.common.ResearchType
+import isel.casciffo.casciffospringbackend.common.buildFileResponse
 import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.files.FileInfo
 import isel.casciffo.casciffospringbackend.mappers.Mapper
@@ -181,19 +182,7 @@ class ProposalController(
         response: ServerHttpResponse
     ): ResponseEntity<InputStreamResource> {
         val path = service.downloadCF(proposalId, pfcId)
-        val fileName = path.fileName.toString().replaceAfterLast("-", "").dropLast(1)
-        return ResponseEntity.ok()
-            .headers {
-                //attachment header very important because it tells the browser to commence the download natively
-                it.contentDisposition = ContentDisposition.parse("attachment")
-                it.contentType = MediaType.APPLICATION_PDF
-                it.contentLength = path.fileSize()
-                it.set(FILE_NAME_HEADER, fileName)
-                it.accessControlExposeHeaders = listOf(FILE_NAME_HEADER)
-            }
-            .body(InputStreamResource(withContext(Dispatchers.IO) {
-                Files.newInputStream(path)
-            }))
+        return buildFileResponse(path)
     }
 
     @PutMapping(PROPOSAL_FINANCE_VALIDATION_URL)

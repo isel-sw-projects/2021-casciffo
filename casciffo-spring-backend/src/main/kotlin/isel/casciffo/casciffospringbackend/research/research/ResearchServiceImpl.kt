@@ -96,10 +96,6 @@ class ResearchServiceImpl(
         participantService.addParticipantToResearch(researchId = researchId, participantId =  participantId)
     }
 
-    override suspend fun getAddenda(researchId: Int, addendaId: Int): Addenda {
-        return addendaService.getAddendaDetails(addendaId)
-    }
-
     override suspend fun cancelResearch(researchId: Int, reason: String, userId: Int): Boolean {
         val research = getResearch(researchId, false)
 
@@ -151,8 +147,6 @@ class ResearchServiceImpl(
         if(!res) throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao transitar o ensaio $researchId do estado $stateId para $nextStateId .")
     }
 
-    @Transactional
-    override suspend fun createAddenda(addenda: Addenda) : Addenda = addendaService.createAddenda(addenda)
     override suspend fun createAddendaComment(addendaId: Int, commentBody: AddendaComment): AddendaComment {
         return addendaService.createAddendaComment(addendaId, commentBody)
     }

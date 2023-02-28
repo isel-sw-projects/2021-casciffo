@@ -3,6 +3,7 @@ import {StateTransitionModel} from "../state/StateTransitionModel";
 import {StateModel} from "../state/StateModel";
 import UserModel from "../user/UserModel";
 import {TeamInvestigatorModel} from "../user/TeamInvestigatorModel";
+import {FileInfo} from "../proposal/finance/ProposalFinanceModel";
 
 
 export interface ResearchModel {
@@ -161,7 +162,7 @@ export interface ResearchAddenda {
     state?: StateModel
     stateTransitions?: StateTransitionModel[]
     observations?: AddendaCommentsModel[]
-    fileInfo?: string
+    fileInfo?: FileInfo
 }
 
 export interface AddendaCommentsModel {
@@ -170,6 +171,7 @@ export interface AddendaCommentsModel {
     addendaId?: string
     observation?: string
     authorId?: string
+    authorName?: string
     author?: UserModel
 }
 

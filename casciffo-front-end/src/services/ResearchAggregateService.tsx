@@ -1,6 +1,7 @@
 import ApiUrls from "../common/Links";
 import {axiosPostFormFile, httpDelete, httpGet, httpGetFile, httpPost, httpPostNoBody, httpPut} from "../common/MyUtil";
 import {
+    AddendaCommentsModel,
     DossierModel,
     PatientModel,
     PatientVisitsAggregate,
@@ -19,12 +20,13 @@ import {
 } from "../model/research/ResearchModel";
 import {StateModel} from "../model/state/StateModel";
 import {StateChainTypes} from "../common/Constants";
-import {CountHolder} from "../common/Types";
+import {AxiosResponseBody, CountHolder} from "../common/Types";
 import {PatientService} from "./PatientService";
-import {FileInfo} from "../model/proposal/finance/ProposalFinanceModel";
+import {StateService} from "./StateService";
 
 export class ResearchAggregateService {
     private patientService = new PatientService()
+    private stateService = new StateService()
 
     getResearchCount(): Promise<CountHolder> {
         const url = ApiUrls.researchCountUrl
@@ -44,8 +46,7 @@ export class ResearchAggregateService {
 
     fetchResearchStateChain(): Promise<StateModel[]> {
         const stateChainType = StateChainTypes.RESEARCH
-        const url = ApiUrls.statesChainUrl(stateChainType)
-        return httpGet(url)
+        return this.stateService.fetchByType(stateChainType)
     }
 
     updateResearch(data: ResearchModel): Promise<ResearchModel> {
@@ -154,13 +155,23 @@ export class ResearchAggregateService {
         return httpPut(url)
     }
 
-    uploadAddendaFile(researchId: string, addendaId: string, file: File): Promise<FileInfo> {
-        const url = ApiUrls.researchAddendaDetailFileUploadUrl(researchId, addendaId)
+    uploadAddendaFile(researchId: string, file: File): Promise<AxiosResponseBody> {
+        const url = ApiUrls.researchAddendaDetailFileUploadUrl(researchId)
         return axiosPostFormFile(url, file)
     }
 
     downloadAddendaFile(researchId: string, addendaId: string): Promise<void> {
         const url = ApiUrls.researchAddendaDetailFileDownloadUrl(researchId, addendaId)
         return httpGetFile(url)
+    }
+
+    createAddendaObservation(researchId: string, addendaId: string, observation: AddendaCommentsModel): Promise<AddendaCommentsModel> {
+        const url = ApiUrls.researchAddendaDetailCommentsUrl(researchId, addendaId)
+        return httpPost(url, observation)
+    }
+
+    cancelAddenda(researchId: string, addendaId: string): Promise<ResearchAddenda> {
+        const url = ApiUrls.researchAddendaCancelUrl(researchId, addendaId)
+        return httpPut(url)
     }
 }

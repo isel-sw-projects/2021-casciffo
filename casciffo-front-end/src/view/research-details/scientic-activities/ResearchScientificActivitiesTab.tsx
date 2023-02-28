@@ -44,11 +44,11 @@ export function ResearchScientificActivitiesTab(props: MyProps) {
             },
             {
                 accessorFn: row => {
-                    console.log(row.researchType)
-                    console.log(Object.values(ResearchTypes).find(rt => {
-                        console.log(`${row.researchType} === ${rt.id} ? ${rt.id === row.researchType}`);
-                        return rt.id === row.researchType
-                    }))
+                    // console.log(row.researchType)
+                    // console.log(Object.values(ResearchTypes).find(rt => {
+                    //     console.log(`${row.researchType} === ${rt.id} ? ${rt.id === row.researchType}`);
+                    //     return rt.id === row.researchType
+                    // }))
                     return Object.values(ResearchTypes).find(rt => rt.id === row.researchType)?.singularName
                 },
                 id: 'researchType',

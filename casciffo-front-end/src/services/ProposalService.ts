@@ -11,9 +11,13 @@ import {
 import {httpGet, httpGetFile, httpPost, axiosPostFormFile, httpPut} from "../common/MyUtil";
 import {StateModel} from "../model/state/StateModel";
 import {AxiosResponseBody, CountHolder} from "../common/Types";
+import {StateService} from "./StateService";
 
 
 class ProposalService {
+
+
+    private stateService = new StateService()
 
     getProposalCount(): Promise<CountHolder> {
         const url = ApiUrls.proposalsCountUrl
@@ -118,8 +122,7 @@ class ProposalService {
     fetchStates(proposalType: string): Promise<StateModel[]> {
         const stateChainType = proposalType === ResearchTypes.CLINICAL_TRIAL.id
             ? StateChainTypes.FINANCE_PROPOSAL : StateChainTypes.STUDY_PROPOSAL
-        const url = ApiUrls.statesChainUrl(stateChainType)
-        return httpGet(url);
+        return this.stateService.fetchByType(stateChainType);
     }
 
     validate(proposalId: string, pfcId: string, validationType: string, validationComment: ValidationCommentDTO): Promise<ProposalValidation> {

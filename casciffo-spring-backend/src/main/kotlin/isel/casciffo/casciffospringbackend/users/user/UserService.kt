@@ -5,12 +5,14 @@ import isel.casciffo.casciffospringbackend.roles.Roles
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.users.notifications.NotificationModel
 import kotlinx.coroutines.flow.Flow
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
 import reactor.core.publisher.Mono
 
 interface UserService: ReactiveUserDetailsService {
 
+    suspend fun getUserRolesFromRequest(request: ServerHttpRequest): List<String>
     override fun findByUsername(username: String?): Mono<UserDetails>
     suspend fun getAllUsers() : Flow<UserModel?>
     suspend fun getUser(id: Int) : UserModel?

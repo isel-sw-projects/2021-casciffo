@@ -1,9 +1,10 @@
-import {Button, Container, FormControl, Table} from "react-bootstrap";
+import {Button, Container, FormControl} from "react-bootstrap";
 import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
 import React, {useEffect, useState} from "react";
 import {CommentTypes} from "../../../common/Constants";
-import {MyUtil} from "../../../common/MyUtil";
 import {useUserAuthContext} from "../../context/UserAuthContext";
+import {MyTable} from "../../components/MyTable";
+import {ColumnDef} from "@tanstack/react-table";
 
 type PCT_Props = {
     comments: Array<ProposalCommentsModel>,
@@ -18,7 +19,6 @@ type MyState = {
 
 export function ProposalCommentsTabContent(props: PCT_Props) {
 
-    const headers = ["Data", "Autor", "Comentário"]
     const [comments, setComments] = useState<ProposalCommentsModel[]>([])
     const {userToken} = useUserAuthContext()
     const [state, setState] = useState<MyState>({
@@ -26,8 +26,8 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
         comment: ""
     })
     useEffect(() => {
-        setComments(props.comments)
-    }, [props.comments])
+        setComments(props.comments.filter(c => c.commentType === props.commentType.id))
+    }, [props.commentType.id, props.comments])
 
     function updateComment(e: React.ChangeEvent<HTMLTextAreaElement>) {
         const key = e.target.name as keyof MyState
@@ -42,27 +42,37 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
         props.addComment(state.comment, props.commentType.id, userToken!.userName, userToken!.userId)
         setState({comment: "", addComment:false})
     }
+    
 
-    function createRows() {
-        if(comments == null || comments.length === 0)
-            return <tr key={"zero-comments"}><td colSpan={3}>Sem resultados</td></tr>
-
-        return comments.filter(c => c.commentType === props.commentType.id).map(mapToRowElement);
-    }
-
-    function mapToRowElement(comment: ProposalCommentsModel) {
-        return (
-            <tr key={comment.id}>
-                <td>{MyUtil.formatDate(comment.createdDate!,true)}</td>
-                <td>{comment.author?.name}</td>
-                <td>{comment.content}</td>
-            </tr>
-        )
-    }
+    const columns = React.useMemo<ColumnDef<ProposalCommentsModel>[]>(
+        () => [
+            {
+                accessorFn: row => row.createdDate,
+                id: 'created-date',
+                header: () => "Data",
+                cell: info => info.getValue(),
+                footer: props => props.column.id,
+            },
+            {
+                accessorFn: row => row.author,
+                id: 'author',
+                header: () => "Autor",
+                cell: info => info.getValue(),
+                footer: props => props.column.id,
+            },
+            {
+                accessorFn: row => row.content,
+                id: 'created-date',
+                header: () => "Comentário",
+                cell: info => info.getValue(),
+                footer: props => props.column.id,
+            }
+        ]
+        ,[])
 
     return (
-        <React.Fragment>
-            <Container className={"mb-3"}>
+        <Container>
+            <Container className={"mb-5"}>
                 <fieldset className={"border p-3"}>
                     <legend className={"float-none w-auto p-2"}>{props.commentType.name}</legend>
                     <FormControl
@@ -80,25 +90,19 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
                     </Button>
                 </fieldset>
             </Container>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-            <Table striped bordered hover size={"sm"}>
-                <colgroup>
-                    <col span={1} style={{width: "15%"}}/>
-                    <col span={1} style={{width: "15%"}}/>
-                    <col span={1} style={{width: "70%"}}/>
-                </colgroup>
-                <thead>
-                <tr key={"headers"}>
-                    {headers.map((h, i) => <th key={`header-${i}`}>{h}</th>)}
-                </tr>
-                </thead>
-                <tbody>
-                    {createRows()}
-                </tbody>
-            </Table>
-        </React.Fragment>
+
+            <div style={{marginTop: "2rem", marginBottom: "2rem"}}>
+                <MyTable
+                    pagination
+                    data={comments}
+                    columns={columns}
+                    colgroup={[
+                        <col span={1} style={{width: "15%"}}/>,
+                        <col span={1} style={{width: "15%"}}/>,
+                        <col span={1} style={{width: "70%"}}/>]
+                    }
+                />
+            </div>
+        </Container>
     )
 }

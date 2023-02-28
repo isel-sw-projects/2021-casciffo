@@ -10,8 +10,8 @@ interface AddendaCommentRepository: ReactiveSortingRepository<AddendaComment, In
         "SELECT ac.*, ua.user_name as author_name " +
         "FROM addenda_comment ac " +
         "JOIN user_account ua on ac.author_id = ua.user_id " +
-        "WHERE ac.id = :addendaId " +
+        "WHERE ac.addenda_id = :addendaId " +
         "ORDER BY ac.created_date DESC"
     )
-    fun findAllCommentsByAddendaId(addendaId: Int): Flux<AddendaComment>
+    fun findAllCommentsByAddendaId(addendaId: Int): Flux<AddendaCommentAggregate>
 }

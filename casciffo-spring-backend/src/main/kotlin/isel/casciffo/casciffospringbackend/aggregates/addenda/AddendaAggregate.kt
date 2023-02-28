@@ -12,11 +12,9 @@ data class AddendaAggregate (
     var researchId: Int? = null,
     var createdDate: LocalDateTime?=null,
 
-    @Column("addenda_state_id")
     var stateId: Int? = null,
     var stateName: String? = null,
 
-    @Column("addenda_file_id")
     var fileId: Int? = null,
     var fileName: String? = null,
     var filePath: String? = null,

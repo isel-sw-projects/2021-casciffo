@@ -8,6 +8,7 @@ import isel.casciffo.casciffospringbackend.exceptions.UserNotFoundException
 import isel.casciffo.casciffospringbackend.roles.RoleModel
 import isel.casciffo.casciffospringbackend.roles.RoleService
 import isel.casciffo.casciffospringbackend.roles.Roles
+import isel.casciffo.casciffospringbackend.security.BearerToken
 import isel.casciffo.casciffospringbackend.security.BearerTokenWrapper
 import isel.casciffo.casciffospringbackend.security.JwtSupport
 import isel.casciffo.casciffospringbackend.users.notifications.NotificationModel
@@ -22,7 +23,9 @@ import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
+import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.core.userdetails.UserDetails
@@ -46,6 +49,14 @@ class UserServiceImpl(
 ) : UserService {
 
     val logger = KotlinLogging.logger {  }
+
+    override suspend fun getUserRolesFromRequest(request: ServerHttpRequest): List<String> {
+        val token = request.headers.getFirst(HttpHeaders.AUTHORIZATION)!!
+        val bearer = BearerToken(token.substringAfter("Bearer "))
+        val userEmail = jwtSupport.getUserEmail(bearer)
+        val user = findUserByEmail(userEmail)!!
+        return user.roles!!.map { it.roleName!! }.collectList().awaitSingle()
+    }
 
     override suspend fun loginUser(userModel: UserModel): BearerTokenWrapper {
         val existingUser = findUserByEmail(userModel.email!!)

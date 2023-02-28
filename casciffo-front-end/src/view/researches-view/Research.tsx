@@ -10,6 +10,7 @@ import {ColumnDef} from "@tanstack/react-table";
 import {SearchComponent} from "../components/SearchComponent";
 import {CSVLink} from "react-csv";
 import {CSVHeader} from "../../common/Types";
+import {STATES} from "../../model/state/STATES";
 
 
 type ResearchRow = {
@@ -200,7 +201,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                     footer: props => props.column.id,
                 },
                 {
-                    accessorFn: row => row.research.stateName,
+                    accessorFn: row => STATES[row.research.stateName as keyof typeof STATES].name,
                     id: 'state',
                     header: () => <span>Estado</span>,
                     cell: info => info.getValue(),
@@ -213,9 +214,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
     const filterData = useCallback(() => {
         return ensaios.filter(e => {
             const regExp = new RegExp(`${query}.*`,"gmi")
-            const cmp = regExp.test(`${e.research[searchProperty]}`)
-            console.log(`/${regExp.source}/.test("${e.research[searchProperty]}")=${cmp}`)
-            return cmp
+            return regExp.test(`${e.research[searchProperty]}`)
         })
     }, [ensaios, query, searchProperty])
 

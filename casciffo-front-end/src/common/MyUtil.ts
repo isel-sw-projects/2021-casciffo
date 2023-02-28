@@ -86,7 +86,6 @@ function getDateTimeField(date: string | null | undefined, fieldName: keyof type
  */
 function formatDate(date: string, withHours: boolean = false): string {
     const formattedDate = date.length > 10 ? date.substring(0, isoDatetimeDelimiterIdx) : date
-
     if(!withHours)
         return formattedDate
 

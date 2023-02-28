@@ -1,12 +1,21 @@
 package isel.casciffo.casciffospringbackend.common
 
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.springframework.core.io.InputStreamResource
+import org.springframework.http.ContentDisposition
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
+import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.io.path.fileSize
 
 const val FILE_NAME_HEADER = "File-Name"
 val FILES_DIR = { fileName: String -> Paths.get("./src/main/resources/files/$fileName-${Date().time}") }
@@ -66,4 +75,20 @@ const val JURIDICAL_AUTHORITY = "${ROLE_AUTH}JURIDICAL"
 
 fun convertToJson(list: List<Pair<String, Int>>): String {
     return "{" + list.joinToString(separator=",", transform= {pair -> "\"${pair.first}\":${pair.second}"}) + "}"
+}
+
+suspend fun buildFileResponse(path: Path): ResponseEntity<InputStreamResource> {
+    val fileName = path.fileName.toString().replaceAfterLast("-", "").dropLast(1)
+    return ResponseEntity.ok()
+        .headers {
+            //attachment header very important because it tells the browser to commence the download natively
+            it.contentDisposition = ContentDisposition.parse("attachment")
+            it.contentType = MediaType.APPLICATION_PDF
+            it.contentLength = path.fileSize()
+            it.set(FILE_NAME_HEADER, fileName)
+            it.accessControlExposeHeaders = listOf(FILE_NAME_HEADER)
+        }
+        .body(InputStreamResource(withContext(Dispatchers.IO) {
+            Files.newInputStream(path)
+        }))
 }

@@ -1,9 +1,6 @@
 package isel.casciffo.casciffospringbackend.research.visits.visits
 
-import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_DETAIL_URL
-import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_PATIENTS_URL
-import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_URL
-import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_VISIT_WITH_PATIENT_URL
+import isel.casciffo.casciffospringbackend.endpoints.*
 import isel.casciffo.casciffospringbackend.mappers.Mapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -57,8 +54,13 @@ class VisitController(
     }
 
     @GetMapping(RESEARCH_VISIT_PATIENTS_URL)
-    suspend fun getVisitsForPatient(@PathVariable researchId: Int, @PathVariable patientId: Int) : Flow<VisitDTO> {
-        return visitService.getVisitsForPatient(patientId, patientId).map { mapper.mapModelToDTO(it) }
+    suspend fun getVisitsForResearchPatient(@PathVariable researchId: Int, @PathVariable patientId: Int) : Flow<VisitDTO> {
+        return visitService.getVisitsForResearchPatient(patientId, patientId).map { mapper.mapModelToDTO(it) }
+    }
+
+    @GetMapping(PATIENTS_DETAIL_VISITS_URL)
+    suspend fun getAllVisitsForPatient(@PathVariable patientId: Int) : Flow<VisitDTO> {
+        return visitService.getVisitsForResearchPatient(patientId, patientId).map { mapper.mapModelToDTO(it) }
     }
 
     @GetMapping(RESEARCH_VISIT_DETAIL_URL)

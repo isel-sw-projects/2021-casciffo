@@ -15,4 +15,12 @@ interface VisitRepository: ReactiveSortingRepository<VisitModel, Int> {
 
     @Query("select v.* from clinical_visit v where v.research_id = :researchId")
     fun findAllByResearchId(researchId: Int): Flux<VisitModel>
+
+    @Query(
+        "SELECT v.* " +
+        "FROM clinical_visit v " +
+        "JOIN research_participants rp on v.research_patient_id = rp.id " +
+        "WHERE rp.participant_id=:patientId"
+    )
+    fun findAllByPatientId(patientId: Int): Flux<VisitModel>
 }

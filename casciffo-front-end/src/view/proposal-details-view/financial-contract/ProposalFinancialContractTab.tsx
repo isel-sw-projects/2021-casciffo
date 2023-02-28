@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {ProposalFinanceModel} from "../../../model/proposal/finance/ProposalFinanceModel";
 import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
 import {Button, Container, Form, Stack} from "react-bootstrap";
-import {DepartmentTypes} from "../../../common/Constants";
+import {CommentTypes, DepartmentTypes} from "../../../common/Constants";
 import {ColumnDef} from "@tanstack/react-table";
 import {ValidationCommentDTO, ValidityComment} from "../../../model/proposal/finance/ValidationModels";
 import {MyTable} from "../../components/MyTable";
@@ -67,17 +67,18 @@ export function ProposalFinancialContractTab(props: PfcProps) {
     const updateDepSelected = (e: React.ChangeEvent<HTMLSelectElement>) => setDepSelected(e.target.value)
 
     const colgroup = [
-        <col key={"first"} span={1} style={{width: "10%"}}/>,
-        <col key={"second"} span={1} style={{width: "15%"}}/>,
-        <col key={"third"} span={1} style={{width: "55%"}}/>,
-        <col key={"fourth"} span={1} style={{width: "10%"}}/>
+        <col key={"cType"} span={1} style={{width: "10%"}}/>,
+        <col key={"date"} span={1} style={{width: "15%"}}/>,
+        <col key={"author"} span={1} style={{width: "15%"}}/>,
+        <col key={"obs"} span={1} style={{width: "50%"}}/>,
+        <col key={"validated"} span={1} style={{width: "10%"}}/>
     ]
 
     const [displayForm, setDisplayForm] = useState(false)
     const columns = React.useMemo<ColumnDef<ValidityComment>[]>(
         () => [
             {
-                accessorFn: row => row.comment!.commentType,
+                accessorFn: row => Object.values(DepartmentTypes).find(dt => dt.id === row.comment!.commentType)!.name,
                 id: 'commentType',
                 cell: info => info.getValue(),
                 header: () => <span>Tipo de Validação</span>,

@@ -12,9 +12,11 @@ $$
         state_validacao_externa_id INT;
         state_submissao_ao_ca_id INT;
         state_validacao_interna_ca_id INT;
+        state_validacao_interna_uic_id INT;
         state_validado_id INT;
         state_completo_id INT;
         state_cancelado_id INT;
+        state_indeferido_id INT;
         state_ativo_id INT;
     BEGIN
 
@@ -48,11 +50,13 @@ $$
                ('VALIDACAO_CF'),
                ('VALIDACAO_EXTERNA'),
                ('SUBMISSAO_AO_CA'),
+               ('VALIDACAO_INTERNA_UIC'),
                ('VALIDACAO_INTERNA_CA'),
                ('VALIDADO'),
                ('ATIVO'),
                ('COMPLETO'),
-               ('CANCELADO')
+               ('CANCELADO'),
+               ('INDEFERIDO')
         ON CONFLICT DO NOTHING;
 
         state_submetido_id := (SELECT state_id FROM states WHERE state_name = 'SUBMETIDO');
@@ -60,9 +64,11 @@ $$
         state_validacao_externa_id := (SELECT state_id FROM states WHERE state_name = 'VALIDACAO_EXTERNA');
         state_submissao_ao_ca_id := (SELECT state_id FROM states WHERE state_name = 'SUBMISSAO_AO_CA');
         state_validacao_interna_ca_id := (SELECT state_id FROM states WHERE state_name = 'VALIDACAO_INTERNA_CA');
+        state_validacao_interna_uic_id := (SELECT state_id FROM states WHERE state_name = 'VALIDACAO_INTERNA_UIC');
         state_validado_id := (SELECT state_id FROM states WHERE state_name = 'VALIDADO');
         state_completo_id := (SELECT state_id FROM states WHERE state_name = 'COMPLETO');
         state_cancelado_id := (SELECT state_id FROM states WHERE state_name = 'CANCELADO');
+        state_indeferido_id := (SELECT state_id FROM states WHERE state_name = 'INDEFERIDO');
         state_ativo_id := (SELECT state_id FROM states WHERE state_name = 'ATIVO');
 
         --STATE ROLES
@@ -74,15 +80,20 @@ $$
                (state_validacao_cf_id, finance_role_id),
                (state_validacao_cf_id, juridical_role_id),
                (state_validacao_interna_ca_id, ca_role_id),
+               (state_validacao_interna_uic_id, uic_role_id),
+               (state_indeferido_id, uic_role_id),
+               (state_indeferido_id, ca_role_id),
                (state_validado_id, superuser_role_id),
                (state_completo_id, superuser_role_id),
                (state_cancelado_id, superuser_role_id),
+               (state_indeferido_id, superuser_role_id),
                (state_ativo_id, superuser_role_id),
                (state_submetido_id, superuser_role_id),
                (state_validacao_cf_id, superuser_role_id),
                (state_validacao_externa_id, superuser_role_id),
                (state_submissao_ao_ca_id, superuser_role_id),
-               (state_validacao_interna_ca_id, superuser_role_id)
+               (state_validacao_interna_ca_id, superuser_role_id),
+               (state_validacao_interna_uic_id, superuser_role_id)
         ON CONFLICT DO NOTHING;
 
         --NEXT STATES
@@ -102,9 +113,11 @@ $$
                 (state_validado_id, NULL, 'STUDY_PROPOSAL', 'TERMINAL'),
 
                 --ADDENDA
-                (state_submetido_id, state_validacao_interna_ca_id, 'ADDENDA', 'PROGRESS'),
+                (state_submetido_id, state_validacao_interna_uic_id, 'ADDENDA', 'INITIAL'),
+                (state_validacao_interna_uic_id, state_validacao_interna_ca_id, 'ADDENDA', 'PROGRESSS'),
                 (state_validacao_interna_ca_id, state_validado_id, 'ADDENDA', 'PROGRESS'),
                 (state_validado_id, NULL, 'ADDENDA', 'TERMINAL'),
+                (state_indeferido_id, NULL, 'ADDENDA', 'TERMINAL'),
 
                 --ENSAIO
                 (state_ativo_id, state_completo_id, 'RESEARCH', 'INITIAL'),

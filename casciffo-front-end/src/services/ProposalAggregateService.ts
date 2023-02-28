@@ -10,11 +10,13 @@ import {StateModel} from "../model/state/StateModel";
 import {UserService} from "./UserService";
 import {ProtocolAggregateDTO} from "../model/proposal/finance/ProtocolModel";
 import {ConstantsService} from "./ConstantsService";
+import {StateService} from "./StateService";
 
 export default class ProposalAggregateService {
     private proposalService = new ProposalService()
     private commentsService = new CommentsService()
     private userService = new UserService()
+
 
     private constantsService = new ConstantsService()
 

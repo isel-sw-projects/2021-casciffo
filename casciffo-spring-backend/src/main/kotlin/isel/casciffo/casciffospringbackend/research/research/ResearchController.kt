@@ -67,11 +67,6 @@ class ResearchController(
         return mapper.mapModelToDTO(researchService.getResearch(researchId))
     }
 
-    @GetMapping(ADDENDA_DETAIL_URL)
-    suspend fun getAddendaDetails(@PathVariable researchId: Int, @PathVariable addendaId: Int) : Addenda {
-        return researchService.getAddenda(researchId, addendaId)
-    }
-
     @GetMapping(RESEARCH_GENERAL_STATS_URL)
     suspend fun getResearchStats(): ResponseEntity<Flow<ResearchStats>> {
         val stats = researchService.getResearchStats()
@@ -106,12 +101,6 @@ class ResearchController(
         @RequestParam participantId: Int
     ) {
         researchService.addParticipant(researchId, participantId)
-    }
-
-    @PostMapping(ADDENDA_URL)
-    suspend fun createAddenda(@PathVariable researchId: Int, @RequestBody addenda: Addenda) : Addenda {
-        addenda.researchId = researchId
-        return researchService.createAddenda(addenda)
     }
 
     @PostMapping(ADDENDA_DETAIL_COMMENTS_URL)

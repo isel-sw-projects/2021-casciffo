@@ -15,6 +15,10 @@ interface StateService {
 
     /**
      * @throws ResponseStatusException In case of invalid next state or insufficient role permissions
+     * @param roles Roles of the user executing the operation.
+     * @param originStateId Current state id.
+     * @param nextStateId State id to transition to.
+     * @param type Type of state transition.
      * @return List of roles associated with the state
      */
     suspend fun verifyNextStateValid(originStateId: Int, nextStateId: Int, type: StateType, roles: List<String>): List<String>

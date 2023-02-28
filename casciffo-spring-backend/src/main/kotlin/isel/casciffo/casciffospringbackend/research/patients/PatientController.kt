@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -23,11 +24,19 @@ class PatientController(
 ) {
 
     @GetMapping(RESEARCH_PATIENT_DETAILS_URL)
-    suspend fun getPatientDetails(
+    suspend fun getResearchPatientDetails(
         @PathVariable researchId: Int,
         @PathVariable patientProcessNum: Long
     ): ResponseEntity<ResearchPatient> {
-        val patient = service.getPatientDetails(researchId, patientProcessNum)
+        val patient = service.getResearchPatientDetails(researchId, patientProcessNum)
+        return ResponseEntity.ok(patient)
+    }
+
+    @GetMapping(PATIENTS_DETAIL_URL)
+    suspend fun getPatientDetails(
+        @PathVariable patientId: Int
+    ): ResponseEntity<PatientModel> {
+        val patient = service.getPatientDetails(patientId)
         return ResponseEntity.ok(patient)
     }
 
@@ -37,6 +46,12 @@ class PatientController(
 
     @GetMapping(PATIENTS_URL)
     suspend fun fetchPatients(): Flow<PatientModel> = service.findAll()
+
+    @PutMapping(PATIENTS_DETAIL_URL)
+    suspend fun updatePatient(@PathVariable patientId: Int, @RequestBody patientModel: PatientModel): ResponseEntity<PatientModel> {
+        val patient = service.updatePatient(patientId, patientModel)
+        return ResponseEntity.ok(patient)
+    }
 
     @PostMapping(PATIENTS_URL)
     suspend fun createPatient(@RequestBody patientModel: PatientModel): ResponseEntity<PatientModel> {

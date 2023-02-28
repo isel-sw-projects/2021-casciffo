@@ -76,7 +76,7 @@ class ParticipantServiceImpl(
         return toDelete
     }
 
-    override suspend fun getPatientDetails(researchId: Int, patientProcessNum: Long): ResearchPatient {
+    override suspend fun getResearchPatientDetails(researchId: Int, patientProcessNum: Long): ResearchPatient {
         val patient = aggregateRepo.findByResearchIdAndProcessId(researchId, patientProcessNum).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST
                 , "O paciente com nº de processo [$patientProcessNum] não foi encontrado no ensaio [$researchId]")
@@ -102,6 +102,15 @@ class ParticipantServiceImpl(
             .awaitSingleOrNull()
 
         logger.info { "Patient with process number $patientProcessNum has been removed from research $researchId." }
+    }
+
+    override suspend fun updatePatient(patientId: Int, patientModel: PatientModel): PatientModel {
+        return participantRepository.save(patientModel).awaitSingle()
+    }
+
+    override suspend fun getPatientDetails(patientId: Int): PatientModel {
+        return participantRepository.findById(patientId).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente não existe.")
     }
 
 }

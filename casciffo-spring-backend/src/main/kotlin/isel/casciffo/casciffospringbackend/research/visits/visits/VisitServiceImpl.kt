@@ -102,8 +102,12 @@ class VisitServiceImpl(
             }.awaitSingle()
     }
 
-    override suspend fun getVisitsForPatient(researchId: Int, participantId: Int): Flow<VisitModel> {
+    override suspend fun getVisitsForResearchPatient(researchId: Int, participantId: Int): Flow<VisitModel> {
         return visitRepository.findAllByParticipantIdAndResearchId(researchId, participantId).asFlow()
+    }
+
+    override suspend fun getAllVisitsForPatient(patientId: Int): Flow<VisitModel> {
+        return visitRepository.findAllByPatientId(patientId).asFlow()
     }
 
     override suspend fun getVisitsForResearch(researchId: Int): Flow<VisitModel> {

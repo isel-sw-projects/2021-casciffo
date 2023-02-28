@@ -1,7 +1,7 @@
 import {MyError} from "../../error-view/MyError";
 
 import {
-    DossierModel, PatientVisitsAggregate,
+    DossierModel, PatientVisitsAggregate, ResearchAddenda,
     ResearchFinance, ResearchFinanceEntry,
     ResearchModel, ResearchPatientModel, ResearchPatientVisitsAggregate, ResearchTeamFinanceEntry,
     ResearchVisitModel,
@@ -24,6 +24,7 @@ import {ResearchScientificActivitiesTab} from "../scientic-activities/ResearchSc
 import {ResearchStates} from "./ResearchStates";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {
+    ADDENDA_ID_PARAMETER,
     PATIENT_ID_PARAMETER, ResearchTabNames,
     ResearchTypes,
     SCOPE_PARAMETER,
@@ -36,6 +37,7 @@ import {useUserAuthContext} from "../../context/UserAuthContext";
 import {MyUtil} from "../../../common/MyUtil";
 import {toast, ToastContainer} from "react-toastify";
 import {ToastMsgContext} from "../../context/ToastMsgContext";
+import {ResearchAddendaDetails} from "../addenda/ResearchAddendaDetails";
 
 export function ResearchDetailsPage(props: { researchService: ResearchAggregateService }) {
     const {researchId} = useParams()
@@ -350,14 +352,45 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         }
     }
 
+    const createAddenda = (file: File) => {
+        props.researchService
+            .uploadAddendaFile(researchId!, file)
+            .then(value => {
+                setResearch(prevState => {
+                    const newAddendas = [...prevState.addendas ?? [], value.data]
+                    return {
+                        ...prevState,
+                        addendas: newAddendas
+                    }
+                })
+            })
+    }
 
-    // const renderAddendaOverviewScreen = () => {
-    //     //TODO ?
-    // }
-    const renderAddendaDetailsScreen = () => {
+    const downloadAddendaFile = async (addendaId: string) => {
+        await props.researchService.downloadAddendaFile(researchId, addendaId)
+    }
+
+    const renderAddendaOverviewScreen = (modifiedAddenda: ResearchAddenda) => {
+        setResearch(prevState => {
+            const newAddendas = prevState.addendas!.map(a => a.id === modifiedAddenda.id ? modifiedAddenda : a)
+            return {
+                ...prevState,
+                addendas: newAddendas
+            }
+        })
         const args = [
             {key: TAB_PARAMETER, value: ResearchTabNames.addenda},
             {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}
+        ]
+        const path = MyUtil.formatUrlHash(args)
+        navigate(path)
+    }
+
+    const renderAddendaDetailsScreen = (aId: string) => {
+        const args = [
+            {key: ADDENDA_ID_PARAMETER, value: aId},
+            {key: TAB_PARAMETER, value: ResearchTabNames.addenda},
+            {key: SCOPE_PARAMETER, value: TabPaneScope.DETAILS.toString()}
         ]
         const path = MyUtil.formatUrlHash(args)
         navigate(path)
@@ -368,6 +401,8 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
             return <ResearchAddendaTab
                     addendas={research.addendas ?? []}
                     renderDetails={renderAddendaDetailsScreen}
+                    createAddenda={createAddenda}
+                    downloadAddendaFile={downloadAddendaFile}
                 />
 
         switch (tab) {
@@ -375,11 +410,13 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                 return <ResearchAddendaTab
                             addendas={research.addendas ?? []}
                             renderDetails={renderAddendaDetailsScreen}
+                            createAddenda={createAddenda}
+                            downloadAddendaFile={downloadAddendaFile}/>
+            case TabPaneScope.DETAILS:
+                return <ResearchAddendaDetails
+                            service={props.researchService}
+                            onRenderOverviewClick={renderAddendaOverviewScreen}
                 />
-            // case TabPaneScope.DETAILS:
-            //     return <ResearchAddendaDetails service={props.researchService}
-            //                                     onRenderOverviewClick={renderAddendaOverviewScreen}
-            //     />
             default:
                 throw new MyError("Illegal addenda tab screen", 400)
         }

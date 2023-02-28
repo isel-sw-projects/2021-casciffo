@@ -17,7 +17,7 @@ export function MyPagination(props: PaginationComponentProps) {
 
     const maxCountPerPage = props.pageSize * (props.pageNum + 1)
     const currMaxElems = props.total < maxCountPerPage ? props.currentDisplayed : maxCountPerPage
-    const currCount = props.pageNum * props.pageSize + 1
+    const currCount = props.pageNum * props.pageSize + props.total !== 0 ? 1 : 0
     const pageSizeSelection = [10,25,50,100]
     const isLastPage = Math.floor(props.total / props.pageSize) === props.pageNum
 

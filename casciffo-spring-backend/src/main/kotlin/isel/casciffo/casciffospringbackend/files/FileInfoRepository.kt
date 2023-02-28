@@ -24,4 +24,12 @@ interface FileInfoRepository : ReactiveCrudRepository<FileInfo, Int> {
         "WHERE pfc.proposal_financial_id = :pfcId"
     )
     fun findByPfcId(pfcId: Int): Mono<FileInfo>
+
+    @Query(
+        "SELECT * " +
+        "FROM files f " +
+        "JOIN addenda a on f.file_id = a.addenda_file_id " +
+        "WHERE a.addenda_id = :addendaId"
+    )
+    fun findByAddendaId(addendaId: Int): Mono<FileInfo>
 }
