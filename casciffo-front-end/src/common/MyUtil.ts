@@ -182,8 +182,7 @@ async function checkAndRaiseError(rsp: Response): Promise<Response> {
     if(!rsp.ok) {
         const status = rsp.status
         const body = await rsp.text()
-        throw new MyError(
-            JSON.parse(body).reason, status)
+        throw new MyError(body.length === 0 ? "" : JSON.parse(body).reason, status)
     }
     return rsp
 }

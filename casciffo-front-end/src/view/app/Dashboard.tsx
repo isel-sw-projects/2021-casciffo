@@ -14,6 +14,7 @@ import {ColumnDef} from "@tanstack/react-table";
 import {useNavigate} from "react-router-dom";
 import {STATES} from "../../model/state/STATES";
 import {Grid} from "@mui/material";
+import {useToken} from "../../custom_hooks/useToken";
 
 
 type DashboardProps = {
@@ -43,6 +44,10 @@ export function Dashboard(props: DashboardProps) {
     const [latestResearch, setLatestResearch] = useState<ResearchAggregateModel[]>([])
     const [nearestEvents, setNearestEvents] = useState<TimelineEventModel[]>([])
     const navigate = useNavigate()
+    const [token] = useToken()
+    if(token == null || token.token == null) {
+        navigate("/login")
+    }
     const errorHandler = useErrorHandler()
 
     useEffect(() => {
