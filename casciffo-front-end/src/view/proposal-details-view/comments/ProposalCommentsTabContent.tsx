@@ -26,7 +26,8 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
         comment: ""
     })
     useEffect(() => {
-        setComments(props.comments.filter(c => c.commentType === props.commentType.id))
+        console.log(props.comments)
+        setComments(props.comments.filter(c => c.commentType === props.commentType.id) )
     }, [props.commentType.id, props.comments])
 
     function updateComment(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -62,7 +63,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
             },
             {
                 accessorFn: row => row.content,
-                id: 'created-date',
+                id: 'content',
                 header: () => "Comentário",
                 cell: info => info.getValue(),
                 footer: props => props.column.id,
@@ -97,9 +98,9 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
                     data={comments}
                     columns={columns}
                     colgroup={[
-                        <col span={1} style={{width: "15%"}}/>,
-                        <col span={1} style={{width: "15%"}}/>,
-                        <col span={1} style={{width: "70%"}}/>]
+                        <col key={'created-date'} span={1} style={{width: "15%"}}/>,
+                        <col key={'author'} span={1} style={{width: "15%"}}/>,
+                        <col key={'content'} span={1} style={{width: "70%"}}/>]
                     }
                 />
             </div>

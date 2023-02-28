@@ -76,7 +76,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
 
     useEffect(() => {
         const params = MyUtil.parseUrlHash(hash).find(p => p.key === TAB_PARAMETER)
-        const tabParam = ( params && params.value ) || ProposalTabNames.proposal
+        const tabParam = ( params && params.value ) ?? ProposalTabNames.proposal
 
         setSelectedTab(tabParam)
     }, [hash])
@@ -130,7 +130,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                         ...prevState.financialComponent,
                         protocol: protocolAggregate.protocol
                     },
-                    comments: [...prevState.comments || [], protocolAggregate.comment!]
+                    comments: [protocolAggregate.comment!, ...prevState.comments ?? []]
                 }))
             })
             .catch(showErrorToast)
@@ -250,10 +250,10 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                                 onAdvanceClick={advanceState}
                                 currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents || []}
-                                stateTransitions={proposal.stateTransitions || []}
+                                timelineEvents={proposal.timelineEvents ?? []}
+                                stateTransitions={proposal.stateTransitions ?? []}
                                 submittedDate={proposal.createdDate!}
-                                states={states || []}
+                                states={states ?? []}
                                 showErrorToast={showErrorToast}
                             />
                             : <span><Spinner as={"span"} animation={"border"}/> A carregar estados... </span>
@@ -268,15 +268,15 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                                 onAdvanceClick={advanceState}
                                 currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents || []}
-                                stateTransitions={proposal.stateTransitions || []}
+                                timelineEvents={proposal.timelineEvents ?? []}
+                                stateTransitions={proposal.stateTransitions ?? []}
                                 submittedDate={proposal.createdDate!}
-                                states={states || []}
+                                states={states ?? []}
                                 showErrorToast={showErrorToast}
                             />}
                             <ProposalFinancialContractTab
                                 pfc={proposal.financialComponent!}
-                                comments={proposal.comments || []}
+                                comments={proposal.comments ?? []}
                                 onSubmitValidationComment={onSubmitValidation}
                                 downloadCf={downloadCf}
                                 uploadCf={uploadCf}
@@ -290,14 +290,14 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
                             currentStateId={proposal.stateId!}
-                            timelineEvents={proposal.timelineEvents || []}
-                            stateTransitions={proposal.stateTransitions || []}
+                            timelineEvents={proposal.timelineEvents ?? []}
+                            stateTransitions={proposal.stateTransitions ?? []}
                             submittedDate={proposal.createdDate!}
-                            states={states || []}
+                            states={states ?? []}
                             showErrorToast={showErrorToast}
                         />
                         <ProposalCommentsTabContent
-                            comments={proposal.comments!}
+                            comments={proposal.comments ?? []}
                             addComment={addNewComment}
                             commentType={CommentTypes.CONTACT}
                         />
@@ -307,14 +307,14 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                             isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                             onAdvanceClick={advanceState}
                             currentStateId={proposal.stateId!}
-                            timelineEvents={proposal.timelineEvents || []}
-                            stateTransitions={proposal.stateTransitions || []}
+                            timelineEvents={proposal.timelineEvents ?? []}
+                            stateTransitions={proposal.stateTransitions ?? []}
                             submittedDate={proposal.createdDate!}
-                            states={states || []}
+                            states={states ?? []}
                             showErrorToast={showErrorToast}
                         />
                         <ProposalCommentsTabContent
-                            comments={proposal.comments!}
+                            comments={proposal.comments ?? []}
                             addComment={addNewComment}
                             commentType={CommentTypes.OBSERVATIONS}
                         />
@@ -326,10 +326,10 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 isProtocolValidated={proposal.financialComponent?.protocol?.validated}
                                 onAdvanceClick={advanceState}
                                 currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents || []}
-                                stateTransitions={proposal.stateTransitions || []}
+                                timelineEvents={proposal.timelineEvents ?? []}
+                                stateTransitions={proposal.stateTransitions ?? []}
                                 submittedDate={proposal.createdDate!}
-                                states={states || []}
+                                states={states ?? []}
                                 showErrorToast={showErrorToast}
                             />
                             <PartnershipsTabContent
@@ -344,7 +344,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                             <ProtocolTabContent
                                 saveProtocolComment={updateProtocol}
                                 pfcId={proposal.financialComponent?.id}
-                                comments={proposal.comments?.filter(value => value.commentType === CommentTypes.PROTOCOL.id) || []}
+                                comments={proposal.comments?.filter(value => value.commentType === CommentTypes.PROTOCOL.id) ?? []}
                                 setNewComment={(c) => setProposal(updateState("comments", [...proposal.comments!, c]))}
                                 protocol={proposal.financialComponent?.protocol}
                             />
@@ -358,16 +358,16 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 isProtocolValidated={proposal.financialComponent?.protocol!.validated!}
                                 onAdvanceClick={advanceState}
                                 currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents || []}
-                                stateTransitions={proposal.stateTransitions || []}
+                                timelineEvents={proposal.timelineEvents ?? []}
+                                stateTransitions={proposal.stateTransitions ?? []}
                                 submittedDate={proposal.createdDate!}
-                                states={states || []}
+                                states={states ?? []}
                                 showErrorToast={showErrorToast}
                             />
                             <ProposalTimelineTabContent
-                                possibleStates={states || []}
+                                possibleStates={states ?? []}
                                 service={props.proposalService}
-                                timelineEvents={proposal.timelineEvents || []}
+                                timelineEvents={proposal.timelineEvents ?? []}
                                 setNewTimeLineEvent={handleNewEvent}
                                 updateTimelineEvent={handleUpdateEvent}
                             />
