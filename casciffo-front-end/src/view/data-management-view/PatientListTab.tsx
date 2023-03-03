@@ -1,7 +1,7 @@
 import {PatientService} from "../../services/PatientService";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import React, {useCallback, useEffect, useState} from "react";
-import {SearchComponent} from "../components/SearchComponent";
+import {SearchBar} from "../components/SearchBar";
 import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
 import {MyTable} from "../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
@@ -149,7 +149,7 @@ export function PatientListTab(props: Props) {
 
             <Row>
                 <Col>
-                    <SearchComponent handleSubmit={handleSearchSubmit}/>
+                    <SearchBar handleSubmit={handleSearchSubmit}/>
                 </Col>
                 <Col/>
                 <Col/>

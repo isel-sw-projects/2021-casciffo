@@ -1,7 +1,7 @@
 
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {PathologyModel} from "../../model/proposal-constants/PathologyModel";
-import {SearchComponent} from "../components/SearchComponent";
+import {SearchBar} from "../components/SearchBar";
 import {MyTable} from "../components/MyTable";
 import React, {useEffect, useState} from "react";
 import {ColumnDef} from "@tanstack/react-table";
@@ -126,7 +126,7 @@ export function PathologyTab(props: Props) {
 
             <Row>
                 <Col>
-                    <SearchComponent handleSubmit={handleSearchSubmit}/>
+                    <SearchBar handleSubmit={handleSearchSubmit}/>
                 </Col>
                 <Col/>
                 <Col/>

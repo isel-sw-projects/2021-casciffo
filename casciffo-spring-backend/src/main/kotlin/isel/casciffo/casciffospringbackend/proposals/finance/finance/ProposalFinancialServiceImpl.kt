@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.nio.file.Path
 import java.time.LocalDateTime
 import kotlin.io.path.Path
@@ -88,10 +89,11 @@ class ProposalFinancialServiceImpl(
             else
                 promoterPartnership
             )
-//            .map { TODO gotta resolve duplicates here
-//                partnershipService.findByNameAndEmail(it.name!!, it.email!!)
-//            }
-
+            .flatMap {
+                partnershipService
+                    .findByNameAndEmail(it.name!!, it.email!!)
+                    .switchIfEmpty(Mono.just(it))
+            }
             .map {
                 it.financeComponentId = pfc.id!!
                 it

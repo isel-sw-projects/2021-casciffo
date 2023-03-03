@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {TimelineEventModel} from "../../../model/proposal/TimelineEventModel";
-import {SearchComponent} from "../../components/SearchComponent";
+import {SearchBar} from "../../components/SearchBar";
 import {Button, Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import {EventTypes} from "../../../common/Constants";
 import {TimelineEventForm} from "./TimelineEventForm";
@@ -242,7 +242,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
             </div>
             <br/>
             <Container className={"justify-content-evenly mb-4 float-start p-0"} style={{width:"50%"}}>
-                <SearchComponent handleSubmit={setQuery}/>
+                <SearchBar handleSubmit={setQuery}/>
             </Container>
 
 

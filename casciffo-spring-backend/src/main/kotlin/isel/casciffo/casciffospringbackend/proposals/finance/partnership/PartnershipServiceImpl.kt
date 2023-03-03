@@ -20,4 +20,8 @@ class PartnershipServiceImpl(
     override fun save(partnership: Partnership): Mono<Partnership> {
         return repo.save(partnership)
     }
+
+    override fun findByNameAndEmail(name: String, email: String): Mono<Partnership> {
+        return repo.findByEmailAndNameIs(name = name, email = email)
+    }
 }

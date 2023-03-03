@@ -23,7 +23,6 @@ export function PartnershipsTabContent(props: PTC_Props) {
     const [displayData, setDisplayData] = useState(false)
 
     useEffect(() => {
-        // console.log(props.partnerships)
         setPartnerships(props.partnerships.map(p => ({p: p, open: false})))
         setDisplayData(true)
     }, [props.partnerships])
@@ -41,7 +40,6 @@ export function PartnershipsTabContent(props: PTC_Props) {
             {displayData ? partnerships.map(partnership =>
                 <Card key={partnership.p.id} className={"small m-3"}
                       style={{width: "21rem", height: "auto", backgroundColor: "#f2f7ff", border: "10px solid", borderColor: "#264f8e"}}>
-                    {/*fixme make it prettier*/}
                     <Card.Body>
                         <Card.Title>{partnership.p.name}</Card.Title>
                         <Stack direction={"vertical"} gap={1}>
@@ -51,32 +49,36 @@ export function PartnershipsTabContent(props: PTC_Props) {
                                     <col key={"second"} span={1} style={{width: "60%"}}/>
                                 </colgroup>
                                 <tbody>
-                                    <tr>
-                                        <td><b>Nome</b></td>
-                                        <td style={{overflowWrap: "break-word"}}>{partnership.p.name}</td>
-                                    </tr>
+                                <tr>
+                                    <td><b>Nome</b></td>
+                                    <td style={{overflowWrap: "break-word"}}>{partnership.p.name}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Email</b></td>
+                                    <td style={{wordBreak: "break-all"}}><a href={`mailto:${partnership.p.email}`}>{partnership.p.email}</a></td>
+                                </tr>
+                                {partnership.p.representative && partnership.p.representative.length !== 0 &&
                                     <tr>
                                         <td><b>Representante</b></td>
                                         <td style={{overflowWrap: "break-word"}}>{partnership.p.representative}</td>
                                     </tr>
-                                    <tr>
-                                        <td><b>Email</b></td>
-                                        <td style={{wordBreak: "break-all"}}><a href={`mailto:${partnership.p.email}`}>{partnership.p.email}</a></td>
-                                    </tr>
+                                }
+                                {partnership.p.phoneContact && partnership.p.phoneContact.length !== 0 &&
                                     <tr>
                                         <td><b>Contacto</b></td>
                                         <td style={{overflowWrap: "break-word"}}>{partnership.p.phoneContact}</td>
                                     </tr>
-                                    {partnership.p.siteUrl?.length !== 0 ?
-                                        <tr>
-                                            <td><b>Site</b></td>
-                                            <td style={{overflowWrap: "break-word"}}>{partnership.p.siteUrl}</td>
-                                        </tr> : <></>
-                                    }
+                                }
+                                {partnership.p.siteUrl && partnership.p.siteUrl.length !== 0 ?
+                                    <tr>
+                                        <td><b>Site</b></td>
+                                        <td style={{overflowWrap: "break-word"}}>{partnership.p.siteUrl}</td>
+                                    </tr> : <></>
+                                }
                                 </tbody>
                             </table>
 
-                            {partnership.p.description?.length !== 0 ?
+                            {partnership.p.description && partnership.p.description.length !== 0 ?
                                 <Container className={"mt-2 border-top text-center border-2"} style={{width: "100%"}}>
                                     <Button
                                         className={"text-center"}
@@ -98,4 +100,6 @@ export function PartnershipsTabContent(props: PTC_Props) {
             }
         </Container>
     )
+
+
 }

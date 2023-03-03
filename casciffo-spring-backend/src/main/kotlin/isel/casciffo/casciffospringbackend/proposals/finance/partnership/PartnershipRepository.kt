@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono
 @Repository
 interface PartnershipRepository: ReactiveCrudRepository<Partnership, Int>{
     fun findByFinanceComponentId(id: Int): Flux<Partnership>
-    fun findAllByEmailIsAndNameIs(email: String, name: String): Mono<Partnership>
+    fun findByEmailAndNameIs(email: String, name: String): Mono<Partnership>
 }

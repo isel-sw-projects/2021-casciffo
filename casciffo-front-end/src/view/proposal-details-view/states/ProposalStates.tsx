@@ -7,6 +7,7 @@ import {StateTransitionModel} from "../../../model/state/StateTransitionModel";
 import {StateFlowTypes} from "../../../common/Constants";
 import {STATES} from "../../../model/state/STATES";
 import {MyError} from "../../error-view/MyError";
+import {Roles} from "../../../model/role/Roles";
 
 type StateProps = {
     onAdvanceClick: (currentId: string, currStateName: string, nextStateId:string) => void
@@ -166,7 +167,7 @@ export function ProposalStateView(props: StateProps) {
                 <span>{state.displayName}</span>
                 <span>{tprops.transitionDate}</span>
                 {(tprops.deadlineDate && <span>{tprops.deadlineDate}</span>) || <br/>}
-                <span>{state.roles!.join(',')}</span>
+                <span>{state.roles!.map(r => Object.values(Roles).find(rName => rName.id === r)!.name).join(', ')}</span>
             </Stack>
         </ToggleButton>;
     }

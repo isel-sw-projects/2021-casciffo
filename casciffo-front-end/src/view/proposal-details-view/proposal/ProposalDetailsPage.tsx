@@ -228,6 +228,19 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         <React.Fragment>
             <ToastContainer/>
             <Container>
+                {isStatesReady && isDataReady
+                    ? <ProposalStateView
+                        isProtocolValidated={proposal.financialComponent?.protocol?.validated}
+                        onAdvanceClick={advanceState}
+                        currentStateId={proposal.stateId!}
+                        timelineEvents={proposal.timelineEvents ?? []}
+                        stateTransitions={proposal.stateTransitions ?? []}
+                        submittedDate={proposal.createdDate!}
+                        states={states ?? []}
+                        showErrorToast={showErrorToast}
+                    />
+                    : <span><Spinner as={"span"} animation={"border"}/> A carregar estados... </span>
+                }
                 <Tabs
                     id="controlled-tab-example"
                     activeKey={selectedTab}
@@ -235,35 +248,11 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     className="mb-3 justify-content-evenly"
                 >
                     <Tab eventKey={ProposalTabNames.proposal} title="Proposta">
-                        {isStatesReady && isDataReady
-                            ? <ProposalStateView
-                                isProtocolValidated={proposal.financialComponent?.protocol?.validated}
-                                onAdvanceClick={advanceState}
-                                currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents ?? []}
-                                stateTransitions={proposal.stateTransitions ?? []}
-                                submittedDate={proposal.createdDate!}
-                                states={states ?? []}
-                                showErrorToast={showErrorToast}
-                            />
-                            : <span><Spinner as={"span"} animation={"border"}/> A carregar estados... </span>
-                        }
-
                         <ProposalDetailsTab dataReady={isDataReady} proposal={proposal}/>
                     </Tab>
 
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
                         <Tab eventKey={ProposalTabNames.proposal_cf} title={"Contracto financeiro"}>
-                            {isStatesReady && <ProposalStateView
-                                isProtocolValidated={proposal.financialComponent?.protocol?.validated}
-                                onAdvanceClick={advanceState}
-                                currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents ?? []}
-                                stateTransitions={proposal.stateTransitions ?? []}
-                                submittedDate={proposal.createdDate!}
-                                states={states ?? []}
-                                showErrorToast={showErrorToast}
-                            />}
                             <ProposalFinancialContractTab
                                 pfc={proposal.financialComponent!}
                                 comments={proposal.comments ?? []}
@@ -276,16 +265,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                     }
 
                     <Tab eventKey={ProposalTabNames.contacts} title="Contactos">
-                        <ProposalStateView
-                            isProtocolValidated={proposal.financialComponent?.protocol?.validated}
-                            onAdvanceClick={advanceState}
-                            currentStateId={proposal.stateId!}
-                            timelineEvents={proposal.timelineEvents ?? []}
-                            stateTransitions={proposal.stateTransitions ?? []}
-                            submittedDate={proposal.createdDate!}
-                            states={states ?? []}
-                            showErrorToast={showErrorToast}
-                        />
                         <ProposalCommentsTabContent
                             comments={proposal.comments ?? []}
                             addComment={addNewComment}
@@ -293,16 +272,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                         />
                     </Tab>
                     <Tab eventKey={ProposalTabNames.observations} title="Observações">
-                        <ProposalStateView
-                            isProtocolValidated={proposal.financialComponent?.protocol?.validated}
-                            onAdvanceClick={advanceState}
-                            currentStateId={proposal.stateId!}
-                            timelineEvents={proposal.timelineEvents ?? []}
-                            stateTransitions={proposal.stateTransitions ?? []}
-                            submittedDate={proposal.createdDate!}
-                            states={states ?? []}
-                            showErrorToast={showErrorToast}
-                        />
                         <ProposalCommentsTabContent
                             comments={proposal.comments ?? []}
                             addComment={addNewComment}
@@ -310,23 +279,12 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                         />
                     </Tab>
 
-                    {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
+                    {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
                         <Tab eventKey={"partnerships"} title={"Parcerias"}>
-                            <ProposalStateView
-                                isProtocolValidated={proposal.financialComponent?.protocol?.validated}
-                                onAdvanceClick={advanceState}
-                                currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents ?? []}
-                                stateTransitions={proposal.stateTransitions ?? []}
-                                submittedDate={proposal.createdDate!}
-                                states={states ?? []}
-                                showErrorToast={showErrorToast}
-                            />
                             <PartnershipsTabContent
                                 partnerships={proposal.financialComponent!.partnerships!}
                             />
-                        </Tab> :
-                        <></>
+                        </Tab>
                     }
 
                     {isDataReady && proposal.type === ResearchTypes.CLINICAL_TRIAL.id &&
@@ -343,17 +301,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
 
 
                     <Tab eventKey={ProposalTabNames.chronology} title="Cronologia">
-                        <div>
-                            <ProposalStateView
-                                isProtocolValidated={proposal.financialComponent?.protocol!.validated!}
-                                onAdvanceClick={advanceState}
-                                currentStateId={proposal.stateId!}
-                                timelineEvents={proposal.timelineEvents ?? []}
-                                stateTransitions={proposal.stateTransitions ?? []}
-                                submittedDate={proposal.createdDate!}
-                                states={states ?? []}
-                                showErrorToast={showErrorToast}
-                            />
                             <ProposalTimelineTabContent
                                 possibleStates={states ?? []}
                                 service={props.proposalService}
@@ -361,7 +308,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 setNewTimeLineEvent={handleNewEvent}
                                 updateTimelineEvent={handleUpdateEvent}
                             />
-                        </div>
                     </Tab>
                 </Tabs>
             </Container>

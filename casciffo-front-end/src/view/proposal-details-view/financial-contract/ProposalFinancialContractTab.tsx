@@ -62,10 +62,6 @@ export function ProposalFinancialContractTab(props: PfcProps) {
         }
     }, [userToken?.roles])
 
-    const [depSelected, setDepSelected] = useState(DepartmentTypes.ALL.id)
-
-    const updateDepSelected = (e: React.ChangeEvent<HTMLSelectElement>) => setDepSelected(e.target.value)
-
     const colgroup = [
         <col key={"cType"} span={1} style={{width: "10%"}}/>,
         <col key={"date"} span={1} style={{width: "15%"}}/>,
@@ -139,10 +135,8 @@ export function ProposalFinancialContractTab(props: PfcProps) {
 
     const toggleDisplayForm = () => setDisplayForm(!displayForm)
 
-    const filterCommentsByDepartment = (c: ValidityComment) =>
-        depSelected === DepartmentTypes.ALL.id || c.comment!.commentType === depSelected;
-
     const onSubmitValidation = (c: ValidationCommentDTO) => {
+        c.newValidation = props.pfc.validations?.find(v => v.validationType === CommentTypes.PROTOCOL.id)?.validated || false
         props.onSubmitValidationComment(c, c.validation!.validationType!)
     }
 
@@ -244,14 +238,17 @@ export function ProposalFinancialContractTab(props: PfcProps) {
             }
 
             <div className={"border-top border-2 "} style={{display: display}}>
-                <Button className={"m-2 m-md-10 p-2 p-md-2"} onClick={toggleDisplayForm} style={{display: displayForm ? "none" : "inherit"}}>
-                    Validar
-                </Button>
+                {
+                    !displayForm &&
+                    <Button className={"m-2 m-md-10 p-2 p-md-2"} onClick={toggleDisplayForm}>
+                        Validar
+                    </Button>
+                }
                 <ValidationComment
                     displayForm={displayForm}
                     onClose={() => setDisplayForm(false)}
                     types={possibleValidationTypes}
-                    isValidated={props.pfc.validations?.find(v => v.validationType === depSelected)?.validated || false}
+                    isValidated={false}
                     onSubmitComment={onSubmitValidation}
                 />
             </div>
@@ -261,7 +258,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
 
             <MyTable
                 pagination
-                data={comments.filter(filterCommentsByDepartment)}
+                data={comments}
                 columns={columns}
                 colgroup={colgroup}
             />

@@ -10,7 +10,7 @@ import {FaEdit} from "react-icons/fa";
 import {ImCancelCircle} from "react-icons/im";
 import {IconButton, Tooltip} from "@mui/material";
 import {AiFillSave} from "react-icons/ai";
-import {SearchComponent} from "../components/SearchComponent";
+import {SearchBar} from "../components/SearchBar";
 
 type Props = {
     therapeuticAreas: TherapeuticAreaModel[]
@@ -126,7 +126,7 @@ export function TherapeuticAreaTab(props: Props) {
 
             <Row>
                 <Col>
-                    <SearchComponent handleSubmit={handleSearchSubmit}/>
+                    <SearchBar handleSubmit={handleSearchSubmit}/>
                 </Col>
                 <Col/>
                 <Col/>

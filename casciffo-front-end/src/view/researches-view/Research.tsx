@@ -7,7 +7,7 @@ import {Col, Container, Form, FormGroup, Row, Stack} from "react-bootstrap";
 import {MyTable} from "../components/MyTable";
 import {ResearchAggregateModel} from "../../model/research/ResearchModel";
 import {ColumnDef} from "@tanstack/react-table";
-import {SearchComponent} from "../components/SearchComponent";
+import {SearchBar} from "../components/SearchBar";
 import {CSVLink} from "react-csv";
 import {CSVHeader} from "../../common/Types";
 import {STATES} from "../../model/state/STATES";
@@ -226,7 +226,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
 
                 <Row>
                     <Col>
-                        <SearchComponent handleSubmit={handleSearchSubmit}/>
+                        <SearchBar handleSubmit={handleSearchSubmit}/>
                     </Col>
                     <Col/>
                     <Col>

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
 import ProposalService from "../../services/ProposalService";
-import {SearchComponent} from "../components/SearchComponent";
+import {SearchBar} from "../components/SearchBar";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {MyUtil} from "../../common/MyUtil";
 import {Link} from "react-router-dom";
@@ -217,7 +217,7 @@ export function Proposals(props: Proposals_Props) {
             <Container>
             <Row>
                 <Col>
-                    <SearchComponent handleSubmit={handleSearchSubmit}/>
+                    <SearchBar handleSubmit={handleSearchSubmit}/>
                 </Col>
                 <Col/>
                 <Col>

@@ -8,7 +8,7 @@ import {VisitChrono, VisitTypes} from "../../../common/Constants";
 import {ColumnDef} from "@tanstack/react-table";
 import {useParams} from "react-router-dom";
 import {Button, Col, Container, Form, FormGroup, Row, Stack} from "react-bootstrap";
-import {SearchComponent} from "../../components/SearchComponent";
+import {SearchBar} from "../../components/SearchBar";
 import {MyTable} from "../../components/MyTable";
 import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 import {VisitFormComponent} from "./VisitFormComponent";
@@ -185,7 +185,7 @@ export function ResearchVisitsTab(props: VisitProps) {
                         </Stack>
                     </Col>
                     <Col>
-                        <SearchComponent handleSubmit={handleSearchSubmit}/>
+                        <SearchBar handleSubmit={handleSearchSubmit}/>
                     </Col>
                     <Col/>
                     <Col>

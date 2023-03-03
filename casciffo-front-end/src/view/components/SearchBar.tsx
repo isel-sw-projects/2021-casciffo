@@ -6,7 +6,7 @@ type SearchProps = {
     handleSubmit: (query: string) => void
 }
 
-export function SearchComponent(props: SearchProps) {
+export function SearchBar(props: SearchProps) {
 
     const [query, setQuery] = useState<string>("")
 

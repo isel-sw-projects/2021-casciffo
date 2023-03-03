@@ -8,7 +8,7 @@ import {AiFillSave} from "react-icons/ai";
 import {ImCancelCircle} from "react-icons/im";
 import {FaEdit} from "react-icons/fa";
 import {RiDeleteBin6Fill} from "react-icons/ri";
-import {SearchComponent} from "../components/SearchComponent";
+import {SearchBar} from "../components/SearchBar";
 import {FloatingLabelHelper} from "../components/FloatingLabelHelper";
 import {MyTable} from "../components/MyTable";
 
@@ -127,7 +127,7 @@ export function ServiceTypeTab(props: Props) {
 
             <Row>
                 <Col>
-                    <SearchComponent handleSubmit={handleSearchSubmit}/>
+                    <SearchBar handleSubmit={handleSearchSubmit}/>
                 </Col>
                 <Col/>
                 <Col/>
