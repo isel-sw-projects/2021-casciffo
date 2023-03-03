@@ -136,16 +136,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
             .catch(showErrorToast)
     }
 
-    // const handleFetchError = useCallback((reason: any) => {
-    //     log(reason)
-    //     setIsError(true)
-    // }, [])
-
-    // const log = (value: any) => {
-    //     console.log(value);
-    //     return value
-    // }
-
 
     const updateState = (key: keyof ProposalModel, value: unknown) =>
         (
@@ -170,7 +160,7 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
         }
 
         props.proposalService.saveProposalComment(commentModel)
-            .then(value => setProposal(updateState("comments", [...proposal.comments!, value])))
+            .then(value => setProposal(updateState("comments", [value, ...proposal.comments!])))
             .catch(showErrorToast)
     };
 

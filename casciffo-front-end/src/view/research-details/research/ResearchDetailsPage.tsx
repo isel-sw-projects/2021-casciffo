@@ -305,7 +305,14 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
 
 
 
-    const renderVisitsOverviewScreen = () => {
+    const renderVisitsOverviewScreen = (modifiedVisit: ResearchVisitModel) => {
+        setResearch(prevState => {
+            const newVisits = research.visits!.map(v => v.id === modifiedVisit.id ? modifiedVisit : v)
+            return {
+                ...prevState,
+                visits: newVisits
+            }
+        })
         const args = [
             {key: TAB_PARAMETER, value: ResearchTabNames.visits},
             {key: SCOPE_PARAMETER, value: TabPaneScope.OVERVIEW.toString()}

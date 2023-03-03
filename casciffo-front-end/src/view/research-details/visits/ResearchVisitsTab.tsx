@@ -150,8 +150,40 @@ export function ResearchVisitsTab(props: VisitProps) {
     return (
         <React.Fragment>
             <Container className={"border-top border-2 border-secondary"}>
+                <Row>
+                    {
+                        !showEntryForm &&
+                        <Container>
+                            <Button variant={"outline-primary"} onClick={toggleShowEntryForm}>Nova entrada</Button>
+                        </Container>
+                    }
+                    {showEntryForm &&
+                        <VisitFormComponent
+                            team={props.researchTeam}
+                            onSave={handleNewEntry}
+                            onCancel={toggleShowEntryForm}
+                            patients={props.patients}
+                        />
+                    }
+                </Row>
+
+                <br/>
+                <br/>
 
                 <Row className={"mt-5 mt-md-5"}>
+                    <Col aria-colspan={2}>
+                        <Stack direction={"horizontal"} gap={2} style={{position: "relative"}}>
+                            <span className={"bold"}>Procurar por</span>
+                            <FormGroup>
+                                <Form.Select defaultValue={"id"} onChange={(e) => setSearchProperty(e.target.value)}>
+                                    <option value={"id"}>Id</option>
+                                    <option value={"patients"}>Pacientes</option>
+                                    <option value={"investigators"}>Investigadores</option>
+                                    <option value={"observations"}>Observações</option>
+                                </Form.Select>
+                            </FormGroup>
+                        </Stack>
+                    </Col>
                     <Col>
                         <SearchComponent handleSubmit={handleSearchSubmit}/>
                     </Col>
@@ -177,44 +209,12 @@ export function ResearchVisitsTab(props: VisitProps) {
             </Container>
             <Container>
                 <Row>
-                    <Col aria-colspan={2}>
-                        <Stack direction={"vertical"} gap={2} style={{position: "relative"}}>
-                            <span className={"bold"}>Procurar por</span>
-                            <FormGroup>
-                                <Form.Select defaultValue={"id"} onChange={(e) => setSearchProperty(e.target.value)}>
-                                    <option value={"id"}>Id</option>
-                                    <option value={"patients"}>Pacientes</option>
-                                    <option value={"investigators"}>Investigadores</option>
-                                    <option value={"observations"}>Observações</option>
-                                </Form.Select>
-                            </FormGroup>
-                        </Stack>
-                    </Col>
+
                     <Col/>
                     <Col/>
                     <Col>
 
                     </Col>
-                </Row>
-
-                <br/>
-                <br/>
-
-                <Row>
-                    {
-                        !showEntryForm &&
-                        <Container>
-                            <Button variant={"outline-primary"} onClick={toggleShowEntryForm}>Nova entrada</Button>
-                        </Container>
-                    }
-                    {showEntryForm &&
-                        <VisitFormComponent
-                            team={props.researchTeam}
-                            onSave={handleNewEntry}
-                            onCancel={toggleShowEntryForm}
-                            patients={props.patients}
-                        />
-                    }
                 </Row>
                 <br/>
                 <br/>

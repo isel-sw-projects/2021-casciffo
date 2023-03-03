@@ -26,7 +26,6 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
         comment: ""
     })
     useEffect(() => {
-        console.log(props.comments)
         setComments(props.comments.filter(c => c.commentType === props.commentType.id) )
     }, [props.commentType.id, props.comments])
 
@@ -55,7 +54,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
                 footer: props => props.column.id,
             },
             {
-                accessorFn: row => row.author,
+                accessorFn: row => row.author!.name,
                 id: 'author',
                 header: () => "Autor",
                 cell: info => info.getValue(),

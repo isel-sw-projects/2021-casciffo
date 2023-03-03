@@ -26,7 +26,7 @@ import {CgDanger} from "react-icons/cg";
 
 type VisitDetailsProps = {
     service: ResearchAggregateService
-    onRenderOverviewClick: () => void
+    onRenderOverviewClick: (modifiedVisit: ResearchVisitModel) => void
     onRenderPatientDetails: (s: string) => void
 }
 
@@ -127,7 +127,7 @@ export function ResearchVisitDetailsTab(props: VisitDetailsProps) {
     return <React.Fragment>
         <Container className={"border-top border-2 border-secondary mb-2"}>
             <Breadcrumb className={"m-2 m-md-2 flex"}>
-                <Breadcrumb.Item className={"font-bold"} onClick={props.onRenderOverviewClick}>Visitas</Breadcrumb.Item>
+                <Breadcrumb.Item className={"font-bold"} onClick={() => props.onRenderOverviewClick(visit)}>Visitas</Breadcrumb.Item>
                 <Breadcrumb.Item className={"font-bold"} active>Detalhes da visita {visitId}</Breadcrumb.Item>
             </Breadcrumb>
             {visit.concluded && <small className={"text-danger"}>Esta visita já não pode ser alterada</small>}

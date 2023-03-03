@@ -257,21 +257,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
             </div>
 
 
-            <Form className={"m-2 m-md-10 p-2 p-md-2"} style={{width:"20%"}}>
-                <Form.Group>
-                    <Form.Label>A visualizar</Form.Label>
-                    <Form.Select
-                        key={"department-type"}
-                        name={"depSelected"}
-                        defaultValue={DepartmentTypes.ALL.id}
-                        onChange={updateDepSelected}
-                    >
-                        {Object.values(DepartmentTypes).map((rt) => (
-                            <option key={rt.id} value={rt.id}>{rt.name}</option>
-                        ))}
-                    </Form.Select>
-                </Form.Group>
-            </Form>
+
 
             <MyTable
                 pagination
