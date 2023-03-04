@@ -246,7 +246,7 @@ export function ProposalTimelineTabContent(props: TimelineProps) {
             </Container>
 
 
-
+            {/*TODO replace with MyTable*/}
             <Table striped bordered hover size={"sm"}>
                 <colgroup>
                     <col span={1} style={{width: "20%"}}/>

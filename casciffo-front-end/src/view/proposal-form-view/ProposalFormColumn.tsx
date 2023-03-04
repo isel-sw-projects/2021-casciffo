@@ -125,7 +125,7 @@ export function ProposalFormColumn(props: PFC_Props) {
     }, [props.formData.researchType])
 
     return (
-        <Col key={"proposal-form-col"} className="block-example border border-dark">
+        <Col sm={12} md={4} key={"proposal-form-col"} className="border border-dark">
             <Alert
                 variant={"danger"}
                 show={errorState.show}

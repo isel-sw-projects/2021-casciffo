@@ -11,6 +11,7 @@ import {SearchBar} from "../components/SearchBar";
 import {CSVLink} from "react-csv";
 import {CSVHeader} from "../../common/Types";
 import {STATES} from "../../model/state/STATES";
+import {SearchComposite} from "../components/SearchComposite";
 
 
 type ResearchRow = {
@@ -23,21 +24,12 @@ export function Research(props: { researchService: ResearchAggregateService }) {
         document.title = MyUtil.RESEARCH_TITLE
     })
 
-
     const [ensaios, setEnsaios] = useState<ResearchRow[]>([])
     const [checkedInfo, setCheckedInfo] = useState({masterCheck: false, nSelected: 0})
     const [isDataReady, setIsDataReady] = useState(false)
     const [researchType, setResearchType] = useState<string>(ResearchTypes.CLINICAL_TRIAL.id)
     const [query, setQuery] = useState("")
     const [searchProperty, setSearchProperty] = useState<keyof ResearchAggregateModel>("sigla")
-
-    //todo get all research for excel
-    // const [totalCount, setTotalCount] = useState({trials: 0, studies: 0})
-    // useEffect(() => {
-    //     props.researchService
-    //         .getResearchCount()
-    //         .then(value => console.log(value))
-    // }, [props.researchService])
 
     useEffect(() => {
         setIsDataReady(false)
@@ -48,7 +40,7 @@ export function Research(props: { researchService: ResearchAggregateService }) {
     }, [props.researchService, researchType])
 
 
-    const handleResearchTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => setResearchType(event.target.value)
+    const handleResearchTypeChange = (type: string) => setResearchType(type)
 
     const tableHeadersClinicalTrials: CSVHeader<ResearchAggregateModel>[] = React.useMemo(() =>
         [
@@ -220,57 +212,79 @@ export function Research(props: { researchService: ResearchAggregateService }) {
 
     const handleSearchSubmit = (query: string) => setQuery(query)
 
+    const onSearchPropertyChange = (property: string) => setSearchProperty(property as keyof ResearchAggregateModel)
+
+    const searchProperties = [
+        {value: "sigla",                        label: "Sigla"},
+        {value: "id",                           label: "Identificador"},
+        {value: "pathologyName",                label: "Patologias"},
+        {value: "serviceTypeName",              label: "Tipo de serviço"},
+        {value: "therapeuticAreaName",          label: "Área terapeutica"},
+        {value: "stateName",                    label: "Estado"}
+    ]
+    if(researchType === ResearchTypes.CLINICAL_TRIAL.id) {
+        searchProperties.push({value: "promoterName", label: "Promotor"})
+    }
+
     return (
         <React.Fragment>
             <Container className={"mt-5"}>
-
-                <Row>
-                    <Col>
-                        <SearchBar handleSubmit={handleSearchSubmit}/>
-                    </Col>
-                    <Col/>
-                    <Col>
-                        <Form.Group>
-                            <Form.Label>A visualizar</Form.Label>
-                            <Form.Select
-                                key={"research-type-id"}
-                                required
-                                aria-label="research type selection"
-                                name={"researchType"}
-                                defaultValue={ResearchTypes.CLINICAL_TRIAL.id}
-                                onChange={handleResearchTypeChange}
-                            >
-                                {Object.values(ResearchTypes).map((rt) => (
-                                    <option key={rt.id} value={rt.id}>{rt.name}</option>
-                                ))}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
-            </Container>
-            <Container>
-                <Row>
-                    <Col aria-colspan={2}>
-                        <Stack direction={"vertical"} gap={2} style={{position: "relative"}}>
-                            <span className={"bold"}>Procurar por</span>
-                            <FormGroup>
-                                <Form.Select defaultValue={"sigla"} onChange={(e) => setSearchProperty(e.target.value as keyof ResearchAggregateModel)}>
-                                    <option value={"id"}>Identificador</option>
-                                    <option value={"sigla"}>Sigla</option>
-                                    <option value={"pathologyName"}>Patologia</option>
-                                    <option value={"stateName"}>Estado</option>
-                                    <option value={"therapeuticAreaName"}>Área terapeutica</option>
-                                    {researchType === ResearchTypes.CLINICAL_TRIAL.id &&
-                                        <option value={"promoterName"}>Promotor</option>
-                                    }
-                                </Form.Select>
-                            </FormGroup>
-                        </Stack>
-                    </Col>
-                    <Col/>
-                    <Col/>
-                    <Col/>
-                </Row>
+                <SearchComposite
+                    handleSubmit={handleSearchSubmit}
+                    searchProperties={searchProperties}
+                    onSearchPropertyChange={onSearchPropertyChange}
+                    includeVisualizeType
+                    defaultVisualizeType={ResearchTypes.CLINICAL_TRIAL.id}
+                    visualizeTypes={Object.values(ResearchTypes).map((rt) => ({label: rt.name, value: rt.id}))}
+                    onVisualizeTypeChange={handleResearchTypeChange}
+                />
+            {/*    <Row>*/}
+            {/*        <Col>*/}
+            {/*            <SearchBar handleSubmit={handleSearchSubmit}/>*/}
+            {/*        </Col>*/}
+            {/*        <Col/>*/}
+            {/*        <Col>*/}
+            {/*            <Form.Group>*/}
+            {/*                <Form.Label>A visualizar</Form.Label>*/}
+            {/*                <Form.Select*/}
+            {/*                    key={"research-type-id"}*/}
+            {/*                    required*/}
+            {/*                    aria-label="research type selection"*/}
+            {/*                    name={"researchType"}*/}
+            {/*                    defaultValue={ResearchTypes.CLINICAL_TRIAL.id}*/}
+            {/*                    onChange={handleResearchTypeChange}*/}
+            {/*                >*/}
+            {/*                    {Object.values(ResearchTypes).map((rt) => (*/}
+            {/*                        <option key={rt.id} value={rt.id}>{rt.name}</option>*/}
+            {/*                    ))}*/}
+            {/*                </Form.Select>*/}
+            {/*            </Form.Group>*/}
+            {/*        </Col>*/}
+            {/*    </Row>*/}
+            {/*</Container>*/}
+            {/*<Container>*/}
+            {/*    <Row>*/}
+            {/*        <Col aria-colspan={2}>*/}
+            {/*            <Stack direction={"vertical"} gap={2} style={{position: "relative"}}>*/}
+            {/*                <span className={"bold"}>Procurar por</span>*/}
+            {/*                <FormGroup>*/}
+            {/*                    <Form.Select defaultValue={"sigla"} onChange={(e) => setSearchProperty(e.target.value as keyof ResearchAggregateModel)}>*/}
+            {/*                        <option value={"id"}>Identificador</option>*/}
+            {/*                        <option value={"sigla"}>Sigla</option>*/}
+            {/*                        <option value={"pathologyName"}>Patologia</option>*/}
+            {/*                        <option value={"stateName"}>Estado</option>*/}
+            {/*                        <option value={"therapeuticAreaName"}>Área terapeutica</option>*/}
+            {/*                        {researchType === ResearchTypes.CLINICAL_TRIAL.id &&*/}
+            {/*                            <option value={"promoterName"}>Promotor</option>*/}
+            {/*                        }*/}
+            {/*                    </Form.Select>*/}
+            {/*                </FormGroup>*/}
+            {/*            </Stack>*/}
+            {/*        </Col>*/}
+            {/*        <Col/>*/}
+            {/*        <Col/>*/}
+            {/*        <Col/>*/}
+            {/*    </Row>*/}
 
                 <br/>
                 <br/>

@@ -117,7 +117,7 @@ export function InvestigatorTeamColumn(props: ITC_Props) {
     }
 
     return (
-        <Col className="block-example border border-dark">
+        <Col sm={12} md={4} className="border border-dark">
             <Container className={"align-content-center"}>
                 <Alert
                     style={{position:"absolute"}}

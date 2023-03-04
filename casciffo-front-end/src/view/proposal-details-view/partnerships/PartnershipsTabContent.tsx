@@ -37,7 +37,7 @@ export function PartnershipsTabContent(props: PTC_Props) {
 
     return  (
         <Container className={"justify-content-evenly"}>
-            {displayData ? partnerships.map(partnership =>
+            {displayData && partnerships.map(partnership =>
                 <Card key={partnership.p.id} className={"small m-3"}
                       style={{width: "21rem", height: "auto", backgroundColor: "#f2f7ff", border: "10px solid", borderColor: "#264f8e"}}>
                     <Card.Body>
@@ -69,16 +69,16 @@ export function PartnershipsTabContent(props: PTC_Props) {
                                         <td style={{overflowWrap: "break-word"}}>{partnership.p.phoneContact}</td>
                                     </tr>
                                 }
-                                {partnership.p.siteUrl && partnership.p.siteUrl.length !== 0 ?
+                                {partnership.p.siteUrl && partnership.p.siteUrl.length !== 0 &&
                                     <tr>
                                         <td><b>Site</b></td>
                                         <td style={{overflowWrap: "break-word"}}>{partnership.p.siteUrl}</td>
-                                    </tr> : <></>
+                                    </tr>
                                 }
                                 </tbody>
                             </table>
 
-                            {partnership.p.description && partnership.p.description.length !== 0 ?
+                            {partnership.p.description && partnership.p.description.length !== 0 &&
                                 <Container className={"mt-2 border-top text-center border-2"} style={{width: "100%"}}>
                                     <Button
                                         className={"text-center"}
@@ -91,12 +91,11 @@ export function PartnershipsTabContent(props: PTC_Props) {
                                         <p>{partnership.p.description}</p>
                                     </Collapse>
                                 </Container>
-                                : <></>
                             }
                         </Stack>
                     </Card.Body>
                 </Card>
-            ) : <></>
+            )
             }
         </Container>
     )

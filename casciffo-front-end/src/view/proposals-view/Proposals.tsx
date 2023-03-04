@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
-import {Col, Container, Form, Row, Stack, Table} from "react-bootstrap";
+import {Container, Table} from "react-bootstrap";
 import ProposalService from "../../services/ProposalService";
-import {SearchBar} from "../components/SearchBar";
 import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {MyUtil} from "../../common/MyUtil";
 import {Link} from "react-router-dom";
@@ -10,6 +9,7 @@ import {ResearchTypes} from "../../common/Constants";
 import {STATES} from "../../model/state/STATES";
 import {useErrorHandler} from "react-error-boundary";
 import {CSVHeader} from "../../common/Types";
+import {SearchComposite} from "../components/SearchComposite";
 
 type Proposals_Props = {
     service: ProposalService
@@ -52,25 +52,11 @@ export function Proposals(props: Proposals_Props) {
     const [isDataReady, setIsDataReady] = useState(false)
     const [researchType, setResearchType] = useState<string>(ResearchTypes.CLINICAL_TRIAL.id)
     const [query, setQuery] = useState("")
-    //TODO implement sort
-    // const [sortBy, setSortBy] = useState<keyof ProposalModel>("id")
     const [searchProperty, setSearchProperty] = useState<keyof ProposalRowInfo>("sigla")
     const [checkBoxGroupState, setCheckBoxGroupState] = useState({
         totalCheckedItems: 0,
         masterChecked: false
     })
-
-    //TODO get all proposals for excel
-    // const [totalCount, setTotalCount] = useState({trials: 0, studies: 0})
-    // const allProposalsLinkRef = React.createRef()
-    // useEffect(() => {
-    //     props.service
-    //         .getProposalCount()
-    //         .then(value => console.log(value))
-    // }, [props.service])
-    // const getAllProposals: ProposalModel[] = useCallback(async () => {
-    //     return await props.service.fetchByType(researchType)
-    // }, [props.service, researchType])
 
     const handleError = useErrorHandler()
 
@@ -192,8 +178,8 @@ export function Proposals(props: Proposals_Props) {
         )
     }
 
-    function handleResearchTypeChange(event: React.ChangeEvent<HTMLSelectElement>) {
-        setResearchType(event.target.value)
+    function handleResearchTypeChange(type: string) {
+        setResearchType(type)
     }
 
 
@@ -209,70 +195,35 @@ export function Proposals(props: Proposals_Props) {
             .map(mapToRowElement)
     }
 
+    const searchProperties = [
+        {value: "sigla",                 label: "Sigla"},
+        {value: "id",                    label: "Identificador"},
+        {value: "pathology",             label: "Patologias"},
+        {value: "serviceType",           label: "Tipo de serviço"},
+        {value: "therapeuticArea",       label: "Área terapeutica"},
+        {value: "state",                 label: "Estado"},
+    ]
+
+    const onSearchPropertiesChange = (property: any) => setSearchProperty(property as keyof ProposalRowInfo)
+
+
     return (
         <React.Fragment>
             <br/>
             <br/>
             <br/>
             <Container>
-            <Row>
-                <Col>
-                    <SearchBar handleSubmit={handleSearchSubmit}/>
-                </Col>
-                <Col/>
-                <Col>
-                    <Form.Group>
-                        <Form.Label className={"font-bold"}>A visualizar</Form.Label>
-                        <Form.Select
-                            key={"proposal-type-id"}
-                            required
-                            aria-label="proposal type selection"
-                            name={"researchType"}
-                            defaultValue={ResearchTypes.CLINICAL_TRIAL.id}
-                            onChange={handleResearchTypeChange}
-                        >
-                            {Object.values(ResearchTypes).map((rt) => (
-                                <option key={rt.id} value={rt.id}>{rt.name}</option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                </Col>
-            </Row>
-            </Container>
-            <Container>
-            <Row>
-                <Col aria-colspan={2}>
-                    <Stack direction={"vertical"} gap={2} style={{position: "relative"}}>
-                        <Form.Group>
-                            <Form.Label className={"font-bold"}>Procurar por</Form.Label>
-                            <Form.Select
-                                required
-                                aria-label="Default select example"
-                                name={"search-property"}
-                                defaultValue={""}
-                                onChange={(event => {
-                                    // console.log(event.target.value)
-                                    setSearchProperty(event.target.value as keyof ProposalRowInfo)
-                                })}
-                            >
-                                <option value={"sigla"}>Sigla</option>
-                                <option value={"id"}>Identificador</option>
-                                <option value={"pathology"}>Patologias</option>
-                                <option value={"serviceType"}>Tipo de serviço</option>
-                                <option value={"therapeuticArea"}>Área terapeutica</option>
-                                <option value={"state"}>Estado</option>
-                                <option value={"principalInvestigator"}>Patologias</option>
-                            </Form.Select>
-                        </Form.Group>
-                    </Stack>
-                </Col>
-                <Col/>
-                <Col/>
-                <Col>
-                    <br/>
-                    <Link to={`criar`} className={"btn btn-primary float-end"}>Criar Proposta</Link>
-                </Col>
-            </Row>
+                <SearchComposite
+                    handleSubmit={handleSearchSubmit}
+                    searchProperties={searchProperties}
+                    onSearchPropertyChange={onSearchPropertiesChange}
+                    includeVisualizeType
+                    visualizeTypes={Object.values(ResearchTypes).map((rt) => ({label: rt.name, value: rt.id}))}
+                    defaultVisualizeType={ResearchTypes.CLINICAL_TRIAL.id}
+                    onVisualizeTypeChange={handleResearchTypeChange}
+                    />
+
+                <Link to={`criar`} className={"btn btn-primary float-end mt-5"}>Criar Proposta</Link>
             </Container>
 
             <br/>
@@ -314,6 +265,7 @@ export function Proposals(props: Proposals_Props) {
                 {/*}*/}
             </Container>
             <Container>
+            {/*TODO REPLACE WITH MyTable*/}
                 <Table striped bordered hover size={"sm"} className={"border border-2"}>
                     <thead>
                     <tr key={"headers"}>
@@ -348,7 +300,6 @@ export function Proposals(props: Proposals_Props) {
                     </tbody>
                 </Table>
             </Container>
-
             {/*{isDataReady ?*/}
             {/*    <TableComponent*/}
             {/*        getData={() => proposals}*/}
