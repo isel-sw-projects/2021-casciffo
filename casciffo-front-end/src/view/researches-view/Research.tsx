@@ -238,54 +238,6 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                     visualizeTypes={Object.values(ResearchTypes).map((rt) => ({label: rt.name, value: rt.id}))}
                     onVisualizeTypeChange={handleResearchTypeChange}
                 />
-            {/*    <Row>*/}
-            {/*        <Col>*/}
-            {/*            <SearchBar handleSubmit={handleSearchSubmit}/>*/}
-            {/*        </Col>*/}
-            {/*        <Col/>*/}
-            {/*        <Col>*/}
-            {/*            <Form.Group>*/}
-            {/*                <Form.Label>A visualizar</Form.Label>*/}
-            {/*                <Form.Select*/}
-            {/*                    key={"research-type-id"}*/}
-            {/*                    required*/}
-            {/*                    aria-label="research type selection"*/}
-            {/*                    name={"researchType"}*/}
-            {/*                    defaultValue={ResearchTypes.CLINICAL_TRIAL.id}*/}
-            {/*                    onChange={handleResearchTypeChange}*/}
-            {/*                >*/}
-            {/*                    {Object.values(ResearchTypes).map((rt) => (*/}
-            {/*                        <option key={rt.id} value={rt.id}>{rt.name}</option>*/}
-            {/*                    ))}*/}
-            {/*                </Form.Select>*/}
-            {/*            </Form.Group>*/}
-            {/*        </Col>*/}
-            {/*    </Row>*/}
-            {/*</Container>*/}
-            {/*<Container>*/}
-            {/*    <Row>*/}
-            {/*        <Col aria-colspan={2}>*/}
-            {/*            <Stack direction={"vertical"} gap={2} style={{position: "relative"}}>*/}
-            {/*                <span className={"bold"}>Procurar por</span>*/}
-            {/*                <FormGroup>*/}
-            {/*                    <Form.Select defaultValue={"sigla"} onChange={(e) => setSearchProperty(e.target.value as keyof ResearchAggregateModel)}>*/}
-            {/*                        <option value={"id"}>Identificador</option>*/}
-            {/*                        <option value={"sigla"}>Sigla</option>*/}
-            {/*                        <option value={"pathologyName"}>Patologia</option>*/}
-            {/*                        <option value={"stateName"}>Estado</option>*/}
-            {/*                        <option value={"therapeuticAreaName"}>Área terapeutica</option>*/}
-            {/*                        {researchType === ResearchTypes.CLINICAL_TRIAL.id &&*/}
-            {/*                            <option value={"promoterName"}>Promotor</option>*/}
-            {/*                        }*/}
-            {/*                    </Form.Select>*/}
-            {/*                </FormGroup>*/}
-            {/*            </Stack>*/}
-            {/*        </Col>*/}
-            {/*        <Col/>*/}
-            {/*        <Col/>*/}
-            {/*        <Col/>*/}
-            {/*    </Row>*/}
-
                 <br/>
                 <br/>
                 <br/>
@@ -308,20 +260,6 @@ export function Research(props: { researchService: ResearchAggregateService }) {
                                     {`Exportar selecionados ${checkedInfo.nSelected > 0 ? `(${checkedInfo.nSelected})` : ''} para Excel`}
                             </CSVLink>
                      }
-                     {/*{*/}
-                     {/*    (*/}
-                     {/*        (researchType === ResearchTypes.CLINICAL_TRIAL.id && totalCount.trials > 0)*/}
-                     {/*        ||*/}
-                     {/*        (researchType === ResearchTypes.OBSVERTIONAL_STUDY.id && totalCount.studies > 0)*/}
-                     {/*    )*/}
-                     {/*    &&*/}
-                     {/*    <CSVLink className={"float-end mb-2"}*/}
-                     {/*             headers={getHeaders()}*/}
-                     {/*             data={getAllResearch()}*/}
-                     {/*             filename={`Ensaios-${(new Date()).toLocaleDateString()}`}>*/}
-                     {/*        {`Exportar todas (${researchType === ResearchTypes.CLINICAL_TRIAL.id ? totalCount.trials : totalCount.studies}) deste tipo`}*/}
-                     {/*    </CSVLink>*/}
-                     {/*}*/}
                  </div>
                 <br/>
 

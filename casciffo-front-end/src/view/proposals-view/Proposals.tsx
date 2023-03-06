@@ -5,11 +5,13 @@ import {ProposalModel} from "../../model/proposal/ProposalModel";
 import {MyUtil} from "../../common/MyUtil";
 import {Link} from "react-router-dom";
 import {CSVLink} from "react-csv";
-import {ResearchTypes} from "../../common/Constants";
+import {ResearchTabNames, ResearchTypes} from "../../common/Constants";
 import {STATES} from "../../model/state/STATES";
 import {useErrorHandler} from "react-error-boundary";
 import {CSVHeader} from "../../common/Types";
 import {SearchComposite} from "../components/SearchComposite";
+import {MyTable} from "../components/MyTable";
+import {ColumnDef} from "@tanstack/react-table";
 
 type Proposals_Props = {
     service: ProposalService
@@ -18,6 +20,7 @@ type Proposals_Props = {
 type ProposalRowInfo = {
     id: string,
     createdDate: string,
+    lastModified: string,
     sigla: string,
     state: string,
     pathology: string,
@@ -90,7 +93,8 @@ export function Proposals(props: Proposals_Props) {
                     principalInvestigator: p.principalInvestigator!.name!,
                     type: p.type,
                     promoter: hasFinancialComponent ? p.financialComponent!.promoter!.name : undefined,
-                    partnerships: hasFinancialComponent && p.financialComponent!.hasPartnerships ? "Sim" : "Não"
+                    partnerships: hasFinancialComponent && p.financialComponent!.hasPartnerships ? "Sim" : "Não",
+                    lastModified: MyUtil.formatDate(p.lastModified!, true)
                 }
             }))
             setProposals(rows)
@@ -112,72 +116,6 @@ export function Proposals(props: Proposals_Props) {
         setQuery(query)
     }
 
-    function onMasterCheck(event: React.ChangeEvent<HTMLInputElement>) {
-        let checkedProposals = proposals.map(p => {p.selected = event.target.checked; return p})
-
-        setCheckBoxGroupState({
-            masterChecked: event.target.checked,
-            totalCheckedItems: event.target.checked ? checkedProposals.length : 0
-        })
-        setProposals(checkedProposals)
-    }
-
-    function selectProposalRow(row: ProposalRow) {
-        return (event: React.ChangeEvent<HTMLInputElement>) => {
-            let _totalCheckedItems = checkBoxGroupState.totalCheckedItems + (event.target.checked ? 1 : -1)
-            row.selected = event.target.checked
-            setCheckBoxGroupState(prevState => ({
-                ...prevState,
-                totalCheckedItems: _totalCheckedItems,
-                masterChecked: _totalCheckedItems === proposals.length
-            }))
-            let tableData = proposals.map(p => {
-                if (p.proposal.id === row.proposal.id) {
-                    p.selected = event.target.checked
-                }
-                return p
-            })
-            setProposals(tableData)
-        }
-    }
-
-    function mapToRowElement(row: ProposalRow): JSX.Element {
-        // const proposal = element as ProposalModel
-        // const color = {
-        //     backgroundColor: row.selected ? "#d3fcff" : "inherit"
-        // }
-        return (
-            <tr key={`row-element-${row.proposal.id}`} id={`row-element-${row.proposal.id}`}>{/*style={color}*/}
-                <td><input
-                    type={"checkbox"}
-                    checked={row.selected}
-                    className={"form-check-input"}
-                    id={`row-check-${row.proposal.id}`}
-                    onChange={selectProposalRow(row)}/>
-                </td>
-                <td>
-                    <span>{row.proposal.id}</span>
-                    <br/>
-                    <span><Link to={`${row.proposal.id}`}>Ver detalhes</Link></span>
-                </td>
-                <td>{row.proposal.createdDate}</td>
-                <td>{row.proposal.sigla}</td>
-                <td>{row.proposal.state}</td>
-                <td>{row.proposal.pathology}</td>
-                <td>{row.proposal.serviceType}</td>
-                <td>{row.proposal.therapeuticArea}</td>
-                <td>{row.proposal.principalInvestigator}</td>
-                {row.proposal.type === ResearchTypes.CLINICAL_TRIAL.id ?
-                    <>
-                        <td>{row.proposal.promoter}</td>
-                        <td>{row.proposal.partnerships}</td>
-                    </>
-                    : <></>
-                }
-            </tr>
-        )
-    }
-
     function handleResearchTypeChange(type: string) {
         setResearchType(type)
     }
@@ -192,7 +130,6 @@ export function Proposals(props: Proposals_Props) {
         const regExp = new RegExp(`${query}.*`, "gi")
         return proposals
             .filter(p => query === "" || regExp.test(p.proposal[searchProperty]!))
-            .map(mapToRowElement)
     }
 
     const searchProperties = [
@@ -206,6 +143,125 @@ export function Proposals(props: Proposals_Props) {
 
     const onSearchPropertiesChange = (property: any) => setSearchProperty(property as keyof ProposalRowInfo)
 
+
+    const columns = React.useMemo<ColumnDef<ProposalRow>[]>(
+        () => {
+            function onMasterCheck(event: React.ChangeEvent<HTMLInputElement>) {
+                let checkedProposals = proposals.map(p => {p.selected = event.target.checked; return p})
+
+                setCheckBoxGroupState({
+                    masterChecked: event.target.checked,
+                    totalCheckedItems: event.target.checked ? checkedProposals.length : 0
+                })
+                setProposals(checkedProposals)
+            }
+
+            function selectProposalRow(row: ProposalRow) {
+                return (event: React.ChangeEvent<HTMLInputElement>) => {
+                    let _totalCheckedItems = checkBoxGroupState.totalCheckedItems + (event.target.checked ? 1 : -1)
+                    row.selected = event.target.checked
+                    setCheckBoxGroupState(prevState => ({
+                        ...prevState,
+                        totalCheckedItems: _totalCheckedItems,
+                        masterChecked: _totalCheckedItems === proposals.length
+                    }))
+                    let tableData = proposals.map(p => {
+                        if (p.proposal.id === row.proposal.id) {
+                            p.selected = event.target.checked
+                        }
+                        return p
+                    })
+                    setProposals(tableData)
+                }
+            }
+
+            const defaultColumns: ColumnDef<ProposalRow>[] =  [
+                {
+                    accessorFn: row => <input
+                        type={"checkbox"}
+                        checked={row.selected}
+                        className={"form-check-input"}
+                        id={`row-check-${row.proposal.id}`}
+                        onChange={selectProposalRow(row)}/>,
+                    id: 'checkbox-button',
+                    header: () => <input
+                        type={"checkbox"}
+                        checked={checkBoxGroupState.masterChecked}
+                        className={"form-check-input"}
+                        id={`master-check`}
+                        onChange={onMasterCheck}/>,
+                    cell: info => info.getValue(),
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.id,
+                    id: 'id',
+                    cell: info => <div>
+                        <span>{info.getValue() as string}</span>
+                        <br/>
+                        <Link to={`${info.getValue()}#t=${ResearchTabNames.research}`}>Ver Detalhes</Link>
+                    </div>,
+                    header: () => <span>Id</span>,
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.createdDate,
+                    id: 'startDate',
+                    cell: info => info.getValue(),
+                    header: () => <span>Data de submissão</span>,
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.lastModified,
+                    id: 'lastUpdated',
+                    cell: info => info.getValue(),
+                    header: () => <span>Última atualização</span>,
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.sigla,
+                    id: 'sigla',
+                    cell: info => info.getValue(),
+                    header: () => <span>Sigla</span>,
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.promoter,
+                    id: 'promoter',
+                    header: () => <span>Promotor</span>,
+                    cell: info => info.getValue(),
+                    footer: props => props.column.id
+                },
+                {
+                    accessorFn: row => row.proposal.serviceType,
+                    id: 'serviceType',
+                    header: () => <span>Serviço</span>,
+                    cell: info => info.getValue(),
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.pathology,
+                    id: 'pathology',
+                    header: () => <span>Patologia</span>,
+                    cell: info => info.getValue(),
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.therapeuticArea,
+                    id: 'therapeuticArea',
+                    header: () => <span>Área terapeutica</span>,
+                    cell: info => info.getValue(),
+                    footer: props => props.column.id,
+                },
+                {
+                    accessorFn: row => row.proposal.state,
+                    id: 'state',
+                    header: () => <span>Estado</span>,
+                    cell: info => info.getValue(),
+                    footer: props => props.column.id,
+                }]
+            return defaultColumns
+        },[checkBoxGroupState.masterChecked, checkBoxGroupState.totalCheckedItems, proposals])
 
     return (
         <React.Fragment>
@@ -244,71 +300,18 @@ export function Proposals(props: Proposals_Props) {
                             {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel`}
                         </CSVLink>
                 }
-                {/*{*/}
-                {/*    (*/}
-                {/*        (researchType === ResearchTypes.CLINICAL_TRIAL.id && totalCount.trials > 0)*/}
-                {/*        ||*/}
-                {/*        (researchType === ResearchTypes.OBSVERTIONAL_STUDY.id && totalCount.studies > 0)*/}
-                {/*    )*/}
-                {/*    &&*/}
-                {/*    <div>*/}
-                {/*        <input type="button" value="Export to CSV (Async)" onClick={getAllProposals} />*/}
-                {/*        <CSVLink*/}
-                {/*            className={"float-end mb-2"}*/}
-                {/*            headers={getHeaders()}*/}
-                {/*            data={allData}*/}
-                {/*            filename={`Propostas-${(new Date()).toLocaleDateString()}`}*/}
-                {/*            ref={allProposalsLinkRef}>*/}
-                {/*            {`Exportar todas (${researchType === ResearchTypes.CLINICAL_TRIAL.id ? totalCount.trials : totalCount.studies}) deste tipo`}*/}
-                {/*        </CSVLink>*/}
-                {/*</div>*/}
-                {/*}*/}
             </Container>
+
             <Container>
-            {/*TODO REPLACE WITH MyTable*/}
-                <Table striped bordered hover size={"sm"} className={"border border-2"}>
-                    <thead>
-                    <tr key={"headers"}>
-                        <th>
-                            <input
-                                type="checkbox"
-                                className="form-check-input"
-                                checked={checkBoxGroupState.masterChecked}
-                                id="mastercheck"
-                                onChange={onMasterCheck}
-                            />
-                        </th>
-                        {getHeaders().map((h, i) => <th key={`${h.key}-${i}`}>{h.label}</th>)}
-                    </tr>
-                    </thead>
-                    <tbody>
-
-                    {isDataReady ?
-                        <>
-                            {filterProposals()}
-                        </>
-                        :
-                        <>
-                            <tr key={"template"}>
-                                <td colSpan={getHeaders().length}>
-                                    A carregar...
-                                </td>
-                            </tr>
-                        </>
-                    }
-
-                    </tbody>
-                </Table>
+                <MyTable
+                    pagination
+                    loading={!isDataReady}
+                    emptyDataPlaceholder={"Não há propostas registadas."}
+                    data={filterProposals()}
+                    columns={columns}
+                    toHide={[{visible: researchType !== ResearchTypes.OBSERVATIONAL_STUDY.id, columnId: "promoter"}]}
+                />
             </Container>
-            {/*{isDataReady ?*/}
-            {/*    <TableComponent*/}
-            {/*        getData={() => proposals}*/}
-            {/*        maxElementsPerPage={10}*/}
-            {/*        fetchDataAsync={fetchProposals}*/}
-            {/*        headers={researchType === ResearchTypes.CLINICAL_TRIAL.id? tableHeadersClinicalTrials : tableHeadersClinicalStudies}*/}
-            {/*        mapDataToRow={mapProposalToRow}*/}
-            {/*    /> : <></>*/}
-            {/*}*/}
 
         </React.Fragment>
     )

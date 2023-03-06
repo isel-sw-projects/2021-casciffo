@@ -12,6 +12,7 @@ import {SearchBar} from "../../components/SearchBar";
 import {MyTable} from "../../components/MyTable";
 import {TeamInvestigatorModel} from "../../../model/user/TeamInvestigatorModel";
 import {VisitFormComponent} from "./VisitFormComponent";
+import {SearchComposite} from "../../components/SearchComposite";
 
 type VisitProps = {
     visits: ResearchVisitModel[]
@@ -150,7 +151,7 @@ export function ResearchVisitsTab(props: VisitProps) {
     return (
         <React.Fragment>
             <Container className={"border-top border-2 border-secondary"}>
-                <Row>
+                <Row className={"mt-5   "}>
                     {
                         !showEntryForm &&
                         <Container>
@@ -170,7 +171,7 @@ export function ResearchVisitsTab(props: VisitProps) {
                 <br/>
                 <br/>
 
-                <Row className={"mt-5 mt-md-5"}>
+                <Row className={"mt-5 mt-md-5 mb-4"}>
                     <Col aria-colspan={2}>
                         <Stack direction={"horizontal"} gap={2} style={{position: "relative"}}>
                             <span className={"bold"}>Procurar por</span>
@@ -188,48 +189,19 @@ export function ResearchVisitsTab(props: VisitProps) {
                         <SearchBar handleSubmit={handleSearchSubmit}/>
                     </Col>
                     <Col/>
-                    <Col>
-                        <Form.Group>
-                            <Form.Label>A visualizar</Form.Label>
-                            <Form.Select
-                                key={"visit-chrono-id"}
-                                required
-                                aria-label="research type selection"
-                                name={"visit-chrono"}
-                                defaultValue={VisitChrono.ALL.id}
-                                onChange={handleVisitChronoChange}
-                            >
-                                {Object.values(VisitChrono).map(vc =>
-                                    <option key={vc.id} value={vc.id}>{vc.name}</option>
-                                )}
-                            </Form.Select>
-                        </Form.Group>
-                    </Col>
-                </Row>
-            </Container>
-            <Container>
-                <Row>
-
                     <Col/>
-                    <Col/>
-                    <Col>
-
-                    </Col>
                 </Row>
-                <br/>
-                <br/>
 
-                {/*<Container>*/}
-                {/*    <CSVLink*/}
-                {/*        className={"float-end mb-2"}*/}
-                {/*        headers={getHeaders()}*/}
-                {/*        data={proposals.map(p => p.proposal)}*/}
-                {/*        filename={`Propostas-${(new Date()).toLocaleDateString()}`}*/}
-                {/*    >*/}
-                {/*        {`Exportar selecionados ${checkBoxGroupState.totalCheckedItems > 0 ? `(${checkBoxGroupState.totalCheckedItems})` : ''} para Excel`}*/}
-                {/*    </CSVLink>*/}
-                {/*</Container>*/}
-
+                {/*<SearchComposite*/}
+                {/*    handleSubmit={handleSearchSubmit}*/}
+                {/*    searchProperties={[*/}
+                {/*        {label: "id",               value:"Id"},*/}
+                {/*        {label: "patients",         value:"Pacientes"},*/}
+                {/*        {label: "investigators",    value:"Investigadores"},*/}
+                {/*        {label: "observations",     value:"Observações"}*/}
+                {/*    ]}*/}
+                {/*    onSearchPropertyChange={}*/}
+                {/*/>*/}
                 <MyTable
                     pagination
                     data={filterData()}

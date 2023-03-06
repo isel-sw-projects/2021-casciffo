@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {
     ColumnDef,
@@ -20,7 +20,9 @@ type TableProps = {
     loading?: boolean
     emptyDataPlaceholder?: JSX.Element | string
     pagination?: boolean
+    toHide?: {visible: boolean, columnId: string}[]
 }
+
 
 export function MyTable(props: TableProps) {
 
@@ -42,6 +44,17 @@ export function MyTable(props: TableProps) {
         getSortedRowModel: getSortedRowModel(),
         debugTable: true,
     })
+
+    useEffect(() => {
+        if(!props.toHide) return
+        table
+            .getAllLeafColumns()
+            .forEach(c => {
+                const prop = props.toHide?.find(th => th.columnId === c.id)
+                if(!prop) return
+                c.getToggleVisibilityHandler()({target: {checked: prop.visible}})
+            })
+    }, [props.toHide, table])
 
     const startIndex = props.pagination ? pageNum * pageSize : 0
     const endIndex = props.pagination ? startIndex + pageSize : 10
@@ -67,7 +80,7 @@ export function MyTable(props: TableProps) {
                     setNewPageSize={handleRowSizeChange}
                 />
             }
-            <RBTable striped bordered hover size={"m-2 m-md-10 p-2 p-md-2 sm mt-3 mb-5"} className={"border border-2"}>
+            <RBTable striped bordered hover size={"m-2 m-md-10 p-2 p-md-2 sm mt-1 mb-5"} className={"border border-2"}>
                 {props.colgroup &&
                     <colgroup>
                         {props.colgroup}
@@ -138,24 +151,3 @@ export function MyTable(props: TableProps) {
         </React.Fragment>
     )
 }
-
-// function IndeterminateCheckbox(
-//     {indeterminate, className = '', ...rest}: { indeterminate?: boolean } & HTMLProps<HTMLInputElement>
-// ) {
-//     const ref = React.useRef<HTMLInputElement>(null!)
-//
-//     React.useEffect(() => {
-//         if (typeof indeterminate === 'boolean') {
-//             ref.current.indeterminate = !rest.checked && indeterminate
-//         }
-//     }, [ref, indeterminate, rest.checked])
-//
-//     return (
-//         <input
-//             type="checkbox"
-//             ref={ref}
-//             className={className + ' cursor-pointer'}
-//             {...rest}
-//         />
-//     )
-// }

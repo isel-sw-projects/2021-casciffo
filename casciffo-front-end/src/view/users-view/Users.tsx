@@ -1,7 +1,7 @@
 import {UserService} from "../../services/UserService";
 import React, {useCallback, useEffect, useState} from "react";
 import UserModel from "../../model/user/UserModel";
-import {Button, Container, Form} from "react-bootstrap";
+import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {MyTable} from "../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
 import {UserRoleModel} from "../../model/role/UserRoleModel";
@@ -12,6 +12,8 @@ import {toast, ToastContainer} from "react-toastify";
 import {MyError} from "../error-view/MyError";
 import { Grid } from "@mui/material";
 import {Link} from "react-router-dom";
+import {SearchComposite} from "../components/SearchComposite";
+import {SearchBar} from "../components/SearchBar";
 
 type UsersProps = {
     service: UserService
@@ -187,6 +189,17 @@ export function Users(props: UsersProps) {
         createUser(newUser)
     }
 
+    const [query, setQuery] = useState("")
+
+    const handleSearch = (query: string) => {
+        setQuery(query)
+    }
+
+    const filterUsers = () => {
+        const regExp = new RegExp(`${query}.*`, "gi")
+        return users.filter(u => regExp.test(u.name!))
+    }
+
     return (
         <Container>
             <ToastContainer/>
@@ -205,9 +218,19 @@ export function Users(props: UsersProps) {
                 </Grid>
             </Grid>
 
+            <div className={"mt-5 mb-2"}>
+                <Row>
+                    <Col>
+                        <SearchBar handleSubmit={handleSearch}/>
+                    </Col>
+                    <Col/>
+                    <Col/>
+                </Row>
+            </div>
+            
             <MyTable
                 pagination
-                data={users}
+                data={filterUsers()}
                 columns={columns}
             />
         </Container>

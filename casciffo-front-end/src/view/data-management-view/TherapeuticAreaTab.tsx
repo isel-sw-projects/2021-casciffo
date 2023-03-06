@@ -123,17 +123,6 @@ export function TherapeuticAreaTab(props: Props) {
 
     return <Container>
         <Container className={"mt-5"}>
-
-            <Row>
-                <Col>
-                    <SearchBar handleSubmit={handleSearchSubmit}/>
-                </Col>
-                <Col/>
-                <Col/>
-            </Row>
-        </Container>
-
-        <Container className={"mt-5"}>
             <Row>
                 <Col>
                     {showEntryForm ?
@@ -166,6 +155,16 @@ export function TherapeuticAreaTab(props: Props) {
         </Container>
 
         <Container className={"mt-5"}>
+
+            <Row>
+                <Col>
+                    <SearchBar handleSubmit={handleSearchSubmit}/>
+                </Col>
+                <Col/>
+                <Col/>
+            </Row>
+        </Container>
+        <Container className={"mt-4"}>
             <MyTable
                 pagination
                 data={filterData()}
