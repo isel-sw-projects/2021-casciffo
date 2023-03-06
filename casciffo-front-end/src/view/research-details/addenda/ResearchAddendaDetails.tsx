@@ -30,7 +30,7 @@ export function ResearchAddendaDetails(props: Props) {
     const [showForm, setShowForm] = useState(false)
 
     const errorHandler = useErrorHandler()
-    const {showToastMsg} = useToastMsgContext()
+    const {showErrorToastMsg} = useToastMsgContext()
 
     const {researchId} = useParams()
     const {hash} = useLocation()
@@ -59,7 +59,9 @@ export function ResearchAddendaDetails(props: Props) {
 
 
     const downloadAddenda = async () => {
-        await props.service.downloadAddendaFile(researchId!, addendaId)
+        await props.service
+            .downloadAddendaFile(researchId!, addendaId)
+            .catch(showErrorToastMsg)
     }
 
     const onObservationSubmit = (obs: string) => {
@@ -80,6 +82,7 @@ export function ResearchAddendaDetails(props: Props) {
                     }
                 })
             })
+            .catch(showErrorToastMsg)
     }
 
     const advanceStackOnClick = (currentId: string, currStateName: string, nextStateId:string) => {
@@ -95,6 +98,7 @@ export function ResearchAddendaDetails(props: Props) {
                     }
                 })
             })
+            .catch(showErrorToastMsg)
     }
 
     const onCancelAddenda = (reason: string) => {
@@ -112,6 +116,7 @@ export function ResearchAddendaDetails(props: Props) {
                     }
                 })
             })
+            .catch(showErrorToastMsg)
     }
 
     const columns = React.useMemo<ColumnDef<AddendaCommentsModel>[]>(
@@ -146,6 +151,18 @@ export function ResearchAddendaDetails(props: Props) {
             <Breadcrumb.Item className={"font-bold"} active>Detalhes</Breadcrumb.Item>
         </Breadcrumb>
 
+        <Container className={"mt-5"}>
+            <h5>Adenda</h5>
+            {
+            isAddendaReady &&
+                <Button variant={"link"} onClick={downloadAddenda}>
+                    <Stack direction={"horizontal"} gap={3}>
+                        <BsDownload/>
+                        {addenda.fileInfo!.fileName!.substring(0, addenda.fileInfo!.fileName!.lastIndexOf('-'))}
+                    </Stack>
+                </Button>
+            }
+        </Container>
         {
             isAddendaReady &&
                 <AddendaStates
@@ -165,18 +182,6 @@ export function ResearchAddendaDetails(props: Props) {
             }
         </Container>
 
-        <Container className={"mt-5"}>
-            <h5>Adenda</h5>
-            {
-            isAddendaReady &&
-                <Button variant={"link"} onClick={downloadAddenda}>
-                    <Stack direction={"horizontal"} gap={3}>
-                        <BsDownload/>
-                        {addenda.fileInfo!.fileName!.substring(0, addenda.fileInfo!.fileName!.lastIndexOf('-'))}
-                    </Stack>
-                </Button>
-            }
-        </Container>
 
         <Container className={"mt-5"}>
             <h5>Observações</h5>

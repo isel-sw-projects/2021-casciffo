@@ -27,4 +27,11 @@ class DossierServiceImpl(
         return repository.save(dossier).awaitSingleOrNull()
             ?: throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro na criação do dossier com valor $dossier")
     }
+
+    override suspend fun deleteDossier(researchId: Int, dossierId: Int): Dossier {
+        val dossier = repository.findById(dossierId).awaitSingleOrNull()
+            ?: throw ResponseStatusException(HttpStatus.OK)
+        repository.deleteById(dossierId).awaitSingleOrNull()
+        return dossier
+    }
 }

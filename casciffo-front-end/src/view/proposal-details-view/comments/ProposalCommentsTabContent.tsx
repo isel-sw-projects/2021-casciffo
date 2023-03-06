@@ -5,6 +5,7 @@ import {CommentTypes} from "../../../common/Constants";
 import {useUserAuthContext} from "../../context/UserAuthContext";
 import {MyTable} from "../../components/MyTable";
 import {ColumnDef} from "@tanstack/react-table";
+import {MyUtil} from "../../../common/MyUtil";
 
 type PCT_Props = {
     comments: Array<ProposalCommentsModel>,
@@ -47,7 +48,7 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
     const columns = React.useMemo<ColumnDef<ProposalCommentsModel>[]>(
         () => [
             {
-                accessorFn: row => row.createdDate,
+                accessorFn: row => MyUtil.formatDate(row.createdDate!, true),
                 id: 'created-date',
                 header: () => "Data",
                 cell: info => info.getValue(),
@@ -63,12 +64,12 @@ export function ProposalCommentsTabContent(props: PCT_Props) {
             {
                 accessorFn: row => row.content,
                 id: 'content',
-                header: () => "Comentário",
+                header: () => props.commentType.name,
                 cell: info => info.getValue(),
                 footer: props => props.column.id,
             }
         ]
-        ,[])
+        ,[props.commentType.name])
 
     return (
         <Container>

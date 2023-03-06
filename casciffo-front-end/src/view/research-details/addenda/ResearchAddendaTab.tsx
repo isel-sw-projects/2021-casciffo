@@ -116,11 +116,8 @@ export function ResearchAddendaTab(props: AddendaProps) {
             ]},[props])
 
 
-
-
-
     return (
-        <Container className={"mt-5"}>
+        <Container className={"border-top border-2 border-secondary"}>
 
             {
                 showForm ?

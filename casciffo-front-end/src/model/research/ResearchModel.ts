@@ -77,7 +77,7 @@ export interface ResearchAggregateModel {
 }
 
 export interface DossierModel {
-    id?: number
+    id?: string
     clinicalResearchId?: string
     volume?: string
     label?: string

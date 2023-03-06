@@ -6,4 +6,5 @@ interface DossierService {
     suspend fun findAllByResearchId(researchId: Int): Flow<Dossier>
     suspend fun createDossier(dossier: Dossier, researchId: Int): Dossier
     suspend fun updateDossier(dossier: Dossier, researchId: Int): Dossier
+    suspend fun deleteDossier(researchId: Int, dossierId: Int): Dossier
 }

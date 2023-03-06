@@ -80,9 +80,6 @@ export class ResearchAggregateService {
     }
 
     searchPatientsByProcessId(processId: string): Promise<PatientModel[]> {
-        console.log(`searchPatientsByProcessId called with ${processId}`)
-        console.log(`this.service: ${this.patientService}`)
-        console.log(`this:`, this)
         return this.patientService.searchPatientsByProcessId(processId)
     }
 
@@ -173,5 +170,10 @@ export class ResearchAggregateService {
     cancelAddenda(researchId: string, addendaId: string): Promise<ResearchAddenda> {
         const url = ApiUrls.researchAddendaCancelUrl(researchId, addendaId)
         return httpPut(url)
+    }
+
+    removeDossier(researchId: string, dId: string): Promise<void> {
+        const url = ApiUrls.researchDossierDetailUrl(researchId, dId)
+        return httpDelete(url)
     }
 }

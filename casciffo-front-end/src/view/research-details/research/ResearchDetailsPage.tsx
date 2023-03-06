@@ -117,6 +117,20 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         }
     }, [errorToast, props.researchService])
 
+    const deleteDossier = useCallback((researchId: string) => {
+        return (dId: string) => {
+            props.researchService
+                .removeDossier(researchId, dId)
+                .then(() => {
+                    setResearch(prevState => ({
+                        ...prevState,
+                        dossiers: prevState.dossiers?.filter(d => d.id !== dId) ?? []
+                    }))
+                })
+                .catch(errorToast)
+        }
+    }, [errorToast, props.researchService])
+
     const saveRandomization = useCallback((patients: ResearchPatientModel[]) => {
         props.researchService.saveRandomization(researchId, patients)
             .then(value => setResearch(prevState => ({...prevState, patients: value})))
@@ -160,7 +174,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
     }, [errorToast, props.researchService, researchId])
 
     const onSaveScientificActivity = useCallback((activity: ScientificActivityModel) => {
-        console.log(activity)
         props.researchService.newScientificActivityEntry(researchId!, activity)
             .then(value => setResearch(prevState => ({...prevState, scientificActivities: [value, ...prevState.scientificActivities || []]})))
             .catch(errorToast)
@@ -437,10 +450,6 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
         ]
         const path = MyUtil.formatUrlHash(args)
         navigate(path)
-        // setSelectedTab(tab!);
-        // if(tab === 'patients' && patientViewTab !== PatientViewTab.OVERVIEW) {
-        //      renderPatientOverviewScreen()
-        // }
     }
 
 
@@ -465,11 +474,20 @@ export function ResearchDetailsPage(props: { researchService: ResearchAggregateS
                             research={research}
                             updateResearch={updateResearch}
                             addDossier={submitDossier(researchId)}
+                            deleteDossier={deleteDossier(researchId)}
                             onCancel={onCancelResearch}
                             onComplete={onCompleteResearch}/>
 
                     </Tab>
                     <Tab eventKey={ResearchTabNames.addenda} title={"Adendas"}>
+                        <ResearchStates
+                            states={stateChain}
+                            stateTransitions={research.stateTransitions ?? []}
+                            currentState={research.state}
+                            createdDate={research.startDate ?? ""}
+                            canceledReason={research.canceledReason}
+                            canceledBy={research.canceledBy}
+                        />
                         {addendaSwitchRender(tabPaneScope)}
                     </Tab>
                     <Tab eventKey={ResearchTabNames.activities} title={"Atividades científicas"}>

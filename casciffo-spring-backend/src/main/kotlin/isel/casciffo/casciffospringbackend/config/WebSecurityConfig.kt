@@ -165,6 +165,7 @@ class WebSecurityConfig {
             .pathMatchers(HttpMethod.PUT, "$RESEARCH_DETAIL_URL/*").hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.POST, RESEARCH_CANCEL_URL, RESEARCH_COMPLETE_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.POST, RESEARCH_DOSSIER_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
+            .pathMatchers(HttpMethod.DELETE, RESEARCH_DOSSIER_DETAIL_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             //research patients
             .pathMatchers(HttpMethod.PUT, RESEARCH_PATIENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)
             .pathMatchers(HttpMethod.GET, SEARCH_PATIENTS_URL).hasAnyAuthority(SUPERUSER_AUTHORITY, UIC_AUTHORITY)

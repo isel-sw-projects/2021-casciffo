@@ -75,6 +75,7 @@ const RESEARCH_DETAIL_URL = (id: string) => `${RESEARCH_URL}/${id}`
 const COMPLETE_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/complete`
 const CANCEL_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/cancel`
 const DOSSIER_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/dossier`
+const DOSSIER_DETAIL_RESEARCH_URL = (rId: string, dId: string) => `${DOSSIER_RESEARCH_URL(rId)}/${dId}`
 const STUDIES_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/studies`
 const VISITS_RESEARCH_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/visits`
 const PATIENT_WITH_VISITS_URL = (id: string) => `${RESEARCH_DETAIL_URL(id)}/visits-n-patient`
@@ -129,6 +130,7 @@ const ApiUrls = {
     researchCompleteUrl: COMPLETE_RESEARCH_URL,
     researchCancelUrl: CANCEL_RESEARCH_URL,
     researchDossierUrl: DOSSIER_RESEARCH_URL,
+    researchDossierDetailUrl: DOSSIER_DETAIL_RESEARCH_URL,
     researchByTypeUrl: RESEARCH_BY_TYPE_URL,
     researchPatientsUrl: PATIENTS_RESEARCH_URL,
     researchStudiesUrl: STUDIES_RESEARCH_URL,

@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {Button, ButtonGroup, Container, OverlayTrigger, Stack, ToggleButton, Tooltip} from "react-bootstrap";
+import {Button, ButtonGroup, Container, Stack, ToggleButton} from "react-bootstrap";
 import {ResearchAggregateService} from "../../../services/ResearchAggregateService";
 import {StateModel} from "../../../model/state/StateModel";
 import {StateTransitionModel} from "../../../model/state/StateTransitionModel";
-import {useToastMsgContext} from "../../context/ToastMsgContext";
+// import {useToastMsgContext} from "../../context/ToastMsgContext";
 import {useErrorHandler} from "react-error-boundary";
 import {STATES} from "../../../model/state/STATES";
 import {MyUtil} from "../../../common/MyUtil";
@@ -39,8 +39,8 @@ type StateToggleButtonProps = {
 
 export function AddendaStates(props: Props) {
 
-    const {showErrorToastMsg} = useToastMsgContext()
-    const [showCancelPopup, setShowCancelPopup] = useState(false)
+    // const {showErrorToastMsg} = useToastMsgContext()
+    // const [showCancelPopup, setShowCancelPopup] = useState(false)
     const [stateChain, setStateChain] = useState<StateWithDisplayName[]>([])
     const [transitions, setTransitions] = useState<StateTransitionModel[]>([])
     const [currentState, setCurrentState] = useState<StateWithDisplayName>({})
@@ -155,7 +155,7 @@ export function AddendaStates(props: Props) {
         </ToggleButton>;
     }
 
-    return <Container className={"mt-5 mb-4 flex border-bottom"}>
+    return <Container className={"mt-5 mb-4 flex border-bottom border-top"}>
             <label style={{fontSize: "1.2rem"}}><b>Estado</b></label>
             <Button className={"float-end mb-2"} variant={"outline-secondary"} onClick={advanceState}
                     disabled={transitions.some(s => s.newState!.name === 'VALIDADO' /* todo check this magic string s.newState!.stateFlowType === "TERMINAL"*/)}>

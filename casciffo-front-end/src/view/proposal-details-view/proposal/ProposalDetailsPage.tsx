@@ -259,7 +259,6 @@ export function ProposalDetailsPage(props: ProposalDetailsProps) {
                                 onSubmitValidationComment={onSubmitValidation}
                                 downloadCf={downloadCf}
                                 uploadCf={uploadCf}
-                                showErrorToast={showErrorToast}
                             />
                         </Tab>
                     }

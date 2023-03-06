@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {ProposalFinanceModel} from "../../../model/proposal/finance/ProposalFinanceModel";
 import {ProposalCommentsModel} from "../../../model/proposal/ProposalCommentsModel";
 import {Button, Container, Form, Stack} from "react-bootstrap";
-import {CommentTypes, DepartmentTypes} from "../../../common/Constants";
+import {DepartmentTypes} from "../../../common/Constants";
 import {ColumnDef} from "@tanstack/react-table";
 import {ValidationCommentDTO, ValidityComment} from "../../../model/proposal/finance/ValidationModels";
 import {MyTable} from "../../components/MyTable";
@@ -13,6 +13,7 @@ import {useUserAuthContext} from "../../context/UserAuthContext";
 import {Roles} from "../../../model/role/Roles";
 import {BsDownload} from "react-icons/bs";
 import {MyError} from "../../error-view/MyError";
+import {useToastMsgContext} from "../../context/ToastMsgContext";
 
 
 type PfcProps = {
@@ -21,7 +22,6 @@ type PfcProps = {
     onSubmitValidationComment: (c: ValidationCommentDTO, validationType:string) => void,
     downloadCf: () => void
     uploadCf: (file: File) => void
-    showErrorToast: (err: MyError) => void
 }
 
 type ValidationType = {
@@ -35,6 +35,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
     const [display, setDisplay] = useState("none")
     const {userToken} = useUserAuthContext()
     const [isEditing, setIsEditing] = useState(false)
+    const {showErrorToastMsg} = useToastMsgContext()
 
     useEffect(() => {
         const allowedRoles = [Roles.FINANCE.id, Roles.JURIDICAL.id, Roles.SUPERUSER.id].join(",")
@@ -136,7 +137,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
     const toggleDisplayForm = () => setDisplayForm(!displayForm)
 
     const onSubmitValidation = (c: ValidationCommentDTO) => {
-        c.newValidation = props.pfc.validations?.find(v => v.validationType === CommentTypes.PROTOCOL.id)?.validated || false
+        c.newValidation = c.validation!.validated || false
         props.onSubmitValidationComment(c, c.validation!.validationType!)
     }
 
@@ -151,7 +152,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
         let file = e.target.files.item(0)
 
         if(file === null) {
-            props.showErrorToast(new MyError("Ocorreu uma falha ao carregar ficheiro, por favor tente de novo."))
+            showErrorToastMsg(new MyError("Ocorreu uma falha ao carregar ficheiro, por favor tente de novo."))
             return;
         }
         setCfFile(file)
@@ -160,7 +161,7 @@ export function ProposalFinancialContractTab(props: PfcProps) {
     const handleCFSubmission = (e: any) => {
         e.preventDefault()
         if(cfFile == null) {
-            alert("Nenhum ficheiro carregado.")
+            showErrorToastMsg(new MyError("Nenhum ficheiro carregado."))
             return
         }
         props.uploadCf(cfFile)

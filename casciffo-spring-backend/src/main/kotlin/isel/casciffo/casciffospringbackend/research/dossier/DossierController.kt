@@ -1,10 +1,12 @@
 package isel.casciffo.casciffospringbackend.research.dossier
 
+import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_DOSSIER_DETAIL_URL
 import isel.casciffo.casciffospringbackend.endpoints.RESEARCH_DOSSIER_URL
 import kotlinx.coroutines.flow.Flow
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -39,6 +41,15 @@ class DossierController(
     ): ResponseEntity<Dossier> {
         val updated = service.updateDossier(dossier, researchId)
         return ResponseEntity.ok(updated)
+    }
+
+    @DeleteMapping("/{dossierId}")
+    suspend fun deleteDossier(
+        @PathVariable researchId: Int,
+        @PathVariable dossierId: Int
+    ): ResponseEntity<Dossier> {
+        val deleted = service.deleteDossier(researchId, dossierId)
+        return ResponseEntity.ok(deleted)
     }
 
 }

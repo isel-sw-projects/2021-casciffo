@@ -21,6 +21,10 @@ import {StateModel} from "../../../model/state/StateModel";
 import {ResearchStates} from "./ResearchStates";
 import {MyUtil} from "../../../common/MyUtil";
 import {DossierComponent} from "./DossierComponent";
+import {RiDeleteBin6Fill} from "react-icons/ri";
+import {IconButton, Tooltip} from "@mui/material";
+import {useToastMsgContext} from "../../context/ToastMsgContext";
+import {MyError} from "../../error-view/MyError";
 
 
 type RDT_Props = {
@@ -28,16 +32,19 @@ type RDT_Props = {
     stateChain: StateModel[]
     updateResearch: (data: ResearchModel) => void
     addDossier: (d: DossierModel) => void
+    deleteDossier: (dId: string) => void
     onComplete: () => void
     onCancel: (reason: string) => void
 }
+
+
 
 export function ResearchDetailsTab(props: RDT_Props) {
     const [dataReady, setDataReady] = useState(false)
     const [research, setResearch] = useState<ResearchModel>({})
     const [previousResearch, setPreviousResearch] = useState<ResearchModel>({})
     const [isStateTerminal, setIsStateTerminal] = useState(false)
-
+    const [treatmentBranches, setTreatmentBranches] = useState<string[]>([])
     useEffect(() => {
         if(props.stateChain?.length === 0 || props.research.id == null) return
         const isTerminalState = props.research.canceledReason != null || props.stateChain.some(sc => sc.id === props.research.stateId && sc.stateFlowType === StateFlowTypes.TERMINAL)
@@ -46,7 +53,9 @@ export function ResearchDetailsTab(props: RDT_Props) {
 
     useEffect(() => {
         if(props.research?.id != null) {
+            const branches = props.research.treatmentBranches?.split(';')?.filter(b => b !== "") ?? []
             setResearch(props.research)
+            setTreatmentBranches(branches)
             setPreviousResearch(props.research)
             setDataReady(true)
         }
@@ -72,13 +81,11 @@ export function ResearchDetailsTab(props: RDT_Props) {
     const toggleIsEditing = () => setIsEditing(prevState => !prevState)
 
     const [showCancelPopup, setShowCancelPopup] = useState(false)
+    const {showErrorToastMsg} = useToastMsgContext()
 
     const saveChanges = () => {
-        if (treatmentBranches.length !== 0) {
-            research.treatmentBranches = treatmentBranches.join(';')
-            setTreatmentBranches([])
-            setCurrentBranch("")
-        }
+        research.treatmentBranches = treatmentBranches.join(';')
+        setCurrentBranch("")
 
         props.updateResearch(research)
         toggleTreatmentBranchForm()
@@ -86,13 +93,14 @@ export function ResearchDetailsTab(props: RDT_Props) {
     }
 
     const cancelChanges = () => {
+        setTreatmentBranches(previousResearch.treatmentBranches?.split(';') ?? [])
         setResearch(previousResearch)
         setIsEditing(false)
     }
 
     const onCancelResearch = (reason: string) => {
         if(reason.length === 0) {
-            alert("A razão de cancelamento tem de ser introduzida!")
+            showErrorToastMsg(new MyError("A razão de cancelamento tem de ser introduzida!"))
             return
         }
         //call service to cancel research, update is done automatically in parent
@@ -115,7 +123,6 @@ export function ResearchDetailsTab(props: RDT_Props) {
     const [showTreatmentBranchForm, setShowTreatmentBranchForm] = useState(false)
 
     const addBranch = () => {
-        //todo eventually add a warning message when input is invalid
         if(currentBranch.length === 0) return
         setTreatmentBranches(prevState => [currentBranch, ...prevState])
         setCurrentBranch("")
@@ -127,7 +134,6 @@ export function ResearchDetailsTab(props: RDT_Props) {
 
     const toggleTreatmentBranchForm = () => setShowTreatmentBranchForm(prevState => !prevState)
 
-    const [treatmentBranches, setTreatmentBranches] = useState<string[]>([])
 
     return <Container>
         <CancelPopup show={showCancelPopup}
@@ -172,15 +178,20 @@ export function ResearchDetailsTab(props: RDT_Props) {
             </Col>
         </Row>
 
-        <Container className={"mt-4 mb-4"}>
+        <div className={"mt-4 mb-4"}>
             <Row className={"mb-4"}>
                 <Col>
                     { isEditing &&
-                        <Container className={"flex-column float-start"}>
-                            <Button variant={"outline-primary"} onClick={toggleTreatmentBranchForm}>Definir braços de tratamento</Button>
+                        <div className={"flex-column float-start"}>
+                            <Button variant={showTreatmentBranchForm ? "outline-danger" : "outline-primary"} onClick={toggleTreatmentBranchForm}>
+                                {showTreatmentBranchForm
+                                    ? "Cancelar"
+                                    : "Definir braços de tratamento"
+                                }
+                            </Button>
                             {
                                 showTreatmentBranchForm &&
-                                <Form className={"m-2"}>
+                                <Form className={"mt-2 mb-2 me-2"}>
                                     <FormGroup className={"mt-2 mb-2"}>
                                         <FloatingLabel label={"Nome do braço de tratamento"}>
                                             <Form.Control
@@ -202,7 +213,7 @@ export function ResearchDetailsTab(props: RDT_Props) {
                                     </ListGroup>
                                 </Form>
                             }
-                        </Container>
+                        </div>
                     }
                 </Col>
                 <Col/>
@@ -212,195 +223,221 @@ export function ResearchDetailsTab(props: RDT_Props) {
             <Row>
                 <Col>
                     <h5>Braços de tratamento</h5>
-                    <ListGroup>
-                        {research.treatmentBranches?.split(';')?.map((b, i) =>
-                        <ListGroupItem
-                            disabled={!isEditing}
-                            as="li"
-                            className="d-flex justify-content-between align-items-start mb-1"
-                            key={`${b}-${i}}`}
-                            style={{backgroundColor: (i & 1) === 1 ? "whitesmoke" : "white"}}>{b}</ListGroupItem>
-                        ) || "Nenhum definido"}
-                    </ListGroup>
+                    {treatmentBranches.length === 0
+                        ? "Nenhum definido"
+                        : <ListGroup>
+                            {treatmentBranches.map((b, i) =>
+                                <ListGroupItem
+                                    disabled={!isEditing}
+                                    as="li"
+                                    className="d-flex justify-content-between align-items-start mb-1"
+                                    key={`${b}-${i}}`}
+                                    style={{backgroundColor: (i & 1) === 1 ? "whitesmoke" : "white"}}>
+                                    <div>
+                                        {b}
+                                    </div>
+                                    {isEditing &&
+                                        <div className={"float-end"}>
+                                            <Tooltip title={"Apagar"} placement={"top"} arrow>
+                                                <IconButton aria-label={"apagar"} onClick={() => removeBranch(b)}>
+                                                    <RiDeleteBin6Fill style={{color: "red"}}/>
+                                                </IconButton>
+                                            </Tooltip>
+                                        </div>
+                                    }
+                                </ListGroupItem>
+                            )}
+                        </ListGroup>
+                    }
                 </Col>
                 <Col/>
                 <Col/>
             </Row>
-
-        </Container>
+        </div>
 
         {dataReady &&
-            <>
-                <Form>
-                    <Row>
-                        <FormInputHelper
-                            label={"Data início"}
-                            type={"date"}
-                            name={"startDate"}
-                            value={research.startDate}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Data prevista de conclusão"}
-                            type={"date"}
-                            name={"estimatedEndDate"}
-                            value={research.estimatedEndDate}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Duração prevista (anos)"}
-                            type={"number"}
-                            value={MyUtil.yearRatioDiff(research.startDate, research.estimatedEndDate)}
-                        />
-                        <FormInputHelper
-                            label={"Duração prevista (meses)"}
-                            type={"number"}
-                            value={MyUtil.monthDiff(research.startDate, research.estimatedEndDate)}
-                        />
-                    </Row>
-                    <Row>
-                        <FormInputHelper
-                            label={"Tipo de ensaio"}
-                            value={ResearchTypes[research.type as keyof typeof ResearchTypes].singularName}
-                        />
-                        <FormInputHelper
-                            label={"Específicação"}
-                            value={research.specification}
-                            name={"specification"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Tipo de medicamento experimental"}
-                            value={research.treatmentType}
-                            name={"treatmentType"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Tipologia"}
-                            value={research.typology}
-                            name={"typology"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                    </Row>
-                    <Row>
-                        <FormInputHelper
-                            label={"Pacientes previstos"}
-                            type={"number"}
-                            value={research.estimatedPatientPool}
-                            name={"estimatedPatientPool"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Pacientes Atuais"}
-                            value={`${research.patients?.length ?? 0}`}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Amostra"}
-                            type={"number"}
-                            value={research.sampleSize}
-                            name={"sampleSize"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"EudraCT"}
-                            value={research.eudra_ct}
-                            name={"eudra_ct"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                    </Row>
-                    <Row>
-                        <FormInputHelper
-                            label={"Sigla"}
-                            value={research.proposal!.sigla}/>
-                        <FormInputHelper
-                            label={"Serviço"}
-                            value={research.proposal!.serviceType!.name}/>
-                        <FormInputHelper
-                            label={"Área terapeutica"}
-                            value={research.proposal!.therapeuticArea!.name}/>
-                        <FormInputHelper
-                            label={"Patologia"}
-                            value={research.proposal!.pathology!.name}/>
-                    </Row>
-                    <Row>
-                        <FormInputHelper
-                            label={"Investigador Principal"}
-                            value={research.proposal!.principalInvestigator!.name}/>
-                        <FormInputHelper
-                            label={"Promotor"}
-                            value={research.proposal!.financialComponent?.promoter?.name ?? "Não aplicável"}/>
-                        <FormInputHelper
-                            label={"Financiamento"}
-                            value={research.proposal!.financialComponent == null ? "Sem financiamento" : "Com financiamento"}/>
-                        <FormInputHelper
-                            label={"Indústria"}
-                            value={research.industry}
-                            name={"industry"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                    </Row>
-                    <Row>
-                        <FormInputHelper
-                            label={"Iniciativa"}
-                            value={research.initiativeBy}
-                            name={"initiativeBy"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        <FormInputHelper
-                            label={"Protocolo"}
-                            value={research.protocol}
-                            name={"protocol"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                        {
-                            research.type === ResearchTypes.CLINICAL_TRIAL.id ?
-                                <FormInputHelper
-                                    label={"Fases"}
-                                    value={research.phase}
-                                    name={"phase"}
-                                    editing={isEditing}
-                                    onChange={updateResearch}
-                                />
-                                :
-                                <FormInputHelper
-                                    label={"Fases"}
-                                    value={"Não aplicável"}
-                                />
-                        }
-                        <FormInputHelper
-                            label={"CRO"}
-                            value={research.cro}
-                            name={"cro"}
-                            editing={isEditing}
-                            onChange={updateResearch}
-                        />
-                    </Row>
-                </Form>
+            <div>
+                <ResearchFormData research={research} editing={isEditing} onUpdateResearch={updateResearch}/>
 
-                <DossierComponent dossiers={props.research.dossiers ?? []} onAddDossier={props.addDossier}/>
-                <Container className={"mt-4"}>
-                    <Button variant={"outline-primary"}
-                            className={"ml-2 mt-3 mb-5 rounded rounded-end"}
-                            style={{width:"100%"}}
-                            onClick={navigateToProposal}>
-                        Ver Proposta
-                    </Button>
-                </Container>
-            </>
+                <DossierComponent
+                    isEdit={isEditing}
+                    dossiers={props.research.dossiers ?? []}
+                    onAddDossier={props.addDossier}
+                    onDeleteDossier={props.deleteDossier}
+                />
+                {!isEditing &&
+                    <Container className={"mt-4"}>
+                        <Button variant={"outline-primary"}
+                                className={"ml-2 mt-3 mb-5 rounded rounded-end"}
+                                style={{width: "100%"}}
+                                onClick={navigateToProposal}>
+                            Ver Proposta
+                        </Button>
+                    </Container>
+                }
+            </div>
         }
     </Container>
+}
+
+function ResearchFormData(props: { research: ResearchModel, editing: boolean, onUpdateResearch: (e: any) => void }) {
+    return <Form>
+        <Row>
+            <FormInputHelper
+                label={"Data início"}
+                type={"date"}
+                name={"startDate"}
+                value={props.research.startDate}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"Data prevista de conclusão"}
+                type={"date"}
+                name={"estimatedEndDate"}
+                value={props.research.estimatedEndDate}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"Duração prevista (anos)"}
+                type={"number"}
+                value={MyUtil.yearRatioDiff(props.research.startDate, props.research.estimatedEndDate)}
+            />
+            <FormInputHelper
+                label={"Duração prevista (meses)"}
+                type={"number"}
+                value={MyUtil.monthDiff(props.research.startDate, props.research.estimatedEndDate)}
+            />
+        </Row>
+        <Row>
+            <FormInputHelper
+                label={"Tipo de ensaio"}
+                value={ResearchTypes[props.research.type as keyof typeof ResearchTypes].singularName}
+            />
+            <FormInputHelper
+                label={"Específicação"}
+                value={props.research.specification}
+                name={"specification"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"Tipo de medicamento experimental"}
+                value={props.research.treatmentType}
+                name={"treatmentType"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"Tipologia"}
+                value={props.research.typology}
+                name={"typology"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+        </Row>
+        <Row>
+            <FormInputHelper
+                label={"Pacientes previstos"}
+                type={"number"}
+                value={props.research.estimatedPatientPool}
+                name={"estimatedPatientPool"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"Pacientes Atuais"}
+                value={`${props.research.patients?.length ?? 0}`}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"Amostra"}
+                type={"number"}
+                value={props.research.sampleSize}
+                name={"sampleSize"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"EudraCT"}
+                value={props.research.eudra_ct}
+                name={"eudra_ct"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+        </Row>
+        <Row>
+            <FormInputHelper
+                label={"Sigla"}
+                value={props.research.proposal!.sigla}/>
+            <FormInputHelper
+                label={"Serviço"}
+                value={props.research.proposal!.serviceType!.name}/>
+            <FormInputHelper
+                label={"Área terapeutica"}
+                value={props.research.proposal!.therapeuticArea!.name}/>
+            <FormInputHelper
+                label={"Patologia"}
+                value={props.research.proposal!.pathology!.name}/>
+        </Row>
+        <Row>
+            <FormInputHelper
+                label={"Investigador Principal"}
+                value={props.research.proposal!.principalInvestigator!.name}/>
+            <FormInputHelper
+                label={"Promotor"}
+                value={props.research.proposal!.financialComponent?.promoter?.name ?? "Não aplicável"}/>
+            <FormInputHelper
+                label={"Financiamento"}
+                value={props.research.proposal!.financialComponent == null ? "Sem financiamento" : "Com financiamento"}/>
+            <FormInputHelper
+                label={"Indústria"}
+                value={props.research.industry}
+                name={"industry"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+        </Row>
+        <Row>
+            <FormInputHelper
+                label={"Iniciativa"}
+                value={props.research.initiativeBy}
+                name={"initiativeBy"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            <FormInputHelper
+                label={"Protocolo"}
+                value={props.research.protocol}
+                name={"protocol"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+            {
+                props.research.type === ResearchTypes.CLINICAL_TRIAL.id ?
+                    <FormInputHelper
+                        label={"Fases"}
+                        value={props.research.phase}
+                        name={"phase"}
+                        editing={props.editing}
+                        onChange={props.onUpdateResearch}
+                    />
+                    :
+                    <FormInputHelper
+                        label={"Fases"}
+                        value={"Não aplicável"}
+                    />
+            }
+            <FormInputHelper
+                label={"CRO"}
+                value={props.research.cro}
+                name={"cro"}
+                editing={props.editing}
+                onChange={props.onUpdateResearch}
+            />
+        </Row>
+    </Form>;
 }
 
 function CancelPopup(

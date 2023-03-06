@@ -7,6 +7,8 @@ import {MyUtil} from "../../../common/MyUtil";
 import {useParams} from "react-router-dom";
 import {StateModel} from "../../../model/state/StateModel";
 import {RequiredLabel} from "../../components/RequiredLabel";
+import {useToastMsgContext} from "../../context/ToastMsgContext";
+import {MyError} from "../../error-view/MyError";
 
 
 type TimelineProps = {
@@ -30,7 +32,9 @@ export function TimelineEventForm(props: TimelineProps) {
         stateId: ""
     })
 
+    const {showErrorToastMsg} = useToastMsgContext()
     const [possibleStates, setPossibleStates] = useState<StateModel[]>([])
+
 
     useEffect(() => {
         setPossibleStates(props.possibleStates)
@@ -58,7 +62,7 @@ export function TimelineEventForm(props: TimelineProps) {
         e.preventDefault()
         e.stopPropagation()
         if(eventToAdd.deadlineDate == null) {
-            alert("Tem de ter data limite!")
+            showErrorToastMsg(new MyError("Tem de ter data limite!"))
             return
         }
         eventToAdd.eventType = eventToAdd.isAssociatedToState ? EventTypes.STATES.id : EventTypes.DEADLINES.id

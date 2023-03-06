@@ -79,59 +79,60 @@ export function ResearchFinanceTab(props: ResearchFinanceProps) {
 
     return <React.Fragment>
         <Container className={"border-top border-2 border-secondary"}>
-
-            <Container className={"mt-3 mt-md-3 mb-3 mb-md-3"}>
-                { canShowEdit && (
-                    isEditing
-                        ? <>
+            <form>
+                <Container className={"mt-3 mt-md-3 mb-3 mb-md-3"}>
+                    { canShowEdit && (
+                        isEditing
+                            ? <>
+                            <Row>
+                                <Col>
+                                    <Button className={"me-2 me-md-2 ms-2 ms-md-2"} variant={"outline-primary"} onClick={() => saveResearchFinance(researchFinance)}>Guardar Alterações</Button>
+                                </Col>
+                                <Col/>
+                                <Col>
+                                    <Button className={"me-2 me-md-2 ms-2 ms-md-2"} variant={"outline-danger"} onClick={cancelChanges}>Cancelar</Button>
+                                </Col>
+                                <Col/>
+                                <Col/>
+                            </Row>
+                            </>
+                            : <Button variant={"outline-primary"} onClick={toggleEditing}>Editar</Button>
+                        )
+                    }
+                </Container>
+                <Container className={"flex float-start mb-3"}>
                         <Row>
-                            <Col>
-                                <Button className={"me-2 me-md-2 ms-2 ms-md-2"} variant={"outline-primary"} onClick={() => saveResearchFinance(researchFinance)}>Guardar Alterações</Button>
+                            <Col className={"me-3"}>
+                                <FormInputHelper label={"Saldo"}
+                                                 name={"balance"}
+                                                 value={researchFinance.balance}
+                                                 inline
+                                                 editing={isEditing}
+                                                 onChange={updateResearchFinance}
+                                />
+                                <FormInputHelper label={"Valor por paciente"}
+                                                 name={"valuePerParticipant"}
+                                                 value={researchFinance.valuePerParticipant}
+                                                 inline
+                                                 editing={isEditing}
+                                                 onChange={updateResearchFinance}
+                                />
                             </Col>
-                            <Col/>
-                            <Col>
-                                <Button className={"me-2 me-md-2 ms-2 ms-md-2"} variant={"outline-danger"} onClick={cancelChanges}>Cancelar</Button>
-                            </Col>
-                            <Col/>
-                            <Col/>
-                        </Row>
-                        </>
-                        : <Button variant={"outline-primary"} onClick={toggleEditing}>Editar</Button>
-                    )
-                }
-            </Container>
-            <Container className={"flex float-start mb-3"}>
-                <Row>
-                    <Col className={"me-3"}>
-                        <FormInputHelper label={"Saldo"}
-                                         name={"balance"}
-                                         value={researchFinance.balance}
-                                         inline
-                                         editing={isEditing}
-                                         onChange={updateResearchFinance}
-                        />
-                        <FormInputHelper label={"Valor por paciente"}
-                                         name={"valuePerParticipant"}
-                                         value={researchFinance.valuePerParticipant}
-                                         inline
-                                         editing={isEditing}
-                                         onChange={updateResearchFinance}
-                        />
-                    </Col>
-                    <Col className={"ms-3"}>
-                        <FormInputHelper label={"Encargo por paciente"}
-                                         name={"roleValuePerParticipant"}
-                                         value={researchFinance.roleValuePerParticipant}
-                                         inline
-                                         editing={isEditing}
-                                         onChange={updateResearchFinance}
-                        />
+                            <Col className={"ms-3"}>
+                                <FormInputHelper label={"Encargo por paciente"}
+                                                 name={"roleValuePerParticipant"}
+                                                 value={researchFinance.roleValuePerParticipant}
+                                                 inline
+                                                 editing={isEditing}
+                                                 onChange={updateResearchFinance}
+                                />
 
-                        <FormInputHelper label={"Nº de pacientes"} value={numOfPatients} inline/>
-                    </Col>
-                </Row>
-            <Divider/>
-            </Container>
+                                <FormInputHelper label={"Nº de pacientes"} value={numOfPatients} inline/>
+                            </Col>
+                        </Row>
+                <Divider/>
+                </Container>
+            </form>
             <Tabs
                 style={{width:"100%"}}
                 id="controlled-finance-tab"

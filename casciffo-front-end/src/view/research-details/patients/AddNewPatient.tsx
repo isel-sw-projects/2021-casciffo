@@ -22,6 +22,8 @@ import {VisitPeriodicity, VisitTypes} from "../../../common/Constants";
 import {AsyncAutoCompletePatientSearch} from "./AsyncAutoCompletePatientSearch";
 import {FormListVisitInvestigators} from "../common/FormListVisitInvestigators";
 import {FloatingLabelHelper} from "../../components/FloatingLabelHelper";
+import {useToastMsgContext} from "../../context/ToastMsgContext";
+import {MyError} from "../../error-view/MyError";
 
 type Props = {
     team: TeamInvestigatorModel[]
@@ -181,20 +183,22 @@ function VisitAccordion(props: VisitAccordionProps) {
     const [dataSaved, setDataSaved] = useState(false)
     const [isSavingData, setIsSavingData] = useState(false)
 
+    const {showErrorToastMsg} = useToastMsgContext()
+
     const handleSaveVisit = (e: any) => {
         e.preventDefault()
         e.stopPropagation()
 
         if(visit.visitInvestigators?.length === 0) {
-            alert("Uma visita tem obrigatóriamente de ter pelo menos um investigador associado.")
+            showErrorToastMsg(new MyError("Uma visita tem obrigatóriamente de ter pelo menos um investigador associado."))
             return
         }
         if(visit.periodicity === VisitPeriodicity.CUSTOM.id && visit.customPeriodicity! <= 0) {
-            alert("Tem de inserir uma periodicidade maior que zero!")
+            showErrorToastMsg(new MyError("Tem de inserir uma periodicidade maior que zero!"))
             return
         }
         if(visit.visitInvestigators!.length === 0) {
-            alert("Uma visita tem de ter pelo menos um investigador associado!!")
+            showErrorToastMsg(new MyError("Uma visita tem de ter pelo menos um investigador associado!!"))
             return
         }
 
@@ -250,7 +254,7 @@ function VisitAccordion(props: VisitAccordionProps) {
                                 <FormGroup className={"m- 2 m-md-2"}>
                                     <Form.Label className={"font-bold"}>Tipo de periodicidade</Form.Label>
                                     <Form.Select
-                                        key={"visit-periodic-selection"}
+                                        key={`visit-periodic-selection-${props.idx}`}
                                         aria-label="visit periodicity selection"
                                         name={"periodicity"}
                                         defaultValue={VisitPeriodicity.NONE.id}
