@@ -17,7 +17,7 @@ if "%~1"=="test" (
 )
 echo Setting up production app...
 set envpath="%cd%\deployments\prod"
-set env=%1
+set env="prod"
 
 :frontend
 cd casciffo-front-end
@@ -43,7 +43,7 @@ echo
 echo Copying optimized production build from front-end to /webapp...
 
 
-robocopy /e /move "..\casciffo-front-end\build" "%envpath%/webapp"
+robocopy /e /move "..\casciffo-front-end\build" "%envpath%\webapp"
 
 
 echo Creating environment variables...
