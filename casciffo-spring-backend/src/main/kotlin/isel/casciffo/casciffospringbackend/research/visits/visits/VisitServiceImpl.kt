@@ -14,7 +14,6 @@ import isel.casciffo.casciffospringbackend.users.user.UserModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitSingle
-import kotlinx.coroutines.reactor.asFlux
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import mu.KLogger
@@ -106,8 +105,8 @@ class VisitServiceImpl(
         return visitRepository.findAllByParticipantIdAndResearchId(researchId, participantId).asFlow()
     }
 
-    override suspend fun getAllVisitsForPatient(patientId: Int): Flow<VisitModel> {
-        return visitRepository.findAllByPatientId(patientId).asFlow()
+    override suspend fun getAllVisitsForPatient(participantId: Int): Flow<VisitModel> {
+        return visitRepository.findAllByPatientId(participantId).asFlow()
     }
 
     override suspend fun getVisitsForResearch(researchId: Int): Flow<VisitModel> {
