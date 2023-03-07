@@ -9,8 +9,6 @@ then
 	echo "Running with default values."
 fi
 
-echo "e.g ./run.sh -p=9000 -dbu=vp -dbn=casciffo_db_test -dbp=vp123456"
-
 while getopts ":p:P:d:u:w:h" option; do
 	case $option in
 		p)	port=$OPTARG;;
@@ -33,4 +31,4 @@ while getopts ":p:P:d:u:w:h" option; do
 
 
 echo "Launching the app!"
-java -jar casciffo.jar --port=$port --db-name=$dbname --db-user=$dbuser --db-pwd=$dbpwd --db-port=$dbport
+java -jar casciffo-test.jar --port=$port --db_name=$dbname --db_user=$dbuser --db_pwd=$dbpwd --db_port=$dbport
