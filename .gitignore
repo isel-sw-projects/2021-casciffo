@@ -43,8 +43,7 @@ coverage
 
 # production
 casciffo-spring-backend/webapp/
-prod/webapp
-test/webapp
+deployments
 build
 *.jar
 

@@ -1,5 +1,0 @@
-.collapsing {
-    -webkit-transition-delay: 0.2s;
-    transition-delay: 0.2s;
-    transition: height 0.2s ease;
-}

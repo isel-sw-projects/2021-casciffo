@@ -181,7 +181,6 @@ class ProposalServiceImpl(
                     it.proposalId = createdProposal.id!!
                     it
                 }
-
         createdProposal.investigationTeam = investigationTeamService.saveTeam(investigators)
     }
 
