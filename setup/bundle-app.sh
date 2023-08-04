@@ -17,7 +17,7 @@ fi
 
 envpath="$workDir/deployments/$envd"
 mkdir -p $envpath
-cd "$workDir//casciffo-front-end" || exit 1
+cd "$workDir/casciffo-front-end" || exit 1
 
 echo "Installing front-end modules..."
 npm install
