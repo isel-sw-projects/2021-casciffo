@@ -172,7 +172,9 @@ Don't forget to give the project a star! Thanks again!
 This project was developed as part of a partnership between the Hospital Professor Doutor Fernando
 Fonseca (HFF) and Lisbon School of Engineering (ISEL) 
 
-Valdemar Antunes - A44865@alunos.isel.pt</br>
+Valdemar Antunes  -   A44865@alunos.isel.pt </br>
+Miguel Gamboa     -   miguel.gamboa@isel.pt </br>
+Pedro Vieira      -   pedro.vieira@isel.pt  </br>
 
 Project Link: [https://github.com/isel-sw-projects/2021-casciffo](https://github.com/isel-sw-projects/2021-casciffo)
 

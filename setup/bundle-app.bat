@@ -10,14 +10,14 @@ if "%~1"=="" (
     echo Default is "test"
 	goto frontend 
 ) 
-if "%~1"=="test" (
-    echo Setting up test app...
-    set envpath="%workDir%\deployments\test"
+if "%~1"=="prod" (
+    echo Setting up production app...
+    set envpath="%workDir%\deployments\prod"
+    set env="prod"
 	goto frontend 
 )
-echo Setting up production app...
-set envpath="%workDir%\deployments\prod"
-set env="prod"
+echo Setting up test app...
+set envpath="%workDir%\deployments\test"
 
 :frontend
 cd ..\casciffo-front-end
