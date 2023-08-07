@@ -9,7 +9,7 @@ workDir="$(dirname "$(realpath -s "$0")")/.."
 if [ -z "$1" ]; then
     echo "You can set the environment by running run.sh [env] where env can be \"prod\" or \"test\"."
     echo "Default is \"test\""
-	if [ ! -f $workDir/deployments/test/casciffo.jar ]; then
+	if [ ! -f $workDir/deployments/test/casciffo-test.jar ]; then
 		echo "File not found!"
 		echo "Please run the respective bundle script!"
 		exit 1
