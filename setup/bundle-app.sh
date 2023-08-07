@@ -50,7 +50,7 @@ mv "build/libs/casciffo-spring-backend-1.0.0.jar" "$envpath"
 
 cd "$workDir/setup" 
 
-if [ "$env" = "test" ]; then
+if [ "$envd" = "test" ]; then
         rm -f "$envpath/casciffo-test.jar"
         mv "$envpath/casciffo-spring-backend-1.0.0.jar" "$envpath/casciffo-test.jar"
 else
@@ -60,5 +60,5 @@ fi
 
 echo
 echo "Done!"
-echo "Run the app with the file run.sh!"
+echo "Run the app with the file run.sh (prod) or test_run.sh (test)!"
 
