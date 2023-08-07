@@ -62,8 +62,6 @@ Software Capacitation in Hospital Fernando Fonseca Research Centre
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-<img src="images/screenshot.png" alt="Logo">
-
 CASCIFFO is a platform split in two modules, a front- and back-end module. This application that aims to develop and provide innovative mechanisms for interoperability with internal and external information systems, allowing, when desired, data synchronization, index search, identification data management and even access to detailed clinical data. Along with these features, the management of clinical visits assisted by researchers and data monitoring of patients are also included. 
 
 
